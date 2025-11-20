@@ -12,6 +12,7 @@ import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
 })
 export class FornecedorPageComponent implements OnInit {
   fornecedor?: Fornecedor;
+  selectedImage?: string;
 
   constructor(private route: ActivatedRoute, private db: FornecedoresData) {}
 
@@ -20,6 +21,14 @@ export class FornecedorPageComponent implements OnInit {
     if (id) {
       this.fornecedor = this.db.getById(id);
     }
+  }
+
+  openImage(img: string) {
+    this.selectedImage = img;
+  }
+
+  closeImage() {
+    this.selectedImage = undefined;
   }
 
   getWhatsAppLink(): string {

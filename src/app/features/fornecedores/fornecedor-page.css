@@ -1,1 +1,12 @@
 .container img{display:block}
+
+/* Modal/overlay tweaks for expanded image */
+.cursor-pointer{cursor:pointer}
+.z-60{z-index:60}
+
+/* Fundo depoimentos automatizado com cor principal do site (rose-600) */
+.bg-depoimentos {
+	background:
+		linear-gradient(rgba(244, 63, 94, 0.08), rgba(244, 63, 94, 0.08)), /* rose-600 */
+		url('/assets/bg-depoimentos.jpg') repeat;
+}

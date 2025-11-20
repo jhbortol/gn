@@ -78,4 +78,7 @@ export class FornecedoresData {
   getByCategoria(categoria: string): Fornecedor[] {
     return this.data.filter(f => f.categoria?.toLowerCase() === categoria?.toLowerCase());
   }
+  getAll(): Fornecedor[] {
+    return this.data;
+  }
 }

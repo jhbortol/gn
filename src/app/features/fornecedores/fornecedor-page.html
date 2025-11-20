@@ -26,12 +26,21 @@
         <h3 class="font-semibold text-lg mb-3">Galeria de Fotos</h3>
         <div class="grid grid-cols-2 gap-4">
           <ng-container *ngFor="let img of fornecedor.imagens">
-            <img [src]="img" alt="imagem" class="w-full h-40 object-cover rounded" />
+            <img (click)="openImage(img)" [src]="img" alt="imagem" class="w-full h-40 object-cover rounded cursor-pointer" />
           </ng-container>
         </div>
       </div>
 
-      <section class="py-8 px-2 mb-6 rounded-xl" style="background: url('/assets/bg-depoimentos.png') repeat;">
+      <!-- Image modal/overlay -->
+      <div *ngIf="selectedImage" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black bg-opacity-70" (click)="closeImage()"></div>
+        <div class="relative max-w-4xl max-h-[90vh] w-full">
+          <button (click)="closeImage()" aria-label="Fechar" class="absolute right-2 top-2 z-60 bg-white rounded-full p-2 shadow">✕</button>
+          <img [src]="selectedImage" alt="imagem ampliada" class="w-full h-auto max-h-[90vh] object-contain rounded" />
+        </div>
+      </div>
+
+      <section class="py-8 px-2 mb-6 rounded-xl bg-depoimentos">
         <h3 class="text-2xl font-serif font-bold text-gray-900 mb-6">O que os noivos dizem</h3>
         <div class="flex flex-wrap gap-6">
           <div *ngFor="let dep of fornecedor.depoimentos" class="bg-white rounded-xl shadow p-6 border border-rose-100 flex-1 min-w-[280px] max-w-[340px]" style="box-shadow:0 2px 8px #0001;">
@@ -60,7 +69,7 @@
         <div class="text-sm text-gray-600">
           <div class="mb-2 font-semibold">Dados de Contato</div>
           <div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h4l3 9 4-18 3 9h4"/></svg> {{fornecedor.whatsapp}}</div>
-          <div class="flex items-center gap-2 mt-2"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 01-8 0 4 4 0 018 0z"/></svg> @{{fornecedor.instagram}}</div>
+          <div class="flex items-center gap-2 mt-2"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 01-8 0 4 4 0 018 0z"/></svg> &#64;{{fornecedor.instagram}}</div>
         </div>
       </div>
     </aside>

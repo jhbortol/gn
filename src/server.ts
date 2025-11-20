@@ -1,68 +1,40 @@
-import {
-  AngularNodeAppEngine,
-  createNodeRequestHandler,
-  isMainModule,
-  writeResponseToNodeResponse,
-} from '@angular/ssr/node';
+import 'zone.js/node';
+import { enableProdMode } from '@angular/core';
 import express from 'express';
-import { join } from 'node:path';
+import { join } from 'path';
 
-const browserDistFolder = join(import.meta.dirname, '../browser');
+enableProdMode();
 
 const app = express();
-const angularApp = new AngularNodeAppEngine();
+const distFolder = join(process.cwd(), 'dist/guia-noivas/browser');
 
-/**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/{*splat}', (req, res) => {
- *   // Handle API request
- * });
- * ```
- */
+// Serve static files (prerendered HTML, assets, etc.)
+app.use(express.static(distFolder, { maxAge: '1y' }));
 
-/**
- * Serve static files from /browser
- */
-app.use(
-  express.static(browserDistFolder, {
-    maxAge: '1y',
-    index: false,
-    redirect: false,
-  }),
-);
-
-/**
- * Handle all other requests by rendering the Angular application.
- */
-app.use((req, res, next) => {
-  angularApp
-    .handle(req)
-    .then((response) =>
-      response ? writeResponseToNodeResponse(response, res) : next(),
-    )
-    .catch(next);
+// Catch-all: serve index.html for client-side routing (CSR fallback)
+app.get('*', (req, res) => {
+  const indexPath = join(distFolder, 'index.html');
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      console.error('Error serving index.html:', err);
+      res.status(500).send('Server Error');
+    }
+  });
 });
 
-/**
- * Start the server if this module is the main entry point, or it is ran via PM2.
- * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.
- */
-if (isMainModule(import.meta.url) || process.env['pm_id']) {
-  const port = process.env['PORT'] || 4000;
-  app.listen(port, (error) => {
-    if (error) {
-      throw error;
-    }
+export const handler = app;
 
-    console.log(`Node Express server listening on http://localhost:${port}`);
+// If this file is run directly with `ts-node src/server.ts`, start the HTTP server.
+const argvEntry = process.argv && process.argv[1] ? process.argv[1] : '';
+const normalizedArgv = argvEntry.replace(/\\/g, '/');
+const isDirectRun = normalizedArgv.endsWith('src/server.ts') || normalizedArgv.endsWith('server.js');
+if (isDirectRun) {
+  const PORT = process.env['PORT'] ? Number(process.env['PORT']) : 4000;
+  app.listen(PORT, () => {
+    // eslint-disable-next-line no-console
+    console.log(`Server listening on http://localhost:${PORT}`);
+    setInterval(() => {
+      console.log(`[${new Date().toISOString()}] Server is alive on port ${PORT}`);
+    }, 10000);
   });
 }
-
-/**
- * Request handler used by the Angular CLI (for dev-server and during build) or Firebase Cloud Functions.
- */
-export const reqHandler = createNodeRequestHandler(app);

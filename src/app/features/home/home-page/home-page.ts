@@ -17,7 +17,7 @@ const CATEGORIES = [
   selector: 'app-home-page',
   standalone: true,
   templateUrl: './home-page.html',
-  styleUrl: './home-page.css',
+  styleUrls: ['./home-page.css'],
   imports: [CommonModule, IconComponent, DestaquesSemanaComponent, RouterModule]
 })
 export class HomePageComponent {

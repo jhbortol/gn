@@ -1,0 +1,45 @@
+<div class="animate-fade-in">
+	<!-- Hero Section -->
+	<div class="relative h-[400px] flex items-center justify-center bg-rose-900 text-white">
+		<div class="absolute inset-0 overflow-hidden">
+			<img src="https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" class="w-full h-full object-cover opacity-40" alt="Hero" />
+		</div>
+		<div class="relative z-10 container mx-auto px-4 text-center">
+			<h1 class="text-4xl md:text-6xl font-serif font-bold mb-4">O Casamento dos seus Sonhos</h1>
+			<p class="text-xl md:text-2xl text-rose-100 mb-8 font-light">Começa aqui, em Piracicaba.</p>
+			<div class="max-w-2xl mx-auto bg-white rounded-full p-2 flex shadow-2xl transform hover:scale-105 transition">
+				<div class="flex-grow flex items-center px-4 border-r border-gray-200 text-gray-500">
+					<app-icon name="search" [size]="20"></app-icon>
+					<input type="text" placeholder="O que você procura? (ex: Buffet, Foto...)" class="w-full p-2 outline-none text-gray-700" />
+				</div>
+				<button class="bg-rose-600 text-white px-8 py-3 rounded-full font-bold hover:bg-rose-700 transition">
+					BUSCAR
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Categories Section -->
+	<section class="py-16 container mx-auto px-4">
+		<h2 class="text-3xl font-serif font-bold text-gray-800 text-center mb-2">Navegue por Categorias</h2>
+		<p class="text-gray-500 text-center mb-10">Encontre os melhores profissionais de Piracicaba</p>
+		<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+			<ng-container *ngFor="let cat of categories">
+				<a [routerLink]="['/categorias', cat.id]" class="group block bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden transform hover:-translate-y-1">
+					<div class="h-32 overflow-hidden relative">
+						<img [src]="cat.image" [alt]="cat.name" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+						<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+						<app-icon [name]="cat.iconName" [size]="24" className="absolute bottom-3 right-3 text-white opacity-80"></app-icon>
+					</div>
+					<div class="p-4 text-center">
+						<h3 class="font-bold text-gray-800 group-hover:text-rose-600 transition-colors">{{cat.name}}</h3>
+						<p class="text-xs text-gray-500 mt-1">Ver fornecedores</p>
+					</div>
+				</a>
+			</ng-container>
+		</div>
+	</section>
+</div>
+
+<!-- Destaques da Semana -->
+<app-destaques-semana></app-destaques-semana>

@@ -1,0 +1,33 @@
+<footer class="bg-slate-900 text-white py-8 mt-12">
+  <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div>
+      <h3 class="font-bold text-lg mb-2">Guia Noivas</h3>
+      <p class="text-sm">Seu portal de fornecedores para casamentos em Piracicaba.</p>
+    </div>
+    <div>
+      <h3 class="font-bold text-lg mb-2">Categorias</h3>
+      <ul class="text-sm space-y-1">
+        <li><a [routerLink]="['/categorias', 'fotografia']" class="hover:underline">Fotografia</a></li>
+        <li><a [routerLink]="['/categorias', 'buffet']" class="hover:underline">Buffet</a></li>
+        <li><a [routerLink]="['/categorias', 'decoracao']" class="hover:underline">Decoração</a></li>
+        <li><a [routerLink]="['/categorias', 'espacos']" class="hover:underline">Espaços</a></li>
+        <li><a [routerLink]="['/categorias', 'vestidos']" class="hover:underline">Vestidos</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="font-bold text-lg mb-2">Institucional</h3>
+      <ul class="text-sm space-y-1">
+        <li><a [routerLink]="['/institucional']" class="hover:underline">Sobre Nós</a></li>
+        <li><a [routerLink]="['/contato']" class="hover:underline">Contato</a></li>
+        <li><a [routerLink]="['/institucional', 'termos']" class="hover:underline">Termos</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="font-bold text-lg mb-2">Newsletter</h3>
+      <form class="flex gap-2">
+        <input type="email" placeholder="Seu e-mail" class="rounded px-2 py-1 text-black" />
+        <button class="bg-rose-600 px-4 py-1 rounded text-white font-semibold">Assinar</button>
+      </form>
+    </div>
+  </div>
+</footer>

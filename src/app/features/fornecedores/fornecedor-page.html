@@ -1,0 +1,72 @@
+<section class="container mx-auto px-4 py-10">
+  <div *ngIf="fornecedor; else notfound" class="grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-xl shadow p-6 mb-6 border border-gray-100">
+        <div class="flex items-start gap-6">
+          <div class="flex-1">
+            <div class="flex items-center gap-3">
+              <span class="text-xs bg-rose-50 text-rose-600 px-2 py-1 rounded-full font-semibold">{{fornecedor.categoria}}</span>
+              <h2 class="text-2xl font-serif font-bold text-gray-900">{{fornecedor.nome}}</h2>
+            </div>
+            <div class="text-sm text-gray-600 mt-2 flex items-center gap-3">
+              <span>{{fornecedor.cidade}}, {{fornecedor.estado}}</span>
+              <span class="flex items-center gap-1 text-yellow-500">★ {{fornecedor.rating}}</span>
+            </div>
+            <div class="mt-4 text-gray-700">
+              <p>{{fornecedor.sobre}}</p>
+            </div>
+          </div>
+          <div class="w-28 h-24 bg-gray-100 rounded border border-gray-200 flex items-center justify-center text-gray-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#d1d5db"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5a4.5 4.5 0 019 0v9a4.5 4.5 0 01-9 0v-9z" /></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow p-6 border border-gray-100 mb-6">
+        <h3 class="font-semibold text-lg mb-3">Galeria de Fotos</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <ng-container *ngFor="let img of fornecedor.imagens">
+            <img [src]="img" alt="imagem" class="w-full h-40 object-cover rounded" />
+          </ng-container>
+        </div>
+      </div>
+
+      <section class="py-8 px-2 mb-6 rounded-xl" style="background: url('/assets/bg-depoimentos.png') repeat;">
+        <h3 class="text-2xl font-serif font-bold text-gray-900 mb-6">O que os noivos dizem</h3>
+        <div class="flex flex-wrap gap-6">
+          <div *ngFor="let dep of fornecedor.depoimentos" class="bg-white rounded-xl shadow p-6 border border-rose-100 flex-1 min-w-[280px] max-w-[340px]" style="box-shadow:0 2px 8px #0001;">
+            <div class="text-rose-400 text-3xl mb-2">&ldquo;</div>
+            <blockquote class="italic text-gray-700 mb-4">{{dep.texto}}</blockquote>
+            <div class="font-serif font-bold text-rose-700 text-right">&ndash; {{dep.casal}}</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="bg-white rounded-xl shadow p-6 border border-gray-100">
+        <h3 class="font-semibold text-lg mb-3">Sobre</h3>
+        <p class="text-gray-700">{{fornecedor.sobre}}</p>
+      </div>
+    </div>
+
+    <aside>
+      <div class="bg-white rounded-xl shadow p-6 border border-gray-100">
+        <h4 class="font-semibold mb-4">Solicitar Orçamento</h4>
+        <div class="flex flex-col gap-3 mb-4">
+          <a [href]="getWhatsAppLink()" target="_blank" class="inline-flex items-center justify-center gap-2 bg-green-500 text-white rounded py-2 px-3 font-medium">WhatsApp</a>
+          <a [href]="getSiteLink()" target="_blank" class="inline-flex items-center justify-center gap-2 bg-gray-100 text-gray-800 rounded py-2 px-3">Visitar Site</a>
+          <a [href]="getInstagramLink()" target="_blank" class="inline-flex items-center justify-center gap-2 bg-white text-gray-800 border border-gray-200 rounded py-2 px-3">Instagram</a>
+        </div>
+
+        <div class="text-sm text-gray-600">
+          <div class="mb-2 font-semibold">Dados de Contato</div>
+          <div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h4l3 9 4-18 3 9h4"/></svg> {{fornecedor.whatsapp}}</div>
+          <div class="flex items-center gap-2 mt-2"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 01-8 0 4 4 0 018 0z"/></svg> @{{fornecedor.instagram}}</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <ng-template #notfound>
+    <div class="bg-white rounded-xl shadow p-6 border border-gray-100 text-center">Fornecedor não encontrado.</div>
+  </ng-template>
+</section>

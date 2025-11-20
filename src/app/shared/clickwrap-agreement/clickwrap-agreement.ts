@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-clickwrap-agreement',
   standalone: true,
   templateUrl: './clickwrap-agreement.html',
-  styleUrl: './clickwrap-agreement.css',
+  styleUrls: ['./clickwrap-agreement.css'],
   imports: [CommonModule]
 })
 export class ClickwrapAgreementComponent {

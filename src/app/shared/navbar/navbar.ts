@@ -9,7 +9,7 @@ import { RouterModule } from '@angular/router';
   selector: 'app-navbar',
   standalone: true,
   templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
+  styleUrls: ['./navbar.css'],
   imports: [IconComponent, RouterModule]
 })
 export class NavbarComponent {

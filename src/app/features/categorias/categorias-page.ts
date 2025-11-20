@@ -7,7 +7,7 @@ import { CategoriasData, Categoria } from './services/categorias-data';
   selector: 'app-categorias-page',
   standalone: true,
   templateUrl: './categorias-page.html',
-  styleUrl: './categorias-page.css',
+  styleUrls: ['./categorias-page.css'],
   imports: [CommonModule, RouterModule]
 })
 export class CategoriasPageComponent {

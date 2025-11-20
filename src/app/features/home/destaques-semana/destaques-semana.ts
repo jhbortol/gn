@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
   selector: 'app-destaques-semana',
   standalone: true,
   templateUrl: './destaques-semana.html',
-  styleUrl: './destaques-semana.css',
+  styleUrls: ['./destaques-semana.css'],
   imports: [CommonModule, RouterModule]
 })
 export class DestaquesSemanaComponent {

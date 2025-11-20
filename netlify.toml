@@ -1,0 +1,10 @@
+# Netlify configuration for Angular application deployment
+
+[build]
+  command = "npm run build"
+  publish = "dist/guia-noivas/browser"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

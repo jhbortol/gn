@@ -54,6 +54,48 @@ ng e2e
 
 Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
+## Deployment
+
+This application is configured for deployment on [Netlify](https://www.netlify.com/).
+
+### Deploying to Netlify
+
+#### Option 1: Deploy via Netlify CLI
+
+1. Install the Netlify CLI:
+   ```bash
+   npm install -g netlify-cli
+   ```
+
+2. Build the application:
+   ```bash
+   npm run build
+   ```
+
+3. Deploy to Netlify:
+   ```bash
+   netlify deploy --prod
+   ```
+
+#### Option 2: Deploy via Netlify Dashboard
+
+1. Push your code to a Git repository (GitHub, GitLab, or Bitbucket)
+2. Log in to [Netlify](https://app.netlify.com/)
+3. Click "Add new site" > "Import an existing project"
+4. Connect your Git provider and select this repository
+5. Netlify will automatically detect the build settings from `netlify.toml`:
+   - **Build command:** `npm run build`
+   - **Publish directory:** `dist/guia-noivas/browser`
+6. Click "Deploy site"
+
+The `netlify.toml` configuration file includes:
+- Build command and publish directory settings
+- Redirect rules for Angular routing (SPA support)
+
+### Continuous Deployment
+
+Once connected to Netlify, any push to your main branch will automatically trigger a new deployment.
+
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

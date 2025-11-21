@@ -1,6 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FornecedoresData, Fornecedor } from '../../fornecedores/services/fornecedores-data';
+
+export interface DestaqueView {
+  id: string;
+  categoria?: string;
+  nome?: string;
+  local?: string;
+  descricao?: string;
+  nota?: number;
+  imagem?: string;
+}
 
 @Component({
   selector: 'app-destaques-semana',
@@ -9,43 +20,46 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./destaques-semana.css'],
   imports: [CommonModule, RouterModule]
 })
-export class DestaquesSemanaComponent {
-  destaques = [
-    {
-      id: 'sandro-cardoso',
-      categoria: 'FOTOGRAFIA',
-      nome: 'Sandro Cardoso',
-      local: 'Piracicaba, SP',
-      descricao: 'Eu sou um apaixonado pelo que faço, amo fotografar os melhores momentos da vida. Acredito que a ...',
-      nota: 5,
-      imagem: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&q=80&w=600'
-    },
-    {
-      id: 'buffet-sabor-real',
-      categoria: 'BUFFET',
-      nome: 'Buffet Sabor Real',
-      local: 'Vila Rezende, Piracicaba',
-      descricao: 'Gastronomia sofisticada para o seu grande dia. Cardápios personalizados que vão do clássico ...',
-      nota: 4.8,
-      imagem: 'https://images.unsplash.com/photo-1519864600265-abb23843a6c1?auto=format&fit=crop&q=80&w=600'
-    },
-    {
-      id: 'flores-sonhos',
-      categoria: 'DECORAÇÃO',
-      nome: 'Flores & Sonhos',
-      local: 'Centro, Piracicaba',
-      descricao: 'Transformamos ambientes com arranjos florais exclusivos e projetos de decoração que refletem ...',
-      nota: 4.9,
-      imagem: 'https://images.unsplash.com/photo-1519225421980-715cb0202128?auto=format&fit=crop&q=80&w=600'
-    },
-    {
-      id: 'chacara-do-sol',
-      categoria: 'ESPAÇOS',
-      nome: 'Chácara do Sol',
-      local: 'Saltinho, SP (Próximo a Piracicaba)',
-      descricao: 'Um espaço amplo ao ar livre, perfeito para casamentos no campo e festas ao pôr do sol.',
-      nota: 4.7,
-      imagem: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600'
+export class DestaquesSemanaComponent implements OnInit {
+  @Input() category?: string | undefined;
+  @Input() exclude: string[] = [];
+  @Input() limit = 4;
+  @Output() displayed = new EventEmitter<string[]>();
+
+  destaques: DestaqueView[] = [];
+
+  constructor(private fornecedoresData: FornecedoresData) {}
+
+  ngOnInit(): void {
+    let all = this.fornecedoresData.getAll()
+      .filter(f => f.imagens && f.imagens.length > 0 && f.destaque === true);
+
+    // Filtra por categoria, se informado
+    if (this.category) {
+      const catLower = this.category.toLowerCase();
+      all = all.filter(f => (f.categoria || '').toLowerCase() === catLower);
     }
-  ];
+
+    // Remove fornecedores que estão na lista de exclusão
+    if (this.exclude && this.exclude.length) {
+      const excl = new Set(this.exclude);
+      all = all.filter(f => !excl.has(f.id));
+    }
+
+    // Ordena por rating (maior primeiro) e pega os `limit` primeiros
+    const top = all.sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, this.limit);
+
+    this.destaques = top.map(f => ({
+      id: f.id,
+      categoria: f.categoria,
+      nome: f.nome,
+      local: [f.cidade, f.estado].filter(Boolean).join(', '),
+      descricao: f.sobre,
+      nota: f.rating,
+      imagem: (f.imagens && f.imagens.length) ? f.imagens[0] : undefined
+    }));
+
+    // Emite IDs exibidos para que o pai possa evitar repetições
+    this.displayed.emit(this.destaques.map(d => d.id));
+  }
 }

@@ -7,6 +7,11 @@ export const routes: Routes = [
 		loadChildren: () => import('./features/home/home-module').then(m => m.HomeModule)
 	},
 	{
+		path: 'termos',
+		redirectTo: 'institucional/termos',
+		pathMatch: 'full'
+	},
+	{
 		path: 'categorias',
 		loadChildren: () => import('./features/categorias/categorias-module').then(m => m.CategoriasModule)
 	},

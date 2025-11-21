@@ -14,6 +14,8 @@ export interface Fornecedor {
   instagram?: string;
 
   imagens?: string[];
+  /** se true, aparece nos destaques da página inicial */
+  destaque?: boolean;
   depoimentos?: Array<{
     texto: string;
     casal: string;
@@ -43,6 +45,7 @@ export class FornecedoresData {
         '/assets/fornecedores/sandro-cardoso/3.png',
         '/assets/fornecedores/sandro-cardoso/4.png'
       ],
+      destaque: true,
       depoimentos: [
         {
           texto: 'Excelentes profissionais! Super recomendo seu trabalho. Amei do começo ao fim.',
@@ -72,6 +75,7 @@ export class FornecedoresData {
         '/assets/fornecedores/perez/7.jpg',
         '/assets/fornecedores/perez/8.jpg'
       ],
+      destaque: true,
       depoimentos: [
         {
           texto: 'Excelentes profissionais! Super recomendo seu trabalho. Amei do começo ao fim.',
@@ -106,6 +110,7 @@ export class FornecedoresData {
         '/assets/fornecedores/toccare/7.jpeg',
         '/assets/fornecedores/toccare/8.jpeg'
       ],
+      destaque: false,
       depoimentos: [
         {
           texto: 'Um dos momentos lindos de uma cerimonia que foi inteira emocionamente, graças a toda dedicação e maestria que vocês tiveram em executar o nosso sonho.',

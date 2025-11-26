@@ -1,10 +1,13 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FornecedoresData, Fornecedor } from '../../fornecedores/services/fornecedores-data';
+import { FornecedoresData, FornecedorListDto } from '../../fornecedores/services/fornecedores-data';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface DestaqueView {
   id: string;
+  slug: string;
   categoria?: string;
   nome?: string;
   local?: string;
@@ -27,39 +30,37 @@ export class DestaquesSemanaComponent implements OnInit {
   @Output() displayed = new EventEmitter<string[]>();
 
   destaques: DestaqueView[] = [];
+  destaques$!: Observable<DestaqueView[]>;
 
   constructor(private fornecedoresData: FornecedoresData) {}
 
   ngOnInit(): void {
-    let all = this.fornecedoresData.getAll()
-      .filter(f => f.imagens && f.imagens.length > 0 && f.destaque === true);
-
-    // Filtra por categoria, se informado
-    if (this.category) {
-      const catLower = this.category.toLowerCase();
-      all = all.filter(f => (f.categoria || '').toLowerCase() === catLower);
-    }
-
-    // Remove fornecedores que estão na lista de exclusão
-    if (this.exclude && this.exclude.length) {
-      const excl = new Set(this.exclude);
-      all = all.filter(f => !excl.has(f.id));
-    }
-
-    // Ordena por rating (maior primeiro) e pega os `limit` primeiros
-    const top = all.sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, this.limit);
-
-    this.destaques = top.map(f => ({
-      id: f.id,
-      categoria: f.categoria,
-      nome: f.nome,
-      local: [f.cidade, f.estado].filter(Boolean).join(', '),
-      descricao: f.sobre,
-      nota: f.rating,
-      imagem: (f.imagens && f.imagens.length) ? f.imagens[0] : undefined
-    }));
-
-    // Emite IDs exibidos para que o pai possa evitar repetições
-    this.displayed.emit(this.destaques.map(d => d.id));
+    this.destaques$ = this.fornecedoresData.getDestaques(1, this.limit * 3).pipe(
+      map(list => {
+        if (!list || !Array.isArray(list)) {
+          console.warn('[DESTAQUES] API returned invalid data:', list);
+          return [];
+        }
+        return list
+          .filter(f => !this.category || (f.categoria?.nome || '').toLowerCase() === this.category!.toLowerCase())
+          .filter(f => !this.exclude?.length || !this.exclude.includes(f.id))
+          .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+          .slice(0, this.limit)
+          .map(f => ({
+            id: f.id,
+            slug: f.slug,
+            categoria: f.categoria?.nome,
+            nome: f.nome,
+            local: f.cidade,
+            descricao: undefined,
+            nota: f.rating || 0,
+            imagem: f.primaryImage?.url || 'assets/fornecedores/placeholder.jpg'
+          }));
+      })
+    );
+    this.destaques$.subscribe(d => {
+      this.destaques = d;
+      this.displayed.emit(d.map(x => x.id));
+    });
   }
 }

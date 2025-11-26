@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-fornecedor-page',
@@ -14,12 +15,14 @@ export class FornecedorPageComponent implements OnInit {
   fornecedor?: Fornecedor;
   selectedImage?: string;
 
-  constructor(private route: ActivatedRoute, private db: FornecedoresData) {}
+  constructor(private route: ActivatedRoute, private fornecedores: FornecedoresData) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.params['id'];
-    if (id) {
-      this.fornecedor = this.db.getById(id);
+    const identifier = this.route.snapshot.params['id']; // pode ser GUID ou slug
+    if (identifier) {
+      this.fornecedores.getById(identifier).subscribe(f => {
+        this.fornecedor = f;
+      });
     }
   }
 
@@ -32,17 +35,12 @@ export class FornecedorPageComponent implements OnInit {
   }
 
   getWhatsAppLink(): string {
-    const w = this.fornecedor?.whatsapp || '';
+    const w = this.fornecedor?.telefone || '';
     const digits = w.replace(/\D/g, '');
     return digits ? `https://wa.me/${digits}` : '#';
   }
 
-  getInstagramLink(): string {
-    const ig = this.fornecedor?.instagram || '';
-    return ig ? `https://instagram.com/${ig}` : '#';
-  }
-
   getSiteLink(): string {
-    return this.fornecedor?.site || '#';
+    return this.fornecedor?.website || '#';
   }
 }

@@ -35,7 +35,7 @@
 
       <!-- Imagem -->
       <div class="relative h-48 overflow-hidden">
-        <img [src]="fornecedor.primaryImage?.url || 'assets/fornecedores/placeholder.jpg'" 
+        <img [src]="fornecedor.primaryImage?.url || 'assets/fornecedores/placeholder.jpg'" loading="lazy" decoding="async" width="300" height="220"
              alt="{{fornecedor.nome}}" 
              class="w-full h-full object-cover" />
         <!-- Verified Badge -->

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../../../shared/icon/icon';
 import { DestaquesSemanaComponent } from '../destaques-semana/destaques-semana';
@@ -13,7 +13,8 @@ import { forkJoin, map, switchMap, Observable, BehaviorSubject, of, combineLates
   standalone: true,
   templateUrl: './home-page.html',
   styleUrls: ['./home-page.css'],
-  imports: [CommonModule, FormsModule, IconComponent, DestaquesSemanaComponent, RouterModule]
+  imports: [CommonModule, FormsModule, IconComponent, DestaquesSemanaComponent, RouterModule, NgOptimizedImage],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomePageComponent {
   categorias$!: Observable<Categoria[]>;

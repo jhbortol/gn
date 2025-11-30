@@ -26,9 +26,9 @@
         <h3 class="font-serif font-bold text-2xl text-gray-900 mb-6">Galeria de Fotos</h3>
         <div class="grid grid-cols-2 gap-4">
           <ng-container *ngFor="let img of fornecedor.imagens; let i = index">
-            <img (click)="openImage(img)" 
-                 [src]="img" 
-                 alt="imagem" 
+              <img (click)="openImage(img)" 
+                [ngSrc]="img" 
+                alt="imagem" 
                  loading="lazy"
                  decoding="async"
                  fetchpriority="low"
@@ -43,7 +43,7 @@
         <div class="absolute inset-0 bg-black bg-opacity-70" (click)="closeImage()"></div>
         <div class="relative max-w-4xl max-h-[90vh] w-full">
           <button (click)="closeImage()" aria-label="Fechar" class="absolute right-2 top-2 z-60 bg-white rounded-full p-2 shadow">✕</button>
-          <img [src]="selectedImage" alt="imagem ampliada" decoding="async" class="w-full h-auto max-h-[90vh] object-contain rounded" />
+          <img [ngSrc]="selectedImage" alt="imagem ampliada" decoding="async" class="w-full h-auto max-h-[90vh] object-contain rounded" />
         </div>
       </div>
 

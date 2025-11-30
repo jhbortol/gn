@@ -24,8 +24,8 @@
   </div>
 
   <!-- Grid de Fornecedores -->
-  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-    <div *ngFor="let fornecedor of (sortedFornecedores$ | async)" 
+  <div *ngIf="sortedFornecedores$ | async as fornecedores; else fornecedoresLoading" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div *ngFor="let fornecedor of fornecedores" 
          class="bg-white rounded-lg shadow-sm hover:shadow-lg border border-gray-200 flex flex-col overflow-hidden transition-all duration-300 group relative">
       
       <!-- Favorite Icon -->
@@ -35,7 +35,7 @@
 
       <!-- Imagem -->
       <div class="relative h-48 overflow-hidden">
-        <img [src]="fornecedor.primaryImage?.url || 'assets/fornecedores/placeholder.jpg'" loading="lazy" decoding="async" width="300" height="220"
+        <img [ngSrc]="fornecedor.primaryImage?.url || 'assets/fornecedores/placeholder.jpg'" loading="lazy" decoding="async" width="300" height="220"
              alt="{{fornecedor.nome}}" 
              class="w-full h-full object-cover" />
         <!-- Verified Badge -->
@@ -85,3 +85,15 @@
     </div>
   </div>
 </section>
+
+<ng-template #fornecedoresLoading>
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div *ngFor="let sk of [1,2,3,4,5,6,7,8]" class="bg-white rounded-lg border border-gray-200 p-4 animate-pulse flex flex-col">
+      <div class="h-48 bg-gray-200 rounded mb-3"></div>
+      <div class="h-4 bg-gray-200 rounded w-2/3 mb-2"></div>
+      <div class="h-3 bg-gray-100 rounded w-1/2 mb-2"></div>
+      <div class="h-3 bg-gray-100 rounded w-4/5 mb-4"></div>
+      <div class="mt-auto h-8 bg-gray-200 rounded"></div>
+    </div>
+  </div>
+</ng-template>

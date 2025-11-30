@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FornecedoresData, FornecedorListDto } from '../../features/fornecedores/services/fornecedores-data';
@@ -12,7 +12,8 @@ import { map } from 'rxjs/operators';
   standalone: true,
   templateUrl: './categoria-detalhe-page.html',
   styleUrls: ['./categoria-detalhe-page.css'],
-  imports: [CommonModule, RouterModule, FormsModule]
+  imports: [CommonModule, RouterModule, FormsModule, NgOptimizedImage],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CategoriaDetalhePageComponent {
   categoriaId$: Observable<string>;

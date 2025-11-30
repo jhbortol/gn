@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
 import { Observable } from 'rxjs';
@@ -9,7 +9,8 @@ import { Observable } from 'rxjs';
   standalone: true,
   templateUrl: './fornecedor-page.html',
   styleUrls: ['./fornecedor-page.css'],
-  imports: [CommonModule, RouterModule]
+  imports: [CommonModule, RouterModule, NgOptimizedImage],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FornecedorPageComponent implements OnInit {
   fornecedor?: Fornecedor;

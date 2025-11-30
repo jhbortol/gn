@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FornecedoresData, FornecedorListDto } from '../../features/fornecedores/services/fornecedores-data';
+import { CategoriasData } from './services/categorias-data';
 import { Observable, switchMap, BehaviorSubject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -15,6 +16,7 @@ import { map } from 'rxjs/operators';
 })
 export class CategoriaDetalhePageComponent {
   categoriaId$: Observable<string>;
+  categoriaNome$: Observable<string>;
   fornecedores$: Observable<FornecedorListDto[]>;
   destaquesCategoria$: Observable<FornecedorListDto[]>;
   sortOrder$ = new BehaviorSubject<string>('relevante');
@@ -22,13 +24,18 @@ export class CategoriaDetalhePageComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private fornecedores: FornecedoresData
+    private fornecedores: FornecedoresData,
+    private categorias: CategoriasData
   ) {
     this.categoriaId$ = this.route.paramMap.pipe(
       map((params: any) => params.get('id') || '')
     );
     this.fornecedores$ = this.categoriaId$.pipe(
       switchMap((id: string) => this.fornecedores.getByCategoria(id))
+    );
+    this.categoriaNome$ = this.categoriaId$.pipe(
+      switchMap((slug: string) => this.categorias.getBySlug(slug)),
+      map(categoria => categoria?.nome || '')
     );
     this.destaquesCategoria$ = this.fornecedores$.pipe(
       map(list => (list || []).filter(f => f.destaque))

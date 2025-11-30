@@ -22,7 +22,13 @@
           <ul class="space-y-1">
             <li *ngFor="let fornecedor of item.fornecedores" class="flex items-start text-sm">
               <span class="mt-[6px] w-2 h-2 rounded-full bg-rose-500 inline-block mr-2"></span>
-              <a [routerLink]="['/fornecedores', fornecedor.slug]" class="text-gray-800 hover:text-rose-600 transition-colors">{{ fornecedor.nome }}</a>
+              <a [routerLink]="['/fornecedores', fornecedor.slug]" 
+                 [attr.data-event-category]="'Navigation'"
+                 [attr.data-event-action]="'Click Destaque - Categoria'"
+                 [attr.data-vendor-id]="fornecedor.id"
+                 [attr.data-vendor-name]="fornecedor.nome"
+                 [attr.data-vendor-category]="item.categoria.nome"
+                 class="text-gray-800 hover:text-rose-600 transition-colors">{{ fornecedor.nome }}</a>
             </li>
           </ul>
         </div>

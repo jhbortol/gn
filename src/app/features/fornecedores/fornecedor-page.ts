@@ -22,6 +22,19 @@ export class FornecedorPageComponent implements OnInit {
     if (identifier) {
       this.fornecedores.getById(identifier).subscribe(f => {
         this.fornecedor = f;
+        // Push data layer event for page view
+        this.trackPageView();
+      });
+    }
+  }
+
+  private trackPageView(): void {
+    if (typeof window !== 'undefined' && (window as any).dataLayer && this.fornecedor) {
+      (window as any).dataLayer.push({
+        event: 'view_vendor',
+        vendor_id: this.fornecedor.id,
+        vendor_name: this.fornecedor.nome,
+        vendor_category: this.fornecedor.categoria
       });
     }
   }
@@ -37,10 +50,17 @@ export class FornecedorPageComponent implements OnInit {
   getWhatsAppLink(): string {
     const w = this.fornecedor?.telefone || '';
     const digits = w.replace(/\D/g, '');
-    return digits ? `https://wa.me/${digits}` : '#';
+    const message = encodeURIComponent('Olá, Te encontrei no Guia Noivas Piracicaba, preciso de mais informações.');
+    return digits ? `https://wa.me/${digits}?text=${message}` : '#';
   }
 
   getSiteLink(): string {
     return this.fornecedor?.website || '#';
+  }
+
+  getInstagramLink(): string {
+    const instagram = this.fornecedor?.instagram || '';
+    const username = instagram.replace('@', '').trim();
+    return username ? `https://instagram.com/${username}` : '#';
   }
 }

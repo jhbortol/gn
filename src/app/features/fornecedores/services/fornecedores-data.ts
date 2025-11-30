@@ -13,6 +13,7 @@ export interface FornecedorListDto {
   destaque?: boolean;
   seloFornecedor?: boolean;
   ativo?: boolean;
+  instagram?: string;
   categoria?: { id: string; nome: string; slug: string };
   primaryImage?: { id: string; url: string; filename: string; contentType: string; isPrimary: boolean };
   imagens?: MediaDto[];
@@ -31,6 +32,7 @@ export interface FornecedorDetailDto {
   telefone?: string;
   email?: string;
   website?: string;
+  instagram?: string;
   destaque?: boolean;
   seloFornecedor?: boolean;
   ativo?: boolean;
@@ -53,6 +55,7 @@ export interface Fornecedor {
   telefone?: string;
   email?: string;
   website?: string;
+  instagram?: string;
   destaque?: boolean;
   seloFornecedor?: boolean;
   ativo?: boolean;
@@ -102,6 +105,7 @@ export class FornecedoresData {
         telefone: detail.telefone,
         email: detail.email,
         website: detail.website,
+        instagram: detail.instagram,
         destaque: detail.destaque,
         seloFornecedor: detail.seloFornecedor,
         ativo: detail.ativo,

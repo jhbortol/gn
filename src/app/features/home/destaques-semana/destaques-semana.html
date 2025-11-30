@@ -2,7 +2,6 @@
   <div class="container mx-auto px-4">
     <div class="text-center mb-12">
       <h2 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-3">Destaques da Semana</h2>
-      <p class="text-gray-600 text-lg">Os fornecedores mais bem avaliados pelos noivos</p>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
       <div *ngFor="let destaque of destaques" 
@@ -15,14 +14,16 @@
         <div class="p-5 flex flex-col flex-1">
           <span class="bg-rose-500 text-white font-bold text-xs px-3 py-1 rounded-full w-fit mb-3">{{ destaque.categoria }}</span>
           <h3 class="font-serif font-bold text-xl text-gray-900 mb-2">{{ destaque.nome }}</h3>
-          <div class="flex items-center gap-2 text-gray-500 text-sm mb-3">
+          <div class="flex items-center gap-2 text-gray-500 text-sm mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 12.414a2 2 0 00-2.828 0l-4.243 4.243M15 11V7a4 4 0 10-8 0v4" /></svg>
             {{ destaque.local }}
           </div>
-          <div class="flex items-center gap-2 mb-4">
-            <span class="bg-yellow-100 text-yellow-700 font-bold text-xs px-2 py-1 rounded">★ {{ destaque.nota }}</span>
-          </div>
            <a [routerLink]="['/fornecedores', destaque.slug]" 
+             [attr.data-event-category]="'Navigation'"
+             [attr.data-event-action]="'Click Ver Perfil - Destaque'"
+             [attr.data-vendor-id]="destaque.id"
+             [attr.data-vendor-name]="destaque.nome"
+             [attr.data-vendor-category]="destaque.categoria"
              class="mt-auto block px-6 py-3 border border-rose-400 text-rose-600 bg-white rounded-lg font-semibold hover:bg-rose-50 transition-all duration-300 text-center shadow-sm hover:shadow-md">
             Ver Perfil Completo
           </a>

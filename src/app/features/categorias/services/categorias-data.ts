@@ -76,5 +76,11 @@ export class CategoriasData {
     );
   }
 
+  getBySlug(slug: string): Observable<Categoria | undefined> {
+    return this.getAll().pipe(
+      map(categorias => categorias.find(c => c.slug === slug || c.id === slug))
+    );
+  }
+
   constructor(private http: HttpClient) {}
 }

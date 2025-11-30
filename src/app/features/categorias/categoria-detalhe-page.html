@@ -10,7 +10,7 @@
   <!-- Header com título e dropdown -->
   <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
     <div>
-      <h1 class="text-3xl font-serif font-bold text-gray-900 mb-1">{{ categoriaId$ | async }}</h1>
+      <h1 class="text-3xl font-serif font-bold text-gray-900 mb-1">{{ categoriaNome$ | async }}</h1>
       <p class="text-sm text-gray-600">Mostrando os melhores profissionais para o seu evento.</p>
     </div>
     <div class="mt-4 md:mt-0">
@@ -69,17 +69,14 @@
           <span class="text-xs text-gray-500">(128)</span>
         </div>
 
-        <!-- Specialty Tags -->
-        <div class="flex flex-wrap gap-2 mb-4">
-          <span *ngFor="let tag of getSpecialties(fornecedor)" 
-                class="text-[10px] bg-gray-100 text-gray-700 px-2 py-1 rounded uppercase font-medium">
-            {{tag}}
-          </span>
-        </div>
-
         <!-- Action Button -->
         <div class="mt-auto">
           <a [routerLink]="['/fornecedores', fornecedor.slug]" 
+             [attr.data-event-category]="'Navigation'"
+             [attr.data-event-action]="'Click Ver Perfil - Lista'"
+             [attr.data-vendor-id]="fornecedor.id"
+             [attr.data-vendor-name]="fornecedor.nome"
+             [attr.data-vendor-category]="fornecedor.categoria?.nome"
              class="block w-full px-4 py-2 border border-rose-400 text-rose-600 bg-white rounded-md text-sm font-semibold hover:bg-rose-50 transition-colors text-center">
             Ver Perfil
           </a>

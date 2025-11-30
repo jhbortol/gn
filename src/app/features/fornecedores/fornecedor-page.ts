@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
@@ -16,15 +16,16 @@ export class FornecedorPageComponent implements OnInit {
   fornecedor?: Fornecedor;
   selectedImage?: string;
 
-  constructor(private route: ActivatedRoute, private fornecedores: FornecedoresData) {}
+  constructor(private route: ActivatedRoute, private fornecedores: FornecedoresData, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     const identifier = this.route.snapshot.params['id']; // pode ser GUID ou slug
     if (identifier) {
       this.fornecedores.getById(identifier).subscribe(f => {
         this.fornecedor = f;
-        // Push data layer event for page view
         this.trackPageView();
+        // For OnPush change detection, ensure view updates after async data arrives
+        this.cdr.markForCheck();
       });
     }
   }

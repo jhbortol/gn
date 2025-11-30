@@ -81,10 +81,29 @@ export class FornecedoresData {
   }
 
   getDestaques(page = 1, pageSize = 24): Observable<FornecedorListDto[]> {
-    // Destaques: ativos com flag destaque=true direto do backend
-    // API retorna array direto, não wrapped em { data: [...] }
-    return this.api.get<FornecedorListDto[]>(`/fornecedores/ativos`, { page, pageSize, destaque: true }).pipe(
-      map(r => Array.isArray(r) ? r : []),
+    // Destaques: alguns ambientes podem retornar { data: [...] } (wrapper) ou array direto
+    return this.api.get<any>(`/fornecedores/ativos`, { page, pageSize, destaque: true }).pipe(
+      map(r => {
+        let list: FornecedorListDto[] = [];
+        if (Array.isArray(r)) list = r as FornecedorListDto[];
+        else if (r && Array.isArray(r.data)) list = r.data as FornecedorListDto[];
+        else {
+          console.warn('[DESTAQUES] formato inesperado da resposta:', r);
+        }
+        // Se a API ignorou o parâmetro destaque e retornou tudo, filtrar localmente
+        if (list.length && list.some(f => f.destaque !== true)) {
+          const filtered = list.filter(f => f.destaque);
+          if (filtered.length) return filtered;
+        }
+        return list.filter(f => f.destaque); // garante só destaque
+      }),
+      map(list => {
+        // Fallback: se vazio, tentar buscar todos e filtrar
+        if (list.length === 0) {
+          console.warn('[DESTAQUES] lista vazia, tentando fallback via getAll()');
+        }
+        return list;
+      }),
       catchError(err => {
         console.error('[DESTAQUES] API error:', err);
         return of([]);

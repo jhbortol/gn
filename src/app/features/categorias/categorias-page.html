@@ -1,11 +1,42 @@
 <section class="container mx-auto px-4 py-12">
-  <h1 class="text-3xl font-serif font-bold text-gray-900 mb-6">Categorias</h1>
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
-    <div *ngFor="let cat of categorias" class="bg-white rounded-xl shadow p-6 border border-gray-100 flex flex-col">
-      <img [src]="cat.imagem" [alt]="cat.name" class="w-full h-32 object-cover rounded-lg mb-4" />
-      <h2 class="font-bold text-lg text-rose-700 mb-2">{{ cat.name }}</h2>
-      <p class="text-gray-700 mb-4">{{ cat.descricao }}</p>
-      <a [routerLink]="['/categorias', cat.id]" class="mt-auto px-4 py-2 border border-rose-600 text-rose-600 rounded-lg font-semibold hover:bg-rose-600 hover:text-white transition text-center">Ver fornecedores</a>
+  <div class="text-center mb-12">
+    <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-3">Categorias</h1>
+    <p class="text-gray-600 text-lg">Encontre os melhores profissionais para o seu casamento</p>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+    <div *ngFor="let item of (categoriasComFornecedores$ | async)" 
+         class="bg-white rounded-2xl shadow-md hover:shadow-2xl border border-gray-100 flex flex-col transition-all duration-300 hover:-translate-y-2 overflow-hidden group h-full">
+      <div class="h-48 overflow-hidden">
+        <img [src]="item.categoria.imageUrl || 'assets/categorias/placeholder.jpg'" 
+             [alt]="item.categoria.nome" 
+             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+      </div>
+      <div class="p-6 flex flex-col flex-1">
+        <h2 class="font-serif font-bold text-2xl text-rose-700 mb-2">{{ item.categoria.nome }}</h2>
+        <p class="text-gray-600 mb-4 flex-grow" *ngIf="item.categoria.descricao">{{ item.categoria.descricao }}</p>
+        <div *ngIf="item.fornecedores.length > 0" class="mb-4 min-h-[80px]">
+          <div class="flex items-center font-semibold text-[13px] tracking-wide text-amber-500 uppercase mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.966a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.049 9.393c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.966z"/></svg>
+            DESTAQUES
+          </div>
+          <ul class="space-y-1">
+            <li *ngFor="let fornecedor of item.fornecedores" class="flex items-start text-sm">
+              <span class="mt-[6px] w-2 h-2 rounded-full bg-rose-500 inline-block mr-2"></span>
+              <a [routerLink]="['/fornecedores', fornecedor.slug]" 
+                 [attr.data-event-category]="'Navigation'"
+                 [attr.data-event-action]="'Click Destaque - Categoria'"
+                 [attr.data-vendor-id]="fornecedor.id"
+                 [attr.data-vendor-name]="fornecedor.nome"
+                 [attr.data-vendor-category]="item.categoria.nome"
+                 class="text-gray-800 hover:text-rose-600 transition-colors">{{ fornecedor.nome }}</a>
+            </li>
+          </ul>
+        </div>
+          <a [routerLink]="['/categorias', item.categoria.slug]" 
+            class="mt-auto block px-6 py-3 border border-rose-400 text-rose-600 bg-white rounded-lg font-semibold hover:bg-rose-50 transition-all duration-300 text-center shadow-sm hover:shadow-md">
+          Ver todos fornecedores
+        </a>
+      </div>
     </div>
   </div>
 </section>

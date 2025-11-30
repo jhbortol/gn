@@ -1,25 +1,80 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../../../shared/icon/icon';
 import { DestaquesSemanaComponent } from '../destaques-semana/destaques-semana';
 import { RouterModule } from '@angular/router';
-
-const CATEGORIES = [
-  { id: 'fotografia', name: 'Fotografia', iconName: 'camera', image: 'assets/categorias/fotografia.jpg' },
-  { id: 'buffet', name: 'Buffet', iconName: 'utensils', image: 'assets/categorias/buffet.jpg' },
-  { id: 'decoracao', name: 'Decoração', iconName: 'flower', image: 'assets/categorias/decoracao.jpg' },
-  { id: 'musica', name: 'Música', iconName: 'music', image: 'assets/categorias/musica.jpg' },
-  { id: 'espacos', name: 'Espaços', iconName: 'home', image: 'assets/categorias/espacos.jpg' },
-  { id: 'vestidos', name: 'Vestido de Noiva', iconName: 'shirt', image: 'assets/categorias/vestidos.jpg' }
-];
+import { CategoriasData, Categoria } from '../../categorias/services/categorias-data';
+import { FornecedoresData, FornecedorListDto } from '../../fornecedores/services/fornecedores-data';
+import { forkJoin, map, switchMap, Observable, BehaviorSubject, of, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-home-page',
   standalone: true,
   templateUrl: './home-page.html',
   styleUrls: ['./home-page.css'],
-  imports: [CommonModule, IconComponent, DestaquesSemanaComponent, RouterModule]
+  imports: [CommonModule, FormsModule, IconComponent, DestaquesSemanaComponent, RouterModule]
 })
 export class HomePageComponent {
-  categories = CATEGORIES;
+  categorias$!: Observable<Categoria[]>;
+  buscaTerm$ = new BehaviorSubject<string>('');
+  fornecedoresBusca$!: Observable<FornecedorListDto[]>;
+  resultPages$!: Observable<FornecedorListDto[][]>;
+  currentPage$ = new BehaviorSubject<number>(0);
+  currentPageItems$!: Observable<FornecedorListDto[]>;
+  buscaTerm: string = '';
+  showResults = true;
+
+  constructor(private categoriasData: CategoriasData, private fornecedoresData: FornecedoresData) {
+    this.categorias$ = this.categoriasData.getAll().pipe(
+      map(cats => this.shuffleArray(cats).slice(0, 6))
+    );
+    this.fornecedoresBusca$ = this.buscaTerm$.pipe(
+      switchMap(term => term.trim().length > 0 ? this.fornecedoresData.search(term) : of([] as FornecedorListDto[]))
+    );
+
+    // chunk results into pages of 3
+    this.resultPages$ = this.fornecedoresBusca$.pipe(
+      map(results => {
+        const pages: FornecedorListDto[][] = [];
+        for (let i = 0; i < results.length; i += 3) {
+          pages.push(results.slice(i, i + 3));
+        }
+        // reset to first page when new results arrive
+        this.currentPage$.next(0);
+        return pages;
+      })
+    );
+
+    // combine current page index with pages to produce items to display
+    this.currentPageItems$ = combineLatest([this.resultPages$, this.currentPage$]).pipe(
+      map(([pages, idx]) => pages.length > 0 ? pages[Math.min(Math.max(idx, 0), pages.length - 1)] : [])
+    );
+  }
+
+  buscar() {
+    this.buscaTerm$.next(this.buscaTerm);
+    this.showResults = true;
+  }
+
+  prevPage(totalPages: number) {
+    const idx = this.currentPage$.getValue();
+    this.currentPage$.next(idx > 0 ? idx - 1 : totalPages - 1);
+  }
+
+  nextPage(totalPages: number) {
+    const idx = this.currentPage$.getValue();
+    this.currentPage$.next(idx + 1 < totalPages ? idx + 1 : 0);
+  }
+
+  closeResults() {
+    this.showResults = false;
+  }
+
+  private shuffleArray<T>(array: T[]): T[] {
+    return array
+      .map(value => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value);
+  }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-fornecedor-page',
@@ -14,12 +15,27 @@ export class FornecedorPageComponent implements OnInit {
   fornecedor?: Fornecedor;
   selectedImage?: string;
 
-  constructor(private route: ActivatedRoute, private db: FornecedoresData) {}
+  constructor(private route: ActivatedRoute, private fornecedores: FornecedoresData) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.params['id'];
-    if (id) {
-      this.fornecedor = this.db.getById(id);
+    const identifier = this.route.snapshot.params['id']; // pode ser GUID ou slug
+    if (identifier) {
+      this.fornecedores.getById(identifier).subscribe(f => {
+        this.fornecedor = f;
+        // Push data layer event for page view
+        this.trackPageView();
+      });
+    }
+  }
+
+  private trackPageView(): void {
+    if (typeof window !== 'undefined' && (window as any).dataLayer && this.fornecedor) {
+      (window as any).dataLayer.push({
+        event: 'view_vendor',
+        vendor_id: this.fornecedor.id,
+        vendor_name: this.fornecedor.nome,
+        vendor_category: this.fornecedor.categoria
+      });
     }
   }
 
@@ -32,17 +48,19 @@ export class FornecedorPageComponent implements OnInit {
   }
 
   getWhatsAppLink(): string {
-    const w = this.fornecedor?.whatsapp || '';
+    const w = this.fornecedor?.telefone || '';
     const digits = w.replace(/\D/g, '');
-    return digits ? `https://wa.me/${digits}` : '#';
-  }
-
-  getInstagramLink(): string {
-    const ig = this.fornecedor?.instagram || '';
-    return ig ? `https://instagram.com/${ig}` : '#';
+    const message = encodeURIComponent('Olá, Te encontrei no Guia Noivas Piracicaba, preciso de mais informações.');
+    return digits ? `https://wa.me/${digits}?text=${message}` : '#';
   }
 
   getSiteLink(): string {
-    return this.fornecedor?.site || '#';
+    return this.fornecedor?.website || '#';
+  }
+
+  getInstagramLink(): string {
+    const instagram = this.fornecedor?.instagram || '';
+    const username = instagram.replace('@', '').trim();
+    return username ? `https://instagram.com/${username}` : '#';
   }
 }

@@ -57,3 +57,35 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Backend API Integration
+
+O projeto agora consome a API documentada em `docs/frontend-spec.md` e nos changelogs. Foi adicionada integração automática para Fornecedores e Categorias:
+
+- Arquivo `src/environments/environment.ts` contém:
+	- `API_BASE_URL`: URL base da API (`https://.../api/v1`)
+	- `INTERNAL_AUTH_EMAIL` / `INTERNAL_AUTH_PASSWORD`: credenciais internas usadas para obter `accessToken` via `POST /auth/login` (não há fluxo de login de usuário final nesta versão).
+- Serviço `AuthTokenService` realiza login quando necessário e o `authTokenInterceptor` anexa o header `Authorization`.
+- Serviço `FornecedoresData` agora busca lista e detalhe via endpoints reais (`GET /fornecedores`, `GET /fornecedores/slug/{slug}`) e adapta o formato para o componente existente.
+- Serviço `CategoriasData` tenta consumir `GET /categorias`; se o endpoint não estiver disponível ainda, retorna um fallback estático.
+
+### Configuração de Credenciais (IMPORTANTE)
+Não commite credenciais reais. Ajuste os valores de email e senha via:
+
+1. Ambiente local: edite temporariamente `environment.ts` (substitua `CHANGEME`).
+2. Produção (Netlify): defina variáveis de ambiente e gere arquivo de substituição em build se necessário.
+
+Caso `INTERNAL_AUTH_EMAIL` permaneça `CHANGEME`, as chamadas autenticadas falharão.
+
+### Teste Rápido
+Após configurar credenciais válidas:
+```bash
+npm install
+ng serve
+```
+Abra uma rota de fornecedor (`/fornecedores/<slug>`) e verifique no DevTools as requisições para `/auth/login` (uma vez) e `/fornecedores/slug/<slug>` retornando JSON.
+
+### Atualizações Futuras
+- Implementar refresh token se necessário (em caso de expiração frequente).
+- Substituir fallback de categorias por chamada real assim que o endpoint for disponibilizado.
+- Adicionar listagem paginada de fornecedores na UI pública usando `getAll(page,pageSize)`.

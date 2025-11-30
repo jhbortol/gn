@@ -1,56 +1,86 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 export interface Categoria {
   id: string;
-  name: string;
-  descricao: string;
-  imagem: string;
+  nome: string;
+  slug: string;
+  descricao: string | null;
+  imageId: string | null;
+  imageUrl: string | null;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoriasData {
-  private categorias: Categoria[] = [
+  // Fallback local (estrutura antiga - remover após backend estável)
+  private fallback: Categoria[] = [
     {
       id: 'fotografia',
-      name: 'Fotografia',
+      nome: 'Fotografia',
+      slug: 'fotografia',
       descricao: 'Profissionais para registrar seu grande dia.',
-      imagem: 'assets/categorias/fotografia.jpg'
+      imageId: null,
+      imageUrl: 'assets/categorias/fotografia.jpg'
     },
     {
       id: 'buffet',
-      name: 'Buffet',
+      nome: 'Buffet',
+      slug: 'buffet',
       descricao: 'Buffets e serviços de alimentação para eventos.',
-      imagem: 'assets/categorias/buffet.jpg'
+      imageId: null,
+      imageUrl: 'assets/categorias/buffet.jpg'
     },
     {
       id: 'decoracao',
-      name: 'Decoração',
+      nome: 'Decoração',
+      slug: 'decoracao',
       descricao: 'Decoração e ambientação para casamentos.',
-      imagem: 'assets/categorias/decoracao.jpg'
+      imageId: null,
+      imageUrl: 'assets/categorias/decoracao.jpg'
     },
     {
       id: 'musica',
-      name: 'Música',
+      nome: 'Música',
+      slug: 'musica',
       descricao: 'Bandas, DJs e músicos para cerimônia e festa.',
-      imagem: 'assets/categorias/musica.jpg'
+      imageId: null,
+      imageUrl: 'assets/categorias/musica.jpg'
     },
     {
       id: 'espacos',
-      name: 'Espaços',
+      nome: 'Espaços',
+      slug: 'espacos',
       descricao: 'Locais para realização de eventos.',
-      imagem: 'assets/categorias/espacos.jpg'
+      imageId: null,
+      imageUrl: 'assets/categorias/espacos.jpg'
     },
     {
       id: 'vestidos',
-      name: 'Vestido de Noiva',
+      nome: 'Vestido de Noiva',
+      slug: 'vestidos',
       descricao: 'Estilistas e lojas especializadas.',
-      imagem: 'assets/categorias/vestidos.jpg'
+      imageId: null,
+      imageUrl: 'assets/categorias/vestidos.jpg'
     }
   ];
 
-  getAll(): Categoria[] {
-    return this.categorias;
+  getAll(): Observable<Categoria[]> {
+    return this.http.get<{ data: Categoria[] }>(`${environment.API_BASE_URL}/categorias`).pipe(
+      map(response => response.data),
+      catchError(() => of(this.fallback))
+    );
   }
+
+  getBySlug(slug: string): Observable<Categoria | undefined> {
+    return this.getAll().pipe(
+      map(categorias => categorias.find(c => c.slug === slug || c.id === slug))
+    );
+  }
+
+  constructor(private http: HttpClient) {}
 }

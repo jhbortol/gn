@@ -1,131 +1,140 @@
 import { Injectable } from '@angular/core';
+import { ApiService } from '../../../core/api.service';
+import { Observable, map, catchError, of } from 'rxjs';
 
+// DTOs alinhados ao backend (simplificados)
+export interface FornecedorListDto {
+  id: string;
+  nome: string;
+  slug: string;
+  descricao?: string;
+  cidade?: string;
+  rating?: number | null;
+  destaque?: boolean;
+  seloFornecedor?: boolean;
+  ativo?: boolean;
+  instagram?: string;
+  categoria?: { id: string; nome: string; slug: string };
+  primaryImage?: { id: string; url: string; filename: string; contentType: string; isPrimary: boolean };
+  imagens?: MediaDto[];
+}
+
+export interface MediaDto {
+  id: string; url: string; filename?: string; contentType?: string; isPrimary?: boolean;
+}
+
+export interface FornecedorDetailDto {
+  id: string;
+  nome: string;
+  slug: string;
+  descricao?: string;
+  cidade?: string;
+  telefone?: string;
+  email?: string;
+  website?: string;
+  instagram?: string;
+  destaque?: boolean;
+  seloFornecedor?: boolean;
+  ativo?: boolean;
+  rating?: number | null;
+  visitas?: number;
+  imagens?: MediaDto[]; // array de objetos completos vindos da API
+  categoria?: { id: string; nome: string; slug: string };
+  createdAt?: string;
+  updatedAt?: string | null;
+  testemunhos?: Array<{ id: string; nome: string; descricao: string; createdAt: string }>;
+}
+
+// Interface consumida pelo template (normalizada)
 export interface Fornecedor {
   id: string;
   nome: string;
-  categoria: string;
+  slug: string;
+  descricao?: string;
   cidade?: string;
-  estado?: string;
-  bairro?: string;
-  rating?: number;
-  sobre?: string;
-  whatsapp?: string;
-  site?: string;
+  telefone?: string;
+  email?: string;
+  website?: string;
   instagram?: string;
-
-  imagens?: string[];
-  depoimentos?: Array<{
-    texto: string;
-    casal: string;
-  }>;
+  destaque?: boolean;
+  seloFornecedor?: boolean;
+  ativo?: boolean;
+  rating?: number | null;
+  visitas?: number;
+  categoria?: string; // apenas o nome para compatibilidade prévia
+  imagens: string[]; // URLs derivadas de detail.imagens
+  depoimentos?: Array<{ texto: string; casal: string }>; // adaptado de testemunhos
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class FornecedoresData {
-  private data: Fornecedor[] = [
-    {
-      id: 'sandro-cardoso',
-      nome: 'Sandro Cardoso',
-      categoria: 'FOTOGRAFIA',
-      cidade: 'Piracicaba',
-      estado: 'SP',
-      rating: 5,
-      sobre:
-        'Eu sou um apaixonado pelo que faço, amo fotografar os melhores momentos da vida. Acredito que a fotografia é algo que completa minha vida, pois o que realmente importa são as Histórias.',
-      whatsapp: '+5519998437940',
-      site: '#',
-      instagram: 'sandrocardoso',
-      imagens: [
-        '/assets/fornecedores/sandro-cardoso/1.png',
-        '/assets/fornecedores/sandro-cardoso/2.png',
-        '/assets/fornecedores/sandro-cardoso/3.png',
-        '/assets/fornecedores/sandro-cardoso/4.png'
-      ],
-      depoimentos: [
-        {
-          texto: 'Excelentes profissionais! Super recomendo seu trabalho. Amei do começo ao fim.',
-          casal: 'Fernanda e Ronildo'
-        }
-      ]
-    },
-    {
-      id: 'fotografo-perez',
-      nome: 'Fotógrafo Perez',
-      categoria: 'FOTOGRAFIA',
-      cidade: 'Piracicaba',
-      estado: 'SP',
-      rating: 5,
-      sobre:
-        'Com mais de três décadas dedicadas à arte de contar histórias, Antonio Perez não apenas fotografa, ele cria um legado. A sua jornada começou no fotojornalismo, onde apurou o seu olhar para captar a emoção crua de cada instante. Hoje, essa sensibilidade é a alma do seu trabalho em casamentos. Para Perez, cada casamento é uma tela em branco. Ele busca a essência de cada casal para criar imagens que sejam não apenas bonitas, mas atemporais e profundamente pessoais. O resultado é um trabalho exclusivo e intimista, que transforma o seu grande dia numa memória eterna.',
-      whatsapp: '+5519997082651',
-      site: 'https://fotoperez.com.br/',
-      instagram: 'fotografo_ perez',
-      imagens: [
-        '/assets/fornecedores/perez/1.jpg',
-        '/assets/fornecedores/perez/2.jpg',
-        '/assets/fornecedores/perez/3.jpg',
-        '/assets/fornecedores/perez/4.jpg',
-        '/assets/fornecedores/perez/5.jpg',
-        '/assets/fornecedores/perez/6.jpg',
-        '/assets/fornecedores/perez/7.jpg',
-        '/assets/fornecedores/perez/8.jpg'
-      ],
-      depoimentos: [
-        {
-          texto: 'Excelentes profissionais! Super recomendo seu trabalho. Amei do começo ao fim.',
-          casal: 'Fernanda e Ronildo'
-        },
-        {
-          texto: 'O melhor fotógrafo e profissional do mundo!!! Com um coração gigante, que realizou meu sonho encantado. Obrigada eternamente.',
-          casal: 'Cris e Douglas'
-        }
-      ]
-    },
-    {
-      id: 'toccare',
-      nome: 'Toccare Musica para Eventos',
-      categoria: 'musica',
-      cidade: 'Piracicaba',
-      estado: 'SP',
-      bairro: '',
-      rating: 5,
-      sobre:
-        'Com 19 anos de história, a Toccare é especialista em criar a trilha sonora perfeita para cada momento.Desde a entrada impactante com o trompete até a formação completa com banda para a cerimônia, eles entregam arte, profissionalismo e a nota exata para eternizar o seu "sim"',
-      whatsapp: '+5519983012271',
-      site: 'https://linktr.ee/Toccare.musica',
-      instagram: 'toccaremusica',
-      imagens: [
-        '/assets/fornecedores/toccare/1.jpeg',
-        '/assets/fornecedores/toccare/2.jpeg',
-        '/assets/fornecedores/toccare/3.jpeg',
-        '/assets/fornecedores/toccare/4.jpeg',
-        '/assets/fornecedores/toccare/5.jpeg',
-        '/assets/fornecedores/toccare/6.jpeg',
-        '/assets/fornecedores/toccare/7.jpeg',
-        '/assets/fornecedores/toccare/8.jpeg'
-      ],
-      depoimentos: [
-        {
-          texto: 'Um dos momentos lindos de uma cerimonia que foi inteira emocionamente, graças a toda dedicação e maestria que vocês tiveram em executar o nosso sonho.',
-          casal: 'Bianca e Estevan'
-        },
-        {
-          texto: 'Obrigada por fazerem esse sonho ainda mais lindo e incrível com o dom de vocês!',
-          casal: 'Bruna e Patrick'
-        }
-      ]
+    search(nome: string, page = 1, pageSize = 12, destaque?: boolean): Observable<FornecedorListDto[]> {
+      const params: any = { nome, page, pageSize };
+      if (destaque !== undefined) params.destaque = destaque;
+      return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/search`, params).pipe(map(r => r.data));
     }
-  ];
+  constructor(private api: ApiService) {}
 
-  getById(id: string): Fornecedor | undefined {
-    return this.data.find(f => f.id === id);
+  getAll(page = 1, pageSize = 12): Observable<FornecedorListDto[]> {
+    // Usar /fornecedores/ativos para exibir apenas fornecedores ativos (público)
+    return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/ativos`, { page, pageSize }).pipe(map(r => r.data));
   }
-  getByCategoria(categoria: string): Fornecedor[] {
-    return this.data.filter(f => f.categoria?.toLowerCase() === categoria?.toLowerCase());
+
+  getDestaques(page = 1, pageSize = 24): Observable<FornecedorListDto[]> {
+    // Destaques: ativos com flag destaque=true direto do backend
+    // API retorna array direto, não wrapped em { data: [...] }
+    return this.api.get<FornecedorListDto[]>(`/fornecedores/ativos`, { page, pageSize, destaque: true }).pipe(
+      map(r => Array.isArray(r) ? r : []),
+      catchError(err => {
+        console.error('[DESTAQUES] API error:', err);
+        return of([]);
+      })
+    );
   }
-  getAll(): Fornecedor[] {
-    return this.data;
+
+  getById(identifier: string): Observable<Fornecedor> {
+    const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(identifier);
+    const endpoint = isGuid ? `/fornecedores/${identifier}` : `/fornecedores/slug/${identifier}`;
+    return this.api.get<FornecedorDetailDto>(endpoint).pipe(
+      map(detail => ({
+        id: detail.id,
+        nome: detail.nome,
+        slug: detail.slug,
+        descricao: detail.descricao,
+        cidade: detail.cidade,
+        telefone: detail.telefone,
+        email: detail.email,
+        website: detail.website,
+        instagram: detail.instagram,
+        destaque: detail.destaque,
+        seloFornecedor: detail.seloFornecedor,
+        ativo: detail.ativo,
+        rating: detail.rating,
+        visitas: detail.visitas,
+        categoria: detail.categoria?.nome,
+        imagens: detail.imagens?.map(m => m.url) || [],
+        depoimentos: detail.testemunhos?.map(t => ({ texto: t.descricao, casal: t.nome })) || []
+      })),
+      catchError(err => { throw err; })
+    );
+  }
+
+  getByCategoria(categoriaSlugOrId: string): Observable<FornecedorListDto[]> {
+    // Usar endpoint correto: /fornecedores/ativos/categoria/{categoriaSlugOrId}
+    return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/ativos/categoria/${categoriaSlugOrId}`, { page: 1, pageSize: 100 }).pipe(
+      map(r => r.data)
+    );
+  }
+
+  getDestaquesByCategoria(categoriaSlugOrId: string): Observable<FornecedorListDto[]> {
+    // Tenta obter somente fornecedores destaque na categoria; se API não suportar param, filtra localmente
+    return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/ativos/categoria/${categoriaSlugOrId}`, { page: 1, pageSize: 100, destaque: true }).pipe(
+      map(r => (r.data || []).filter(f => f.destaque)),
+      catchError(err => {
+        console.warn('[DESTAQUES BY CATEGORIA] falling back filtering local:', err);
+        return this.getByCategoria(categoriaSlugOrId).pipe(map(list => list.filter(f => f.destaque)));
+      })
+    );
   }
 }
+

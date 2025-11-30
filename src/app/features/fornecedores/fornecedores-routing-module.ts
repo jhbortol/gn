@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { FornecedoresData } from './services/fornecedores-data';
 
 const routes: Routes = [
   {
@@ -9,11 +8,9 @@ const routes: Routes = [
   }
 ];
 
-// For prerendering dynamic fornecedor IDs
+// Prerender desabilitado para fornecedores dinâmicos (dados vindos da API)
 export function getPrerenderParams(): Promise<Record<string, string>[]> {
-  // You may want to inject FornecedoresData if using DI, but for static build, instantiate directly
-  const fornecedoresData = new FornecedoresData();
-  return Promise.resolve(fornecedoresData.getAll().map(fornecedor => ({ id: fornecedor.id })));
+  return Promise.resolve([]);
 }
 
 @NgModule({

@@ -13,7 +13,11 @@ export class ClickwrapAgreementComponent {
 
   ngOnInit() {
     if (typeof window !== 'undefined' && window.localStorage) {
-      this.isVisible = !window.localStorage.getItem('clickwrapAccepted');
+      const acceptedDate = window.localStorage.getItem('clickwrapAcceptedDate');
+      const today = new Date().toDateString();
+      
+      // Show if never accepted or if last acceptance was on a different day
+      this.isVisible = !acceptedDate || acceptedDate !== today;
     } else {
       this.isVisible = true;
     }
@@ -21,7 +25,8 @@ export class ClickwrapAgreementComponent {
 
   accept() {
     if (typeof window !== 'undefined' && window.localStorage) {
-      window.localStorage.setItem('clickwrapAccepted', 'true');
+      const today = new Date().toDateString();
+      window.localStorage.setItem('clickwrapAcceptedDate', today);
     }
     this.isVisible = false;
   }

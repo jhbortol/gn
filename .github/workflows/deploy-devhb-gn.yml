@@ -1,0 +1,37 @@
+name: Deploy dev-hb to gn
+
+on:
+  push:
+    branches:
+      - dev-hb
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular (browser) with base href for gn
+        run: |
+          npx ng build --configuration production --base-href /gn/
+
+      - name: Deploy to external repo jhbortol/gn via gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GH_PAT }}
+          publish_dir: dist/**/browser
+          external_repository: jhbortol/gn
+          publish_branch: gh-pages
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com

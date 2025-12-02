@@ -41,10 +41,14 @@ export class DestaquesSemanaComponent implements OnInit {
           console.warn('[DESTAQUES] API returned invalid data:', list);
           return [];
         }
-        const result = list
+        const filtered = list
           .filter(f => !this.category || (f.categoria?.nome || '').toLowerCase() === this.category!.toLowerCase())
-          .filter(f => !this.exclude?.length || !this.exclude.includes(f.id))
-          .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+          .filter(f => !this.exclude?.length || !this.exclude.includes(f.id));
+        
+        // Randomize order to show different highlights on each page load
+        const shuffled = filtered.sort(() => Math.random() - 0.5);
+        
+        const result = shuffled
           .slice(0, this.limit)
           .map(f => ({
             id: f.id,

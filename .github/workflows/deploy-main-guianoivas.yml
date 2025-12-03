@@ -29,11 +29,10 @@ jobs:
 
       - name: Move build to /piracicaba for GitHub Pages
         run: |
-          mkdir -p dist/guia-noivas/browser/piracicaba
           mkdir -p dist/guia-noivas/browser_tmp
           shopt -s dotglob
           mv dist/guia-noivas/browser/* dist/guia-noivas/browser_tmp/
-          rm -rf dist/guia-noivas/browser/*
+          mkdir -p dist/guia-noivas/browser/piracicaba
           mv dist/guia-noivas/browser_tmp/* dist/guia-noivas/browser/piracicaba/
           rm -rf dist/guia-noivas/browser_tmp
 

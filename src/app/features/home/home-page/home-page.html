@@ -1,85 +1,87 @@
 <div class="animate-fade-in">
 	<!-- Hero Section -->
-	<div class="relative h-[400px] flex items-center justify-center bg-rose-900 text-white">
-		<div class="absolute inset-0 overflow-hidden">
-			<img src="https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" class="w-full h-full object-cover opacity-40" alt="Hero" />
-		</div>
-		<div class="relative z-10 container mx-auto px-4 text-center">
-			<h1 class="text-4xl md:text-6xl font-serif font-bold mb-4">O Casamento dos seus Sonhos</h1>
-			<p class="text-xl md:text-2xl text-rose-100 mb-8 font-light">Começa aqui, em Piracicaba.</p>
-			<div class="max-w-2xl mx-auto bg-white rounded-full p-2 flex shadow-2xl transform hover:scale-105 transition">
+	<div class="relative h-[400px] flex items-center justify-center bg-rose-900 text-white hero-wrapper">
+		<div class="absolute inset-0 overflow-hidden hero-bg"></div>
+		<div class="relative z-10 container mx-auto px-4 flex flex-col items-center justify-center h-full text-center gap-4">
+			<h1 class="text-4xl md:text-6xl font-serif font-bold mb-4 hero-title">O Casamento dos seus Sonhos</h1>
+			<p class="text-xl md:text-2xl text-rose-100 mb-8 font-light hero-subtitle">Começa aqui, em Piracicaba.</p>
+			<div class="w-full sm:max-w-2xl md:max-w-3xl lg:max-w-5xl mx-auto bg-white rounded-full px-4 py-2 flex shadow-2xl hero-search-block mt-4 gap-2">
 				<div class="flex-grow flex items-center px-4 border-r border-gray-200 text-gray-500">
 					<app-icon name="search" [size]="20"></app-icon>
-					<input type="text" [(ngModel)]="buscaTerm" placeholder="O que você procura? (ex: Buffet, Foto...)" class="w-full p-2 outline-none text-gray-700" />
+					<input type="text" [(ngModel)]="buscaTerm" placeholder="O que você procura? (ex: Buffet, Foto...)" class="w-full p-2 outline-none text-gray-700 search-input" />
 				</div>
-				<button (click)="buscar()" class="bg-rose-600 text-white px-8 py-3 rounded-full font-bold hover:bg-rose-700 transition">
-					BUSCAR
-				</button>
-			</div>
-			<div *ngIf="resultPages$ | async as pages" class="max-w-4xl mx-auto mt-6 bg-white rounded-2xl shadow-xl p-6 border border-gray-100" [hidden]="!(pages && pages.length > 0) || !showResults">
-				<div class="flex items-center justify-between mb-4">
-					<div class="font-serif font-bold text-lg text-rose-700">Fornecedores encontrados</div>
-					<div class="flex items-center gap-2">
-						<div class="text-sm text-gray-500" *ngIf="pages?.length">Página {{ (currentPage$ | async)! + 1 }} de {{ pages.length }}</div>
-						<button (click)="closeResults()" class="px-3 py-1 rounded-full border border-rose-600 text-rose-600 hover:bg-rose-50 font-semibold">Fechar</button>
-					</div>
-				</div>
-				<div class="flex items-center gap-3">
-					<button (click)="prevPage(pages.length)" aria-label="Anterior" class="px-3 py-2 rounded-full border border-rose-600 text-rose-600 hover:bg-rose-50 font-semibold bg-white">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-4 h-4 fill-current">
-							<path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/>
-						</svg>
-					</button>
-					<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 flex-1">
-						<div *ngFor="let fornecedor of (currentPageItems$ | async)" class="border border-gray-100 rounded-lg overflow-hidden shadow-sm">
-							<a [routerLink]="['/fornecedores', fornecedor.slug]" 
-							   [attr.data-event-category]="'Navigation'"
-							   [attr.data-event-action]="'Click Card - Busca'"
-							   [attr.data-vendor-id]="fornecedor.id"
-							   [attr.data-vendor-name]="fornecedor.nome"
-							   [attr.data-vendor-category]="fornecedor.categoria?.nome"
-							   class="block">
-								<div class="h-32 bg-gray-50">
-									<img [src]="fornecedor.primaryImage?.url || 'assets/fornecedores/placeholder.jpg'" [alt]="fornecedor.nome" class="w-full h-full object-cover" />
-								</div>
-								<div class="p-3">
-									<div class="font-semibold text-gray-800">{{ fornecedor.nome }}</div>
-									<div class="text-xs text-gray-500" *ngIf="fornecedor.categoria?.nome">{{ fornecedor.categoria?.nome }}</div>
-								</div>
-							</a>
-						</div>
-					</div>
-					<button (click)="nextPage(pages.length)" aria-label="Próxima" class="px-3 py-2 rounded-full border border-rose-600 text-rose-600 hover:bg-rose-50 font-semibold bg-white">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-4 h-4 fill-current">
-							<path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/>
-						</svg>
-					</button>
-				</div>
+				<button (click)="buscar()" class="bg-rose-600 text-white px-8 py-3 rounded-full font-bold hover:bg-rose-700 transition">BUSCAR</button>
 			</div>
 		</div>
 	</div>
 
-	<!-- Destaques da Semana -->
-	<app-destaques-semana></app-destaques-semana>
+	<!-- Resultado da busca fora do Hero -->
+	<div class="hero-results-slot relative mx-auto max-w-5xl px-4 mt-4" *ngIf="(resultPages$ | async)?.length && showResults" [class.has-results]="(resultPages$ | async)?.length && showResults">
+		<div *ngIf="resultPages$ | async as pages" class="hero-results-panel bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+			<div class="flex items-center justify-between mb-4">
+				<div class="font-serif font-bold text-lg text-rose-700">Fornecedores encontrados</div>
+				<div class="flex items-center gap-2">
+					<div class="text-sm text-gray-500" *ngIf="pages?.length">Página {{ (currentPage$ | async)! + 1 }} de {{ pages.length }}</div>
+					<button (click)="closeResults()" class="px-3 py-1 rounded-full border border-rose-600 text-rose-600 hover:bg-rose-50 font-semibold">Fechar</button>
+				</div>
+			</div>
+			<div class="flex items-center gap-3">
+				<button (click)="prevPage(pages.length)" aria-label="Anterior" class="px-3 py-2 rounded-full border border-rose-600 text-rose-600 hover:bg-rose-50 font-semibold bg-white">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
+				</button>
+				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 flex-1">
+					<div *ngFor="let fornecedor of (currentPageItems$ | async)" class="border border-gray-100 rounded-lg overflow-hidden shadow-sm">
+						<a [routerLink]="['/fornecedores', fornecedor.slug]" [attr.data-event-category]="'Navigation'" [attr.data-event-action]="'Click Card - Busca'" [attr.data-vendor-id]="fornecedor.id" [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria?.nome" class="block">
+							<div class="h-32 bg-gray-50" style="aspect-ratio:300/220;">
+								<img [ngSrc]="fornecedor.primaryImage?.url || 'assets/fornecedores/placeholder.jpg'" [alt]="fornecedor.nome" loading="lazy" decoding="async" width="300" height="220" class="w-full h-full object-cover" />
+							</div>
+							<div class="p-3">
+								<div class="font-semibold text-gray-800">{{ fornecedor.nome }}</div>
+								<div class="text-xs text-gray-500" *ngIf="fornecedor.categoria?.nome">{{ fornecedor.categoria?.nome }}</div>
+							</div>
+						</a>
+					</div>
+				</div>
+				<button (click)="nextPage(pages.length)" aria-label="Próxima" class="px-3 py-2 rounded-full border border-rose-600 text-rose-600 hover:bg-rose-50 font-semibold bg-white">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+				</button>
+			</div>
+		</div>
+	</div>
+
+		<!-- Destaques da Semana -->
+		<app-destaques-semana></app-destaques-semana>
 
 	<!-- Categories Section -->
 	<section class="py-16 container mx-auto px-4">
 		<h2 class="text-3xl font-serif font-bold text-gray-800 text-center mb-2">Navegue por Categorias</h2>
 		<p class="text-gray-500 text-center mb-10">Encontre os melhores profissionais de Piracicaba</p>
-		<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-			<ng-container *ngFor="let cat of (categorias$ | async)">
-				<a [routerLink]="['/categorias', cat.slug]" class="group block bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden transform hover:-translate-y-1">
-					<div class="h-32 overflow-hidden relative">
-						<img [src]="cat.imageUrl || 'assets/categorias/placeholder.jpg'" [alt]="cat.nome" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-						<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+		<div *ngIf="categorias$ | async as cats; else catsLoading" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 categorias-grid">
+			<ng-container *ngFor="let cat of cats">
+				<a [routerLink]="['/categorias', cat.slug]" class="group flex flex-col bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden hover:-translate-y-1 cat-card">
+					<div class="relative w-full overflow-hidden img-wrap aspect-[4/3]">
+						<img [ngSrc]="cat.imageUrl || 'assets/categorias/placeholder.jpg'" [alt]="cat.nome" loading="lazy" decoding="async" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+						<div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent"></div>
 					</div>
-					<div class="p-4 text-center">
+					<div class="p-4 text-center flex flex-col gap-1">
 						<h3 class="font-bold text-gray-800 group-hover:text-rose-600 transition-colors">{{cat.nome}}</h3>
-						<p class="text-xs text-gray-500 mt-1" *ngIf="cat.descricao">{{cat.descricao}}</p>
+						<p class="text-xs text-gray-500" *ngIf="cat.descricao">{{cat.descricao}}</p>
 						<span class="text-xs text-gray-400">Ver fornecedores</span>
 					</div>
 				</a>
 			</ng-container>
 		</div>
+		<ng-template #catsLoading>
+			<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 categorias-grid">
+				<div *ngFor="let sk of [1,2,3,4,5,6]" class="bg-white rounded-xl border border-gray-100 p-4 animate-pulse cat-card-skeleton">
+					<div class="img-wrap bg-gray-200 rounded mb-3"></div>
+					<div class="text-wrap">
+					  <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+					  <div class="h-3 bg-gray-100 rounded w-1/2 mb-1"></div>
+					  <div class="h-3 bg-gray-100 rounded w-2/3"></div>
+					</div>
+				</div>
+			</div>
+		</ng-template>
 	</section>
 </div>

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CategoriasData, Categoria } from './services/categorias-data';
 import { Observable } from 'rxjs';
@@ -11,7 +11,8 @@ import { forkJoin, map, switchMap } from 'rxjs';
   standalone: true,
   templateUrl: './categorias-page.html',
   styleUrls: ['./categorias-page.css'],
-  imports: [CommonModule, RouterModule]
+  imports: [CommonModule, RouterModule, NgOptimizedImage],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CategoriasPageComponent {
   categoriasComFornecedores$!: Observable<Array<{ categoria: Categoria; fornecedores: FornecedorListDto[] }>>;

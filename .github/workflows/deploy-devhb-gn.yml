@@ -1,0 +1,42 @@
+name: Deploy dev-hb to gn
+
+on:
+  push:
+    branches:
+      - dev-hb
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+
+      - name: Build Angular (browser) with base href for custom domain
+        run: |
+          npx ng build --configuration production --base-href /
+          cp public/_redirects dist/guia-noivas/browser/_redirects
+
+      - name: Deploy to external repo jhbortol/gn via gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.GH_PAT }}
+          external_repository: jhbortol/gn
+          publish_dir: dist/guia-noivas/browser
+          publish_branch: gh-pages
+          enable_jekyll: false
+          force_orphan: true
+          cname: dev.guianoivas.com
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com

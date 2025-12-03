@@ -2,5 +2,5 @@ export const environment = {
   API_BASE_URL: 'https://guia-noivas.somee.com/api/v1',
   INTERNAL_AUTH_EMAIL: 'jhbortol@gmail.com',
   INTERNAL_AUTH_PASSWORD: 'pesc01',
-  FORNECEDOR_PUBLICADO: null as boolean | null
+  FORNECEDOR_PUBLICADO: true as boolean | null
 };

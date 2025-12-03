@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FornecedoresData, FornecedorListDto } from '../../fornecedores/services/fornecedores-data';
@@ -21,7 +21,8 @@ export interface DestaqueView {
   standalone: true,
   templateUrl: './destaques-semana.html',
   styleUrls: ['./destaques-semana.css'],
-  imports: [CommonModule, RouterModule]
+  imports: [CommonModule, RouterModule],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DestaquesSemanaComponent implements OnInit {
   @Input() category?: string | undefined;
@@ -29,7 +30,6 @@ export class DestaquesSemanaComponent implements OnInit {
   @Input() limit = 4;
   @Output() displayed = new EventEmitter<string[]>();
 
-  destaques: DestaqueView[] = [];
   destaques$!: Observable<DestaqueView[]>;
 
   constructor(private fornecedoresData: FornecedoresData) {}
@@ -41,10 +41,14 @@ export class DestaquesSemanaComponent implements OnInit {
           console.warn('[DESTAQUES] API returned invalid data:', list);
           return [];
         }
-        return list
+        const filtered = list
           .filter(f => !this.category || (f.categoria?.nome || '').toLowerCase() === this.category!.toLowerCase())
-          .filter(f => !this.exclude?.length || !this.exclude.includes(f.id))
-          .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+          .filter(f => !this.exclude?.length || !this.exclude.includes(f.id));
+        
+        // Randomize order to show different highlights on each page load
+        const shuffled = filtered.sort(() => Math.random() - 0.5);
+        
+        const result = shuffled
           .slice(0, this.limit)
           .map(f => ({
             id: f.id,
@@ -56,11 +60,12 @@ export class DestaquesSemanaComponent implements OnInit {
             nota: f.rating || 0,
             imagem: f.primaryImage?.url || 'assets/fornecedores/placeholder.jpg'
           }));
+        if (!result.length) {
+          console.warn('[DESTAQUES] nenhum resultado após filtragem.');
+        }
+        this.displayed.emit(result.map(x => x.id));
+        return result;
       })
     );
-    this.destaques$.subscribe(d => {
-      this.destaques = d;
-      this.displayed.emit(d.map(x => x.id));
-    });
   }
 }

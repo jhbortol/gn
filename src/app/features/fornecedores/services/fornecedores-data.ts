@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../../core/api.service';
 import { Observable, map, catchError, of } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 // DTOs alinhados ao backend (simplificados)
 export interface FornecedorListDto {
@@ -71,18 +72,29 @@ export class FornecedoresData {
     search(nome: string, page = 1, pageSize = 12, destaque?: boolean): Observable<FornecedorListDto[]> {
       const params: any = { nome, page, pageSize };
       if (destaque !== undefined) params.destaque = destaque;
+      if (environment.FORNECEDOR_PUBLICADO !== null) {
+        params.publicado = environment.FORNECEDOR_PUBLICADO;
+      }
       return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/search`, params).pipe(map(r => r.data));
     }
   constructor(private api: ApiService) {}
 
   getAll(page = 1, pageSize = 12): Observable<FornecedorListDto[]> {
     // Usar /fornecedores/ativos para exibir apenas fornecedores ativos (público)
-    return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/ativos`, { page, pageSize }).pipe(map(r => r.data));
+    const params: any = { page, pageSize };
+    if (environment.FORNECEDOR_PUBLICADO !== null) {
+      params.publicado = environment.FORNECEDOR_PUBLICADO;
+    }
+    return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/ativos`, params).pipe(map(r => r.data));
   }
 
   getDestaques(page = 1, pageSize = 24): Observable<FornecedorListDto[]> {
     // Destaques: alguns ambientes podem retornar { data: [...] } (wrapper) ou array direto
-    return this.api.get<any>(`/fornecedores/ativos`, { page, pageSize, destaque: true }).pipe(
+    const params: any = { page, pageSize, destaque: true };
+    if (environment.FORNECEDOR_PUBLICADO !== null) {
+      params.publicado = environment.FORNECEDOR_PUBLICADO;
+    }
+    return this.api.get<any>(`/fornecedores/ativos`, params).pipe(
       map(r => {
         let list: FornecedorListDto[] = [];
         if (Array.isArray(r)) list = r as FornecedorListDto[];
@@ -140,14 +152,22 @@ export class FornecedoresData {
 
   getByCategoria(categoriaSlugOrId: string): Observable<FornecedorListDto[]> {
     // Usar endpoint correto: /fornecedores/ativos/categoria/{categoriaSlugOrId}
-    return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/ativos/categoria/${categoriaSlugOrId}`, { page: 1, pageSize: 100 }).pipe(
+    const params: any = { page: 1, pageSize: 100 };
+    if (environment.FORNECEDOR_PUBLICADO !== null) {
+      params.publicado = environment.FORNECEDOR_PUBLICADO;
+    }
+    return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/ativos/categoria/${categoriaSlugOrId}`, params).pipe(
       map(r => r.data)
     );
   }
 
   getDestaquesByCategoria(categoriaSlugOrId: string): Observable<FornecedorListDto[]> {
     // Tenta obter somente fornecedores destaque na categoria; se API não suportar param, filtra localmente
-    return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/ativos/categoria/${categoriaSlugOrId}`, { page: 1, pageSize: 100, destaque: true }).pipe(
+    const params: any = { page: 1, pageSize: 100, destaque: true };
+    if (environment.FORNECEDOR_PUBLICADO !== null) {
+      params.publicado = environment.FORNECEDOR_PUBLICADO;
+    }
+    return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/ativos/categoria/${categoriaSlugOrId}`, params).pipe(
       map(r => (r.data || []).filter(f => f.destaque)),
       catchError(err => {
         console.warn('[DESTAQUES BY CATEGORIA] falling back filtering local:', err);

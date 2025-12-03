@@ -30,8 +30,12 @@ jobs:
       - name: Move build to /piracicaba for GitHub Pages
         run: |
           mkdir -p dist/guia-noivas/browser/piracicaba
-          mv dist/guia-noivas/browser/* dist/guia-noivas/browser/piracicaba/
-          find dist/guia-noivas/browser -maxdepth 1 ! -name piracicaba -type f -exec rm -rf {} +
+          mkdir -p dist/guia-noivas/browser_tmp
+          shopt -s dotglob
+          mv dist/guia-noivas/browser/* dist/guia-noivas/browser_tmp/
+          rm -rf dist/guia-noivas/browser/*
+          mv dist/guia-noivas/browser_tmp/* dist/guia-noivas/browser/piracicaba/
+          rm -rf dist/guia-noivas/browser_tmp
 
       - name: Deploy to external repo jhbortol/guianoivas via gh-pages
         uses: peaceiris/actions-gh-pages@v3

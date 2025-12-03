@@ -22,9 +22,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Angular (browser) with base href for guianoivas
+
+      - name: Build Angular (browser) with base href for piracicaba
         run: |
-          npx ng build --configuration production --base-href /guianoivas/
+          npx ng build --configuration production --base-href /piracicaba/
+
+      - name: Move build to /piracicaba for GitHub Pages
+        run: |
+          mkdir -p dist/guia-noivas/browser/piracicaba
+          mv dist/guia-noivas/browser/* dist/guia-noivas/browser/piracicaba/
+          find dist/guia-noivas/browser -maxdepth 1 ! -name piracicaba -type f -exec rm -rf {} +
 
       - name: Deploy to external repo jhbortol/guianoivas via gh-pages
         uses: peaceiris/actions-gh-pages@v3

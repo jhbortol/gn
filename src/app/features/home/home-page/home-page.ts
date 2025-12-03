@@ -28,7 +28,7 @@ export class HomePageComponent {
 
   constructor(private categoriasData: CategoriasData, private fornecedoresData: FornecedoresData) {
     this.categorias$ = this.categoriasData.getAll().pipe(
-      map(cats => this.shuffleArray(cats).slice(0, 6))
+      map(cats => this.shuffleArray(cats))
     );
     this.fornecedoresBusca$ = this.buscaTerm$.pipe(
       switchMap(term => term.trim().length > 0 ? this.fornecedoresData.search(term) : of([] as FornecedorListDto[]))

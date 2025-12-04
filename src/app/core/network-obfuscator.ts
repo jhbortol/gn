@@ -20,7 +20,9 @@ const SENSITIVE_FIELDS = ['password', 'email'];
 XMLHttpRequest.prototype.open = function (
   method: string,
   url: string,
-  ...args: any[]
+  async?: boolean,
+  username?: string,
+  password?: string
 ) {
   // Mark this XHR as sensitive if it's hitting a sensitive endpoint
   const isSensitive = SENSITIVE_ENDPOINTS.some((endpoint) =>
@@ -34,17 +36,15 @@ XMLHttpRequest.prototype.open = function (
   }
 
   // Call original open
-  return originalXHROpen.apply(this, [method, url, ...args]);
+  return originalXHROpen.call(this, method, url, async, username, password);
 };
 
 /**
  * Hook XMLHttpRequest.send to intercept sensitive payloads
  */
-XMLHttpRequest.prototype.send = function (body: any) {
+XMLHttpRequest.prototype.send = function (body?: Document | BodyInit | null) {
   if ((this as any)._isSensitiveRequest && body) {
     try {
-      let payloadToSend = body;
-
       // If body is a string (JSON), parse it to sanitize
       if (typeof body === 'string') {
         const parsed = JSON.parse(body);
@@ -52,18 +52,15 @@ XMLHttpRequest.prototype.send = function (body: any) {
         
         // Log sanitized version
         console.debug(`[AUTH] Sending to ${(this as any)._sensitiveUrl}:`, sanitized);
-        
-        // Send original unsanitized body to server
-        payloadToSend = body;
       }
     } catch (e) {
-      // If parsing fails, just send as-is
+      // If parsing fails, just log endpoint
       console.debug(`[AUTH] Sensitive request to ${(this as any)._sensitiveUrl}`);
     }
   }
 
   // Send the actual request (with credentials intact for server)
-  return originalXHRSend.apply(this, [body]);
+  return originalXHRSend.call(this, body);
 };
 
 /**

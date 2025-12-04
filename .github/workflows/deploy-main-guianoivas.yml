@@ -29,15 +29,15 @@ jobs:
 
       - name: Prepare deploy structure
         run: |
-          mkdir -p piracicaba
-          cp -r dist/guia-noivas/browser/* piracicaba/
+          mkdir -p deploy-root/piracicaba
+          cp -r dist/guia-noivas/browser/* deploy-root/piracicaba/
 
       - name: Deploy to external repo jhbortol/guianoivas via gh-pages2
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.GH_PAT }}
           external_repository: jhbortol/guianoivas
-          publish_dir: ./piracicaba
+          publish_dir: ./deploy-root
           publish_branch: gh-pages2
           enable_jekyll: false
           force_orphan: true

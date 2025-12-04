@@ -7,23 +7,19 @@
  * It should be loaded early in the application, ideally in main.ts or index.html
  */
 
-// Store original XMLHttpRequest.prototype.open and send
-const originalXHROpen = XMLHttpRequest.prototype.open;
-const originalXHRSend = XMLHttpRequest.prototype.send;
-
 const SENSITIVE_ENDPOINTS = ['/auth/login', '/auth/register'];
 const SENSITIVE_FIELDS = ['password', 'email'];
+
+// Store original XMLHttpRequest.prototype methods
+const originalXHROpen = (XMLHttpRequest.prototype as any).open;
+const originalXHRSend = (XMLHttpRequest.prototype as any).send;
 
 /**
  * Hook XMLHttpRequest.open to detect sensitive requests
  */
-XMLHttpRequest.prototype.open = function (
-  method: string,
-  url: string,
-  async?: boolean,
-  username?: string,
-  password?: string
-) {
+(XMLHttpRequest.prototype as any).open = function (...args: any[]) {
+  const [method, url] = args;
+  
   // Mark this XHR as sensitive if it's hitting a sensitive endpoint
   const isSensitive = SENSITIVE_ENDPOINTS.some((endpoint) =>
     url.includes(endpoint)
@@ -35,14 +31,14 @@ XMLHttpRequest.prototype.open = function (
     (this as any)._sensitiveUrl = url;
   }
 
-  // Call original open
-  return originalXHROpen.call(this, method, url, async, username, password);
+  // Call original open with all arguments
+  return originalXHROpen.apply(this, args);
 };
 
 /**
  * Hook XMLHttpRequest.send to intercept sensitive payloads
  */
-XMLHttpRequest.prototype.send = function (body?: Document | BodyInit | null) {
+(XMLHttpRequest.prototype as any).send = function (body: any) {
   if ((this as any)._isSensitiveRequest && body) {
     try {
       // If body is a string (JSON), parse it to sanitize

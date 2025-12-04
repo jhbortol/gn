@@ -43,5 +43,6 @@ jobs:
           publish_branch: gh-pages2
           enable_jekyll: false
           force_orphan: true
+          cname: guianoivas.com
           user_name: github-actions[bot]
           user_email: 41898282+github-actions[bot]@users.noreply.github.com

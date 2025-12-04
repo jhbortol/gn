@@ -25,7 +25,7 @@ jobs:
 
       - name: Build Angular (browser) with base href for piracicaba
         run: |
-          npx ng build --configuration production --base-href /piracicaba/ --deploy-url /piracicaba/
+          npx ng build --configuration production --base-href /guianoivas/piracicaba/ --deploy-url /guianoivas/piracicaba/
 
       - name: Prepare deploy structure with SPA routing support
         run: |

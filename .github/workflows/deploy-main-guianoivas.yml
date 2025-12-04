@@ -44,5 +44,6 @@ jobs:
           publish_dir: dist/guia-noivas/browser
           publish_branch: gh-pages2
           enable_jekyll: false
+          force_orphan: true
           user_name: github-actions[bot]
           user_email: 41898282+github-actions[bot]@users.noreply.github.com

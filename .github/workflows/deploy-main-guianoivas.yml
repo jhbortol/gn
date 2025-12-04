@@ -27,10 +27,12 @@ jobs:
         run: |
           npx ng build --configuration production --base-href /piracicaba/
 
-      - name: Prepare deploy structure
+      - name: Prepare deploy structure with SPA routing support
         run: |
           mkdir -p deploy-root/piracicaba
           cp -r dist/guia-noivas/browser/* deploy-root/piracicaba/
+          cp public/404.html deploy-root/piracicaba/404.html
+          touch deploy-root/piracicaba/.nojekyll
 
       - name: Deploy to external repo jhbortol/guianoivas via gh-pages2
         uses: peaceiris/actions-gh-pages@v3

@@ -109,13 +109,12 @@ export class FornecedoresData {
         }
         return list.filter(f => f.destaque); // garante só destaque
       }),
-      switchMap(list => {
-        // Fallback: se vazio, buscar todos os fornecedores publicados
+      map(list => {
+        // Se não houver destaques, retornar lista vazia (não mostrar nada)
         if (list.length === 0) {
-          console.warn('[DESTAQUES] lista vazia, tentando fallback via getAll()');
-          return this.getAll(1, pageSize);
+          console.warn('[DESTAQUES] nenhum fornecedor com destaque=true encontrado');
         }
-        return of(list);
+        return list;
       }),
       catchError(err => {
         console.error('[DESTAQUES] API error:', err);

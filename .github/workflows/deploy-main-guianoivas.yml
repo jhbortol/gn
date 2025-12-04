@@ -27,21 +27,17 @@ jobs:
         run: |
           npx ng build --configuration production --base-href /piracicaba/
 
-      - name: Move build to /piracicaba for GitHub Pages
+      - name: Prepare deploy structure
         run: |
-          mkdir -p dist/guia-noivas/browser_tmp
-          shopt -s dotglob
-          mv dist/guia-noivas/browser/* dist/guia-noivas/browser_tmp/
-          mkdir -p dist/guia-noivas/browser/piracicaba
-          mv dist/guia-noivas/browser_tmp/* dist/guia-noivas/browser/piracicaba/
-          rm -rf dist/guia-noivas/browser_tmp
+          mkdir -p piracicaba
+          cp -r dist/guia-noivas/browser/* piracicaba/
 
       - name: Deploy to external repo jhbortol/guianoivas via gh-pages2
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.GH_PAT }}
           external_repository: jhbortol/guianoivas
-          publish_dir: dist/guia-noivas/browser
+          publish_dir: ./piracicaba
           publish_branch: gh-pages2
           enable_jekyll: false
           force_orphan: true

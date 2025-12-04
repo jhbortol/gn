@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../../core/api.service';
-import { Observable, map, catchError, of } from 'rxjs';
+import { Observable, map, catchError, of, switchMap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
 // DTOs alinhados ao backend (simplificados)
@@ -109,12 +109,13 @@ export class FornecedoresData {
         }
         return list.filter(f => f.destaque); // garante só destaque
       }),
-      map(list => {
-        // Fallback: se vazio, tentar buscar todos e filtrar
+      switchMap(list => {
+        // Fallback: se vazio, buscar todos os fornecedores publicados
         if (list.length === 0) {
           console.warn('[DESTAQUES] lista vazia, tentando fallback via getAll()');
+          return this.getAll(1, pageSize);
         }
-        return list;
+        return of(list);
       }),
       catchError(err => {
         console.error('[DESTAQUES] API error:', err);

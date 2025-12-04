@@ -7,9 +7,11 @@ const SENSITIVE_ENDPOINTS = ['/auth/login', '/auth/register'];
  * HTTP Interceptor that sanitizes sensitive credentials (email, password)
  * to prevent exposure in browser DevTools Network tab and console logs.
  * 
- * Note: This sanitizes logs and replaces the request body to prevent
- * credentials from appearing in browser DevTools. For maximum security,
- * ensure backend sends tokens via HttpOnly, Secure, SameSite cookies.
+ * Strategy: 
+ * 1. Log sanitized version to console
+ * 2. Send actual request with original credentials (needed for server)
+ * 3. The browser's DevTools will still capture the network request,
+ *    but developers won't see it in plain view if they check console logs
  */
 export const credentialsSanitizerInterceptor: HttpInterceptorFn = (
   req,
@@ -21,17 +23,15 @@ export const credentialsSanitizerInterceptor: HttpInterceptorFn = (
   );
 
   if (isSensitiveEndpoint && req.body) {
-    // Log sanitized version
+    // Log sanitized version to console (not in network tab)
     const sanitizedBody = sanitizeBodyForLog(req.body);
-    console.debug(`[AUTH] Requesting: ${req.method} ${req.url}`);
-    console.debug('[AUTH] Request payload:', sanitizedBody);
+    console.debug(`[AUTH] ${req.method} ${req.url}`);
+    console.debug('[AUTH] Payload (sanitized for display):', sanitizedBody);
 
-    // Clone request and replace body to prevent DevTools exposure
-    // The actual credentials are still sent to the server via the HTTP layer,
-    // but they won't be visible in browser DevTools Network tab
-    req = req.clone({
-      body: req.body, // Keep original for actual transmission
-    });
+    // IMPORTANT: We still send the original request with credentials.
+    // They will appear in Network tab, but not in console or readily visible.
+    // For maximum security, backend should use HttpOnly, Secure, SameSite cookies
+    // and avoid storing sensitive data in response bodies.
   }
 
   return next(req);

@@ -47,11 +47,12 @@ Edição completa de todos os campos:
 - **Deletar imagens**
 - **Limites**: Máximo 20 imagens, tamanho máximo 5MB cada
 
-### 4. Gerenciamento de Testemunhos
-- **Listar testemunhos** recebidos
-- **Aprovar/Reprovar** testemunhos pendentes
-- **Responder** a testemunhos (opcional, v2)
-- **Excluir** testemunhos (apenas admin pode deletar permanentemente)
+### 4. Gerenciamento de Testemunhos (Depoimentos)
+- **Criar novo testemunho** - Fornecedor cadastra depoimentos de clientes
+- **Listar testemunhos** cadastrados
+- **Editar testemunho** existente
+- **Excluir testemunho**
+- Campos: Nome do cliente, descrição do depoimento, rating (opcional), data
 
 ### 5. Dashboard (opcional, v1.1)
 - Total de visualizações
@@ -179,27 +180,35 @@ Deleta imagem do fornecedor autenticado.
 
 ---
 
-#### 3. Testemunhos - Gerenciamento pelo fornecedor
+#### 3. Testemunhos - CRUD completo pelo fornecedor
 ```http
 GET /api/v1/supplier/me/testemunhos
 ```
 Lista testemunhos do fornecedor autenticado.
-- **Query**: `page, pageSize, status` (pending, approved, rejected)
-
-```http
-PATCH /api/v1/supplier/me/testemunhos/{id}/approve
-```
-Aprova testemunho pendente.
-
-```http
-PATCH /api/v1/supplier/me/testemunhos/{id}/reject
-```
-Rejeita testemunho pendente.
+- **Query**: `page, pageSize`
 
 ```http
 GET /api/v1/supplier/me/testemunhos/{id}
 ```
 Detalhes de um testemunho específico.
+
+```http
+POST /api/v1/supplier/me/testemunhos
+```
+Cria novo testemunho.
+- **Body**: `{ nome, descricao, rating?, data? }`
+- **Nota**: Fornecedor cadastra depoimentos de clientes que recebeu
+
+```http
+PUT /api/v1/supplier/me/testemunhos/{id}
+```
+Atualiza testemunho existente.
+- **Body**: `{ nome, descricao, rating?, data? }`
+
+```http
+DELETE /api/v1/supplier/me/testemunhos/{id}
+```
+Deleta testemunho.
 
 ---
 
@@ -303,13 +312,19 @@ CREATE UNIQUE INDEX IX_Media_Fornecedor_Primary
 3. Ao deletar imagem: Reorganizar OrderIndex das imagens com índice maior
 4. Ao reordenar (drag & drop): Atualizar OrderIndex de todas as imagens afetadas
 
-### Testemunhos (adicionar status)
+### Testemunhos (campos recomendados)
 ```sql
+-- Campos existentes (baseado em CHANGELOG-TESTEMUNHOS.md):
+-- Id, FornecedorId, Nome, Descricao, CreatedAt
+
+-- Campos adicionais recomendados:
 ALTER TABLE Testemunhos ADD
-  Status NVARCHAR(20) NOT NULL DEFAULT 'pending', -- 'pending', 'approved', 'rejected'
-  ReviewedAt DATETIMEOFFSET NULL,
-  ReviewedBy UNIQUEIDENTIFIER NULL; -- FK para Usuarios
+  Rating DECIMAL(3,2) NULL, -- Avaliação (0-5)
+  Data DATETIMEOFFSET NULL, -- Data do serviço/evento
+  UpdatedAt DATETIMEOFFSET NULL;
 ```
+
+**Nota:** Não há sistema de aprovação - fornecedor cria e gerencia diretamente seus testemunhos.
 
 ### ContatoSubmission (adicionar isRead)
 ```sql
@@ -354,11 +369,16 @@ ALTER TABLE ContatoSubmissions ADD
 - Indicador visual da ordem (números 1, 2, 3...)
 
 ### 5. Testemunhos (`/painel/testemunhos`)
-- Tabs: Pendentes / Aprovados / Rejeitados
-- Lista de testemunhos com:
-  - Nome, descrição, data
-  - Botões "Aprovar" / "Rejeitar"
+- Botão "Novo Testemunho"
+- Lista de testemunhos cadastrados:
+  - Nome do cliente, descrição, rating, data
+  - Botões "Editar" / "Excluir"
 - Paginação
+- Modal/Form para criar/editar:
+  - Campo: Nome do cliente (obrigatório)
+  - Campo: Depoimento (textarea, obrigatório)
+  - Campo: Rating (0-5 estrelas, opcional)
+  - Campo: Data do serviço (date picker, opcional)
 
 ---
 
@@ -513,7 +533,7 @@ export class SupplierService {
 
 ### Fase 2
 1. Dashboard com estatísticas
-2. Gerenciamento de testemunhos (aprovar/rejeitar)
+2. CRUD de testemunhos (criar/editar/excluir)
 3. Reordenação de imagens (drag & drop)
 4. Preview do perfil público
 
@@ -550,10 +570,12 @@ export class SupplierService {
 
 ### Testemunhos
 - [x] `GET /api/v1/testemunhos/fornecedor/{id}` (já existe, público)
-- [ ] `GET /api/v1/supplier/me/testemunhos` - Lista testemunhos (com filtro por status)
-- [ ] `PATCH /api/v1/supplier/me/testemunhos/{id}/approve` - Aprova testemunho
-- [ ] `PATCH /api/v1/supplier/me/testemunhos/{id}/reject` - Rejeita testemunho
-- [ ] Adicionar campo `Status` na tabela Testemunhos
+- [ ] `GET /api/v1/supplier/me/testemunhos` - Lista testemunhos do fornecedor
+- [ ] `GET /api/v1/supplier/me/testemunhos/{id}` - Detalhes de um testemunho
+- [ ] `POST /api/v1/supplier/me/testemunhos` - Cria novo testemunho
+- [ ] `PUT /api/v1/supplier/me/testemunhos/{id}` - Atualiza testemunho
+- [ ] `DELETE /api/v1/supplier/me/testemunhos/{id}` - Deleta testemunho
+- [ ] Adicionar campos opcionais: Rating, Data, UpdatedAt
 
 ### Upload de Mídia
 - [ ] `POST /api/v1/supplier/me/media/presign` - Gera presigned URL

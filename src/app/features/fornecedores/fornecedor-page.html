@@ -85,6 +85,17 @@
              class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
             Instagram
           </a>
+          <a *ngIf="fornecedor.facebook" 
+             [href]="getFacebookLink()" 
+             target="_blank" 
+             [attr.data-event-category]="'Contato'"
+             [attr.data-event-action]="'Clique Facebook'"
+             [attr.data-vendor-id]="fornecedor.id"
+             [attr.data-vendor-name]="fornecedor.nome"
+             [attr.data-vendor-category]="fornecedor.categoria"
+             class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
+            Facebook
+          </a>
           <a *ngIf="fornecedor.website" 
              [href]="getSiteLink()" 
              target="_blank" 

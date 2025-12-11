@@ -7,7 +7,7 @@ import { PainelLayoutComponent } from '../layout/painel-layout';
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [CommonModule, RouterModule, PainelLayoutComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './dashboard-page.html',
   styleUrls: ['./dashboard-page.css']
 })

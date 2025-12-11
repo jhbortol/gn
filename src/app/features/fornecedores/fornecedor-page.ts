@@ -23,6 +23,8 @@ export class FornecedorPageComponent implements OnInit {
     if (identifier) {
       this.fornecedores.getById(identifier).subscribe(f => {
         this.fornecedor = f;
+        console.log('Fornecedor carregado:', f);
+        console.log('Facebook:', f.facebook);
         this.trackPageView();
         // For OnPush change detection, ensure view updates after async data arrives
         this.cdr.markForCheck();
@@ -64,5 +66,11 @@ export class FornecedorPageComponent implements OnInit {
     const instagram = this.fornecedor?.instagram || '';
     const username = instagram.replace('@', '').trim();
     return username ? `https://instagram.com/${username}` : '#';
+  }
+
+  getFacebookLink(): string {
+    const facebook = this.fornecedor?.facebook || '';
+    const cleaned = facebook.replace('@', '').trim();
+    return cleaned ? `https://facebook.com/${cleaned}` : '#';
   }
 }

@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { SupplierAuthService } from '../services/supplier-auth.service';
+import { ToastContainerComponent } from '../../../shared/components/toast-container.component';
 
 @Component({
   selector: 'app-painel-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ToastContainerComponent],
   templateUrl: './painel-layout.html',
   styleUrls: ['./painel-layout.css']
 })
@@ -18,7 +19,8 @@ export class PainelLayoutComponent implements OnInit {
     { path: '/painel/dashboard', icon: '📊', label: 'Dashboard' },
     { path: '/painel/perfil', icon: '👤', label: 'Meu Perfil' },
     { path: '/painel/imagens', icon: '🖼️', label: 'Imagens' },
-    { path: '/painel/testemunhos', icon: '💬', label: 'Testemunhos' }
+    { path: '/painel/testemunhos', icon: '💬', label: 'Testemunhos' },
+    { path: '/painel/alterar-senha', icon: '🔒', label: 'Alterar Senha' }
   ];
 
   constructor(

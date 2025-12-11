@@ -34,6 +34,7 @@ export interface FornecedorDetailDto {
   email?: string;
   website?: string;
   instagram?: string;
+  facebook?: string;
   destaque?: boolean;
   seloFornecedor?: boolean;
   ativo?: boolean;
@@ -57,6 +58,7 @@ export interface Fornecedor {
   email?: string;
   website?: string;
   instagram?: string;
+  facebook?: string;
   destaque?: boolean;
   seloFornecedor?: boolean;
   ativo?: boolean;
@@ -137,6 +139,7 @@ export class FornecedoresData {
         email: detail.email,
         website: detail.website,
         instagram: detail.instagram,
+        facebook: detail.facebook,
         destaque: detail.destaque,
         seloFornecedor: detail.seloFornecedor,
         ativo: detail.ativo,

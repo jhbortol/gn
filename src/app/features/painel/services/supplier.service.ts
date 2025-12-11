@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { SupplierAuthService, LoginResponse } from './supplier-auth.service';
 
@@ -55,39 +55,41 @@ export interface MediaDto {
   url: string;
   filename: string;
   contentType: string;
-  width?: number;
-  height?: number;
+  width: number | null;
+  height: number | null;
   isPrimary: boolean;
   orderIndex: number;
-  imageType?: string;
+  imageType: string | null;
   createdAt: string;
 }
 
 export interface TestemunhoDto {
-  id: string;
+  id: number;
+  fornecedorId?: number;
   nome: string;
+  email: string;
   descricao: string;
-  rating?: number;
-  data?: string;
-  createdAt: string;
-  updatedAt?: string;
+  rating: number;
+  ativo: boolean;
+  criadoEm?: string;
+  atualizadoEm?: string;
+  // Retrocompatibilidade com nomes antigos (caso o backend use)
+  nomeCliente?: string;
+  emailCliente?: string;
+  mensagem?: string;
 }
 
 export interface TestemunhoCreateDto {
-  nome: string;
-  descricao: string;
-  rating?: number;
-  data?: string;
+  nome: string;        // Nome do cliente
+  descricao: string;   // Mensagem/testemunho
 }
 
 export interface PaginatedResponse<T> {
   data: T[];
-  meta: {
-    total: number;
-    page: number;
-    pageSize: number;
-    totalPages: number;
-  };
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -113,9 +115,45 @@ export class SupplierService {
     );
   }
 
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.authUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.authUrl}/reset-password`, {
+      token,
+      newPassword
+    });
+  }
+
+  changePassword(currentPassword: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${environment.API_BASE_URL}/account/change-password`, {
+      currentPassword,
+      newPassword
+    });
+  }
+
   // ===== FORNECEDOR =====
   getMe(): Observable<FornecedorDto> {
-    return this.http.get<FornecedorDto>(`${this.apiUrl}/me`);
+    return this.http.get<any>(`${this.apiUrl}/me`).pipe(
+      tap(response => console.log('getMe RAW response:', response, 'type:', typeof response)),
+      map((response: any) => {
+        console.log('getMe response structure - has data?:', !!response?.data);
+        
+        // Handle wrapped response: { data: FornecedorDto }
+        if (response && typeof response === 'object' && response.data) {
+          console.log('Extracting data from wrapper');
+          const extracted = response.data;
+          console.log('Extracted data:', extracted);
+          return extracted;
+        }
+        
+        // Handle direct response: FornecedorDto
+        console.log('Using response as-is (not wrapped)');
+        return response;
+      }),
+      tap(result => console.log('Final mapped result:', result))
+    );
   }
 
   updateMe(data: FornecedorUpdateDto): Observable<FornecedorDto> {
@@ -123,12 +161,22 @@ export class SupplierService {
   }
 
   getStats(): Observable<FornecedorStatsDto> {
-    return this.http.get<FornecedorStatsDto>(`${this.apiUrl}/me/stats`);
+    return this.http.get<any>(`${this.apiUrl}/me/stats`).pipe(
+      tap(response => console.log('getStats RAW response:', response)),
+      map((response: any) => {
+        if (response && response.data) {
+          return response.data;
+        }
+        return response;
+      })
+    );
   }
 
   // ===== IMAGENS =====
   getImages(): Observable<{ data: MediaDto[] }> {
-    return this.http.get<{ data: MediaDto[] }>(`${this.apiUrl}/me/images`);
+    return this.http.get<{ data: MediaDto[] }>(`${this.apiUrl}/me/images`).pipe(
+      tap(response => console.log('Images response:', response))
+    );
   }
 
   uploadImage(file: File, isPrimary = false, imageType = 'gallery'): Observable<MediaDto> {
@@ -145,7 +193,8 @@ export class SupplierService {
   }
 
   reorderImages(imageIds: string[]): Observable<void> {
-    return this.http.patch<void>(`${this.apiUrl}/me/images/reorder`, { imageIds });
+    // API espera o array completo na ordem desejada
+    return this.http.patch<void>(`${this.apiUrl}/me/images/reorder`, { ImageIds: imageIds });
   }
 
   deleteImage(imageId: string): Observable<void> {
@@ -168,11 +217,11 @@ export class SupplierService {
     return this.http.post<TestemunhoDto>(`${this.apiUrl}/me/testemunhos`, data);
   }
 
-  updateTestemunho(id: string, data: TestemunhoCreateDto): Observable<TestemunhoDto> {
-    return this.http.put<TestemunhoDto>(`${this.apiUrl}/me/testemunhos/${id}`, data);
+  updateTestemunho(id: number, data: Partial<TestemunhoCreateDto & { ativo: boolean }>): Observable<TestemunhoDto> {
+    return this.http.patch<TestemunhoDto>(`${this.apiUrl}/me/testemunhos/${id}`, data);
   }
 
-  deleteTestemunho(id: string): Observable<void> {
+  deleteTestemunho(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/me/testemunhos/${id}`);
   }
 }

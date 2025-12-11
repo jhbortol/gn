@@ -8,8 +8,17 @@ const routes: Routes = [
     loadComponent: () => import('./login/login-page').then(m => m.LoginPageComponent)
   },
   {
+    path: 'forgot-password',
+    loadComponent: () => import('./forgot-password/forgot-password-page').then(m => m.ForgotPasswordPage)
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./reset-password/reset-password-page').then(m => m.ResetPasswordPage)
+  },
+  {
     path: '',
     canActivate: [SupplierGuard],
+    loadComponent: () => import('./layout/painel-layout').then(m => m.PainelLayoutComponent),
     children: [
       {
         path: '',
@@ -26,11 +35,15 @@ const routes: Routes = [
       },
       {
         path: 'imagens',
-        loadComponent: () => import('./imagens/imagens-page').then(m => m.ImagensPageComponent)
+        loadComponent: () => import('./imagens/imagens-page').then(m => m.ImagensPage)
       },
       {
         path: 'testemunhos',
-        loadComponent: () => import('./testemunhos/testemunhos-page').then(m => m.TestemunhosPageComponent)
+        loadComponent: () => import('./testemunhos/testemunhos-page').then(m => m.TestemunhosPage)
+      },
+      {
+        path: 'alterar-senha',
+        loadComponent: () => import('./alterar-senha/alterar-senha-page').then(m => m.AlterarSenhaPage)
       }
     ]
   }

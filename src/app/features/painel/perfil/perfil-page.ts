@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SupplierService, FornecedorDto, FornecedorUpdateDto } from '../services/supplier.service';
-import { PainelLayoutComponent } from '../layout/painel-layout';
+import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-perfil-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PainelLayoutComponent],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './perfil-page.html',
   styleUrls: ['./perfil-page.css']
 })
@@ -21,7 +21,8 @@ export class PerfilPageComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private supplierService: SupplierService
+    private supplierService: SupplierService,
+    private toastService: ToastService
   ) {
     this.perfilForm = this.fb.group({
       nome: ['', [Validators.required, Validators.maxLength(200)]],
@@ -44,16 +45,39 @@ export class PerfilPageComponent implements OnInit {
 
   loadFornecedor(): void {
     this.loading = true;
+    this.error = '';
+    console.log('Loading fornecedor...');
+    
     this.supplierService.getMe().subscribe({
       next: (data) => {
+        console.log('Fornecedor data received:', data);
+        if (!data) {
+          this.error = 'Dados vazios recebidos do servidor';
+          this.loading = false;
+          return;
+        }
         this.fornecedor = data;
         this.perfilForm.patchValue(data);
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Erro ao carregar dados do perfil';
+        console.error('Error loading fornecedor:', err);
+        console.error('Error status:', err.status);
+        console.error('Error message:', err.message);
+        
+        if (err.status === 401) {
+          this.error = 'Sessão expirada. Por favor, faça login novamente.';
+        } else if (err.status === 403) {
+          this.error = 'Acesso negado. Você não tem permissão para acessar estes dados.';
+        } else if (err.status === 404) {
+          this.error = 'Perfil não encontrado.';
+        } else {
+          this.error = err.error?.message || 'Erro ao carregar dados do perfil';
+        }
         this.loading = false;
-        console.error(err);
+      },
+      complete: () => {
+        console.log('getMe subscription completed');
       }
     });
   }
@@ -67,17 +91,25 @@ export class PerfilPageComponent implements OnInit {
     this.error = '';
     this.success = '';
 
-    const data: FornecedorUpdateDto = this.perfilForm.value;
+    const formData = this.perfilForm.value;
+    
+    // Remover campos vazios para não enviar no payload
+    const data = Object.keys(formData)
+      .filter(key => formData[key] !== '' && formData[key] !== null && formData[key] !== undefined)
+      .reduce((obj: any, key: string) => {
+        obj[key] = formData[key];
+        return obj;
+      }, {}) as FornecedorUpdateDto;
 
     this.supplierService.updateMe(data).subscribe({
       next: (result) => {
         this.fornecedor = result;
-        this.success = 'Perfil atualizado com sucesso!';
+        this.toastService.success('Perfil gravado com sucesso!');
         this.saving = false;
-        setTimeout(() => this.success = '', 5000);
       },
       error: (err) => {
-        this.error = err.error?.detail || 'Erro ao salvar perfil';
+        const errorMsg = err.error?.detail || 'Erro ao salvar perfil';
+        this.toastService.error(errorMsg);
         this.saving = false;
       }
     });

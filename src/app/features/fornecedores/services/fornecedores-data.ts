@@ -153,6 +153,7 @@ export class FornecedoresData {
         visitas: detail.visitas,
         categoria: detail.categoria?.nome,
         imagens: (detail.imagens || [])
+          .filter((m: MediaDto) => m.url) // Filtrar imagens sem URL
           .map((m: MediaDto) => ({ url: m.url, orderIndex: m.orderIndex || 0 }))
           .sort((a, b) => a.orderIndex - b.orderIndex),
         depoimentos: detail.testemunhos?.map((t: any) => ({ texto: t.descricao, casal: t.nome })) || []

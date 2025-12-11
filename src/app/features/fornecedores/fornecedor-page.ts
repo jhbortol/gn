@@ -23,8 +23,6 @@ export class FornecedorPageComponent implements OnInit {
     if (identifier) {
       this.fornecedores.getById(identifier).subscribe(f => {
         this.fornecedor = f;
-        console.log('Fornecedor carregado:', f);
-        console.log('Facebook:', f.facebook);
         this.trackPageView();
         // For OnPush change detection, ensure view updates after async data arrives
         this.cdr.markForCheck();
@@ -72,5 +70,12 @@ export class FornecedorPageComponent implements OnInit {
     const facebook = this.fornecedor?.facebook || '';
     const cleaned = facebook.replace('@', '').trim();
     return cleaned ? `https://facebook.com/${cleaned}` : '#';
+  }
+
+  getMapsLink(): string {
+    const endereco = this.fornecedor?.endereco || '';
+    if (!endereco.trim()) return '#';
+    const encoded = encodeURIComponent(endereco);
+    return `https://www.google.com/maps/search/${encoded}`;
   }
 }

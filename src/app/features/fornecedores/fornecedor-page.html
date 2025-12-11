@@ -27,12 +27,11 @@
         <div class="grid grid-cols-2 gap-4">
           <ng-container *ngFor="let img of fornecedor.imagens; let i = index">
               <img (click)="openImage(img.url)" 
-                [ngSrc]="img.url" 
+                [src]="img.url" 
                 alt="imagem" 
                  loading="lazy"
                  decoding="async"
                  fetchpriority="low"
-                 width="320" height="160"
                  class="w-full h-40 object-cover rounded-xl cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105" />
           </ng-container>
         </div>

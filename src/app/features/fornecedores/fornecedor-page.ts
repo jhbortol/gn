@@ -65,4 +65,17 @@ export class FornecedorPageComponent implements OnInit {
     const username = instagram.replace('@', '').trim();
     return username ? `https://instagram.com/${username}` : '#';
   }
+
+  getFacebookLink(): string {
+    const facebook = this.fornecedor?.facebook || '';
+    const cleaned = facebook.replace('@', '').trim();
+    return cleaned ? `https://facebook.com/${cleaned}` : '#';
+  }
+
+  getMapsLink(): string {
+    const endereco = this.fornecedor?.endereco || '';
+    if (!endereco.trim()) return '#';
+    const encoded = encodeURIComponent(endereco);
+    return `https://www.google.com/maps/search/${encoded}`;
+  }
 }

@@ -26,13 +26,12 @@
         <h3 class="font-serif font-bold text-2xl text-gray-900 mb-6">Galeria de Fotos</h3>
         <div class="grid grid-cols-2 gap-4">
           <ng-container *ngFor="let img of fornecedor.imagens; let i = index">
-              <img (click)="openImage(img)" 
-                [ngSrc]="img" 
+              <img (click)="openImage(img.url)" 
+                [src]="img.url" 
                 alt="imagem" 
                  loading="lazy"
                  decoding="async"
                  fetchpriority="low"
-                 width="320" height="160"
                  class="w-full h-40 object-cover rounded-xl cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105" />
           </ng-container>
         </div>
@@ -85,6 +84,17 @@
              class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
             Instagram
           </a>
+          <a *ngIf="fornecedor.facebook" 
+             [href]="getFacebookLink()" 
+             target="_blank" 
+             [attr.data-event-category]="'Contato'"
+             [attr.data-event-action]="'Clique Facebook'"
+             [attr.data-vendor-id]="fornecedor.id"
+             [attr.data-vendor-name]="fornecedor.nome"
+             [attr.data-vendor-category]="fornecedor.categoria"
+             class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
+            Facebook
+          </a>
           <a *ngIf="fornecedor.website" 
              [href]="getSiteLink()" 
              target="_blank" 
@@ -107,6 +117,23 @@
           <div *ngIf="fornecedor.email" class="flex items-center gap-2 mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
             {{fornecedor.email}}
+          </div>
+          <div *ngIf="fornecedor.endereco" class="flex items-center gap-2 mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span>{{fornecedor.endereco}}</span>
+            <a [href]="getMapsLink()" 
+               target="_blank"
+               [attr.data-event-category]="'Contato'"
+               [attr.data-event-action]="'Clique Mapa'"
+               [attr.data-vendor-id]="fornecedor.id"
+               [attr.data-vendor-name]="fornecedor.nome"
+               class="text-rose-600 hover:text-rose-700 text-xs font-semibold ml-2 whitespace-nowrap">
+              Ver no mapa ↗
+            </a>
+          </div>
+          <div *ngIf="fornecedor.horarioFuncionamento" class="flex items-center gap-2 mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            {{fornecedor.horarioFuncionamento}}
           </div>
           <!-- whatsapp/instagram removidos pois não estão presentes no DTO atual -->
         </div>

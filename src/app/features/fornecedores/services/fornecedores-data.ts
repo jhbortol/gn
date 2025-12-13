@@ -21,7 +21,7 @@ export interface FornecedorListDto {
 }
 
 export interface MediaDto {
-  id: string; url: string; filename?: string; contentType?: string; isPrimary?: boolean;
+  id: string; url: string; filename?: string; contentType?: string; isPrimary?: boolean; orderIndex?: number;
 }
 
 export interface FornecedorDetailDto {
@@ -30,10 +30,13 @@ export interface FornecedorDetailDto {
   slug: string;
   descricao?: string;
   cidade?: string;
+  endereco?: string;
+  horarioFuncionamento?: string;
   telefone?: string;
   email?: string;
   website?: string;
   instagram?: string;
+  facebook?: string;
   destaque?: boolean;
   seloFornecedor?: boolean;
   ativo?: boolean;
@@ -53,17 +56,20 @@ export interface Fornecedor {
   slug: string;
   descricao?: string;
   cidade?: string;
+  endereco?: string;
+  horarioFuncionamento?: string;
   telefone?: string;
   email?: string;
   website?: string;
   instagram?: string;
+  facebook?: string;
   destaque?: boolean;
   seloFornecedor?: boolean;
   ativo?: boolean;
   rating?: number | null;
   visitas?: number;
   categoria?: string; // apenas o nome para compatibilidade prévia
-  imagens: string[]; // URLs derivadas de detail.imagens
+  imagens: Array<{ url: string; orderIndex: number }>; // URLs com ordem
   depoimentos?: Array<{ texto: string; casal: string }>; // adaptado de testemunhos
 }
 
@@ -133,18 +139,24 @@ export class FornecedoresData {
         slug: detail.slug,
         descricao: detail.descricao,
         cidade: detail.cidade,
+        endereco: detail.endereco,
+        horarioFuncionamento: detail.horarioFuncionamento,
         telefone: detail.telefone,
         email: detail.email,
         website: detail.website,
         instagram: detail.instagram,
+        facebook: detail.facebook,
         destaque: detail.destaque,
         seloFornecedor: detail.seloFornecedor,
         ativo: detail.ativo,
         rating: detail.rating,
         visitas: detail.visitas,
         categoria: detail.categoria?.nome,
-        imagens: detail.imagens?.map(m => m.url) || [],
-        depoimentos: detail.testemunhos?.map(t => ({ texto: t.descricao, casal: t.nome })) || []
+        imagens: (detail.imagens || [])
+          .filter((m: MediaDto) => m.url) // Filtrar imagens sem URL
+          .map((m: MediaDto) => ({ url: m.url, orderIndex: m.orderIndex || 0 }))
+          .sort((a, b) => a.orderIndex - b.orderIndex),
+        depoimentos: detail.testemunhos?.map((t: any) => ({ texto: t.descricao, casal: t.nome })) || []
       })),
       catchError(err => { throw err; })
     );

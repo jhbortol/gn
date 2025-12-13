@@ -1,0 +1,48 @@
+<div class="painel-container" [class.sidebar-collapsed]="!sidebarOpen">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h1 class="logo">Guia Noivas</h1>
+      <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a 
+        *ngFor="let item of menuItems"
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        <span class="nav-icon">{{item.icon}}</span>
+        <span class="nav-label">{{item.label}}</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-ghost" (click)="viewSite()">
+        <span class="nav-icon">🌐</span>
+        <span class="nav-label">Ver Site</span>
+      </button>
+      <button class="btn-ghost" (click)="logout()">
+        <span class="nav-icon">🚪</span>
+        <span class="nav-label">Sair</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <header class="topbar">
+      <button class="mobile-menu-btn" (click)="toggleSidebar()">☰</button>
+      <div class="topbar-user">
+        <span class="user-name">{{userName}}</span>
+      </div>
+    </header>
+
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
+
+<app-toast-container></app-toast-container>

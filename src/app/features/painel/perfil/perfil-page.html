@@ -1,0 +1,139 @@
+<div class="perfil-header">
+  <h1>Meu Perfil</h1>
+  <p>Atualize as informações do seu negócio</p>
+</div>
+
+<div *ngIf="loading" class="loading-container">
+  <div class="spinner"></div>
+  <p>Carregando dados...</p>
+</div>
+
+<form *ngIf="!loading && fornecedor" [formGroup]="perfilForm" (ngSubmit)="onSubmit()" class="perfil-form">
+    <div class="form-card">
+      <h2>Informações Básicas</h2>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nome">Nome do Fornecedor *</label>
+          <input id="nome" type="text" formControlName="nome" class="form-control" />
+          <span class="form-hint">Este nome será exibido no site</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="descricao">Descrição</label>
+          <textarea id="descricao" formControlName="descricao" class="form-control" rows="6"
+            placeholder="Conte mais sobre seu negócio, serviços oferecidos, diferenciais..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="cidade">Cidade</label>
+          <input id="cidade" type="text" formControlName="cidade" class="form-control" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h2>Contato</h2>
+      
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="telefone">Telefone</label>
+          <input id="telefone" type="tel" formControlName="telefone" class="form-control" 
+            placeholder="(19) 99999-9999" />
+        </div>
+
+        <div class="form-group">
+          <label for="whatsApp">WhatsApp</label>
+          <input id="whatsApp" type="tel" formControlName="whatsApp" class="form-control" 
+            placeholder="5519999999999" />
+          <span class="form-hint">Apenas números com DDI e DDD</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" type="email" formControlName="email" class="form-control" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="website">Website</label>
+          <input id="website" type="url" formControlName="website" class="form-control" 
+            placeholder="https://seunegocio.com.br" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h2>Endereço e Horário</h2>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="endereco">Endereço Completo</label>
+          <input id="endereco" type="text" formControlName="endereco" class="form-control" 
+            placeholder="Rua, Número, Bairro" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="horarioFuncionamento">Horário de Funcionamento</label>
+          <textarea id="horarioFuncionamento" formControlName="horarioFuncionamento" 
+            class="form-control" rows="3"
+            placeholder="Ex: Seg-Sex: 9h-18h, Sáb: 9h-13h"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h2>Redes Sociais</h2>
+      
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="instagram">Instagram</label>
+          <input id="instagram" type="text" formControlName="instagram" class="form-control" 
+            placeholder="@seunegocio" />
+        </div>
+
+        <div class="form-group">
+          <label for="facebook">Facebook</label>
+          <input id="facebook" type="url" formControlName="facebook" class="form-control" 
+            placeholder="facebook.com/seunegocio" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card info-card">
+      <h2>Informações Somente Leitura</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Destaque:</span>
+          <span class="info-value">{{ fornecedor.destaque ? 'Sim' : 'Não' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Selo Fornecedor:</span>
+          <span class="info-value">{{ fornecedor.seloFornecedor ? 'Sim' : 'Não' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Publicado:</span>
+          <span class="info-value">{{ fornecedor.publicado ? 'Sim' : 'Não' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="loadFornecedor()">
+        Cancelar
+      </button>
+      <button type="submit" class="btn-primary" [disabled]="saving || perfilForm.invalid">
+        <span *ngIf="!saving">Salvar Alterações</span>
+        <span *ngIf="saving">Salvando...</span>
+      </button>
+    </div>
+  </form>

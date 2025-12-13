@@ -28,6 +28,10 @@ export const routes: Routes = [
         loadChildren: () => import('./features/anuncie/anuncie-module').then(m => m.AnuncieModule)
     },
 	{
+        path: 'painel',
+        loadChildren: () => import('./features/painel/painel-module').then(m => m.PainelModule)
+    },
+	{
 		path: 'contato',
 		loadChildren: () => import('./features/contato/contato-module').then(m => m.ContatoModule)
 	}

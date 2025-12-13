@@ -1,0 +1,179 @@
+<div class="testemunhos-page">
+  <div class="page-header">
+    <div class="header-content">
+      <div>
+        <h1>Testemunhos</h1>
+        <p class="subtitle">Gerencie os depoimentos de seus clientes</p>
+      </div>
+      <button class="btn-primary" (click)="openCreateModal()">
+        <span class="icon">➕</span>
+        Novo Testemunho
+      </button>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  @if (error()) {
+    <div class="alert alert-error">
+      <span>{{ error() }}</span>
+      <button class="close-btn" (click)="error.set(null)">&times;</button>
+    </div>
+  }
+
+  @if (successMessage()) {
+    <div class="alert alert-success">
+      <span>{{ successMessage() }}</span>
+      <button class="close-btn" (click)="successMessage.set(null)">&times;</button>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Carregando testemunhos...</p>
+    </div>
+  }
+
+  <!-- Testemunhos List -->
+  @if (!isLoading() && testemunhos().length > 0) {
+    <div class="testemunhos-list">
+      @for (testemunho of testemunhos(); track testemunho.id) {
+        <div class="testemunho-card" [class.inactive]="!testemunho.ativo">
+          <div class="card-header">
+            <div class="client-info">
+              <h3>{{ testemunho.nome || testemunho.nomeCliente }}</h3>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <p class="mensagem">{{ testemunho.descricao || testemunho.mensagem }}</p>
+          </div>
+
+          <div class="card-footer">
+            <div class="footer-info">
+              <span class="date">{{ testemunho.criadoEm | date:'dd/MM/yyyy' }}</span>
+            </div>
+
+            <div class="actions">
+              <button 
+                class="action-btn edit-btn"
+                (click)="openEditModal(testemunho)"
+                title="Editar">
+                ✏️
+              </button>
+              
+              <button 
+                class="action-btn delete-btn"
+                (click)="deleteTestemunho(testemunho.id)"
+                title="Excluir">
+                🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <button 
+          class="page-btn"
+          (click)="changePage(currentPage() - 1)"
+          [disabled]="currentPage() === 1">
+          ← Anterior
+        </button>
+
+        <div class="page-info">
+          Página {{ currentPage() }} de {{ totalPages() }} ({{ total() }} total)
+        </div>
+
+        <button 
+          class="page-btn"
+          (click)="changePage(currentPage() + 1)"
+          [disabled]="currentPage() === totalPages()">
+          Próxima →
+        </button>
+      </div>
+    }
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading() && testemunhos().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">💬</div>
+      <h3>Nenhum testemunho cadastrado</h3>
+      <p>Adicione depoimentos de clientes satisfeitos para aumentar sua credibilidade.</p>
+      <button class="btn-primary-large" (click)="openCreateModal()">
+        Criar Primeiro Testemunho
+      </button>
+    </div>
+  }
+</div>
+
+<!-- Modal -->
+@if (showModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ isEditing() ? 'Editar Testemunho' : 'Novo Testemunho' }}</h2>
+        <button class="close-modal-btn" (click)="closeModal()">&times;</button>
+      </div>
+
+      <form [formGroup]="testemunhoForm" (ngSubmit)="saveTestemunho()">
+        <div class="modal-body">
+          <!-- Nome Cliente -->
+          <div class="form-group">
+            <label for="nome">Nome do Cliente *</label>
+            <input 
+              type="text" 
+              id="nome"
+              formControlName="nome"
+              [class.invalid]="isFieldInvalid('nome')"
+              placeholder="Digite o nome completo">
+            @if (isFieldInvalid('nome')) {
+              <span class="error-message">{{ getFieldError('nome') }}</span>
+            }
+          </div>
+
+          <!-- Mensagem -->
+          <div class="form-group">
+            <label for="descricao">Mensagem *</label>
+            <textarea 
+              id="descricao"
+              formControlName="descricao"
+              rows="5"
+              [class.invalid]="isFieldInvalid('descricao')"
+              placeholder="Digite o depoimento do cliente..."
+              maxlength="2000"></textarea>
+            <div class="char-count">
+              {{ testemunhoForm.get('descricao')?.value?.length || 0 }} / 2000
+            </div>
+            @if (isFieldInvalid('descricao')) {
+              <span class="error-message">{{ getFieldError('descricao') }}</span>
+            }
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button 
+            type="button" 
+            class="btn-secondary"
+            (click)="closeModal()"
+            [disabled]="isSaving()">
+            Cancelar
+          </button>
+          
+          <button 
+            type="submit" 
+            class="btn-primary"
+            [disabled]="isSaving() || testemunhoForm.invalid">
+            {{ isSaving() ? 'Salvando...' : (isEditing() ? 'Atualizar' : 'Criar') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

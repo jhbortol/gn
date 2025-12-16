@@ -1,48 +1,87 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
+	// Rota raiz - redireciona para /piracicaba (cidade padrão)
 	{
 		path: '',
-		loadChildren: () => import('./features/home/home-module').then(m => m.HomeModule)
+		redirectTo: '/piracicaba',
+		pathMatch: 'full'
 	},
+	// Rotas por cidade - estrutura escalável para futuras cidades (limeira, americana, etc)
 	{
-		path: 'piracicaba',
-		loadChildren: () => import('./features/home/home-module').then(m => m.HomeModule)
+		path: ':cidade',
+		children: [
+			{
+				path: '',
+				loadChildren: () => import('./features/home/home-module').then(m => m.HomeModule)
+			},
+			{
+				path: 'termos',
+				redirectTo: 'institucional/termos',
+				pathMatch: 'full'
+			},
+			{
+				path: 'categorias',
+				loadChildren: () => import('./features/categorias/categorias-module').then(m => m.CategoriasModule)
+			},
+			{
+				path: 'fornecedores',
+				loadChildren: () => import('./features/fornecedores/fornecedores-module').then(m => m.FornecedoresModule)
+			},
+			{
+				path: 'institucional',
+				loadChildren: () => import('./features/institucional/institucional-module').then(m => m.InstitucionalModule)
+			},
+			{
+				path: 'anuncie',
+				loadChildren: () => import('./features/anuncie/anuncie-module').then(m => m.AnuncieModule)
+			},
+			{
+				path: 'contato',
+				loadChildren: () => import('./features/contato/contato-module').then(m => m.ContatoModule)
+			}
+		]
 	},
+	// Painel de fornecedor - não dependente de cidade (admin global)
+	{
+		path: 'painel',
+		loadChildren: () => import('./features/painel/painel-module').then(m => m.PainelModule)
+	},
+	// Rotas legadas sem cidade - redirecionar para /piracicaba (compatibilidade)
 	{
 		path: 'termos',
-		redirectTo: 'institucional/termos',
+		redirectTo: '/piracicaba/termos',
 		pathMatch: 'full'
 	},
 	{
 		path: 'categorias',
-		loadChildren: () => import('./features/categorias/categorias-module').then(m => m.CategoriasModule)
+		redirectTo: '/piracicaba/categorias',
+		pathMatch: 'full'
 	},
 	{
 		path: 'fornecedores',
-		loadChildren: () => import('./features/fornecedores/fornecedores-module').then(m => m.FornecedoresModule)
+		redirectTo: '/piracicaba/fornecedores',
+		pathMatch: 'full'
 	},
 	{
 		path: 'institucional',
-		loadChildren: () => import('./features/institucional/institucional-module').then(m => m.InstitucionalModule)
+		redirectTo: '/piracicaba/institucional',
+		pathMatch: 'full'
 	},
-    {
-        path: 'anuncie',
-        loadChildren: () => import('./features/anuncie/anuncie-module').then(m => m.AnuncieModule)
-    },
 	{
-        path: 'painel',
-        loadChildren: () => import('./features/painel/painel-module').then(m => m.PainelModule)
-    },
+		path: 'anuncie',
+		redirectTo: '/piracicaba/anuncie',
+		pathMatch: 'full'
+	},
 	{
 		path: 'contato',
-		loadChildren: () => import('./features/contato/contato-module').then(m => m.ContatoModule)
+		redirectTo: '/piracicaba/contato',
+		pathMatch: 'full'
 	},
+	// Catch-all - redireciona para painel/login
 	{
 		path: '**',
 		redirectTo: '/painel/login',
 		pathMatch: 'full'
-	}
-];
 	}
 ];

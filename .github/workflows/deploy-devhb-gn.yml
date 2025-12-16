@@ -26,7 +26,7 @@ jobs:
       - name: Build Angular (browser) with base href for custom domain
         run: |
           npx ng build --configuration development --base-href /
-          cp public/_redirects dist/guia-noivas/browser/_redirects
+          cp public/404.html dist/guia-noivas/browser/404.html
 
       - name: Deploy to external repo jhbortol/gn via gh-pages
         uses: peaceiris/actions-gh-pages@v3

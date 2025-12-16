@@ -1,10 +1,8 @@
-
-
-
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon/icon';
 import { RouterModule } from '@angular/router';
+import { CidadeService } from '../../core/cidade.service';
 
 @Component({
   selector: 'app-navbar',
@@ -18,6 +16,7 @@ export class NavbarComponent {
   @Output() navigateTo = new EventEmitter<string>();
   @Output() scrollToCategories = new EventEmitter<void>();
   
+  private cidadeService = inject(CidadeService);
   mobileMenuOpen = false;
 
   toggleMobileMenu() {
@@ -26,5 +25,9 @@ export class NavbarComponent {
 
   closeMobileMenu() {
     this.mobileMenuOpen = false;
+  }
+
+  buildUrl(path: string): string {
+    return this.cidadeService.buildUrl(path);
   }
 }

@@ -31,7 +31,7 @@
 				</button>
 				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 flex-1">
 					<div *ngFor="let fornecedor of (currentPageItems$ | async)" class="border border-gray-100 rounded-lg overflow-hidden shadow-sm">
-						<a [routerLink]="['/fornecedores', fornecedor.slug]" [attr.data-event-category]="'Navigation'" [attr.data-event-action]="'Click Card - Busca'" [attr.data-vendor-id]="fornecedor.id" [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria?.nome" class="block">
+						<a [routerLink]="buildUrl(['fornecedores', fornecedor.slug])" [attr.data-event-category]="'Navigation'" [attr.data-event-action]="'Click Card - Busca'" [attr.data-vendor-id]="fornecedor.id" [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria?.nome" class="block">
 							<div class="h-32 bg-gray-50" style="aspect-ratio:300/220;">
 								<img [ngSrc]="fornecedor.primaryImage?.url || 'assets/fornecedores/placeholder.jpg'" [alt]="fornecedor.nome" loading="lazy" decoding="async" width="300" height="220" class="w-full h-full object-cover" />
 							</div>

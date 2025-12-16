@@ -1,9 +1,10 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FornecedoresData, FornecedorListDto } from '../../fornecedores/services/fornecedores-data';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { CidadeService } from '../../../core/cidade.service';
 
 export interface DestaqueView {
   id: string;
@@ -31,6 +32,8 @@ export class DestaquesSemanaComponent implements OnInit {
   @Output() displayed = new EventEmitter<string[]>();
 
   destaques$!: Observable<DestaqueView[]>;
+
+  private cidadeService = inject(CidadeService);
 
   constructor(private fornecedoresData: FornecedoresData) {}
 
@@ -67,5 +70,14 @@ export class DestaquesSemanaComponent implements OnInit {
         return result;
       })
     );
+  }
+
+  buildUrl(path: string | string[]): string {
+    if (Array.isArray(path)) {
+      const [base, ...rest] = path;
+      const fullPath = rest.length ? `${base}/${rest.join('/')}` : base;
+      return this.cidadeService.buildUrl(fullPath);
+    }
+    return this.cidadeService.buildUrl(path);
   }
 }

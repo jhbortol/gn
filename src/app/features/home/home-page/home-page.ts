@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../../../shared/icon/icon';
@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { CategoriasData, Categoria } from '../../categorias/services/categorias-data';
 import { FornecedoresData, FornecedorListDto } from '../../fornecedores/services/fornecedores-data';
 import { forkJoin, map, switchMap, Observable, BehaviorSubject, of, combineLatest } from 'rxjs';
+import { CidadeService } from '../../../core/cidade.service';
 
 @Component({
   selector: 'app-home-page',
@@ -25,6 +26,8 @@ export class HomePageComponent {
   currentPageItems$!: Observable<FornecedorListDto[]>;
   buscaTerm: string = '';
   showResults = true;
+
+  private cidadeService = inject(CidadeService);
 
   constructor(private categoriasData: CategoriasData, private fornecedoresData: FornecedoresData) {
     this.categorias$ = this.categoriasData.getAll().pipe(
@@ -51,6 +54,15 @@ export class HomePageComponent {
     this.currentPageItems$ = combineLatest([this.resultPages$, this.currentPage$]).pipe(
       map(([pages, idx]) => pages.length > 0 ? pages[Math.min(Math.max(idx, 0), pages.length - 1)] : [])
     );
+  }
+
+  buildUrl(path: string | string[]): string {
+    if (Array.isArray(path)) {
+      const [base, ...rest] = path;
+      const fullPath = rest.length ? `${base}/${rest.join('/')}` : base;
+      return this.cidadeService.buildUrl(fullPath);
+    }
+    return this.cidadeService.buildUrl(path);
   }
 
   buscar() {

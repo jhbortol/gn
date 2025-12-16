@@ -1,7 +1,7 @@
 <section class="container mx-auto px-4 py-8">
   <!-- Breadcrumb -->
   <div class="mb-4">
-    <a routerLink="/" class="text-sm text-gray-600 hover:text-rose-600 transition-colors flex items-center">
+    <a [routerLink]="buildUrl('/')" class="text-sm text-gray-600 hover:text-rose-600 transition-colors flex items-center">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
       Voltar para Home
     </a>
@@ -71,7 +71,7 @@
 
         <!-- Action Button -->
         <div class="mt-auto">
-          <a [routerLink]="['/fornecedores', fornecedor.slug]" 
+           <a [routerLink]="buildUrl(['fornecedores', fornecedor.slug])" 
              [attr.data-event-category]="'Navigation'"
              [attr.data-event-action]="'Click Ver Perfil - Lista'"
              [attr.data-vendor-id]="fornecedor.id"

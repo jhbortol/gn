@@ -3,8 +3,7 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
 	{
 		path: '',
-		redirectTo: '/piracicaba',
-		pathMatch: 'full'
+		loadChildren: () => import('./features/home/home-module').then(m => m.HomeModule)
 	},
 	{
 		path: 'piracicaba',
@@ -43,5 +42,7 @@ export const routes: Routes = [
 		path: '**',
 		redirectTo: '/painel/login',
 		pathMatch: 'full'
+	}
+];
 	}
 ];

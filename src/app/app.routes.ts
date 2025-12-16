@@ -1,9 +1,13 @@
-
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
 	{
 		path: '',
+		redirectTo: '/piracicaba',
+		pathMatch: 'full'
+	},
+	{
+		path: 'piracicaba',
 		loadChildren: () => import('./features/home/home-module').then(m => m.HomeModule)
 	},
 	{
@@ -34,5 +38,10 @@ export const routes: Routes = [
 	{
 		path: 'contato',
 		loadChildren: () => import('./features/contato/contato-module').then(m => m.ContatoModule)
+	},
+	{
+		path: '**',
+		redirectTo: '/painel/login',
+		pathMatch: 'full'
 	}
 ];

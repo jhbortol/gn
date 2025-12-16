@@ -38,5 +38,10 @@ export const routes: Routes = [
 	{
 		path: 'contato',
 		loadChildren: () => import('./features/contato/contato-module').then(m => m.ContatoModule)
+	},
+	{
+		path: '**',
+		redirectTo: '/painel/login',
+		pathMatch: 'full'
 	}
 ];

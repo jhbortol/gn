@@ -103,9 +103,9 @@
           <label for="instagram">Instagram</label>
           <input id="instagram" type="text" formControlName="instagram" class="form-control" 
             placeholder="@seunegocio" />
-          <span class="form-hint">Ex: @seunegocio (apenas @ + usuário, sem URL)</span>
+          <span class="form-hint">Ex: &#64;seunegocio (apenas &#64; + usuário, sem URL)</span>
           <span class="form-error" *ngIf="perfilForm.get('instagram')?.hasError('invalidInstagram') && perfilForm.get('instagram')?.touched">
-            Instagram inválido. Deve começar com @ e conter apenas letras, números, pontos e underscores.
+            Instagram inválido. Deve começar com &#64; e conter apenas letras, números, pontos e underscores.
           </span>
         </div>
 

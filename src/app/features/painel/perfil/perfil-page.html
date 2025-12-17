@@ -43,13 +43,13 @@
         <div class="form-group">
           <label for="telefone">Telefone</label>
           <input id="telefone" type="tel" formControlName="telefone" class="form-control" 
-            placeholder="(19) 99999-9999" />
+            placeholder="(19) 99999-9999" (keypress)="onlyNumbers($event)" />
         </div>
 
         <div class="form-group">
           <label for="whatsApp">WhatsApp</label>
           <input id="whatsApp" type="tel" formControlName="whatsApp" class="form-control" 
-            placeholder="5519999999999" />
+            placeholder="5519999999999" (keypress)="onlyNumbers($event)" />
           <span class="form-hint">Apenas números com DDI e DDD</span>
         </div>
       </div>
@@ -103,12 +103,20 @@
           <label for="instagram">Instagram</label>
           <input id="instagram" type="text" formControlName="instagram" class="form-control" 
             placeholder="@seunegocio" />
+          <span class="form-hint">Ex: @seunegocio (apenas @ + usuário, sem URL)</span>
+          <span class="form-error" *ngIf="perfilForm.get('instagram')?.hasError('invalidInstagram') && perfilForm.get('instagram')?.touched">
+            Instagram inválido. Deve começar com @ e conter apenas letras, números, pontos e underscores.
+          </span>
         </div>
 
         <div class="form-group">
           <label for="facebook">Facebook</label>
           <input id="facebook" type="url" formControlName="facebook" class="form-control" 
-            placeholder="facebook.com/seunegocio" />
+            placeholder="https://www.facebook.com/seunegocio" />
+          <span class="form-hint">Ex: https://www.facebook.com/seunegocio (URL completa do perfil)</span>
+          <span class="form-error" *ngIf="perfilForm.get('facebook')?.hasError('invalidFacebook') && perfilForm.get('facebook')?.touched">
+            URL do Facebook inválida. Use o link completo do seu perfil ou página.
+          </span>
         </div>
       </div>
     </div>

@@ -34,8 +34,8 @@ export class PerfilPageComponent implements OnInit {
       whatsApp: ['', Validators.maxLength(50)],
       endereco: ['', Validators.maxLength(300)],
       horarioFuncionamento: ['', Validators.maxLength(500)],
-      instagram: ['', Validators.maxLength(200)],
-      facebook: ['', Validators.maxLength(200)]
+      instagram: ['', [Validators.maxLength(200), this.instagramValidator.bind(this)]],
+      facebook: ['', [Validators.maxLength(200), this.facebookValidator.bind(this)]]
     });
   }
 
@@ -66,6 +66,66 @@ export class PerfilPageComponent implements OnInit {
     } catch {
       return { invalidUrl: true };
     }
+  }
+
+  /**
+   * Permite apenas números para telefone e WhatsApp
+   */
+  onlyNumbers(event: KeyboardEvent): void {
+    const char = String.fromCharCode(event.which);
+    if (!/[0-9]/.test(char)) {
+      event.preventDefault();
+    }
+  }
+
+  /**
+   * Valida Instagram - deve começar com @ e conter apenas letras, números, pontos e underscores
+   * Se vazio, permite (campo opcional). Se preenchido, deve ser válido.
+   */
+  private instagramValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    
+    // Se vazio, é válido (campo opcional)
+    if (!value || value.trim() === '') {
+      return null;
+    }
+    
+    // Instagram handle deve começar com @
+    if (!value.startsWith('@')) {
+      return { invalidInstagram: { message: 'Deve começar com @' } };
+    }
+    
+    // Remove o @ para validar o resto
+    const handle = value.substring(1);
+    
+    // Instagram handles podem ter: letras, números, pontos e underscores
+    const instagramPattern = /^[a-zA-Z0-9._]+$/;
+    if (!instagramPattern.test(handle)) {
+      return { invalidInstagram: { message: 'Caracteres inválidos' } };
+    }
+    
+    return null;
+  }
+
+  /**
+   * Valida Facebook - deve ser uma URL válida (facebook.com/... ou fb.com/...)
+   * Se vazio, permite (campo opcional). Se preenchido, deve ser URL válida.
+   */
+  private facebookValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    
+    // Se vazio, é válido (campo opcional)
+    if (!value || value.trim() === '') {
+      return null;
+    }
+    
+    // Facebook URL pode começar com facebook.com, fb.com, ou https://
+    const facebookPattern = /^(https?:\/\/)?(www\.)?(facebook\.com|fb\.com|m\.facebook\.com)\//i;
+    if (!facebookPattern.test(value)) {
+      return { invalidFacebook: { message: 'URL do Facebook inválida' } };
+    }
+    
+    return null;
   }
 
   loadFornecedor(): void {

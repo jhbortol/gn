@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { SupplierService, FornecedorDto, FornecedorUpdateDto } from '../services/supplier.service';
 import { ToastService } from '../../../shared/services/toast.service';
 
@@ -30,7 +30,7 @@ export class PerfilPageComponent implements OnInit {
       cidade: ['', Validators.maxLength(100)],
       telefone: ['', Validators.maxLength(50)],
       email: ['', [Validators.email, Validators.maxLength(200)]],
-      website: ['', Validators.maxLength(250)],
+      website: ['', [Validators.maxLength(250), this.urlValidator.bind(this)]],
       whatsApp: ['', Validators.maxLength(50)],
       endereco: ['', Validators.maxLength(300)],
       horarioFuncionamento: ['', Validators.maxLength(500)],
@@ -41,6 +41,31 @@ export class PerfilPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadFornecedor();
+  }
+
+  /**
+   * Valida se o website é uma URL válida (http://, https://, ou ftp://)
+   * Se vazio, permite (validação opcional). Se preenchido, deve ser URL válida.
+   */
+  private urlValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    
+    // Se vazio, é válido (campo opcional)
+    if (!value || value.trim() === '') {
+      return null;
+    }
+    
+    // Se preenchido, deve ser URL válida
+    try {
+      // Expressão regular para validar URLs com http, https ou ftp
+      const urlPattern = /^(https?:\/\/|ftp:\/\/)([^\s/$.?#].[^\s]*)$/i;
+      if (!urlPattern.test(value)) {
+        return { invalidUrl: true };
+      }
+      return null;
+    } catch {
+      return { invalidUrl: true };
+    }
   }
 
   loadFornecedor(): void {
@@ -84,6 +109,7 @@ export class PerfilPageComponent implements OnInit {
 
   onSubmit(): void {
     if (this.perfilForm.invalid) {
+      this.toastService.error('Formulário inválido. Verifique os campos.');
       return;
     }
 

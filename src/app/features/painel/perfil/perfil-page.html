@@ -66,6 +66,10 @@
           <label for="website">Website</label>
           <input id="website" type="url" formControlName="website" class="form-control" 
             placeholder="https://seunegocio.com.br" />
+          <span class="form-hint">Deve começar com http://, https:// ou ftp://</span>
+          <span class="form-error" *ngIf="perfilForm.get('website')?.hasError('invalidUrl') && perfilForm.get('website')?.touched">
+            Website inválido. Use um URL válido (ex: https://exemplo.com)
+          </span>
         </div>
       </div>
     </div>

@@ -68,8 +68,16 @@ export class FornecedorPageComponent implements OnInit {
 
   getFacebookLink(): string {
     const facebook = this.fornecedor?.facebook || '';
+    if (!facebook.trim()) return '#';
+    
+    // Se já for uma URL completa, retorna direto
+    if (facebook.startsWith('http://') || facebook.startsWith('https://')) {
+      return facebook;
+    }
+    
+    // Caso contrário, adiciona o prefixo
     const cleaned = facebook.replace('@', '').trim();
-    return cleaned ? `https://facebook.com/${cleaned}` : '#';
+    return `https://facebook.com/${cleaned}`;
   }
 
   getMapsLink(): string {

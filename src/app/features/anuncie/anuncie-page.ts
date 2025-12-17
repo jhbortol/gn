@@ -12,6 +12,16 @@ export class AnunciePageComponent {
   submitted = false;
   error = false;
 
+  /**
+   * Permite apenas números para telefone
+   */
+  onlyNumbers(event: KeyboardEvent): void {
+    const char = String.fromCharCode(event.which);
+    if (!/[0-9]/.test(char)) {
+      event.preventDefault();
+    }
+  }
+
   onSubmit(event: Event) {
     event.preventDefault();
     const form = event.target as HTMLFormElement;

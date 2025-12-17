@@ -7,19 +7,19 @@
     <div>
       <h3 class="font-bold text-lg mb-2">Categorias</h3>
       <ul class="text-sm space-y-1">
-        <li><a [routerLink]="['/categorias', 'fotografia']" class="hover:underline">Fotografia</a></li>
-        <li><a [routerLink]="['/categorias', 'buffet']" class="hover:underline">Buffet</a></li>
-        <li><a [routerLink]="['/categorias', 'decoracao']" class="hover:underline">Decoração</a></li>
-        <li><a [routerLink]="['/categorias', 'espacos']" class="hover:underline">Espaços</a></li>
-        <li><a [routerLink]="['/categorias', 'vestidos']" class="hover:underline">Vestidos</a></li>
+        <li><a [routerLink]="buildUrl(['categorias', 'fotografia'])" class="hover:underline">Fotografia</a></li>
+        <li><a [routerLink]="buildUrl(['categorias', 'buffet'])" class="hover:underline">Buffet</a></li>
+        <li><a [routerLink]="buildUrl(['categorias', 'decoracao'])" class="hover:underline">Decoração</a></li>
+        <li><a [routerLink]="buildUrl(['categorias', 'espacos'])" class="hover:underline">Espaços</a></li>
+        <li><a [routerLink]="buildUrl(['categorias', 'vestidos'])" class="hover:underline">Vestidos</a></li>
       </ul>
     </div>
     <div>
       <h3 class="font-bold text-lg mb-2">Institucional</h3>
       <ul class="text-sm space-y-1">
-        <li><a [routerLink]="['/institucional']" class="hover:underline">Sobre Nós</a></li>
-        <li><a [routerLink]="['/contato']" class="hover:underline">Contato</a></li>
-        <li><a [routerLink]="['/institucional','termos']" class="hover:underline">Termos</a></li>
+        <li><a [routerLink]="buildUrl('institucional')" class="hover:underline">Sobre Nós</a></li>
+        <li><a [routerLink]="buildUrl('contato')" class="hover:underline">Contato</a></li>
+        <li><a [routerLink]="buildUrl(['institucional', 'termos'])" class="hover:underline">Termos</a></li>
       </ul>
     </div>
     <div>

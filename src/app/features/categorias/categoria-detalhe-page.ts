@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -6,6 +6,7 @@ import { FornecedoresData, FornecedorListDto } from '../../features/fornecedores
 import { CategoriasData } from './services/categorias-data';
 import { Observable, switchMap, BehaviorSubject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { CidadeService } from '../../core/cidade.service';
 
 @Component({
   selector: 'app-categoria-detalhe-page',
@@ -22,6 +23,8 @@ export class CategoriaDetalhePageComponent {
   destaquesCategoria$: Observable<FornecedorListDto[]>;
   sortOrder$ = new BehaviorSubject<string>('relevante');
   sortedFornecedores$: Observable<FornecedorListDto[]>;
+
+  private cidadeService = inject(CidadeService);
 
   constructor(
     private route: ActivatedRoute,
@@ -44,6 +47,15 @@ export class CategoriaDetalhePageComponent {
     this.sortedFornecedores$ = combineLatest([this.fornecedores$, this.sortOrder$]).pipe(
       map(([list, order]) => this.sortFornecedores(list, order))
     );
+  }
+
+  buildUrl(path: string | string[]): string {
+    if (Array.isArray(path)) {
+      const [base, ...rest] = path;
+      const fullPath = rest.length ? `${base}/${rest.join('/')}` : base;
+      return this.cidadeService.buildUrl(fullPath);
+    }
+    return this.cidadeService.buildUrl(path);
   }
 
   onSortChange(event: Event): void {

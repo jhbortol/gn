@@ -22,7 +22,7 @@
           <ul class="space-y-1">
             <li *ngFor="let fornecedor of item.fornecedores" class="flex items-start text-sm">
               <span class="mt-[6px] w-2 h-2 rounded-full bg-rose-500 inline-block mr-2"></span>
-              <a [routerLink]="['/fornecedores', fornecedor.slug]" 
+                <a [routerLink]="buildUrl(['fornecedores', fornecedor.slug])" 
                  [attr.data-event-category]="'Navigation'"
                  [attr.data-event-action]="'Click Destaque - Categoria'"
                  [attr.data-vendor-id]="fornecedor.id"
@@ -32,7 +32,7 @@
             </li>
           </ul>
         </div>
-          <a [routerLink]="['/categorias', item.categoria.slug]" 
+          <a [routerLink]="buildUrl(['categorias', item.categoria.slug])" 
             class="mt-auto block px-6 py-3 border border-rose-400 text-rose-600 bg-white rounded-lg font-semibold hover:bg-rose-50 transition-all duration-300 text-center shadow-sm hover:shadow-md">
           Ver todos fornecedores
         </a>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { SupplierService, FornecedorDto, FornecedorUpdateDto } from '../services/supplier.service';
 import { ToastService } from '../../../shared/services/toast.service';
 
@@ -30,17 +30,102 @@ export class PerfilPageComponent implements OnInit {
       cidade: ['', Validators.maxLength(100)],
       telefone: ['', Validators.maxLength(50)],
       email: ['', [Validators.email, Validators.maxLength(200)]],
-      website: ['', Validators.maxLength(250)],
+      website: ['', [Validators.maxLength(250), this.urlValidator.bind(this)]],
       whatsApp: ['', Validators.maxLength(50)],
       endereco: ['', Validators.maxLength(300)],
       horarioFuncionamento: ['', Validators.maxLength(500)],
-      instagram: ['', Validators.maxLength(200)],
-      facebook: ['', Validators.maxLength(200)]
+      instagram: ['', [Validators.maxLength(200), this.instagramValidator.bind(this)]],
+      facebook: ['', [Validators.maxLength(200), this.facebookValidator.bind(this)]]
     });
   }
 
   ngOnInit(): void {
     this.loadFornecedor();
+  }
+
+  /**
+   * Valida se o website é uma URL válida (http://, https://, ou ftp://)
+   * Se vazio, permite (validação opcional). Se preenchido, deve ser URL válida.
+   */
+  private urlValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    
+    // Se vazio, é válido (campo opcional)
+    if (!value || value.trim() === '') {
+      return null;
+    }
+    
+    // Se preenchido, deve ser URL válida
+    try {
+      // Expressão regular para validar URLs com http, https ou ftp
+      const urlPattern = /^(https?:\/\/|ftp:\/\/)([^\s/$.?#].[^\s]*)$/i;
+      if (!urlPattern.test(value)) {
+        return { invalidUrl: true };
+      }
+      return null;
+    } catch {
+      return { invalidUrl: true };
+    }
+  }
+
+  /**
+   * Permite apenas números para telefone e WhatsApp
+   */
+  onlyNumbers(event: KeyboardEvent): void {
+    const char = String.fromCharCode(event.which);
+    if (!/[0-9]/.test(char)) {
+      event.preventDefault();
+    }
+  }
+
+  /**
+   * Valida Instagram - deve começar com @ e conter apenas letras, números, pontos e underscores
+   * Se vazio, permite (campo opcional). Se preenchido, deve ser válido.
+   */
+  private instagramValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    
+    // Se vazio, é válido (campo opcional)
+    if (!value || value.trim() === '') {
+      return null;
+    }
+    
+    // Instagram handle deve começar com @
+    if (!value.startsWith('@')) {
+      return { invalidInstagram: { message: 'Deve começar com @' } };
+    }
+    
+    // Remove o @ para validar o resto
+    const handle = value.substring(1);
+    
+    // Instagram handles podem ter: letras, números, pontos e underscores
+    const instagramPattern = /^[a-zA-Z0-9._]+$/;
+    if (!instagramPattern.test(handle)) {
+      return { invalidInstagram: { message: 'Caracteres inválidos' } };
+    }
+    
+    return null;
+  }
+
+  /**
+   * Valida Facebook - deve ser uma URL válida (facebook.com/... ou fb.com/...)
+   * Se vazio, permite (campo opcional). Se preenchido, deve ser URL válida.
+   */
+  private facebookValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    
+    // Se vazio, é válido (campo opcional)
+    if (!value || value.trim() === '') {
+      return null;
+    }
+    
+    // Facebook URL pode começar com facebook.com, fb.com, ou https://
+    const facebookPattern = /^(https?:\/\/)?(www\.)?(facebook\.com|fb\.com|m\.facebook\.com)\//i;
+    if (!facebookPattern.test(value)) {
+      return { invalidFacebook: { message: 'URL do Facebook inválida' } };
+    }
+    
+    return null;
   }
 
   loadFornecedor(): void {
@@ -84,6 +169,7 @@ export class PerfilPageComponent implements OnInit {
 
   onSubmit(): void {
     if (this.perfilForm.invalid) {
+      this.toastService.error('Formulário inválido. Verifique os campos.');
       return;
     }
 

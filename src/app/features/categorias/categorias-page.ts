@@ -1,10 +1,11 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CategoriasData, Categoria } from './services/categorias-data';
 import { Observable } from 'rxjs';
 import { FornecedoresData, FornecedorListDto } from '../fornecedores/services/fornecedores-data';
 import { forkJoin, map, switchMap } from 'rxjs';
+import { CidadeService } from '../../core/cidade.service';
 
 @Component({
   selector: 'app-categorias-page',
@@ -16,6 +17,8 @@ import { forkJoin, map, switchMap } from 'rxjs';
 })
 export class CategoriasPageComponent {
   categoriasComFornecedores$!: Observable<Array<{ categoria: Categoria; fornecedores: FornecedorListDto[] }>>;
+
+  private cidadeService = inject(CidadeService);
 
   constructor(
     private categoriasData: CategoriasData,
@@ -34,6 +37,15 @@ export class CategoriasPageComponent {
         )
       ))
     );
+  }
+
+  buildUrl(path: string | string[]): string {
+    if (Array.isArray(path)) {
+      const [base, ...rest] = path;
+      const fullPath = rest.length ? `${base}/${rest.join('/')}` : base;
+      return this.cidadeService.buildUrl(fullPath);
+    }
+    return this.cidadeService.buildUrl(path);
   }
 
   private shuffleArray<T>(array: T[]): T[] {

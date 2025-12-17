@@ -23,16 +23,16 @@ jobs:
         run: npm ci
 
 
-      - name: Build Angular (browser) with base href for piracicaba
+      - name: Build Angular (browser) for custom domain
         run: |
-          npx ng build --configuration production --base-href /piracicaba/ --deploy-url /piracicaba/
+          npx ng build --configuration production --base-href /
 
       - name: Prepare deploy structure with SPA routing support
         run: |
-          mkdir -p deploy-root/piracicaba
-          cp -r dist/guia-noivas/browser/* deploy-root/piracicaba/
-          cp public/404.html deploy-root/piracicaba/404.html
-          touch deploy-root/piracicaba/.nojekyll
+          mkdir -p deploy-root
+          cp -r dist/guia-noivas/browser/* deploy-root/
+          cp public/404.html deploy-root/404.html
+          touch deploy-root/.nojekyll
 
       - name: Deploy to external repo jhbortol/guianoivas via gh-pages2
         uses: peaceiris/actions-gh-pages@v3

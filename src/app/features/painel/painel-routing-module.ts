@@ -16,6 +16,10 @@ const routes: Routes = [
     loadComponent: () => import('./reset-password/reset-password-page').then(m => m.ResetPasswordPage)
   },
   {
+    path: 'redefinir-senha',
+    loadComponent: () => import('./reset-password/reset-password-page').then(m => m.ResetPasswordPage)
+  },
+  {
     path: '',
     canActivate: [SupplierGuard],
     loadComponent: () => import('./layout/painel-layout').then(m => m.PainelLayoutComponent),

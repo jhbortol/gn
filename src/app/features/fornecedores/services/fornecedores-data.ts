@@ -75,12 +75,22 @@ export interface Fornecedor {
 
 @Injectable({ providedIn: 'root' })
 export class FornecedoresData {
-    search(nome: string, page = 1, pageSize = 12, destaque?: boolean): Observable<FornecedorListDto[]> {
-      const params: any = { nome, page, pageSize };
+    search(term: string, page = 1, pageSize = 12, destaque?: boolean): Observable<FornecedorListDto[]> {
+      const trimmed = (term || '').trim();
+      const params: any = { page, pageSize };
+
+      // Enviar q/nome/descricao para permitir busca por nome e descrição (compatibilidade com backend)
+      if (trimmed.length) {
+        params.q = trimmed;
+        params.nome = trimmed;
+        params.descricao = trimmed;
+      }
+
       if (destaque !== undefined) params.destaque = destaque;
       if (environment.FORNECEDOR_PUBLICADO !== null) {
         params.publicado = environment.FORNECEDOR_PUBLICADO;
       }
+
       return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/search`, params).pipe(map(r => r.data));
     }
   constructor(private api: ApiService) {}

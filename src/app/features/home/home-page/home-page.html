@@ -8,7 +8,7 @@
 			<div class="w-full sm:max-w-2xl md:max-w-3xl lg:max-w-5xl mx-auto bg-white rounded-full px-4 py-2 flex shadow-2xl hero-search-block mt-4 gap-2">
 				<div class="flex-grow flex items-center px-4 border-r border-gray-200 text-gray-500">
 					<app-icon name="search" [size]="20"></app-icon>
-					<input type="text" [(ngModel)]="buscaTerm" placeholder="O que você procura? (ex: Buffet, Foto...)" class="w-full p-2 outline-none text-gray-700 search-input" />
+					<input type="text" [(ngModel)]="buscaTerm" (keydown.enter)="buscar()" placeholder="O que você procura? (ex: Buffet, Foto...)" class="w-full p-2 outline-none text-gray-700 search-input" />
 				</div>
 				<button (click)="buscar()" class="bg-rose-600 text-white px-8 py-3 rounded-full font-bold hover:bg-rose-700 transition">BUSCAR</button>
 			</div>

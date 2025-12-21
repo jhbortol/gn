@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CidadeService } from '../../core/cidade.service';
 import { ApiService } from '../../core/api.service';
+import { TrackingService } from '../../core/tracking.service';
 
 @Component({
   selector: 'app-footer',
@@ -15,6 +16,7 @@ import { ApiService } from '../../core/api.service';
 export class FooterComponent {
   private cidadeService = inject(CidadeService);
   private api = inject(ApiService);
+  private tracking = inject(TrackingService);
 
   email = '';
   isSubmitting = signal(false);
@@ -44,6 +46,7 @@ export class FooterComponent {
     this.api.post('/newsletter/subscribe', { email: trimmed }).subscribe({
       next: () => {
         this.successMessage.set('Pronto! Você receberá novidades em breve.');
+        this.tracking.trackFormSubmit('newsletter');
         this.email = '';
         this.isSubmitting.set(false);
       },

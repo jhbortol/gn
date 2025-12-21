@@ -144,12 +144,4 @@ export class FornecedorPageComponent implements OnInit {
       vendorCategory: this.fornecedor?.categoria
     });
   }
-  }
-
-  getMapsLink(): string {
-    const endereco = this.fornecedor?.endereco || '';
-    if (!endereco.trim()) return '#';
-    const encoded = encodeURIComponent(endereco);
-    return `https://www.google.com/maps/search/${encoded}`;
-  }
 }

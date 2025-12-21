@@ -6,7 +6,7 @@ import { DestaquesSemanaComponent } from '../destaques-semana/destaques-semana';
 import { RouterModule } from '@angular/router';
 import { CategoriasData, Categoria } from '../../categorias/services/categorias-data';
 import { FornecedoresData, FornecedorListDto } from '../../fornecedores/services/fornecedores-data';
-import { forkJoin, map, switchMap, Observable, BehaviorSubject, of, combineLatest } from 'rxjs';
+import { forkJoin, map, switchMap, Observable, BehaviorSubject, of, combineLatest, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CidadeService } from '../../../core/cidade.service';
 
 @Component({
@@ -34,7 +34,10 @@ export class HomePageComponent {
       map(cats => cats.slice().sort((a, b) => (a.nome || '').localeCompare(b.nome || '')))
     );
     this.fornecedoresBusca$ = this.buscaTerm$.pipe(
-      switchMap(term => term.trim().length > 0 ? this.fornecedoresData.search(term) : of([] as FornecedorListDto[]))
+      debounceTime(250),
+      map(term => term.trim()),
+      distinctUntilChanged(),
+      switchMap(term => term.length > 0 ? this.fornecedoresData.search(term) : of([] as FornecedorListDto[]))
     );
 
     // chunk results into pages of 3

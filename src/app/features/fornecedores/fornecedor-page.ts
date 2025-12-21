@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
+import { TrackingService } from '../../core/tracking.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -16,14 +17,23 @@ export class FornecedorPageComponent implements OnInit {
   fornecedor?: Fornecedor;
   selectedImage?: string;
 
-  constructor(private route: ActivatedRoute, private fornecedores: FornecedoresData, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private route: ActivatedRoute,
+    private fornecedores: FornecedoresData,
+    private cdr: ChangeDetectorRef,
+    private tracking: TrackingService
+  ) {}
 
   ngOnInit(): void {
     const identifier = this.route.snapshot.params['id']; // pode ser GUID ou slug
     if (identifier) {
       this.fornecedores.getById(identifier).subscribe(f => {
         this.fornecedor = f;
-        this.trackPageView();
+        this.tracking.trackVendorView({
+          vendorId: f.id,
+          vendorName: f.nome,
+          vendorCategory: f.categoria
+        });
         // For OnPush change detection, ensure view updates after async data arrives
         this.cdr.markForCheck();
       });
@@ -56,14 +66,38 @@ export class FornecedorPageComponent implements OnInit {
     return digits ? `https://wa.me/${digits}?text=${message}` : '#';
   }
 
+  onWhatsAppClick() {
+    this.tracking.trackContactClick('whatsapp', {
+      vendorId: this.fornecedor?.id || '',
+      vendorName: this.fornecedor?.nome || '',
+      vendorCategory: this.fornecedor?.categoria
+    });
+  }
+
   getSiteLink(): string {
     return this.fornecedor?.website || '#';
+  }
+
+  onSiteClick() {
+    this.tracking.trackContactClick('website', {
+      vendorId: this.fornecedor?.id || '',
+      vendorName: this.fornecedor?.nome || '',
+      vendorCategory: this.fornecedor?.categoria
+    });
   }
 
   getInstagramLink(): string {
     const instagram = this.fornecedor?.instagram || '';
     const username = instagram.replace('@', '').trim();
     return username ? `https://instagram.com/${username}` : '#';
+  }
+
+  onInstagramClick() {
+    this.tracking.trackContactClick('instagram', {
+      vendorId: this.fornecedor?.id || '',
+      vendorName: this.fornecedor?.nome || '',
+      vendorCategory: this.fornecedor?.categoria
+    });
   }
 
   getFacebookLink(): string {
@@ -78,6 +112,38 @@ export class FornecedorPageComponent implements OnInit {
     // Caso contrário, adiciona o prefixo
     const cleaned = facebook.replace('@', '').trim();
     return `https://facebook.com/${cleaned}`;
+  }
+
+  onFacebookClick() {
+    this.tracking.trackContactClick('facebook', {
+      vendorId: this.fornecedor?.id || '',
+      vendorName: this.fornecedor?.nome || '',
+      vendorCategory: this.fornecedor?.categoria
+    });
+  }
+
+  onPhoneClick() {
+    this.tracking.trackContactClick('phone', {
+      vendorId: this.fornecedor?.id || '',
+      vendorName: this.fornecedor?.nome || '',
+      vendorCategory: this.fornecedor?.categoria
+    });
+  }
+
+  getMapsLink(): string {
+    const endereco = this.fornecedor?.endereco || '';
+    if (!endereco) return '#';
+    const encoded = encodeURIComponent(endereco);
+    return `https://www.google.com/maps/search/${encoded}`;
+  }
+
+  onMapsClick() {
+    this.tracking.trackContactClick('maps', {
+      vendorId: this.fornecedor?.id || '',
+      vendorName: this.fornecedor?.nome || '',
+      vendorCategory: this.fornecedor?.categoria
+    });
+  }
   }
 
   getMapsLink(): string {

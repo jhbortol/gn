@@ -6,6 +6,7 @@ import { DestaquesSemanaComponent } from '../destaques-semana/destaques-semana';
 import { RouterModule } from '@angular/router';
 import { CategoriasData, Categoria } from '../../categorias/services/categorias-data';
 import { FornecedoresData, FornecedorListDto } from '../../fornecedores/services/fornecedores-data';
+import { TrackingService } from '../../../core/tracking.service';
 import { forkJoin, map, switchMap, Observable, BehaviorSubject, of, combineLatest, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CidadeService } from '../../../core/cidade.service';
 
@@ -29,7 +30,7 @@ export class HomePageComponent {
 
   private cidadeService = inject(CidadeService);
 
-  constructor(private categoriasData: CategoriasData, private fornecedoresData: FornecedoresData) {
+  constructor(private categoriasData: CategoriasData, private fornecedoresData: FornecedoresData, private tracking: TrackingService) {
     this.categorias$ = this.categoriasData.getAll().pipe(
       map(cats => cats.slice().sort((a, b) => (a.nome || '').localeCompare(b.nome || '')))
     );
@@ -37,7 +38,18 @@ export class HomePageComponent {
       debounceTime(250),
       map(term => term.trim()),
       distinctUntilChanged(),
-      switchMap(term => term.length > 0 ? this.fornecedoresData.search(term) : of([] as FornecedorListDto[]))
+      switchMap(term => {
+        if (term.length > 0) {
+          return this.fornecedoresData.search(term).pipe(
+            map(results => {
+              // Track search
+              this.tracking.trackSearch(term, results.length);
+              return results;
+            })
+          );
+        }
+        return of([] as FornecedorListDto[]);
+      })
     );
 
     // chunk results into pages of 3

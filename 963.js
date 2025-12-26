@@ -1,0 +1,8117 @@
+"use strict";
+(self["webpackChunkguia_noivas"] = self["webpackChunkguia_noivas"] || []).push([[963],{
+
+/***/ 513:
+/*!******************************************************************************!*\
+  !*** ./node_modules/@angular/cdk/fesm2022/fake-event-detection-DWOdFTFz.mjs ***!
+  \******************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   a: () => (/* binding */ isFakeTouchstartFromScreenReader),
+/* harmony export */   i: () => (/* binding */ isFakeMousedownFromScreenReader)
+/* harmony export */ });
+/** Gets whether an event could be a faked `mousedown` event dispatched by a screen reader. */
+function isFakeMousedownFromScreenReader(event) {
+  // Some screen readers will dispatch a fake `mousedown` event when pressing enter or space on
+  // a clickable element. We can distinguish these events when `event.buttons` is zero, or
+  // `event.detail` is zero depending on the browser:
+  // - `event.buttons` works on Firefox, but fails on Chrome.
+  // - `detail` works on Chrome, but fails on Firefox.
+  return event.buttons === 0 || event.detail === 0;
+}
+/** Gets whether an event could be a faked `touchstart` event dispatched by a screen reader. */
+function isFakeTouchstartFromScreenReader(event) {
+  const touch = event.touches && event.touches[0] || event.changedTouches && event.changedTouches[0];
+  // A fake `touchstart` can be distinguished from a real one by looking at the `identifier`
+  // which is typically >= 0 on a real device versus -1 from a screen reader. Just to be safe,
+  // we can also look at `radiusX` and `radiusY`. This behavior was observed against a Windows 10
+  // device with a touch screen running NVDA v2020.4 and Firefox 85 or Chrome 88.
+  return !!touch && touch.identifier === -1 && (touch.radiusX == null || touch.radiusX === 1) && (touch.radiusY == null || touch.radiusY === 1);
+}
+
+
+/***/ }),
+
+/***/ 614:
+/*!*************************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/scheduler/animationFrame.js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   animationFrame: () => (/* binding */ animationFrame),
+/* harmony export */   animationFrameScheduler: () => (/* binding */ animationFrameScheduler)
+/* harmony export */ });
+/* harmony import */ var _AnimationFrameAction__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AnimationFrameAction */ 1860);
+/* harmony import */ var _AnimationFrameScheduler__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AnimationFrameScheduler */ 4909);
+
+
+const animationFrameScheduler = new _AnimationFrameScheduler__WEBPACK_IMPORTED_MODULE_0__.AnimationFrameScheduler(_AnimationFrameAction__WEBPACK_IMPORTED_MODULE_1__.AnimationFrameAction);
+const animationFrame = animationFrameScheduler;
+
+/***/ }),
+
+/***/ 733:
+/*!***************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/util/Immediate.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Immediate: () => (/* binding */ Immediate),
+/* harmony export */   TestTools: () => (/* binding */ TestTools)
+/* harmony export */ });
+let nextHandle = 1;
+let resolved;
+const activeHandles = {};
+function findAndClearHandle(handle) {
+  if (handle in activeHandles) {
+    delete activeHandles[handle];
+    return true;
+  }
+  return false;
+}
+const Immediate = {
+  setImmediate(cb) {
+    const handle = nextHandle++;
+    activeHandles[handle] = true;
+    if (!resolved) {
+      resolved = Promise.resolve();
+    }
+    resolved.then(() => findAndClearHandle(handle) && cb());
+    return handle;
+  },
+  clearImmediate(handle) {
+    findAndClearHandle(handle);
+  }
+};
+const TestTools = {
+  pending() {
+    return Object.keys(activeHandles).length;
+  }
+};
+
+/***/ }),
+
+/***/ 854:
+/*!**********************************************************!*\
+  !*** ./node_modules/@angular/cdk/fesm2022/drag-drop.mjs ***!
+  \**********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CDK_DRAG_CONFIG: () => (/* binding */ CDK_DRAG_CONFIG),
+/* harmony export */   CDK_DRAG_HANDLE: () => (/* binding */ CDK_DRAG_HANDLE),
+/* harmony export */   CDK_DRAG_PARENT: () => (/* binding */ CDK_DRAG_PARENT),
+/* harmony export */   CDK_DRAG_PLACEHOLDER: () => (/* binding */ CDK_DRAG_PLACEHOLDER),
+/* harmony export */   CDK_DRAG_PREVIEW: () => (/* binding */ CDK_DRAG_PREVIEW),
+/* harmony export */   CDK_DROP_LIST: () => (/* binding */ CDK_DROP_LIST),
+/* harmony export */   CDK_DROP_LIST_GROUP: () => (/* binding */ CDK_DROP_LIST_GROUP),
+/* harmony export */   CdkDrag: () => (/* binding */ CdkDrag),
+/* harmony export */   CdkDragHandle: () => (/* binding */ CdkDragHandle),
+/* harmony export */   CdkDragPlaceholder: () => (/* binding */ CdkDragPlaceholder),
+/* harmony export */   CdkDragPreview: () => (/* binding */ CdkDragPreview),
+/* harmony export */   CdkDropList: () => (/* binding */ CdkDropList),
+/* harmony export */   CdkDropListGroup: () => (/* binding */ CdkDropListGroup),
+/* harmony export */   DragDrop: () => (/* binding */ DragDrop),
+/* harmony export */   DragDropModule: () => (/* binding */ DragDropModule),
+/* harmony export */   DragDropRegistry: () => (/* binding */ DragDropRegistry),
+/* harmony export */   DragRef: () => (/* binding */ DragRef),
+/* harmony export */   DropListRef: () => (/* binding */ DropListRef),
+/* harmony export */   copyArrayItem: () => (/* binding */ copyArrayItem),
+/* harmony export */   moveItemInArray: () => (/* binding */ moveItemInArray),
+/* harmony export */   transferArrayItem: () => (/* binding */ transferArrayItem),
+/* harmony export */   "ɵɵCdkScrollable": () => (/* reexport safe */ _scrolling_mjs__WEBPACK_IMPORTED_MODULE_0__.CdkScrollable)
+/* harmony export */ });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 7580);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common */ 9770);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ 819);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 2510);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! rxjs */ 9240);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! rxjs */ 614);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! rxjs */ 3942);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! rxjs */ 3617);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! rxjs */ 5797);
+/* harmony import */ var _shadow_dom_B0oHn41l_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./shadow-dom-B0oHn41l.mjs */ 6488);
+/* harmony import */ var _fake_event_detection_DWOdFTFz_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./fake-event-detection-DWOdFTFz.mjs */ 513);
+/* harmony import */ var _element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./element-x4z00URv.mjs */ 4724);
+/* harmony import */ var _backwards_compatibility_DHR38MsD_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./backwards-compatibility-DHR38MsD.mjs */ 1437);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! rxjs/operators */ 3900);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! rxjs/operators */ 271);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! rxjs/operators */ 4334);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! rxjs/operators */ 8764);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! rxjs/operators */ 6647);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! rxjs/operators */ 3037);
+/* harmony import */ var _style_loader_Cu9AvjH9_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./style-loader-Cu9AvjH9.mjs */ 1235);
+/* harmony import */ var _scrolling_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./scrolling.mjs */ 9975);
+/* harmony import */ var _directionality_CBXD4hga_mjs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./directionality-CBXD4hga.mjs */ 9932);
+/* harmony import */ var _id_generator_Dw_9dSDu_mjs__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./id-generator-Dw_9dSDu.mjs */ 6271);
+/* harmony import */ var _array_I1yfCXUO_mjs__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./array-I1yfCXUO.mjs */ 7184);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/** Creates a deep clone of an element. */
+function deepCloneNode(node) {
+  const clone = node.cloneNode(true);
+  const descendantsWithId = clone.querySelectorAll('[id]');
+  const nodeName = node.nodeName.toLowerCase();
+  // Remove the `id` to avoid having multiple elements with the same id on the page.
+  clone.removeAttribute('id');
+  for (let i = 0; i < descendantsWithId.length; i++) {
+    descendantsWithId[i].removeAttribute('id');
+  }
+  if (nodeName === 'canvas') {
+    transferCanvasData(node, clone);
+  } else if (nodeName === 'input' || nodeName === 'select' || nodeName === 'textarea') {
+    transferInputData(node, clone);
+  }
+  transferData('canvas', node, clone, transferCanvasData);
+  transferData('input, textarea, select', node, clone, transferInputData);
+  return clone;
+}
+/** Matches elements between an element and its clone and allows for their data to be cloned. */
+function transferData(selector, node, clone, callback) {
+  const descendantElements = node.querySelectorAll(selector);
+  if (descendantElements.length) {
+    const cloneElements = clone.querySelectorAll(selector);
+    for (let i = 0; i < descendantElements.length; i++) {
+      callback(descendantElements[i], cloneElements[i]);
+    }
+  }
+}
+// Counter for unique cloned radio button names.
+let cloneUniqueId = 0;
+/** Transfers the data of one input element to another. */
+function transferInputData(source, clone) {
+  // Browsers throw an error when assigning the value of a file input programmatically.
+  if (clone.type !== 'file') {
+    clone.value = source.value;
+  }
+  // Radio button `name` attributes must be unique for radio button groups
+  // otherwise original radio buttons can lose their checked state
+  // once the clone is inserted in the DOM.
+  if (clone.type === 'radio' && clone.name) {
+    clone.name = `mat-clone-${clone.name}-${cloneUniqueId++}`;
+  }
+}
+/** Transfers the data of one canvas element to another. */
+function transferCanvasData(source, clone) {
+  const context = clone.getContext('2d');
+  if (context) {
+    // In some cases `drawImage` can throw (e.g. if the canvas size is 0x0).
+    // We can't do much about it so just ignore the error.
+    try {
+      context.drawImage(source, 0, 0);
+    } catch {}
+  }
+}
+
+/** Gets a mutable version of an element's bounding `DOMRect`. */
+function getMutableClientRect(element) {
+  const rect = element.getBoundingClientRect();
+  // We need to clone the `clientRect` here, because all the values on it are readonly
+  // and we need to be able to update them. Also we can't use a spread here, because
+  // the values on a `DOMRect` aren't own properties. See:
+  // https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect#Notes
+  return {
+    top: rect.top,
+    right: rect.right,
+    bottom: rect.bottom,
+    left: rect.left,
+    width: rect.width,
+    height: rect.height,
+    x: rect.x,
+    y: rect.y
+  };
+}
+/**
+ * Checks whether some coordinates are within a `DOMRect`.
+ * @param clientRect DOMRect that is being checked.
+ * @param x Coordinates along the X axis.
+ * @param y Coordinates along the Y axis.
+ */
+function isInsideClientRect(clientRect, x, y) {
+  const {
+    top,
+    bottom,
+    left,
+    right
+  } = clientRect;
+  return y >= top && y <= bottom && x >= left && x <= right;
+}
+/**
+ * Updates the top/left positions of a `DOMRect`, as well as their bottom/right counterparts.
+ * @param domRect `DOMRect` that should be updated.
+ * @param top Amount to add to the `top` position.
+ * @param left Amount to add to the `left` position.
+ */
+function adjustDomRect(domRect, top, left) {
+  domRect.top += top;
+  domRect.bottom = domRect.top + domRect.height;
+  domRect.left += left;
+  domRect.right = domRect.left + domRect.width;
+}
+/**
+ * Checks whether the pointer coordinates are close to a DOMRect.
+ * @param rect DOMRect to check against.
+ * @param threshold Threshold around the DOMRect.
+ * @param pointerX Coordinates along the X axis.
+ * @param pointerY Coordinates along the Y axis.
+ */
+function isPointerNearDomRect(rect, threshold, pointerX, pointerY) {
+  const {
+    top,
+    right,
+    bottom,
+    left,
+    width,
+    height
+  } = rect;
+  const xThreshold = width * threshold;
+  const yThreshold = height * threshold;
+  return pointerY > top - yThreshold && pointerY < bottom + yThreshold && pointerX > left - xThreshold && pointerX < right + xThreshold;
+}
+
+/** Keeps track of the scroll position and dimensions of the parents of an element. */
+class ParentPositionTracker {
+  _document;
+  /** Cached positions of the scrollable parent elements. */
+  positions = /*#__PURE__*/new Map();
+  constructor(_document) {
+    this._document = _document;
+  }
+  /** Clears the cached positions. */
+  clear() {
+    this.positions.clear();
+  }
+  /** Caches the positions. Should be called at the beginning of a drag sequence. */
+  cache(elements) {
+    this.clear();
+    this.positions.set(this._document, {
+      scrollPosition: this.getViewportScrollPosition()
+    });
+    elements.forEach(element => {
+      this.positions.set(element, {
+        scrollPosition: {
+          top: element.scrollTop,
+          left: element.scrollLeft
+        },
+        clientRect: getMutableClientRect(element)
+      });
+    });
+  }
+  /** Handles scrolling while a drag is taking place. */
+  handleScroll(event) {
+    const target = (0,_shadow_dom_B0oHn41l_mjs__WEBPACK_IMPORTED_MODULE_1__._)(event);
+    const cachedPosition = this.positions.get(target);
+    if (!cachedPosition) {
+      return null;
+    }
+    const scrollPosition = cachedPosition.scrollPosition;
+    let newTop;
+    let newLeft;
+    if (target === this._document) {
+      const viewportScrollPosition = this.getViewportScrollPosition();
+      newTop = viewportScrollPosition.top;
+      newLeft = viewportScrollPosition.left;
+    } else {
+      newTop = target.scrollTop;
+      newLeft = target.scrollLeft;
+    }
+    const topDifference = scrollPosition.top - newTop;
+    const leftDifference = scrollPosition.left - newLeft;
+    // Go through and update the cached positions of the scroll
+    // parents that are inside the element that was scrolled.
+    this.positions.forEach((position, node) => {
+      if (position.clientRect && target !== node && target.contains(node)) {
+        adjustDomRect(position.clientRect, topDifference, leftDifference);
+      }
+    });
+    scrollPosition.top = newTop;
+    scrollPosition.left = newLeft;
+    return {
+      top: topDifference,
+      left: leftDifference
+    };
+  }
+  /**
+   * Gets the scroll position of the viewport. Note that we use the scrollX and scrollY directly,
+   * instead of going through the `ViewportRuler`, because the first value the ruler looks at is
+   * the top/left offset of the `document.documentElement` which works for most cases, but breaks
+   * if the element is offset by something like the `BlockScrollStrategy`.
+   */
+  getViewportScrollPosition() {
+    return {
+      top: window.scrollY,
+      left: window.scrollX
+    };
+  }
+}
+
+/**
+ * Gets the root HTML element of an embedded view.
+ * If the root is not an HTML element it gets wrapped in one.
+ */
+function getRootNode(viewRef, _document) {
+  const rootNodes = viewRef.rootNodes;
+  if (rootNodes.length === 1 && rootNodes[0].nodeType === _document.ELEMENT_NODE) {
+    return rootNodes[0];
+  }
+  const wrapper = _document.createElement('div');
+  rootNodes.forEach(node => wrapper.appendChild(node));
+  return wrapper;
+}
+
+/**
+ * Shallow-extends a stylesheet object with another stylesheet-like object.
+ * Note that the keys in `source` have to be dash-cased.
+ * @docs-private
+ */
+function extendStyles(dest, source, importantProperties) {
+  for (let key in source) {
+    if (source.hasOwnProperty(key)) {
+      const value = source[key];
+      if (value) {
+        dest.setProperty(key, value, importantProperties?.has(key) ? 'important' : '');
+      } else {
+        dest.removeProperty(key);
+      }
+    }
+  }
+  return dest;
+}
+/**
+ * Toggles whether the native drag interactions should be enabled for an element.
+ * @param element Element on which to toggle the drag interactions.
+ * @param enable Whether the drag interactions should be enabled.
+ * @docs-private
+ */
+function toggleNativeDragInteractions(element, enable) {
+  const userSelect = enable ? '' : 'none';
+  extendStyles(element.style, {
+    'touch-action': enable ? '' : 'none',
+    '-webkit-user-drag': enable ? '' : 'none',
+    '-webkit-tap-highlight-color': enable ? '' : 'transparent',
+    'user-select': userSelect,
+    '-ms-user-select': userSelect,
+    '-webkit-user-select': userSelect,
+    '-moz-user-select': userSelect
+  });
+}
+/**
+ * Toggles whether an element is visible while preserving its dimensions.
+ * @param element Element whose visibility to toggle
+ * @param enable Whether the element should be visible.
+ * @param importantProperties Properties to be set as `!important`.
+ * @docs-private
+ */
+function toggleVisibility(element, enable, importantProperties) {
+  extendStyles(element.style, {
+    position: enable ? '' : 'fixed',
+    top: enable ? '' : '0',
+    opacity: enable ? '' : '0',
+    left: enable ? '' : '-999em'
+  }, importantProperties);
+}
+/**
+ * Combines a transform string with an optional other transform
+ * that exited before the base transform was applied.
+ */
+function combineTransforms(transform, initialTransform) {
+  return initialTransform && initialTransform != 'none' ? transform + ' ' + initialTransform : transform;
+}
+/**
+ * Matches the target element's size to the source's size.
+ * @param target Element that needs to be resized.
+ * @param sourceRect Dimensions of the source element.
+ */
+function matchElementSize(target, sourceRect) {
+  target.style.width = `${sourceRect.width}px`;
+  target.style.height = `${sourceRect.height}px`;
+  target.style.transform = getTransform(sourceRect.left, sourceRect.top);
+}
+/**
+ * Gets a 3d `transform` that can be applied to an element.
+ * @param x Desired position of the element along the X axis.
+ * @param y Desired position of the element along the Y axis.
+ */
+function getTransform(x, y) {
+  // Round the transforms since some browsers will
+  // blur the elements for sub-pixel transforms.
+  return `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
+}
+
+/** Parses a CSS time value to milliseconds. */
+function parseCssTimeUnitsToMs(value) {
+  // Some browsers will return it in seconds, whereas others will return milliseconds.
+  const multiplier = value.toLowerCase().indexOf('ms') > -1 ? 1 : 1000;
+  return parseFloat(value) * multiplier;
+}
+/** Gets the transform transition duration, including the delay, of an element in milliseconds. */
+function getTransformTransitionDurationInMs(element) {
+  const computedStyle = getComputedStyle(element);
+  const transitionedProperties = parseCssPropertyValue(computedStyle, 'transition-property');
+  const property = transitionedProperties.find(prop => prop === 'transform' || prop === 'all');
+  // If there's no transition for `all` or `transform`, we shouldn't do anything.
+  if (!property) {
+    return 0;
+  }
+  // Get the index of the property that we're interested in and match
+  // it up to the same index in `transition-delay` and `transition-duration`.
+  const propertyIndex = transitionedProperties.indexOf(property);
+  const rawDurations = parseCssPropertyValue(computedStyle, 'transition-duration');
+  const rawDelays = parseCssPropertyValue(computedStyle, 'transition-delay');
+  return parseCssTimeUnitsToMs(rawDurations[propertyIndex]) + parseCssTimeUnitsToMs(rawDelays[propertyIndex]);
+}
+/** Parses out multiple values from a computed style into an array. */
+function parseCssPropertyValue(computedStyle, name) {
+  const value = computedStyle.getPropertyValue(name);
+  return value.split(',').map(part => part.trim());
+}
+
+/** Inline styles to be set as `!important` while dragging. */
+const importantProperties = /*#__PURE__*/new Set([
+// Needs to be important, because some `mat-table` sets `position: sticky !important`. See #22781.
+'position']);
+class PreviewRef {
+  _document;
+  _rootElement;
+  _direction;
+  _initialDomRect;
+  _previewTemplate;
+  _previewClass;
+  _pickupPositionOnPage;
+  _initialTransform;
+  _zIndex;
+  _renderer;
+  /** Reference to the view of the preview element. */
+  _previewEmbeddedView;
+  /** Reference to the preview element. */
+  _preview;
+  get element() {
+    return this._preview;
+  }
+  constructor(_document, _rootElement, _direction, _initialDomRect, _previewTemplate, _previewClass, _pickupPositionOnPage, _initialTransform, _zIndex, _renderer) {
+    this._document = _document;
+    this._rootElement = _rootElement;
+    this._direction = _direction;
+    this._initialDomRect = _initialDomRect;
+    this._previewTemplate = _previewTemplate;
+    this._previewClass = _previewClass;
+    this._pickupPositionOnPage = _pickupPositionOnPage;
+    this._initialTransform = _initialTransform;
+    this._zIndex = _zIndex;
+    this._renderer = _renderer;
+  }
+  attach(parent) {
+    this._preview = this._createPreview();
+    parent.appendChild(this._preview);
+    // The null check is necessary for browsers that don't support the popover API.
+    // Note that we use a string access for compatibility with Closure.
+    if (supportsPopover(this._preview)) {
+      this._preview['showPopover']();
+    }
+  }
+  destroy() {
+    this._preview.remove();
+    this._previewEmbeddedView?.destroy();
+    this._preview = this._previewEmbeddedView = null;
+  }
+  setTransform(value) {
+    this._preview.style.transform = value;
+  }
+  getBoundingClientRect() {
+    return this._preview.getBoundingClientRect();
+  }
+  addClass(className) {
+    this._preview.classList.add(className);
+  }
+  getTransitionDuration() {
+    return getTransformTransitionDurationInMs(this._preview);
+  }
+  addEventListener(name, handler) {
+    return this._renderer.listen(this._preview, name, handler);
+  }
+  _createPreview() {
+    const previewConfig = this._previewTemplate;
+    const previewClass = this._previewClass;
+    const previewTemplate = previewConfig ? previewConfig.template : null;
+    let preview;
+    if (previewTemplate && previewConfig) {
+      // Measure the element before we've inserted the preview
+      // since the insertion could throw off the measurement.
+      const rootRect = previewConfig.matchSize ? this._initialDomRect : null;
+      const viewRef = previewConfig.viewContainer.createEmbeddedView(previewTemplate, previewConfig.context);
+      viewRef.detectChanges();
+      preview = getRootNode(viewRef, this._document);
+      this._previewEmbeddedView = viewRef;
+      if (previewConfig.matchSize) {
+        matchElementSize(preview, rootRect);
+      } else {
+        preview.style.transform = getTransform(this._pickupPositionOnPage.x, this._pickupPositionOnPage.y);
+      }
+    } else {
+      preview = deepCloneNode(this._rootElement);
+      matchElementSize(preview, this._initialDomRect);
+      if (this._initialTransform) {
+        preview.style.transform = this._initialTransform;
+      }
+    }
+    extendStyles(preview.style, {
+      // It's important that we disable the pointer events on the preview, because
+      // it can throw off the `document.elementFromPoint` calls in the `CdkDropList`.
+      'pointer-events': 'none',
+      // If the preview has a margin, it can throw off our positioning so we reset it. The reset
+      // value for `margin-right` needs to be `auto` when opened as a popover, because our
+      // positioning is always top/left based, but native popover seems to position itself
+      // to the top/right if `<html>` or `<body>` have `dir="rtl"` (see #29604). Setting it
+      // to `auto` pushed it to the top/left corner in RTL and is a noop in LTR.
+      'margin': supportsPopover(preview) ? '0 auto 0 0' : '0',
+      'position': 'fixed',
+      'top': '0',
+      'left': '0',
+      'z-index': this._zIndex + ''
+    }, importantProperties);
+    toggleNativeDragInteractions(preview, false);
+    preview.classList.add('cdk-drag-preview');
+    preview.setAttribute('popover', 'manual');
+    preview.setAttribute('dir', this._direction);
+    if (previewClass) {
+      if (Array.isArray(previewClass)) {
+        previewClass.forEach(className => preview.classList.add(className));
+      } else {
+        preview.classList.add(previewClass);
+      }
+    }
+    return preview;
+  }
+}
+/** Checks whether a specific element supports the popover API. */
+function supportsPopover(element) {
+  return 'showPopover' in element;
+}
+
+/** Options that can be used to bind a passive event listener. */
+const passiveEventListenerOptions = {
+  passive: true
+};
+/** Options that can be used to bind an active event listener. */
+const activeEventListenerOptions = {
+  passive: false
+};
+/** Event options that can be used to bind an active, capturing event. */
+const activeCapturingEventOptions$1 = {
+  passive: false,
+  capture: true
+};
+/**
+ * Time in milliseconds for which to ignore mouse events, after
+ * receiving a touch event. Used to avoid doing double work for
+ * touch devices where the browser fires fake mouse events, in
+ * addition to touch events.
+ */
+const MOUSE_EVENT_IGNORE_TIME = 800;
+/** Inline styles to be set as `!important` while dragging. */
+const dragImportantProperties = /*#__PURE__*/new Set([
+// Needs to be important, because some `mat-table` sets `position: sticky !important`. See #22781.
+'position']);
+/**
+ * Reference to a draggable item. Used to manipulate or dispose of the item.
+ */
+class DragRef {
+  _config;
+  _document;
+  _ngZone;
+  _viewportRuler;
+  _dragDropRegistry;
+  _renderer;
+  _rootElementCleanups;
+  _cleanupShadowRootSelectStart;
+  /** Element displayed next to the user's pointer while the element is dragged. */
+  _preview;
+  /** Container into which to insert the preview. */
+  _previewContainer;
+  /** Reference to the view of the placeholder element. */
+  _placeholderRef;
+  /** Element that is rendered instead of the draggable item while it is being sorted. */
+  _placeholder;
+  /** Coordinates within the element at which the user picked up the element. */
+  _pickupPositionInElement;
+  /** Coordinates on the page at which the user picked up the element. */
+  _pickupPositionOnPage;
+  /**
+   * Anchor node used to save the place in the DOM where the element was
+   * picked up so that it can be restored at the end of the drag sequence.
+   */
+  _anchor;
+  /**
+   * CSS `transform` applied to the element when it isn't being dragged. We need a
+   * passive transform in order for the dragged element to retain its new position
+   * after the user has stopped dragging and because we need to know the relative
+   * position in case they start dragging again. This corresponds to `element.style.transform`.
+   */
+  _passiveTransform = {
+    x: 0,
+    y: 0
+  };
+  /** CSS `transform` that is applied to the element while it's being dragged. */
+  _activeTransform = {
+    x: 0,
+    y: 0
+  };
+  /** Inline `transform` value that the element had before the first dragging sequence. */
+  _initialTransform;
+  /**
+   * Whether the dragging sequence has been started. Doesn't
+   * necessarily mean that the element has been moved.
+   */
+  _hasStartedDragging = /*#__PURE__*/(0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.signal)(false);
+  /** Whether the element has moved since the user started dragging it. */
+  _hasMoved;
+  /** Drop container in which the DragRef resided when dragging began. */
+  _initialContainer;
+  /** Index at which the item started in its initial container. */
+  _initialIndex;
+  /** Cached positions of scrollable parent elements. */
+  _parentPositions;
+  /** Emits when the item is being moved. */
+  _moveEvents = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+  /** Keeps track of the direction in which the user is dragging along each axis. */
+  _pointerDirectionDelta;
+  /** Pointer position at which the last change in the delta occurred. */
+  _pointerPositionAtLastDirectionChange;
+  /** Position of the pointer at the last pointer event. */
+  _lastKnownPointerPosition;
+  /**
+   * Root DOM node of the drag instance. This is the element that will
+   * be moved around as the user is dragging.
+   */
+  _rootElement;
+  /**
+   * Nearest ancestor SVG, relative to which coordinates are calculated if dragging SVGElement
+   */
+  _ownerSVGElement;
+  /**
+   * Inline style value of `-webkit-tap-highlight-color` at the time the
+   * dragging was started. Used to restore the value once we're done dragging.
+   */
+  _rootElementTapHighlight;
+  /** Subscription to pointer movement events. */
+  _pointerMoveSubscription = rxjs__WEBPACK_IMPORTED_MODULE_4__.Subscription.EMPTY;
+  /** Subscription to the event that is dispatched when the user lifts their pointer. */
+  _pointerUpSubscription = rxjs__WEBPACK_IMPORTED_MODULE_4__.Subscription.EMPTY;
+  /** Subscription to the viewport being scrolled. */
+  _scrollSubscription = rxjs__WEBPACK_IMPORTED_MODULE_4__.Subscription.EMPTY;
+  /** Subscription to the viewport being resized. */
+  _resizeSubscription = rxjs__WEBPACK_IMPORTED_MODULE_4__.Subscription.EMPTY;
+  /**
+   * Time at which the last touch event occurred. Used to avoid firing the same
+   * events multiple times on touch devices where the browser will fire a fake
+   * mouse event for each touch event, after a certain time.
+   */
+  _lastTouchEventTime;
+  /** Time at which the last dragging sequence was started. */
+  _dragStartTime;
+  /** Cached reference to the boundary element. */
+  _boundaryElement = null;
+  /** Whether the native dragging interactions have been enabled on the root element. */
+  _nativeInteractionsEnabled = true;
+  /** Client rect of the root element when the dragging sequence has started. */
+  _initialDomRect;
+  /** Cached dimensions of the preview element. Should be read via `_getPreviewRect`. */
+  _previewRect;
+  /** Cached dimensions of the boundary element. */
+  _boundaryRect;
+  /** Element that will be used as a template to create the draggable item's preview. */
+  _previewTemplate;
+  /** Template for placeholder element rendered to show where a draggable would be dropped. */
+  _placeholderTemplate;
+  /** Elements that can be used to drag the draggable item. */
+  _handles = [];
+  /** Registered handles that are currently disabled. */
+  _disabledHandles = /*#__PURE__*/new Set();
+  /** Droppable container that the draggable is a part of. */
+  _dropContainer;
+  /** Layout direction of the item. */
+  _direction = 'ltr';
+  /** Ref that the current drag item is nested in. */
+  _parentDragRef;
+  /**
+   * Cached shadow root that the element is placed in. `null` means that the element isn't in
+   * the shadow DOM and `undefined` means that it hasn't been resolved yet. Should be read via
+   * `_getShadowRoot`, not directly.
+   */
+  _cachedShadowRoot;
+  /** Axis along which dragging is locked. */
+  lockAxis;
+  /**
+   * Amount of milliseconds to wait after the user has put their
+   * pointer down before starting to drag the element.
+   */
+  dragStartDelay = 0;
+  /** Class to be added to the preview element. */
+  previewClass;
+  /**
+   * If the parent of the dragged element has a `scale` transform, it can throw off the
+   * positioning when the user starts dragging. Use this input to notify the CDK of the scale.
+   */
+  scale = 1;
+  /** Whether starting to drag this element is disabled. */
+  get disabled() {
+    return this._disabled || !!(this._dropContainer && this._dropContainer.disabled);
+  }
+  set disabled(value) {
+    if (value !== this._disabled) {
+      this._disabled = value;
+      this._toggleNativeDragInteractions();
+      this._handles.forEach(handle => toggleNativeDragInteractions(handle, value));
+    }
+  }
+  _disabled = false;
+  /** Emits as the drag sequence is being prepared. */
+  beforeStarted = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+  /** Emits when the user starts dragging the item. */
+  started = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+  /** Emits when the user has released a drag item, before any animations have started. */
+  released = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+  /** Emits when the user stops dragging an item in the container. */
+  ended = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+  /** Emits when the user has moved the item into a new container. */
+  entered = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+  /** Emits when the user removes the item its container by dragging it into another container. */
+  exited = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+  /** Emits when the user drops the item inside a container. */
+  dropped = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+  /**
+   * Emits as the user is dragging the item. Use with caution,
+   * because this event will fire for every pixel that the user has dragged.
+   */
+  moved = this._moveEvents;
+  /** Arbitrary data that can be attached to the drag item. */
+  data;
+  /**
+   * Function that can be used to customize the logic of how the position of the drag item
+   * is limited while it's being dragged. Gets called with a point containing the current position
+   * of the user's pointer on the page, a reference to the item being dragged and its dimensions.
+   * Should return a point describing where the item should be rendered.
+   */
+  constrainPosition;
+  constructor(element, _config, _document, _ngZone, _viewportRuler, _dragDropRegistry, _renderer) {
+    this._config = _config;
+    this._document = _document;
+    this._ngZone = _ngZone;
+    this._viewportRuler = _viewportRuler;
+    this._dragDropRegistry = _dragDropRegistry;
+    this._renderer = _renderer;
+    this.withRootElement(element).withParent(_config.parentDragRef || null);
+    this._parentPositions = new ParentPositionTracker(_document);
+    _dragDropRegistry.registerDragItem(this);
+  }
+  /**
+   * Returns the element that is being used as a placeholder
+   * while the current element is being dragged.
+   */
+  getPlaceholderElement() {
+    return this._placeholder;
+  }
+  /** Returns the root draggable element. */
+  getRootElement() {
+    return this._rootElement;
+  }
+  /**
+   * Gets the currently-visible element that represents the drag item.
+   * While dragging this is the placeholder, otherwise it's the root element.
+   */
+  getVisibleElement() {
+    return this.isDragging() ? this.getPlaceholderElement() : this.getRootElement();
+  }
+  /** Registers the handles that can be used to drag the element. */
+  withHandles(handles) {
+    this._handles = handles.map(handle => (0,_element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_5__.a)(handle));
+    this._handles.forEach(handle => toggleNativeDragInteractions(handle, this.disabled));
+    this._toggleNativeDragInteractions();
+    // Delete any lingering disabled handles that may have been destroyed. Note that we re-create
+    // the set, rather than iterate over it and filter out the destroyed handles, because while
+    // the ES spec allows for sets to be modified while they're being iterated over, some polyfills
+    // use an array internally which may throw an error.
+    const disabledHandles = new Set();
+    this._disabledHandles.forEach(handle => {
+      if (this._handles.indexOf(handle) > -1) {
+        disabledHandles.add(handle);
+      }
+    });
+    this._disabledHandles = disabledHandles;
+    return this;
+  }
+  /**
+   * Registers the template that should be used for the drag preview.
+   * @param template Template that from which to stamp out the preview.
+   */
+  withPreviewTemplate(template) {
+    this._previewTemplate = template;
+    return this;
+  }
+  /**
+   * Registers the template that should be used for the drag placeholder.
+   * @param template Template that from which to stamp out the placeholder.
+   */
+  withPlaceholderTemplate(template) {
+    this._placeholderTemplate = template;
+    return this;
+  }
+  /**
+   * Sets an alternate drag root element. The root element is the element that will be moved as
+   * the user is dragging. Passing an alternate root element is useful when trying to enable
+   * dragging on an element that you might not have access to.
+   */
+  withRootElement(rootElement) {
+    const element = (0,_element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_5__.a)(rootElement);
+    if (element !== this._rootElement) {
+      this._removeRootElementListeners();
+      this._rootElementCleanups = this._ngZone.runOutsideAngular(() => [(0,_backwards_compatibility_DHR38MsD_mjs__WEBPACK_IMPORTED_MODULE_6__._)(this._renderer, element, 'mousedown', this._pointerDown, activeEventListenerOptions), (0,_backwards_compatibility_DHR38MsD_mjs__WEBPACK_IMPORTED_MODULE_6__._)(this._renderer, element, 'touchstart', this._pointerDown, passiveEventListenerOptions), (0,_backwards_compatibility_DHR38MsD_mjs__WEBPACK_IMPORTED_MODULE_6__._)(this._renderer, element, 'dragstart', this._nativeDragStart, activeEventListenerOptions)]);
+      this._initialTransform = undefined;
+      this._rootElement = element;
+    }
+    if (typeof SVGElement !== 'undefined' && this._rootElement instanceof SVGElement) {
+      this._ownerSVGElement = this._rootElement.ownerSVGElement;
+    }
+    return this;
+  }
+  /**
+   * Element to which the draggable's position will be constrained.
+   */
+  withBoundaryElement(boundaryElement) {
+    this._boundaryElement = boundaryElement ? (0,_element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_5__.a)(boundaryElement) : null;
+    this._resizeSubscription.unsubscribe();
+    if (boundaryElement) {
+      this._resizeSubscription = this._viewportRuler.change(10).subscribe(() => this._containInsideBoundaryOnResize());
+    }
+    return this;
+  }
+  /** Sets the parent ref that the ref is nested in.  */
+  withParent(parent) {
+    this._parentDragRef = parent;
+    return this;
+  }
+  /** Removes the dragging functionality from the DOM element. */
+  dispose() {
+    this._removeRootElementListeners();
+    // Do this check before removing from the registry since it'll
+    // stop being considered as dragged once it is removed.
+    if (this.isDragging()) {
+      // Since we move out the element to the end of the body while it's being
+      // dragged, we have to make sure that it's removed if it gets destroyed.
+      this._rootElement?.remove();
+    }
+    this._anchor?.remove();
+    this._destroyPreview();
+    this._destroyPlaceholder();
+    this._dragDropRegistry.removeDragItem(this);
+    this._removeListeners();
+    this.beforeStarted.complete();
+    this.started.complete();
+    this.released.complete();
+    this.ended.complete();
+    this.entered.complete();
+    this.exited.complete();
+    this.dropped.complete();
+    this._moveEvents.complete();
+    this._handles = [];
+    this._disabledHandles.clear();
+    this._dropContainer = undefined;
+    this._resizeSubscription.unsubscribe();
+    this._parentPositions.clear();
+    this._boundaryElement = this._rootElement = this._ownerSVGElement = this._placeholderTemplate = this._previewTemplate = this._anchor = this._parentDragRef = null;
+  }
+  /** Checks whether the element is currently being dragged. */
+  isDragging() {
+    return this._hasStartedDragging() && this._dragDropRegistry.isDragging(this);
+  }
+  /** Resets a standalone drag item to its initial position. */
+  reset() {
+    this._rootElement.style.transform = this._initialTransform || '';
+    this._activeTransform = {
+      x: 0,
+      y: 0
+    };
+    this._passiveTransform = {
+      x: 0,
+      y: 0
+    };
+  }
+  /**
+   * Sets a handle as disabled. While a handle is disabled, it'll capture and interrupt dragging.
+   * @param handle Handle element that should be disabled.
+   */
+  disableHandle(handle) {
+    if (!this._disabledHandles.has(handle) && this._handles.indexOf(handle) > -1) {
+      this._disabledHandles.add(handle);
+      toggleNativeDragInteractions(handle, true);
+    }
+  }
+  /**
+   * Enables a handle, if it has been disabled.
+   * @param handle Handle element to be enabled.
+   */
+  enableHandle(handle) {
+    if (this._disabledHandles.has(handle)) {
+      this._disabledHandles.delete(handle);
+      toggleNativeDragInteractions(handle, this.disabled);
+    }
+  }
+  /** Sets the layout direction of the draggable item. */
+  withDirection(direction) {
+    this._direction = direction;
+    return this;
+  }
+  /** Sets the container that the item is part of. */
+  _withDropContainer(container) {
+    this._dropContainer = container;
+  }
+  /**
+   * Gets the current position in pixels the draggable outside of a drop container.
+   */
+  getFreeDragPosition() {
+    const position = this.isDragging() ? this._activeTransform : this._passiveTransform;
+    return {
+      x: position.x,
+      y: position.y
+    };
+  }
+  /**
+   * Sets the current position in pixels the draggable outside of a drop container.
+   * @param value New position to be set.
+   */
+  setFreeDragPosition(value) {
+    this._activeTransform = {
+      x: 0,
+      y: 0
+    };
+    this._passiveTransform.x = value.x;
+    this._passiveTransform.y = value.y;
+    if (!this._dropContainer) {
+      this._applyRootElementTransform(value.x, value.y);
+    }
+    return this;
+  }
+  /**
+   * Sets the container into which to insert the preview element.
+   * @param value Container into which to insert the preview.
+   */
+  withPreviewContainer(value) {
+    this._previewContainer = value;
+    return this;
+  }
+  /** Updates the item's sort order based on the last-known pointer position. */
+  _sortFromLastPointerPosition() {
+    const position = this._lastKnownPointerPosition;
+    if (position && this._dropContainer) {
+      this._updateActiveDropContainer(this._getConstrainedPointerPosition(position), position);
+    }
+  }
+  /** Unsubscribes from the global subscriptions. */
+  _removeListeners() {
+    this._pointerMoveSubscription.unsubscribe();
+    this._pointerUpSubscription.unsubscribe();
+    this._scrollSubscription.unsubscribe();
+    this._cleanupShadowRootSelectStart?.();
+    this._cleanupShadowRootSelectStart = undefined;
+  }
+  /** Destroys the preview element and its ViewRef. */
+  _destroyPreview() {
+    this._preview?.destroy();
+    this._preview = null;
+  }
+  /** Destroys the placeholder element and its ViewRef. */
+  _destroyPlaceholder() {
+    this._placeholder?.remove();
+    this._placeholderRef?.destroy();
+    this._placeholder = this._placeholderRef = null;
+  }
+  /** Handler for the `mousedown`/`touchstart` events. */
+  _pointerDown = event => {
+    this.beforeStarted.next();
+    // Delegate the event based on whether it started from a handle or the element itself.
+    if (this._handles.length) {
+      const targetHandle = this._getTargetHandle(event);
+      if (targetHandle && !this._disabledHandles.has(targetHandle) && !this.disabled) {
+        this._initializeDragSequence(targetHandle, event);
+      }
+    } else if (!this.disabled) {
+      this._initializeDragSequence(this._rootElement, event);
+    }
+  };
+  /** Handler that is invoked when the user moves their pointer after they've initiated a drag. */
+  _pointerMove = event => {
+    const pointerPosition = this._getPointerPositionOnPage(event);
+    if (!this._hasStartedDragging()) {
+      const distanceX = Math.abs(pointerPosition.x - this._pickupPositionOnPage.x);
+      const distanceY = Math.abs(pointerPosition.y - this._pickupPositionOnPage.y);
+      const isOverThreshold = distanceX + distanceY >= this._config.dragStartThreshold;
+      // Only start dragging after the user has moved more than the minimum distance in either
+      // direction. Note that this is preferable over doing something like `skip(minimumDistance)`
+      // in the `pointerMove` subscription, because we're not guaranteed to have one move event
+      // per pixel of movement (e.g. if the user moves their pointer quickly).
+      if (isOverThreshold) {
+        const isDelayElapsed = Date.now() >= this._dragStartTime + this._getDragStartDelay(event);
+        const container = this._dropContainer;
+        if (!isDelayElapsed) {
+          this._endDragSequence(event);
+          return;
+        }
+        // Prevent other drag sequences from starting while something in the container is still
+        // being dragged. This can happen while we're waiting for the drop animation to finish
+        // and can cause errors, because some elements might still be moving around.
+        if (!container || !container.isDragging() && !container.isReceiving()) {
+          // Prevent the default action as soon as the dragging sequence is considered as
+          // "started" since waiting for the next event can allow the device to begin scrolling.
+          if (event.cancelable) {
+            event.preventDefault();
+          }
+          this._hasStartedDragging.set(true);
+          this._ngZone.run(() => this._startDragSequence(event));
+        }
+      }
+      return;
+    }
+    // We prevent the default action down here so that we know that dragging has started. This is
+    // important for touch devices where doing this too early can unnecessarily block scrolling,
+    // if there's a dragging delay.
+    if (event.cancelable) {
+      event.preventDefault();
+    }
+    const constrainedPointerPosition = this._getConstrainedPointerPosition(pointerPosition);
+    this._hasMoved = true;
+    this._lastKnownPointerPosition = pointerPosition;
+    this._updatePointerDirectionDelta(constrainedPointerPosition);
+    if (this._dropContainer) {
+      this._updateActiveDropContainer(constrainedPointerPosition, pointerPosition);
+    } else {
+      // If there's a position constraint function, we want the element's top/left to be at the
+      // specific position on the page. Use the initial position as a reference if that's the case.
+      const offset = this.constrainPosition ? this._initialDomRect : this._pickupPositionOnPage;
+      const activeTransform = this._activeTransform;
+      activeTransform.x = constrainedPointerPosition.x - offset.x + this._passiveTransform.x;
+      activeTransform.y = constrainedPointerPosition.y - offset.y + this._passiveTransform.y;
+      this._applyRootElementTransform(activeTransform.x, activeTransform.y);
+    }
+    // Since this event gets fired for every pixel while dragging, we only
+    // want to fire it if the consumer opted into it. Also we have to
+    // re-enter the zone because we run all of the events on the outside.
+    if (this._moveEvents.observers.length) {
+      this._ngZone.run(() => {
+        this._moveEvents.next({
+          source: this,
+          pointerPosition: constrainedPointerPosition,
+          event,
+          distance: this._getDragDistance(constrainedPointerPosition),
+          delta: this._pointerDirectionDelta
+        });
+      });
+    }
+  };
+  /** Handler that is invoked when the user lifts their pointer up, after initiating a drag. */
+  _pointerUp = event => {
+    this._endDragSequence(event);
+  };
+  /**
+   * Clears subscriptions and stops the dragging sequence.
+   * @param event Browser event object that ended the sequence.
+   */
+  _endDragSequence(event) {
+    // Note that here we use `isDragging` from the service, rather than from `this`.
+    // The difference is that the one from the service reflects whether a dragging sequence
+    // has been initiated, whereas the one on `this` includes whether the user has passed
+    // the minimum dragging threshold.
+    if (!this._dragDropRegistry.isDragging(this)) {
+      return;
+    }
+    this._removeListeners();
+    this._dragDropRegistry.stopDragging(this);
+    this._toggleNativeDragInteractions();
+    if (this._handles) {
+      this._rootElement.style.webkitTapHighlightColor = this._rootElementTapHighlight;
+    }
+    if (!this._hasStartedDragging()) {
+      return;
+    }
+    this.released.next({
+      source: this,
+      event
+    });
+    if (this._dropContainer) {
+      // Stop scrolling immediately, instead of waiting for the animation to finish.
+      this._dropContainer._stopScrolling();
+      this._animatePreviewToPlaceholder().then(() => {
+        this._cleanupDragArtifacts(event);
+        this._cleanupCachedDimensions();
+        this._dragDropRegistry.stopDragging(this);
+      });
+    } else {
+      // Convert the active transform into a passive one. This means that next time
+      // the user starts dragging the item, its position will be calculated relatively
+      // to the new passive transform.
+      this._passiveTransform.x = this._activeTransform.x;
+      const pointerPosition = this._getPointerPositionOnPage(event);
+      this._passiveTransform.y = this._activeTransform.y;
+      this._ngZone.run(() => {
+        this.ended.next({
+          source: this,
+          distance: this._getDragDistance(pointerPosition),
+          dropPoint: pointerPosition,
+          event
+        });
+      });
+      this._cleanupCachedDimensions();
+      this._dragDropRegistry.stopDragging(this);
+    }
+  }
+  /** Starts the dragging sequence. */
+  _startDragSequence(event) {
+    if (isTouchEvent(event)) {
+      this._lastTouchEventTime = Date.now();
+    }
+    this._toggleNativeDragInteractions();
+    // Needs to happen before the root element is moved.
+    const shadowRoot = this._getShadowRoot();
+    const dropContainer = this._dropContainer;
+    if (shadowRoot) {
+      // In some browsers the global `selectstart` that we maintain in the `DragDropRegistry`
+      // doesn't cross the shadow boundary so we have to prevent it at the shadow root (see #28792).
+      this._ngZone.runOutsideAngular(() => {
+        this._cleanupShadowRootSelectStart = (0,_backwards_compatibility_DHR38MsD_mjs__WEBPACK_IMPORTED_MODULE_6__._)(this._renderer, shadowRoot, 'selectstart', shadowDomSelectStart, activeCapturingEventOptions$1);
+      });
+    }
+    if (dropContainer) {
+      const element = this._rootElement;
+      const parent = element.parentNode;
+      const placeholder = this._placeholder = this._createPlaceholderElement();
+      const anchor = this._anchor = this._anchor || this._document.createComment(typeof ngDevMode === 'undefined' || ngDevMode ? 'cdk-drag-anchor' : '');
+      // Insert an anchor node so that we can restore the element's position in the DOM.
+      parent.insertBefore(anchor, element);
+      // There's no risk of transforms stacking when inside a drop container so
+      // we can keep the initial transform up to date any time dragging starts.
+      this._initialTransform = element.style.transform || '';
+      // Create the preview after the initial transform has
+      // been cached, because it can be affected by the transform.
+      this._preview = new PreviewRef(this._document, this._rootElement, this._direction, this._initialDomRect, this._previewTemplate || null, this.previewClass || null, this._pickupPositionOnPage, this._initialTransform, this._config.zIndex || 1000, this._renderer);
+      this._preview.attach(this._getPreviewInsertionPoint(parent, shadowRoot));
+      // We move the element out at the end of the body and we make it hidden, because keeping it in
+      // place will throw off the consumer's `:last-child` selectors. We can't remove the element
+      // from the DOM completely, because iOS will stop firing all subsequent events in the chain.
+      toggleVisibility(element, false, dragImportantProperties);
+      this._document.body.appendChild(parent.replaceChild(placeholder, element));
+      this.started.next({
+        source: this,
+        event
+      }); // Emit before notifying the container.
+      dropContainer.start();
+      this._initialContainer = dropContainer;
+      this._initialIndex = dropContainer.getItemIndex(this);
+    } else {
+      this.started.next({
+        source: this,
+        event
+      });
+      this._initialContainer = this._initialIndex = undefined;
+    }
+    // Important to run after we've called `start` on the parent container
+    // so that it has had time to resolve its scrollable parents.
+    this._parentPositions.cache(dropContainer ? dropContainer.getScrollableParents() : []);
+  }
+  /**
+   * Sets up the different variables and subscriptions
+   * that will be necessary for the dragging sequence.
+   * @param referenceElement Element that started the drag sequence.
+   * @param event Browser event object that started the sequence.
+   */
+  _initializeDragSequence(referenceElement, event) {
+    // Stop propagation if the item is inside another
+    // draggable so we don't start multiple drag sequences.
+    if (this._parentDragRef) {
+      event.stopPropagation();
+    }
+    const isDragging = this.isDragging();
+    const isTouchSequence = isTouchEvent(event);
+    const isAuxiliaryMouseButton = !isTouchSequence && event.button !== 0;
+    const rootElement = this._rootElement;
+    const target = (0,_shadow_dom_B0oHn41l_mjs__WEBPACK_IMPORTED_MODULE_1__._)(event);
+    const isSyntheticEvent = !isTouchSequence && this._lastTouchEventTime && this._lastTouchEventTime + MOUSE_EVENT_IGNORE_TIME > Date.now();
+    const isFakeEvent = isTouchSequence ? (0,_fake_event_detection_DWOdFTFz_mjs__WEBPACK_IMPORTED_MODULE_7__.a)(event) : (0,_fake_event_detection_DWOdFTFz_mjs__WEBPACK_IMPORTED_MODULE_7__.i)(event);
+    // If the event started from an element with the native HTML drag&drop, it'll interfere
+    // with our own dragging (e.g. `img` tags do it by default). Prevent the default action
+    // to stop it from happening. Note that preventing on `dragstart` also seems to work, but
+    // it's flaky and it fails if the user drags it away quickly. Also note that we only want
+    // to do this for `mousedown` since doing the same for `touchstart` will stop any `click`
+    // events from firing on touch devices.
+    if (target && target.draggable && event.type === 'mousedown') {
+      event.preventDefault();
+    }
+    // Abort if the user is already dragging or is using a mouse button other than the primary one.
+    if (isDragging || isAuxiliaryMouseButton || isSyntheticEvent || isFakeEvent) {
+      return;
+    }
+    // If we've got handles, we need to disable the tap highlight on the entire root element,
+    // otherwise iOS will still add it, even though all the drag interactions on the handle
+    // are disabled.
+    if (this._handles.length) {
+      const rootStyles = rootElement.style;
+      this._rootElementTapHighlight = rootStyles.webkitTapHighlightColor || '';
+      rootStyles.webkitTapHighlightColor = 'transparent';
+    }
+    this._hasMoved = false;
+    this._hasStartedDragging.set(this._hasMoved);
+    // Avoid multiple subscriptions and memory leaks when multi touch
+    // (isDragging check above isn't enough because of possible temporal and/or dimensional delays)
+    this._removeListeners();
+    this._initialDomRect = this._rootElement.getBoundingClientRect();
+    this._pointerMoveSubscription = this._dragDropRegistry.pointerMove.subscribe(this._pointerMove);
+    this._pointerUpSubscription = this._dragDropRegistry.pointerUp.subscribe(this._pointerUp);
+    this._scrollSubscription = this._dragDropRegistry.scrolled(this._getShadowRoot()).subscribe(scrollEvent => this._updateOnScroll(scrollEvent));
+    if (this._boundaryElement) {
+      this._boundaryRect = getMutableClientRect(this._boundaryElement);
+    }
+    // If we have a custom preview we can't know ahead of time how large it'll be so we position
+    // it next to the cursor. The exception is when the consumer has opted into making the preview
+    // the same size as the root element, in which case we do know the size.
+    const previewTemplate = this._previewTemplate;
+    this._pickupPositionInElement = previewTemplate && previewTemplate.template && !previewTemplate.matchSize ? {
+      x: 0,
+      y: 0
+    } : this._getPointerPositionInElement(this._initialDomRect, referenceElement, event);
+    const pointerPosition = this._pickupPositionOnPage = this._lastKnownPointerPosition = this._getPointerPositionOnPage(event);
+    this._pointerDirectionDelta = {
+      x: 0,
+      y: 0
+    };
+    this._pointerPositionAtLastDirectionChange = {
+      x: pointerPosition.x,
+      y: pointerPosition.y
+    };
+    this._dragStartTime = Date.now();
+    this._dragDropRegistry.startDragging(this, event);
+  }
+  /** Cleans up the DOM artifacts that were added to facilitate the element being dragged. */
+  _cleanupDragArtifacts(event) {
+    // Restore the element's visibility and insert it at its old position in the DOM.
+    // It's important that we maintain the position, because moving the element around in the DOM
+    // can throw off `NgFor` which does smart diffing and re-creates elements only when necessary,
+    // while moving the existing elements in all other cases.
+    toggleVisibility(this._rootElement, true, dragImportantProperties);
+    this._anchor.parentNode.replaceChild(this._rootElement, this._anchor);
+    this._destroyPreview();
+    this._destroyPlaceholder();
+    this._initialDomRect = this._boundaryRect = this._previewRect = this._initialTransform = undefined;
+    // Re-enter the NgZone since we bound `document` events on the outside.
+    this._ngZone.run(() => {
+      const container = this._dropContainer;
+      const currentIndex = container.getItemIndex(this);
+      const pointerPosition = this._getPointerPositionOnPage(event);
+      const distance = this._getDragDistance(pointerPosition);
+      const isPointerOverContainer = container._isOverContainer(pointerPosition.x, pointerPosition.y);
+      this.ended.next({
+        source: this,
+        distance,
+        dropPoint: pointerPosition,
+        event
+      });
+      this.dropped.next({
+        item: this,
+        currentIndex,
+        previousIndex: this._initialIndex,
+        container: container,
+        previousContainer: this._initialContainer,
+        isPointerOverContainer,
+        distance,
+        dropPoint: pointerPosition,
+        event
+      });
+      container.drop(this, currentIndex, this._initialIndex, this._initialContainer, isPointerOverContainer, distance, pointerPosition, event);
+      this._dropContainer = this._initialContainer;
+    });
+  }
+  /**
+   * Updates the item's position in its drop container, or moves it
+   * into a new one, depending on its current drag position.
+   */
+  _updateActiveDropContainer({
+    x,
+    y
+  }, {
+    x: rawX,
+    y: rawY
+  }) {
+    // Drop container that draggable has been moved into.
+    let newContainer = this._initialContainer._getSiblingContainerFromPosition(this, x, y);
+    // If we couldn't find a new container to move the item into, and the item has left its
+    // initial container, check whether the it's over the initial container. This handles the
+    // case where two containers are connected one way and the user tries to undo dragging an
+    // item into a new container.
+    if (!newContainer && this._dropContainer !== this._initialContainer && this._initialContainer._isOverContainer(x, y)) {
+      newContainer = this._initialContainer;
+    }
+    if (newContainer && newContainer !== this._dropContainer) {
+      this._ngZone.run(() => {
+        // Notify the old container that the item has left.
+        this.exited.next({
+          item: this,
+          container: this._dropContainer
+        });
+        this._dropContainer.exit(this);
+        // Notify the new container that the item has entered.
+        this._dropContainer = newContainer;
+        this._dropContainer.enter(this, x, y, newContainer === this._initialContainer &&
+        // If we're re-entering the initial container and sorting is disabled,
+        // put item the into its starting index to begin with.
+        newContainer.sortingDisabled ? this._initialIndex : undefined);
+        this.entered.next({
+          item: this,
+          container: newContainer,
+          currentIndex: newContainer.getItemIndex(this)
+        });
+      });
+    }
+    // Dragging may have been interrupted as a result of the events above.
+    if (this.isDragging()) {
+      this._dropContainer._startScrollingIfNecessary(rawX, rawY);
+      this._dropContainer._sortItem(this, x, y, this._pointerDirectionDelta);
+      if (this.constrainPosition) {
+        this._applyPreviewTransform(x, y);
+      } else {
+        this._applyPreviewTransform(x - this._pickupPositionInElement.x, y - this._pickupPositionInElement.y);
+      }
+    }
+  }
+  /**
+   * Animates the preview element from its current position to the location of the drop placeholder.
+   * @returns Promise that resolves when the animation completes.
+   */
+  _animatePreviewToPlaceholder() {
+    // If the user hasn't moved yet, the transitionend event won't fire.
+    if (!this._hasMoved) {
+      return Promise.resolve();
+    }
+    const placeholderRect = this._placeholder.getBoundingClientRect();
+    // Apply the class that adds a transition to the preview.
+    this._preview.addClass('cdk-drag-animating');
+    // Move the preview to the placeholder position.
+    this._applyPreviewTransform(placeholderRect.left, placeholderRect.top);
+    // If the element doesn't have a `transition`, the `transitionend` event won't fire. Since
+    // we need to trigger a style recalculation in order for the `cdk-drag-animating` class to
+    // apply its style, we take advantage of the available info to figure out whether we need to
+    // bind the event in the first place.
+    const duration = this._preview.getTransitionDuration();
+    if (duration === 0) {
+      return Promise.resolve();
+    }
+    return this._ngZone.runOutsideAngular(() => {
+      return new Promise(resolve => {
+        const handler = event => {
+          if (!event || this._preview && (0,_shadow_dom_B0oHn41l_mjs__WEBPACK_IMPORTED_MODULE_1__._)(event) === this._preview.element && event.propertyName === 'transform') {
+            cleanupListener();
+            resolve();
+            clearTimeout(timeout);
+          }
+        };
+        // If a transition is short enough, the browser might not fire the `transitionend` event.
+        // Since we know how long it's supposed to take, add a timeout with a 50% buffer that'll
+        // fire if the transition hasn't completed when it was supposed to.
+        const timeout = setTimeout(handler, duration * 1.5);
+        const cleanupListener = this._preview.addEventListener('transitionend', handler);
+      });
+    });
+  }
+  /** Creates an element that will be shown instead of the current element while dragging. */
+  _createPlaceholderElement() {
+    const placeholderConfig = this._placeholderTemplate;
+    const placeholderTemplate = placeholderConfig ? placeholderConfig.template : null;
+    let placeholder;
+    if (placeholderTemplate) {
+      this._placeholderRef = placeholderConfig.viewContainer.createEmbeddedView(placeholderTemplate, placeholderConfig.context);
+      this._placeholderRef.detectChanges();
+      placeholder = getRootNode(this._placeholderRef, this._document);
+    } else {
+      placeholder = deepCloneNode(this._rootElement);
+    }
+    // Stop pointer events on the preview so the user can't
+    // interact with it while the preview is animating.
+    placeholder.style.pointerEvents = 'none';
+    placeholder.classList.add('cdk-drag-placeholder');
+    return placeholder;
+  }
+  /**
+   * Figures out the coordinates at which an element was picked up.
+   * @param referenceElement Element that initiated the dragging.
+   * @param event Event that initiated the dragging.
+   */
+  _getPointerPositionInElement(elementRect, referenceElement, event) {
+    const handleElement = referenceElement === this._rootElement ? null : referenceElement;
+    const referenceRect = handleElement ? handleElement.getBoundingClientRect() : elementRect;
+    const point = isTouchEvent(event) ? event.targetTouches[0] : event;
+    const scrollPosition = this._getViewportScrollPosition();
+    const x = point.pageX - referenceRect.left - scrollPosition.left;
+    const y = point.pageY - referenceRect.top - scrollPosition.top;
+    return {
+      x: referenceRect.left - elementRect.left + x,
+      y: referenceRect.top - elementRect.top + y
+    };
+  }
+  /** Determines the point of the page that was touched by the user. */
+  _getPointerPositionOnPage(event) {
+    const scrollPosition = this._getViewportScrollPosition();
+    const point = isTouchEvent(event) ?
+    // `touches` will be empty for start/end events so we have to fall back to `changedTouches`.
+    // Also note that on real devices we're guaranteed for either `touches` or `changedTouches`
+    // to have a value, but Firefox in device emulation mode has a bug where both can be empty
+    // for `touchstart` and `touchend` so we fall back to a dummy object in order to avoid
+    // throwing an error. The value returned here will be incorrect, but since this only
+    // breaks inside a developer tool and the value is only used for secondary information,
+    // we can get away with it. See https://bugzilla.mozilla.org/show_bug.cgi?id=1615824.
+    event.touches[0] || event.changedTouches[0] || {
+      pageX: 0,
+      pageY: 0
+    } : event;
+    const x = point.pageX - scrollPosition.left;
+    const y = point.pageY - scrollPosition.top;
+    // if dragging SVG element, try to convert from the screen coordinate system to the SVG
+    // coordinate system
+    if (this._ownerSVGElement) {
+      const svgMatrix = this._ownerSVGElement.getScreenCTM();
+      if (svgMatrix) {
+        const svgPoint = this._ownerSVGElement.createSVGPoint();
+        svgPoint.x = x;
+        svgPoint.y = y;
+        return svgPoint.matrixTransform(svgMatrix.inverse());
+      }
+    }
+    return {
+      x,
+      y
+    };
+  }
+  /** Gets the pointer position on the page, accounting for any position constraints. */
+  _getConstrainedPointerPosition(point) {
+    const dropContainerLock = this._dropContainer ? this._dropContainer.lockAxis : null;
+    let {
+      x,
+      y
+    } = this.constrainPosition ? this.constrainPosition(point, this, this._initialDomRect, this._pickupPositionInElement) : point;
+    if (this.lockAxis === 'x' || dropContainerLock === 'x') {
+      y = this._pickupPositionOnPage.y - (this.constrainPosition ? this._pickupPositionInElement.y : 0);
+    } else if (this.lockAxis === 'y' || dropContainerLock === 'y') {
+      x = this._pickupPositionOnPage.x - (this.constrainPosition ? this._pickupPositionInElement.x : 0);
+    }
+    if (this._boundaryRect) {
+      // If not using a custom constrain we need to account for the pickup position in the element
+      // otherwise we do not need to do this, as it has already been accounted for
+      const {
+        x: pickupX,
+        y: pickupY
+      } = !this.constrainPosition ? this._pickupPositionInElement : {
+        x: 0,
+        y: 0
+      };
+      const boundaryRect = this._boundaryRect;
+      const {
+        width: previewWidth,
+        height: previewHeight
+      } = this._getPreviewRect();
+      const minY = boundaryRect.top + pickupY;
+      const maxY = boundaryRect.bottom - (previewHeight - pickupY);
+      const minX = boundaryRect.left + pickupX;
+      const maxX = boundaryRect.right - (previewWidth - pickupX);
+      x = clamp$1(x, minX, maxX);
+      y = clamp$1(y, minY, maxY);
+    }
+    return {
+      x,
+      y
+    };
+  }
+  /** Updates the current drag delta, based on the user's current pointer position on the page. */
+  _updatePointerDirectionDelta(pointerPositionOnPage) {
+    const {
+      x,
+      y
+    } = pointerPositionOnPage;
+    const delta = this._pointerDirectionDelta;
+    const positionSinceLastChange = this._pointerPositionAtLastDirectionChange;
+    // Amount of pixels the user has dragged since the last time the direction changed.
+    const changeX = Math.abs(x - positionSinceLastChange.x);
+    const changeY = Math.abs(y - positionSinceLastChange.y);
+    // Because we handle pointer events on a per-pixel basis, we don't want the delta
+    // to change for every pixel, otherwise anything that depends on it can look erratic.
+    // To make the delta more consistent, we track how much the user has moved since the last
+    // delta change and we only update it after it has reached a certain threshold.
+    if (changeX > this._config.pointerDirectionChangeThreshold) {
+      delta.x = x > positionSinceLastChange.x ? 1 : -1;
+      positionSinceLastChange.x = x;
+    }
+    if (changeY > this._config.pointerDirectionChangeThreshold) {
+      delta.y = y > positionSinceLastChange.y ? 1 : -1;
+      positionSinceLastChange.y = y;
+    }
+    return delta;
+  }
+  /** Toggles the native drag interactions, based on how many handles are registered. */
+  _toggleNativeDragInteractions() {
+    if (!this._rootElement || !this._handles) {
+      return;
+    }
+    const shouldEnable = this._handles.length > 0 || !this.isDragging();
+    if (shouldEnable !== this._nativeInteractionsEnabled) {
+      this._nativeInteractionsEnabled = shouldEnable;
+      toggleNativeDragInteractions(this._rootElement, shouldEnable);
+    }
+  }
+  /** Removes the manually-added event listeners from the root element. */
+  _removeRootElementListeners() {
+    this._rootElementCleanups?.forEach(cleanup => cleanup());
+    this._rootElementCleanups = undefined;
+  }
+  /**
+   * Applies a `transform` to the root element, taking into account any existing transforms on it.
+   * @param x New transform value along the X axis.
+   * @param y New transform value along the Y axis.
+   */
+  _applyRootElementTransform(x, y) {
+    const scale = 1 / this.scale;
+    const transform = getTransform(x * scale, y * scale);
+    const styles = this._rootElement.style;
+    // Cache the previous transform amount only after the first drag sequence, because
+    // we don't want our own transforms to stack on top of each other.
+    // Should be excluded none because none + translate3d(x, y, x) is invalid css
+    if (this._initialTransform == null) {
+      this._initialTransform = styles.transform && styles.transform != 'none' ? styles.transform : '';
+    }
+    // Preserve the previous `transform` value, if there was one. Note that we apply our own
+    // transform before the user's, because things like rotation can affect which direction
+    // the element will be translated towards.
+    styles.transform = combineTransforms(transform, this._initialTransform);
+  }
+  /**
+   * Applies a `transform` to the preview, taking into account any existing transforms on it.
+   * @param x New transform value along the X axis.
+   * @param y New transform value along the Y axis.
+   */
+  _applyPreviewTransform(x, y) {
+    // Only apply the initial transform if the preview is a clone of the original element, otherwise
+    // it could be completely different and the transform might not make sense anymore.
+    const initialTransform = this._previewTemplate?.template ? undefined : this._initialTransform;
+    const transform = getTransform(x, y);
+    this._preview.setTransform(combineTransforms(transform, initialTransform));
+  }
+  /**
+   * Gets the distance that the user has dragged during the current drag sequence.
+   * @param currentPosition Current position of the user's pointer.
+   */
+  _getDragDistance(currentPosition) {
+    const pickupPosition = this._pickupPositionOnPage;
+    if (pickupPosition) {
+      return {
+        x: currentPosition.x - pickupPosition.x,
+        y: currentPosition.y - pickupPosition.y
+      };
+    }
+    return {
+      x: 0,
+      y: 0
+    };
+  }
+  /** Cleans up any cached element dimensions that we don't need after dragging has stopped. */
+  _cleanupCachedDimensions() {
+    this._boundaryRect = this._previewRect = undefined;
+    this._parentPositions.clear();
+  }
+  /**
+   * Checks whether the element is still inside its boundary after the viewport has been resized.
+   * If not, the position is adjusted so that the element fits again.
+   */
+  _containInsideBoundaryOnResize() {
+    let {
+      x,
+      y
+    } = this._passiveTransform;
+    if (x === 0 && y === 0 || this.isDragging() || !this._boundaryElement) {
+      return;
+    }
+    // Note: don't use `_clientRectAtStart` here, because we want the latest position.
+    const elementRect = this._rootElement.getBoundingClientRect();
+    const boundaryRect = this._boundaryElement.getBoundingClientRect();
+    // It's possible that the element got hidden away after dragging (e.g. by switching to a
+    // different tab). Don't do anything in this case so we don't clear the user's position.
+    if (boundaryRect.width === 0 && boundaryRect.height === 0 || elementRect.width === 0 && elementRect.height === 0) {
+      return;
+    }
+    const leftOverflow = boundaryRect.left - elementRect.left;
+    const rightOverflow = elementRect.right - boundaryRect.right;
+    const topOverflow = boundaryRect.top - elementRect.top;
+    const bottomOverflow = elementRect.bottom - boundaryRect.bottom;
+    // If the element has become wider than the boundary, we can't
+    // do much to make it fit so we just anchor it to the left.
+    if (boundaryRect.width > elementRect.width) {
+      if (leftOverflow > 0) {
+        x += leftOverflow;
+      }
+      if (rightOverflow > 0) {
+        x -= rightOverflow;
+      }
+    } else {
+      x = 0;
+    }
+    // If the element has become taller than the boundary, we can't
+    // do much to make it fit so we just anchor it to the top.
+    if (boundaryRect.height > elementRect.height) {
+      if (topOverflow > 0) {
+        y += topOverflow;
+      }
+      if (bottomOverflow > 0) {
+        y -= bottomOverflow;
+      }
+    } else {
+      y = 0;
+    }
+    if (x !== this._passiveTransform.x || y !== this._passiveTransform.y) {
+      this.setFreeDragPosition({
+        y,
+        x
+      });
+    }
+  }
+  /** Gets the drag start delay, based on the event type. */
+  _getDragStartDelay(event) {
+    const value = this.dragStartDelay;
+    if (typeof value === 'number') {
+      return value;
+    } else if (isTouchEvent(event)) {
+      return value.touch;
+    }
+    return value ? value.mouse : 0;
+  }
+  /** Updates the internal state of the draggable element when scrolling has occurred. */
+  _updateOnScroll(event) {
+    const scrollDifference = this._parentPositions.handleScroll(event);
+    if (scrollDifference) {
+      const target = (0,_shadow_dom_B0oHn41l_mjs__WEBPACK_IMPORTED_MODULE_1__._)(event);
+      // DOMRect dimensions are based on the scroll position of the page and its parent
+      // node so we have to update the cached boundary DOMRect if the user has scrolled.
+      if (this._boundaryRect && target !== this._boundaryElement && target.contains(this._boundaryElement)) {
+        adjustDomRect(this._boundaryRect, scrollDifference.top, scrollDifference.left);
+      }
+      this._pickupPositionOnPage.x += scrollDifference.left;
+      this._pickupPositionOnPage.y += scrollDifference.top;
+      // If we're in free drag mode, we have to update the active transform, because
+      // it isn't relative to the viewport like the preview inside a drop list.
+      if (!this._dropContainer) {
+        this._activeTransform.x -= scrollDifference.left;
+        this._activeTransform.y -= scrollDifference.top;
+        this._applyRootElementTransform(this._activeTransform.x, this._activeTransform.y);
+      }
+    }
+  }
+  /** Gets the scroll position of the viewport. */
+  _getViewportScrollPosition() {
+    return this._parentPositions.positions.get(this._document)?.scrollPosition || this._parentPositions.getViewportScrollPosition();
+  }
+  /**
+   * Lazily resolves and returns the shadow root of the element. We do this in a function, rather
+   * than saving it in property directly on init, because we want to resolve it as late as possible
+   * in order to ensure that the element has been moved into the shadow DOM. Doing it inside the
+   * constructor might be too early if the element is inside of something like `ngFor` or `ngIf`.
+   */
+  _getShadowRoot() {
+    if (this._cachedShadowRoot === undefined) {
+      this._cachedShadowRoot = (0,_shadow_dom_B0oHn41l_mjs__WEBPACK_IMPORTED_MODULE_1__.a)(this._rootElement);
+    }
+    return this._cachedShadowRoot;
+  }
+  /** Gets the element into which the drag preview should be inserted. */
+  _getPreviewInsertionPoint(initialParent, shadowRoot) {
+    const previewContainer = this._previewContainer || 'global';
+    if (previewContainer === 'parent') {
+      return initialParent;
+    }
+    if (previewContainer === 'global') {
+      const documentRef = this._document;
+      // We can't use the body if the user is in fullscreen mode,
+      // because the preview will render under the fullscreen element.
+      // TODO(crisbeto): dedupe this with the `FullscreenOverlayContainer` eventually.
+      return shadowRoot || documentRef.fullscreenElement || documentRef.webkitFullscreenElement || documentRef.mozFullScreenElement || documentRef.msFullscreenElement || documentRef.body;
+    }
+    return (0,_element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_5__.a)(previewContainer);
+  }
+  /** Lazily resolves and returns the dimensions of the preview. */
+  _getPreviewRect() {
+    // Cache the preview element rect if we haven't cached it already or if
+    // we cached it too early before the element dimensions were computed.
+    if (!this._previewRect || !this._previewRect.width && !this._previewRect.height) {
+      this._previewRect = this._preview ? this._preview.getBoundingClientRect() : this._initialDomRect;
+    }
+    return this._previewRect;
+  }
+  /** Handles a native `dragstart` event. */
+  _nativeDragStart = event => {
+    if (this._handles.length) {
+      const targetHandle = this._getTargetHandle(event);
+      if (targetHandle && !this._disabledHandles.has(targetHandle) && !this.disabled) {
+        event.preventDefault();
+      }
+    } else if (!this.disabled) {
+      // Usually this isn't necessary since the we prevent the default action in `pointerDown`,
+      // but some cases like dragging of links can slip through (see #24403).
+      event.preventDefault();
+    }
+  };
+  /** Gets a handle that is the target of an event. */
+  _getTargetHandle(event) {
+    return this._handles.find(handle => {
+      return event.target && (event.target === handle || handle.contains(event.target));
+    });
+  }
+}
+/** Clamps a value between a minimum and a maximum. */
+function clamp$1(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+/** Determines whether an event is a touch event. */
+function isTouchEvent(event) {
+  // This function is called for every pixel that the user has dragged so we need it to be
+  // as fast as possible. Since we only bind mouse events and touch events, we can assume
+  // that if the event's name starts with `t`, it's a touch event.
+  return event.type[0] === 't';
+}
+/** Callback invoked for `selectstart` events inside the shadow DOM. */
+function shadowDomSelectStart(event) {
+  event.preventDefault();
+}
+
+/**
+ * Moves an item one index in an array to another.
+ * @param array Array in which to move the item.
+ * @param fromIndex Starting index of the item.
+ * @param toIndex Index to which the item should be moved.
+ */
+function moveItemInArray(array, fromIndex, toIndex) {
+  const from = clamp(fromIndex, array.length - 1);
+  const to = clamp(toIndex, array.length - 1);
+  if (from === to) {
+    return;
+  }
+  const target = array[from];
+  const delta = to < from ? -1 : 1;
+  for (let i = from; i !== to; i += delta) {
+    array[i] = array[i + delta];
+  }
+  array[to] = target;
+}
+/**
+ * Moves an item from one array to another.
+ * @param currentArray Array from which to transfer the item.
+ * @param targetArray Array into which to put the item.
+ * @param currentIndex Index of the item in its current array.
+ * @param targetIndex Index at which to insert the item.
+ */
+function transferArrayItem(currentArray, targetArray, currentIndex, targetIndex) {
+  const from = clamp(currentIndex, currentArray.length - 1);
+  const to = clamp(targetIndex, targetArray.length);
+  if (currentArray.length) {
+    targetArray.splice(to, 0, currentArray.splice(from, 1)[0]);
+  }
+}
+/**
+ * Copies an item from one array to another, leaving it in its
+ * original position in current array.
+ * @param currentArray Array from which to copy the item.
+ * @param targetArray Array into which is copy the item.
+ * @param currentIndex Index of the item in its current array.
+ * @param targetIndex Index at which to insert the item.
+ *
+ */
+function copyArrayItem(currentArray, targetArray, currentIndex, targetIndex) {
+  const to = clamp(targetIndex, targetArray.length);
+  if (currentArray.length) {
+    targetArray.splice(to, 0, currentArray[currentIndex]);
+  }
+}
+/** Clamps a number between zero and a maximum. */
+function clamp(value, max) {
+  return Math.max(0, Math.min(max, value));
+}
+
+/**
+ * Strategy that only supports sorting along a single axis.
+ * Items are reordered using CSS transforms which allows for sorting to be animated.
+ * @docs-private
+ */
+class SingleAxisSortStrategy {
+  _dragDropRegistry;
+  /** Root element container of the drop list. */
+  _element;
+  /** Function used to determine if an item can be sorted into a specific index. */
+  _sortPredicate;
+  /** Cache of the dimensions of all the items inside the container. */
+  _itemPositions = [];
+  /**
+   * Draggable items that are currently active inside the container. Includes the items
+   * that were there at the start of the sequence, as well as any items that have been dragged
+   * in, but haven't been dropped yet.
+   */
+  _activeDraggables;
+  /** Direction in which the list is oriented. */
+  orientation = 'vertical';
+  /** Layout direction of the drop list. */
+  direction;
+  constructor(_dragDropRegistry) {
+    this._dragDropRegistry = _dragDropRegistry;
+  }
+  /**
+   * Keeps track of the item that was last swapped with the dragged item, as well as what direction
+   * the pointer was moving in when the swap occurred and whether the user's pointer continued to
+   * overlap with the swapped item after the swapping occurred.
+   */
+  _previousSwap = {
+    drag: null,
+    delta: 0,
+    overlaps: false
+  };
+  /**
+   * To be called when the drag sequence starts.
+   * @param items Items that are currently in the list.
+   */
+  start(items) {
+    this.withItems(items);
+  }
+  /**
+   * To be called when an item is being sorted.
+   * @param item Item to be sorted.
+   * @param pointerX Position of the item along the X axis.
+   * @param pointerY Position of the item along the Y axis.
+   * @param pointerDelta Direction in which the pointer is moving along each axis.
+   */
+  sort(item, pointerX, pointerY, pointerDelta) {
+    const siblings = this._itemPositions;
+    const newIndex = this._getItemIndexFromPointerPosition(item, pointerX, pointerY, pointerDelta);
+    if (newIndex === -1 && siblings.length > 0) {
+      return null;
+    }
+    const isHorizontal = this.orientation === 'horizontal';
+    const currentIndex = siblings.findIndex(currentItem => currentItem.drag === item);
+    const siblingAtNewPosition = siblings[newIndex];
+    const currentPosition = siblings[currentIndex].clientRect;
+    const newPosition = siblingAtNewPosition.clientRect;
+    const delta = currentIndex > newIndex ? 1 : -1;
+    // How many pixels the item's placeholder should be offset.
+    const itemOffset = this._getItemOffsetPx(currentPosition, newPosition, delta);
+    // How many pixels all the other items should be offset.
+    const siblingOffset = this._getSiblingOffsetPx(currentIndex, siblings, delta);
+    // Save the previous order of the items before moving the item to its new index.
+    // We use this to check whether an item has been moved as a result of the sorting.
+    const oldOrder = siblings.slice();
+    // Shuffle the array in place.
+    moveItemInArray(siblings, currentIndex, newIndex);
+    siblings.forEach((sibling, index) => {
+      // Don't do anything if the position hasn't changed.
+      if (oldOrder[index] === sibling) {
+        return;
+      }
+      const isDraggedItem = sibling.drag === item;
+      const offset = isDraggedItem ? itemOffset : siblingOffset;
+      const elementToOffset = isDraggedItem ? item.getPlaceholderElement() : sibling.drag.getRootElement();
+      // Update the offset to reflect the new position.
+      sibling.offset += offset;
+      const transformAmount = Math.round(sibling.offset * (1 / sibling.drag.scale));
+      // Since we're moving the items with a `transform`, we need to adjust their cached
+      // client rects to reflect their new position, as well as swap their positions in the cache.
+      // Note that we shouldn't use `getBoundingClientRect` here to update the cache, because the
+      // elements may be mid-animation which will give us a wrong result.
+      if (isHorizontal) {
+        // Round the transforms since some browsers will
+        // blur the elements, for sub-pixel transforms.
+        elementToOffset.style.transform = combineTransforms(`translate3d(${transformAmount}px, 0, 0)`, sibling.initialTransform);
+        adjustDomRect(sibling.clientRect, 0, offset);
+      } else {
+        elementToOffset.style.transform = combineTransforms(`translate3d(0, ${transformAmount}px, 0)`, sibling.initialTransform);
+        adjustDomRect(sibling.clientRect, offset, 0);
+      }
+    });
+    // Note that it's important that we do this after the client rects have been adjusted.
+    this._previousSwap.overlaps = isInsideClientRect(newPosition, pointerX, pointerY);
+    this._previousSwap.drag = siblingAtNewPosition.drag;
+    this._previousSwap.delta = isHorizontal ? pointerDelta.x : pointerDelta.y;
+    return {
+      previousIndex: currentIndex,
+      currentIndex: newIndex
+    };
+  }
+  /**
+   * Called when an item is being moved into the container.
+   * @param item Item that was moved into the container.
+   * @param pointerX Position of the item along the X axis.
+   * @param pointerY Position of the item along the Y axis.
+   * @param index Index at which the item entered. If omitted, the container will try to figure it
+   *   out automatically.
+   */
+  enter(item, pointerX, pointerY, index) {
+    const newIndex = index == null || index < 0 ?
+    // We use the coordinates of where the item entered the drop
+    // zone to figure out at which index it should be inserted.
+    this._getItemIndexFromPointerPosition(item, pointerX, pointerY) : index;
+    const activeDraggables = this._activeDraggables;
+    const currentIndex = activeDraggables.indexOf(item);
+    const placeholder = item.getPlaceholderElement();
+    let newPositionReference = activeDraggables[newIndex];
+    // If the item at the new position is the same as the item that is being dragged,
+    // it means that we're trying to restore the item to its initial position. In this
+    // case we should use the next item from the list as the reference.
+    if (newPositionReference === item) {
+      newPositionReference = activeDraggables[newIndex + 1];
+    }
+    // If we didn't find a new position reference, it means that either the item didn't start off
+    // in this container, or that the item requested to be inserted at the end of the list.
+    if (!newPositionReference && (newIndex == null || newIndex === -1 || newIndex < activeDraggables.length - 1) && this._shouldEnterAsFirstChild(pointerX, pointerY)) {
+      newPositionReference = activeDraggables[0];
+    }
+    // Since the item may be in the `activeDraggables` already (e.g. if the user dragged it
+    // into another container and back again), we have to ensure that it isn't duplicated.
+    if (currentIndex > -1) {
+      activeDraggables.splice(currentIndex, 1);
+    }
+    // Don't use items that are being dragged as a reference, because
+    // their element has been moved down to the bottom of the body.
+    if (newPositionReference && !this._dragDropRegistry.isDragging(newPositionReference)) {
+      const element = newPositionReference.getRootElement();
+      element.parentElement.insertBefore(placeholder, element);
+      activeDraggables.splice(newIndex, 0, item);
+    } else {
+      this._element.appendChild(placeholder);
+      activeDraggables.push(item);
+    }
+    // The transform needs to be cleared so it doesn't throw off the measurements.
+    placeholder.style.transform = '';
+    // Note that usually `start` is called together with `enter` when an item goes into a new
+    // container. This will cache item positions, but we need to refresh them since the amount
+    // of items has changed.
+    this._cacheItemPositions();
+  }
+  /** Sets the items that are currently part of the list. */
+  withItems(items) {
+    this._activeDraggables = items.slice();
+    this._cacheItemPositions();
+  }
+  /** Assigns a sort predicate to the strategy. */
+  withSortPredicate(predicate) {
+    this._sortPredicate = predicate;
+  }
+  /** Resets the strategy to its initial state before dragging was started. */
+  reset() {
+    // TODO(crisbeto): may have to wait for the animations to finish.
+    this._activeDraggables?.forEach(item => {
+      const rootElement = item.getRootElement();
+      if (rootElement) {
+        const initialTransform = this._itemPositions.find(p => p.drag === item)?.initialTransform;
+        rootElement.style.transform = initialTransform || '';
+      }
+    });
+    this._itemPositions = [];
+    this._activeDraggables = [];
+    this._previousSwap.drag = null;
+    this._previousSwap.delta = 0;
+    this._previousSwap.overlaps = false;
+  }
+  /**
+   * Gets a snapshot of items currently in the list.
+   * Can include items that we dragged in from another list.
+   */
+  getActiveItemsSnapshot() {
+    return this._activeDraggables;
+  }
+  /** Gets the index of a specific item. */
+  getItemIndex(item) {
+    // Items are sorted always by top/left in the cache, however they flow differently in RTL.
+    // The rest of the logic still stands no matter what orientation we're in, however
+    // we need to invert the array when determining the index.
+    const items = this.orientation === 'horizontal' && this.direction === 'rtl' ? this._itemPositions.slice().reverse() : this._itemPositions;
+    return items.findIndex(currentItem => currentItem.drag === item);
+  }
+  /** Used to notify the strategy that the scroll position has changed. */
+  updateOnScroll(topDifference, leftDifference) {
+    // Since we know the amount that the user has scrolled we can shift all of the
+    // client rectangles ourselves. This is cheaper than re-measuring everything and
+    // we can avoid inconsistent behavior where we might be measuring the element before
+    // its position has changed.
+    this._itemPositions.forEach(({
+      clientRect
+    }) => {
+      adjustDomRect(clientRect, topDifference, leftDifference);
+    });
+    // We need two loops for this, because we want all of the cached
+    // positions to be up-to-date before we re-sort the item.
+    this._itemPositions.forEach(({
+      drag
+    }) => {
+      if (this._dragDropRegistry.isDragging(drag)) {
+        // We need to re-sort the item manually, because the pointer move
+        // events won't be dispatched while the user is scrolling.
+        drag._sortFromLastPointerPosition();
+      }
+    });
+  }
+  withElementContainer(container) {
+    this._element = container;
+  }
+  /** Refreshes the position cache of the items and sibling containers. */
+  _cacheItemPositions() {
+    const isHorizontal = this.orientation === 'horizontal';
+    this._itemPositions = this._activeDraggables.map(drag => {
+      const elementToMeasure = drag.getVisibleElement();
+      return {
+        drag,
+        offset: 0,
+        initialTransform: elementToMeasure.style.transform || '',
+        clientRect: getMutableClientRect(elementToMeasure)
+      };
+    }).sort((a, b) => {
+      return isHorizontal ? a.clientRect.left - b.clientRect.left : a.clientRect.top - b.clientRect.top;
+    });
+  }
+  /**
+   * Gets the offset in pixels by which the item that is being dragged should be moved.
+   * @param currentPosition Current position of the item.
+   * @param newPosition Position of the item where the current item should be moved.
+   * @param delta Direction in which the user is moving.
+   */
+  _getItemOffsetPx(currentPosition, newPosition, delta) {
+    const isHorizontal = this.orientation === 'horizontal';
+    let itemOffset = isHorizontal ? newPosition.left - currentPosition.left : newPosition.top - currentPosition.top;
+    // Account for differences in the item width/height.
+    if (delta === -1) {
+      itemOffset += isHorizontal ? newPosition.width - currentPosition.width : newPosition.height - currentPosition.height;
+    }
+    return itemOffset;
+  }
+  /**
+   * Gets the offset in pixels by which the items that aren't being dragged should be moved.
+   * @param currentIndex Index of the item currently being dragged.
+   * @param siblings All of the items in the list.
+   * @param delta Direction in which the user is moving.
+   */
+  _getSiblingOffsetPx(currentIndex, siblings, delta) {
+    const isHorizontal = this.orientation === 'horizontal';
+    const currentPosition = siblings[currentIndex].clientRect;
+    const immediateSibling = siblings[currentIndex + delta * -1];
+    let siblingOffset = currentPosition[isHorizontal ? 'width' : 'height'] * delta;
+    if (immediateSibling) {
+      const start = isHorizontal ? 'left' : 'top';
+      const end = isHorizontal ? 'right' : 'bottom';
+      // Get the spacing between the start of the current item and the end of the one immediately
+      // after it in the direction in which the user is dragging, or vice versa. We add it to the
+      // offset in order to push the element to where it will be when it's inline and is influenced
+      // by the `margin` of its siblings.
+      if (delta === -1) {
+        siblingOffset -= immediateSibling.clientRect[start] - currentPosition[end];
+      } else {
+        siblingOffset += currentPosition[start] - immediateSibling.clientRect[end];
+      }
+    }
+    return siblingOffset;
+  }
+  /**
+   * Checks if pointer is entering in the first position
+   * @param pointerX Position of the user's pointer along the X axis.
+   * @param pointerY Position of the user's pointer along the Y axis.
+   */
+  _shouldEnterAsFirstChild(pointerX, pointerY) {
+    if (!this._activeDraggables.length) {
+      return false;
+    }
+    const itemPositions = this._itemPositions;
+    const isHorizontal = this.orientation === 'horizontal';
+    // `itemPositions` are sorted by position while `activeDraggables` are sorted by child index
+    // check if container is using some sort of "reverse" ordering (eg: flex-direction: row-reverse)
+    const reversed = itemPositions[0].drag !== this._activeDraggables[0];
+    if (reversed) {
+      const lastItemRect = itemPositions[itemPositions.length - 1].clientRect;
+      return isHorizontal ? pointerX >= lastItemRect.right : pointerY >= lastItemRect.bottom;
+    } else {
+      const firstItemRect = itemPositions[0].clientRect;
+      return isHorizontal ? pointerX <= firstItemRect.left : pointerY <= firstItemRect.top;
+    }
+  }
+  /**
+   * Gets the index of an item in the drop container, based on the position of the user's pointer.
+   * @param item Item that is being sorted.
+   * @param pointerX Position of the user's pointer along the X axis.
+   * @param pointerY Position of the user's pointer along the Y axis.
+   * @param delta Direction in which the user is moving their pointer.
+   */
+  _getItemIndexFromPointerPosition(item, pointerX, pointerY, delta) {
+    const isHorizontal = this.orientation === 'horizontal';
+    const index = this._itemPositions.findIndex(({
+      drag,
+      clientRect
+    }) => {
+      // Skip the item itself.
+      if (drag === item) {
+        return false;
+      }
+      if (delta) {
+        const direction = isHorizontal ? delta.x : delta.y;
+        // If the user is still hovering over the same item as last time, their cursor hasn't left
+        // the item after we made the swap, and they didn't change the direction in which they're
+        // dragging, we don't consider it a direction swap.
+        if (drag === this._previousSwap.drag && this._previousSwap.overlaps && direction === this._previousSwap.delta) {
+          return false;
+        }
+      }
+      return isHorizontal ?
+      // Round these down since most browsers report client rects with
+      // sub-pixel precision, whereas the pointer coordinates are rounded to pixels.
+      pointerX >= Math.floor(clientRect.left) && pointerX < Math.floor(clientRect.right) : pointerY >= Math.floor(clientRect.top) && pointerY < Math.floor(clientRect.bottom);
+    });
+    return index === -1 || !this._sortPredicate(index, item) ? -1 : index;
+  }
+}
+
+/**
+ * Strategy that only supports sorting on a list that might wrap.
+ * Items are reordered by moving their DOM nodes around.
+ * @docs-private
+ */
+class MixedSortStrategy {
+  _document;
+  _dragDropRegistry;
+  /** Root element container of the drop list. */
+  _element;
+  /** Function used to determine if an item can be sorted into a specific index. */
+  _sortPredicate;
+  /** Lazily-resolved root node containing the list. Use `_getRootNode` to read this. */
+  _rootNode;
+  /**
+   * Draggable items that are currently active inside the container. Includes the items
+   * that were there at the start of the sequence, as well as any items that have been dragged
+   * in, but haven't been dropped yet.
+   */
+  _activeItems;
+  /**
+   * Keeps track of the item that was last swapped with the dragged item, as well as what direction
+   * the pointer was moving in when the swap occurred and whether the user's pointer continued to
+   * overlap with the swapped item after the swapping occurred.
+   */
+  _previousSwap = {
+    drag: null,
+    deltaX: 0,
+    deltaY: 0,
+    overlaps: false
+  };
+  /**
+   * Keeps track of the relationship between a node and its next sibling. This information
+   * is used to restore the DOM to the order it was in before dragging started.
+   */
+  _relatedNodes = [];
+  constructor(_document, _dragDropRegistry) {
+    this._document = _document;
+    this._dragDropRegistry = _dragDropRegistry;
+  }
+  /**
+   * To be called when the drag sequence starts.
+   * @param items Items that are currently in the list.
+   */
+  start(items) {
+    const childNodes = this._element.childNodes;
+    this._relatedNodes = [];
+    for (let i = 0; i < childNodes.length; i++) {
+      const node = childNodes[i];
+      this._relatedNodes.push([node, node.nextSibling]);
+    }
+    this.withItems(items);
+  }
+  /**
+   * To be called when an item is being sorted.
+   * @param item Item to be sorted.
+   * @param pointerX Position of the item along the X axis.
+   * @param pointerY Position of the item along the Y axis.
+   * @param pointerDelta Direction in which the pointer is moving along each axis.
+   */
+  sort(item, pointerX, pointerY, pointerDelta) {
+    const newIndex = this._getItemIndexFromPointerPosition(item, pointerX, pointerY);
+    const previousSwap = this._previousSwap;
+    if (newIndex === -1 || this._activeItems[newIndex] === item) {
+      return null;
+    }
+    const toSwapWith = this._activeItems[newIndex];
+    // Prevent too many swaps over the same item.
+    if (previousSwap.drag === toSwapWith && previousSwap.overlaps && previousSwap.deltaX === pointerDelta.x && previousSwap.deltaY === pointerDelta.y) {
+      return null;
+    }
+    const previousIndex = this.getItemIndex(item);
+    const current = item.getPlaceholderElement();
+    const overlapElement = toSwapWith.getRootElement();
+    if (newIndex > previousIndex) {
+      overlapElement.after(current);
+    } else {
+      overlapElement.before(current);
+    }
+    moveItemInArray(this._activeItems, previousIndex, newIndex);
+    const newOverlapElement = this._getRootNode().elementFromPoint(pointerX, pointerY);
+    // Note: it's tempting to save the entire `pointerDelta` object here, however that'll
+    // break this functionality, because the same object is passed for all `sort` calls.
+    previousSwap.deltaX = pointerDelta.x;
+    previousSwap.deltaY = pointerDelta.y;
+    previousSwap.drag = toSwapWith;
+    previousSwap.overlaps = overlapElement === newOverlapElement || overlapElement.contains(newOverlapElement);
+    return {
+      previousIndex,
+      currentIndex: newIndex
+    };
+  }
+  /**
+   * Called when an item is being moved into the container.
+   * @param item Item that was moved into the container.
+   * @param pointerX Position of the item along the X axis.
+   * @param pointerY Position of the item along the Y axis.
+   * @param index Index at which the item entered. If omitted, the container will try to figure it
+   *   out automatically.
+   */
+  enter(item, pointerX, pointerY, index) {
+    let enterIndex = index == null || index < 0 ? this._getItemIndexFromPointerPosition(item, pointerX, pointerY) : index;
+    // In some cases (e.g. when the container has padding) we might not be able to figure
+    // out which item to insert the dragged item next to, because the pointer didn't overlap
+    // with anything. In that case we find the item that's closest to the pointer.
+    if (enterIndex === -1) {
+      enterIndex = this._getClosestItemIndexToPointer(item, pointerX, pointerY);
+    }
+    const targetItem = this._activeItems[enterIndex];
+    const currentIndex = this._activeItems.indexOf(item);
+    if (currentIndex > -1) {
+      this._activeItems.splice(currentIndex, 1);
+    }
+    if (targetItem && !this._dragDropRegistry.isDragging(targetItem)) {
+      this._activeItems.splice(enterIndex, 0, item);
+      targetItem.getRootElement().before(item.getPlaceholderElement());
+    } else {
+      this._activeItems.push(item);
+      this._element.appendChild(item.getPlaceholderElement());
+    }
+  }
+  /** Sets the items that are currently part of the list. */
+  withItems(items) {
+    this._activeItems = items.slice();
+  }
+  /** Assigns a sort predicate to the strategy. */
+  withSortPredicate(predicate) {
+    this._sortPredicate = predicate;
+  }
+  /** Resets the strategy to its initial state before dragging was started. */
+  reset() {
+    const root = this._element;
+    const previousSwap = this._previousSwap;
+    // Moving elements around in the DOM can break things like the `@for` loop, because it
+    // uses comment nodes to know where to insert elements. To avoid such issues, we restore
+    // the DOM nodes in the list to their original order when the list is reset.
+    // Note that this could be simpler if we just saved all the nodes, cleared the root
+    // and then appended them in the original order. We don't do it, because it can break
+    // down depending on when the snapshot was taken. E.g. we may end up snapshotting the
+    // placeholder element which is removed after dragging.
+    for (let i = this._relatedNodes.length - 1; i > -1; i--) {
+      const [node, nextSibling] = this._relatedNodes[i];
+      if (node.parentNode === root && node.nextSibling !== nextSibling) {
+        if (nextSibling === null) {
+          root.appendChild(node);
+        } else if (nextSibling.parentNode === root) {
+          root.insertBefore(node, nextSibling);
+        }
+      }
+    }
+    this._relatedNodes = [];
+    this._activeItems = [];
+    previousSwap.drag = null;
+    previousSwap.deltaX = previousSwap.deltaY = 0;
+    previousSwap.overlaps = false;
+  }
+  /**
+   * Gets a snapshot of items currently in the list.
+   * Can include items that we dragged in from another list.
+   */
+  getActiveItemsSnapshot() {
+    return this._activeItems;
+  }
+  /** Gets the index of a specific item. */
+  getItemIndex(item) {
+    return this._activeItems.indexOf(item);
+  }
+  /** Used to notify the strategy that the scroll position has changed. */
+  updateOnScroll() {
+    this._activeItems.forEach(item => {
+      if (this._dragDropRegistry.isDragging(item)) {
+        // We need to re-sort the item manually, because the pointer move
+        // events won't be dispatched while the user is scrolling.
+        item._sortFromLastPointerPosition();
+      }
+    });
+  }
+  withElementContainer(container) {
+    if (container !== this._element) {
+      this._element = container;
+      this._rootNode = undefined;
+    }
+  }
+  /**
+   * Gets the index of an item in the drop container, based on the position of the user's pointer.
+   * @param item Item that is being sorted.
+   * @param pointerX Position of the user's pointer along the X axis.
+   * @param pointerY Position of the user's pointer along the Y axis.
+   * @param delta Direction in which the user is moving their pointer.
+   */
+  _getItemIndexFromPointerPosition(item, pointerX, pointerY) {
+    const elementAtPoint = this._getRootNode().elementFromPoint(Math.floor(pointerX), Math.floor(pointerY));
+    const index = elementAtPoint ? this._activeItems.findIndex(item => {
+      const root = item.getRootElement();
+      return elementAtPoint === root || root.contains(elementAtPoint);
+    }) : -1;
+    return index === -1 || !this._sortPredicate(index, item) ? -1 : index;
+  }
+  /** Lazily resolves the list's root node. */
+  _getRootNode() {
+    // Resolve the root node lazily to ensure that the drop list is in its final place in the DOM.
+    if (!this._rootNode) {
+      this._rootNode = (0,_shadow_dom_B0oHn41l_mjs__WEBPACK_IMPORTED_MODULE_1__.a)(this._element) || this._document;
+    }
+    return this._rootNode;
+  }
+  /**
+   * Finds the index of the item that's closest to the item being dragged.
+   * @param item Item being dragged.
+   * @param pointerX Position of the user's pointer along the X axis.
+   * @param pointerY Position of the user's pointer along the Y axis.
+   */
+  _getClosestItemIndexToPointer(item, pointerX, pointerY) {
+    if (this._activeItems.length === 0) {
+      return -1;
+    }
+    if (this._activeItems.length === 1) {
+      return 0;
+    }
+    let minDistance = Infinity;
+    let minIndex = -1;
+    // Find the Euclidean distance (https://en.wikipedia.org/wiki/Euclidean_distance) between each
+    // item and the pointer, and return the smallest one. Note that this is a bit flawed in that DOM
+    // nodes are rectangles, not points, so we use the top/left coordinates. It should be enough
+    // for our purposes.
+    for (let i = 0; i < this._activeItems.length; i++) {
+      const current = this._activeItems[i];
+      if (current !== item) {
+        const {
+          x,
+          y
+        } = current.getRootElement().getBoundingClientRect();
+        const distance = Math.hypot(pointerX - x, pointerY - y);
+        if (distance < minDistance) {
+          minDistance = distance;
+          minIndex = i;
+        }
+      }
+    }
+    return minIndex;
+  }
+}
+
+/**
+ * Proximity, as a ratio to width/height, at which a
+ * dragged item will affect the drop container.
+ */
+const DROP_PROXIMITY_THRESHOLD = 0.05;
+/**
+ * Proximity, as a ratio to width/height at which to start auto-scrolling the drop list or the
+ * viewport. The value comes from trying it out manually until it feels right.
+ */
+const SCROLL_PROXIMITY_THRESHOLD = 0.05;
+/** Vertical direction in which we can auto-scroll. */
+var AutoScrollVerticalDirection = /*#__PURE__*/function (AutoScrollVerticalDirection) {
+  AutoScrollVerticalDirection[AutoScrollVerticalDirection["NONE"] = 0] = "NONE";
+  AutoScrollVerticalDirection[AutoScrollVerticalDirection["UP"] = 1] = "UP";
+  AutoScrollVerticalDirection[AutoScrollVerticalDirection["DOWN"] = 2] = "DOWN";
+  return AutoScrollVerticalDirection;
+}(AutoScrollVerticalDirection || {});
+/** Horizontal direction in which we can auto-scroll. */
+var AutoScrollHorizontalDirection = /*#__PURE__*/function (AutoScrollHorizontalDirection) {
+  AutoScrollHorizontalDirection[AutoScrollHorizontalDirection["NONE"] = 0] = "NONE";
+  AutoScrollHorizontalDirection[AutoScrollHorizontalDirection["LEFT"] = 1] = "LEFT";
+  AutoScrollHorizontalDirection[AutoScrollHorizontalDirection["RIGHT"] = 2] = "RIGHT";
+  return AutoScrollHorizontalDirection;
+}(AutoScrollHorizontalDirection || {});
+/**
+ * Reference to a drop list. Used to manipulate or dispose of the container.
+ */
+class DropListRef {
+  _dragDropRegistry;
+  _ngZone;
+  _viewportRuler;
+  /** Element that the drop list is attached to. */
+  element;
+  /** Whether starting a dragging sequence from this container is disabled. */
+  disabled = false;
+  /** Whether sorting items within the list is disabled. */
+  sortingDisabled = false;
+  /** Locks the position of the draggable elements inside the container along the specified axis. */
+  lockAxis;
+  /**
+   * Whether auto-scrolling the view when the user
+   * moves their pointer close to the edges is disabled.
+   */
+  autoScrollDisabled = false;
+  /** Number of pixels to scroll for each frame when auto-scrolling an element. */
+  autoScrollStep = 2;
+  /**
+   * Function that is used to determine whether an item
+   * is allowed to be moved into a drop container.
+   */
+  enterPredicate = () => true;
+  /** Function that is used to determine whether an item can be sorted into a particular index. */
+  sortPredicate = () => true;
+  /** Emits right before dragging has started. */
+  beforeStarted = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+  /**
+   * Emits when the user has moved a new drag item into this container.
+   */
+  entered = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+  /**
+   * Emits when the user removes an item from the container
+   * by dragging it into another container.
+   */
+  exited = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+  /** Emits when the user drops an item inside the container. */
+  dropped = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+  /** Emits as the user is swapping items while actively dragging. */
+  sorted = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+  /** Emits when a dragging sequence is started in a list connected to the current one. */
+  receivingStarted = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+  /** Emits when a dragging sequence is stopped from a list connected to the current one. */
+  receivingStopped = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+  /** Arbitrary data that can be attached to the drop list. */
+  data;
+  /** Element that is the direct parent of the drag items. */
+  _container;
+  /** Whether an item in the list is being dragged. */
+  _isDragging = false;
+  /** Keeps track of the positions of any parent scrollable elements. */
+  _parentPositions;
+  /** Strategy being used to sort items within the list. */
+  _sortStrategy;
+  /** Cached `DOMRect` of the drop list. */
+  _domRect;
+  /** Draggable items in the container. */
+  _draggables = [];
+  /** Drop lists that are connected to the current one. */
+  _siblings = [];
+  /** Connected siblings that currently have a dragged item. */
+  _activeSiblings = /*#__PURE__*/new Set();
+  /** Subscription to the window being scrolled. */
+  _viewportScrollSubscription = rxjs__WEBPACK_IMPORTED_MODULE_4__.Subscription.EMPTY;
+  /** Vertical direction in which the list is currently scrolling. */
+  _verticalScrollDirection = AutoScrollVerticalDirection.NONE;
+  /** Horizontal direction in which the list is currently scrolling. */
+  _horizontalScrollDirection = AutoScrollHorizontalDirection.NONE;
+  /** Node that is being auto-scrolled. */
+  _scrollNode;
+  /** Used to signal to the current auto-scroll sequence when to stop. */
+  _stopScrollTimers = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+  /** Shadow root of the current element. Necessary for `elementFromPoint` to resolve correctly. */
+  _cachedShadowRoot = null;
+  /** Reference to the document. */
+  _document;
+  /** Elements that can be scrolled while the user is dragging. */
+  _scrollableElements = [];
+  /** Initial value for the element's `scroll-snap-type` style. */
+  _initialScrollSnap;
+  /** Direction of the list's layout. */
+  _direction = 'ltr';
+  constructor(element, _dragDropRegistry, _document, _ngZone, _viewportRuler) {
+    this._dragDropRegistry = _dragDropRegistry;
+    this._ngZone = _ngZone;
+    this._viewportRuler = _viewportRuler;
+    const coercedElement = this.element = (0,_element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_5__.a)(element);
+    this._document = _document;
+    this.withOrientation('vertical').withElementContainer(coercedElement);
+    _dragDropRegistry.registerDropContainer(this);
+    this._parentPositions = new ParentPositionTracker(_document);
+  }
+  /** Removes the drop list functionality from the DOM element. */
+  dispose() {
+    this._stopScrolling();
+    this._stopScrollTimers.complete();
+    this._viewportScrollSubscription.unsubscribe();
+    this.beforeStarted.complete();
+    this.entered.complete();
+    this.exited.complete();
+    this.dropped.complete();
+    this.sorted.complete();
+    this.receivingStarted.complete();
+    this.receivingStopped.complete();
+    this._activeSiblings.clear();
+    this._scrollNode = null;
+    this._parentPositions.clear();
+    this._dragDropRegistry.removeDropContainer(this);
+  }
+  /** Whether an item from this list is currently being dragged. */
+  isDragging() {
+    return this._isDragging;
+  }
+  /** Starts dragging an item. */
+  start() {
+    this._draggingStarted();
+    this._notifyReceivingSiblings();
+  }
+  /**
+   * Attempts to move an item into the container.
+   * @param item Item that was moved into the container.
+   * @param pointerX Position of the item along the X axis.
+   * @param pointerY Position of the item along the Y axis.
+   * @param index Index at which the item entered. If omitted, the container will try to figure it
+   *   out automatically.
+   */
+  enter(item, pointerX, pointerY, index) {
+    this._draggingStarted();
+    // If sorting is disabled, we want the item to return to its starting
+    // position if the user is returning it to its initial container.
+    if (index == null && this.sortingDisabled) {
+      index = this._draggables.indexOf(item);
+    }
+    this._sortStrategy.enter(item, pointerX, pointerY, index);
+    // Note that this usually happens inside `_draggingStarted` as well, but the dimensions
+    // can change when the sort strategy moves the item around inside `enter`.
+    this._cacheParentPositions();
+    // Notify siblings at the end so that the item has been inserted into the `activeDraggables`.
+    this._notifyReceivingSiblings();
+    this.entered.next({
+      item,
+      container: this,
+      currentIndex: this.getItemIndex(item)
+    });
+  }
+  /**
+   * Removes an item from the container after it was dragged into another container by the user.
+   * @param item Item that was dragged out.
+   */
+  exit(item) {
+    this._reset();
+    this.exited.next({
+      item,
+      container: this
+    });
+  }
+  /**
+   * Drops an item into this container.
+   * @param item Item being dropped into the container.
+   * @param currentIndex Index at which the item should be inserted.
+   * @param previousIndex Index of the item when dragging started.
+   * @param previousContainer Container from which the item got dragged in.
+   * @param isPointerOverContainer Whether the user's pointer was over the
+   *    container when the item was dropped.
+   * @param distance Distance the user has dragged since the start of the dragging sequence.
+   * @param event Event that triggered the dropping sequence.
+   *
+   * @breaking-change 15.0.0 `previousIndex` and `event` parameters to become required.
+   */
+  drop(item, currentIndex, previousIndex, previousContainer, isPointerOverContainer, distance, dropPoint, event = {}) {
+    this._reset();
+    this.dropped.next({
+      item,
+      currentIndex,
+      previousIndex,
+      container: this,
+      previousContainer,
+      isPointerOverContainer,
+      distance,
+      dropPoint,
+      event
+    });
+  }
+  /**
+   * Sets the draggable items that are a part of this list.
+   * @param items Items that are a part of this list.
+   */
+  withItems(items) {
+    const previousItems = this._draggables;
+    this._draggables = items;
+    items.forEach(item => item._withDropContainer(this));
+    if (this.isDragging()) {
+      const draggedItems = previousItems.filter(item => item.isDragging());
+      // If all of the items being dragged were removed
+      // from the list, abort the current drag sequence.
+      if (draggedItems.every(item => items.indexOf(item) === -1)) {
+        this._reset();
+      } else {
+        this._sortStrategy.withItems(this._draggables);
+      }
+    }
+    return this;
+  }
+  /** Sets the layout direction of the drop list. */
+  withDirection(direction) {
+    this._direction = direction;
+    if (this._sortStrategy instanceof SingleAxisSortStrategy) {
+      this._sortStrategy.direction = direction;
+    }
+    return this;
+  }
+  /**
+   * Sets the containers that are connected to this one. When two or more containers are
+   * connected, the user will be allowed to transfer items between them.
+   * @param connectedTo Other containers that the current containers should be connected to.
+   */
+  connectedTo(connectedTo) {
+    this._siblings = connectedTo.slice();
+    return this;
+  }
+  /**
+   * Sets the orientation of the container.
+   * @param orientation New orientation for the container.
+   */
+  withOrientation(orientation) {
+    if (orientation === 'mixed') {
+      this._sortStrategy = new MixedSortStrategy(this._document, this._dragDropRegistry);
+    } else {
+      const strategy = new SingleAxisSortStrategy(this._dragDropRegistry);
+      strategy.direction = this._direction;
+      strategy.orientation = orientation;
+      this._sortStrategy = strategy;
+    }
+    this._sortStrategy.withElementContainer(this._container);
+    this._sortStrategy.withSortPredicate((index, item) => this.sortPredicate(index, item, this));
+    return this;
+  }
+  /**
+   * Sets which parent elements are can be scrolled while the user is dragging.
+   * @param elements Elements that can be scrolled.
+   */
+  withScrollableParents(elements) {
+    const element = this._container;
+    // We always allow the current element to be scrollable
+    // so we need to ensure that it's in the array.
+    this._scrollableElements = elements.indexOf(element) === -1 ? [element, ...elements] : elements.slice();
+    return this;
+  }
+  /**
+   * Configures the drop list so that a different element is used as the container for the
+   * dragged items. This is useful for the cases when one might not have control over the
+   * full DOM that sets up the dragging.
+   * Note that the alternate container needs to be a descendant of the drop list.
+   * @param container New element container to be assigned.
+   */
+  withElementContainer(container) {
+    if (container === this._container) {
+      return this;
+    }
+    const element = (0,_element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_5__.a)(this.element);
+    if ((typeof ngDevMode === 'undefined' || ngDevMode) && container !== element && !element.contains(container)) {
+      throw new Error('Invalid DOM structure for drop list. Alternate container element must be a descendant of the drop list.');
+    }
+    const oldContainerIndex = this._scrollableElements.indexOf(this._container);
+    const newContainerIndex = this._scrollableElements.indexOf(container);
+    if (oldContainerIndex > -1) {
+      this._scrollableElements.splice(oldContainerIndex, 1);
+    }
+    if (newContainerIndex > -1) {
+      this._scrollableElements.splice(newContainerIndex, 1);
+    }
+    if (this._sortStrategy) {
+      this._sortStrategy.withElementContainer(container);
+    }
+    this._cachedShadowRoot = null;
+    this._scrollableElements.unshift(container);
+    this._container = container;
+    return this;
+  }
+  /** Gets the scrollable parents that are registered with this drop container. */
+  getScrollableParents() {
+    return this._scrollableElements;
+  }
+  /**
+   * Figures out the index of an item in the container.
+   * @param item Item whose index should be determined.
+   */
+  getItemIndex(item) {
+    return this._isDragging ? this._sortStrategy.getItemIndex(item) : this._draggables.indexOf(item);
+  }
+  /**
+   * Whether the list is able to receive the item that
+   * is currently being dragged inside a connected drop list.
+   */
+  isReceiving() {
+    return this._activeSiblings.size > 0;
+  }
+  /**
+   * Sorts an item inside the container based on its position.
+   * @param item Item to be sorted.
+   * @param pointerX Position of the item along the X axis.
+   * @param pointerY Position of the item along the Y axis.
+   * @param pointerDelta Direction in which the pointer is moving along each axis.
+   */
+  _sortItem(item, pointerX, pointerY, pointerDelta) {
+    // Don't sort the item if sorting is disabled or it's out of range.
+    if (this.sortingDisabled || !this._domRect || !isPointerNearDomRect(this._domRect, DROP_PROXIMITY_THRESHOLD, pointerX, pointerY)) {
+      return;
+    }
+    const result = this._sortStrategy.sort(item, pointerX, pointerY, pointerDelta);
+    if (result) {
+      this.sorted.next({
+        previousIndex: result.previousIndex,
+        currentIndex: result.currentIndex,
+        container: this,
+        item
+      });
+    }
+  }
+  /**
+   * Checks whether the user's pointer is close to the edges of either the
+   * viewport or the drop list and starts the auto-scroll sequence.
+   * @param pointerX User's pointer position along the x axis.
+   * @param pointerY User's pointer position along the y axis.
+   */
+  _startScrollingIfNecessary(pointerX, pointerY) {
+    if (this.autoScrollDisabled) {
+      return;
+    }
+    let scrollNode;
+    let verticalScrollDirection = AutoScrollVerticalDirection.NONE;
+    let horizontalScrollDirection = AutoScrollHorizontalDirection.NONE;
+    // Check whether we should start scrolling any of the parent containers.
+    this._parentPositions.positions.forEach((position, element) => {
+      // We have special handling for the `document` below. Also this would be
+      // nicer with a  for...of loop, but it requires changing a compiler flag.
+      if (element === this._document || !position.clientRect || scrollNode) {
+        return;
+      }
+      if (isPointerNearDomRect(position.clientRect, DROP_PROXIMITY_THRESHOLD, pointerX, pointerY)) {
+        [verticalScrollDirection, horizontalScrollDirection] = getElementScrollDirections(element, position.clientRect, this._direction, pointerX, pointerY);
+        if (verticalScrollDirection || horizontalScrollDirection) {
+          scrollNode = element;
+        }
+      }
+    });
+    // Otherwise check if we can start scrolling the viewport.
+    if (!verticalScrollDirection && !horizontalScrollDirection) {
+      const {
+        width,
+        height
+      } = this._viewportRuler.getViewportSize();
+      const domRect = {
+        width,
+        height,
+        top: 0,
+        right: width,
+        bottom: height,
+        left: 0
+      };
+      verticalScrollDirection = getVerticalScrollDirection(domRect, pointerY);
+      horizontalScrollDirection = getHorizontalScrollDirection(domRect, pointerX);
+      scrollNode = window;
+    }
+    if (scrollNode && (verticalScrollDirection !== this._verticalScrollDirection || horizontalScrollDirection !== this._horizontalScrollDirection || scrollNode !== this._scrollNode)) {
+      this._verticalScrollDirection = verticalScrollDirection;
+      this._horizontalScrollDirection = horizontalScrollDirection;
+      this._scrollNode = scrollNode;
+      if ((verticalScrollDirection || horizontalScrollDirection) && scrollNode) {
+        this._ngZone.runOutsideAngular(this._startScrollInterval);
+      } else {
+        this._stopScrolling();
+      }
+    }
+  }
+  /** Stops any currently-running auto-scroll sequences. */
+  _stopScrolling() {
+    this._stopScrollTimers.next();
+  }
+  /** Starts the dragging sequence within the list. */
+  _draggingStarted() {
+    const styles = this._container.style;
+    this.beforeStarted.next();
+    this._isDragging = true;
+    if ((typeof ngDevMode === 'undefined' || ngDevMode) &&
+    // Prevent the check from running on apps not using an alternate container. Ideally we
+    // would always run it, but introducing it at this stage would be a breaking change.
+    this._container !== (0,_element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_5__.a)(this.element)) {
+      for (const drag of this._draggables) {
+        if (!drag.isDragging() && drag.getVisibleElement().parentNode !== this._container) {
+          throw new Error('Invalid DOM structure for drop list. All items must be placed directly inside of the element container.');
+        }
+      }
+    }
+    // We need to disable scroll snapping while the user is dragging, because it breaks automatic
+    // scrolling. The browser seems to round the value based on the snapping points which means
+    // that we can't increment/decrement the scroll position.
+    this._initialScrollSnap = styles.msScrollSnapType || styles.scrollSnapType || '';
+    styles.scrollSnapType = styles.msScrollSnapType = 'none';
+    this._sortStrategy.start(this._draggables);
+    this._cacheParentPositions();
+    this._viewportScrollSubscription.unsubscribe();
+    this._listenToScrollEvents();
+  }
+  /** Caches the positions of the configured scrollable parents. */
+  _cacheParentPositions() {
+    this._parentPositions.cache(this._scrollableElements);
+    // The list element is always in the `scrollableElements`
+    // so we can take advantage of the cached `DOMRect`.
+    this._domRect = this._parentPositions.positions.get(this._container).clientRect;
+  }
+  /** Resets the container to its initial state. */
+  _reset() {
+    this._isDragging = false;
+    const styles = this._container.style;
+    styles.scrollSnapType = styles.msScrollSnapType = this._initialScrollSnap;
+    this._siblings.forEach(sibling => sibling._stopReceiving(this));
+    this._sortStrategy.reset();
+    this._stopScrolling();
+    this._viewportScrollSubscription.unsubscribe();
+    this._parentPositions.clear();
+  }
+  /** Starts the interval that'll auto-scroll the element. */
+  _startScrollInterval = () => {
+    this._stopScrolling();
+    (0,rxjs__WEBPACK_IMPORTED_MODULE_8__.interval)(0, rxjs__WEBPACK_IMPORTED_MODULE_9__.animationFrameScheduler).pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_10__.takeUntil)(this._stopScrollTimers)).subscribe(() => {
+      const node = this._scrollNode;
+      const scrollStep = this.autoScrollStep;
+      if (this._verticalScrollDirection === AutoScrollVerticalDirection.UP) {
+        node.scrollBy(0, -scrollStep);
+      } else if (this._verticalScrollDirection === AutoScrollVerticalDirection.DOWN) {
+        node.scrollBy(0, scrollStep);
+      }
+      if (this._horizontalScrollDirection === AutoScrollHorizontalDirection.LEFT) {
+        node.scrollBy(-scrollStep, 0);
+      } else if (this._horizontalScrollDirection === AutoScrollHorizontalDirection.RIGHT) {
+        node.scrollBy(scrollStep, 0);
+      }
+    });
+  };
+  /**
+   * Checks whether the user's pointer is positioned over the container.
+   * @param x Pointer position along the X axis.
+   * @param y Pointer position along the Y axis.
+   */
+  _isOverContainer(x, y) {
+    return this._domRect != null && isInsideClientRect(this._domRect, x, y);
+  }
+  /**
+   * Figures out whether an item should be moved into a sibling
+   * drop container, based on its current position.
+   * @param item Drag item that is being moved.
+   * @param x Position of the item along the X axis.
+   * @param y Position of the item along the Y axis.
+   */
+  _getSiblingContainerFromPosition(item, x, y) {
+    return this._siblings.find(sibling => sibling._canReceive(item, x, y));
+  }
+  /**
+   * Checks whether the drop list can receive the passed-in item.
+   * @param item Item that is being dragged into the list.
+   * @param x Position of the item along the X axis.
+   * @param y Position of the item along the Y axis.
+   */
+  _canReceive(item, x, y) {
+    if (!this._domRect || !isInsideClientRect(this._domRect, x, y) || !this.enterPredicate(item, this)) {
+      return false;
+    }
+    const elementFromPoint = this._getShadowRoot().elementFromPoint(x, y);
+    // If there's no element at the pointer position, then
+    // the client rect is probably scrolled out of the view.
+    if (!elementFromPoint) {
+      return false;
+    }
+    // The `DOMRect`, that we're using to find the container over which the user is
+    // hovering, doesn't give us any information on whether the element has been scrolled
+    // out of the view or whether it's overlapping with other containers. This means that
+    // we could end up transferring the item into a container that's invisible or is positioned
+    // below another one. We use the result from `elementFromPoint` to get the top-most element
+    // at the pointer position and to find whether it's one of the intersecting drop containers.
+    return elementFromPoint === this._container || this._container.contains(elementFromPoint);
+  }
+  /**
+   * Called by one of the connected drop lists when a dragging sequence has started.
+   * @param sibling Sibling in which dragging has started.
+   */
+  _startReceiving(sibling, items) {
+    const activeSiblings = this._activeSiblings;
+    if (!activeSiblings.has(sibling) && items.every(item => {
+      // Note that we have to add an exception to the `enterPredicate` for items that started off
+      // in this drop list. The drag ref has logic that allows an item to return to its initial
+      // container, if it has left the initial container and none of the connected containers
+      // allow it to enter. See `DragRef._updateActiveDropContainer` for more context.
+      return this.enterPredicate(item, this) || this._draggables.indexOf(item) > -1;
+    })) {
+      activeSiblings.add(sibling);
+      this._cacheParentPositions();
+      this._listenToScrollEvents();
+      this.receivingStarted.next({
+        initiator: sibling,
+        receiver: this,
+        items
+      });
+    }
+  }
+  /**
+   * Called by a connected drop list when dragging has stopped.
+   * @param sibling Sibling whose dragging has stopped.
+   */
+  _stopReceiving(sibling) {
+    this._activeSiblings.delete(sibling);
+    this._viewportScrollSubscription.unsubscribe();
+    this.receivingStopped.next({
+      initiator: sibling,
+      receiver: this
+    });
+  }
+  /**
+   * Starts listening to scroll events on the viewport.
+   * Used for updating the internal state of the list.
+   */
+  _listenToScrollEvents() {
+    this._viewportScrollSubscription = this._dragDropRegistry.scrolled(this._getShadowRoot()).subscribe(event => {
+      if (this.isDragging()) {
+        const scrollDifference = this._parentPositions.handleScroll(event);
+        if (scrollDifference) {
+          this._sortStrategy.updateOnScroll(scrollDifference.top, scrollDifference.left);
+        }
+      } else if (this.isReceiving()) {
+        this._cacheParentPositions();
+      }
+    });
+  }
+  /**
+   * Lazily resolves and returns the shadow root of the element. We do this in a function, rather
+   * than saving it in property directly on init, because we want to resolve it as late as possible
+   * in order to ensure that the element has been moved into the shadow DOM. Doing it inside the
+   * constructor might be too early if the element is inside of something like `ngFor` or `ngIf`.
+   */
+  _getShadowRoot() {
+    if (!this._cachedShadowRoot) {
+      const shadowRoot = (0,_shadow_dom_B0oHn41l_mjs__WEBPACK_IMPORTED_MODULE_1__.a)(this._container);
+      this._cachedShadowRoot = shadowRoot || this._document;
+    }
+    return this._cachedShadowRoot;
+  }
+  /** Notifies any siblings that may potentially receive the item. */
+  _notifyReceivingSiblings() {
+    const draggedItems = this._sortStrategy.getActiveItemsSnapshot().filter(item => item.isDragging());
+    this._siblings.forEach(sibling => sibling._startReceiving(this, draggedItems));
+  }
+}
+/**
+ * Gets whether the vertical auto-scroll direction of a node.
+ * @param clientRect Dimensions of the node.
+ * @param pointerY Position of the user's pointer along the y axis.
+ */
+function getVerticalScrollDirection(clientRect, pointerY) {
+  const {
+    top,
+    bottom,
+    height
+  } = clientRect;
+  const yThreshold = height * SCROLL_PROXIMITY_THRESHOLD;
+  if (pointerY >= top - yThreshold && pointerY <= top + yThreshold) {
+    return AutoScrollVerticalDirection.UP;
+  } else if (pointerY >= bottom - yThreshold && pointerY <= bottom + yThreshold) {
+    return AutoScrollVerticalDirection.DOWN;
+  }
+  return AutoScrollVerticalDirection.NONE;
+}
+/**
+ * Gets whether the horizontal auto-scroll direction of a node.
+ * @param clientRect Dimensions of the node.
+ * @param pointerX Position of the user's pointer along the x axis.
+ */
+function getHorizontalScrollDirection(clientRect, pointerX) {
+  const {
+    left,
+    right,
+    width
+  } = clientRect;
+  const xThreshold = width * SCROLL_PROXIMITY_THRESHOLD;
+  if (pointerX >= left - xThreshold && pointerX <= left + xThreshold) {
+    return AutoScrollHorizontalDirection.LEFT;
+  } else if (pointerX >= right - xThreshold && pointerX <= right + xThreshold) {
+    return AutoScrollHorizontalDirection.RIGHT;
+  }
+  return AutoScrollHorizontalDirection.NONE;
+}
+/**
+ * Gets the directions in which an element node should be scrolled,
+ * assuming that the user's pointer is already within it scrollable region.
+ * @param element Element for which we should calculate the scroll direction.
+ * @param clientRect Bounding client rectangle of the element.
+ * @param direction Layout direction of the drop list.
+ * @param pointerX Position of the user's pointer along the x axis.
+ * @param pointerY Position of the user's pointer along the y axis.
+ */
+function getElementScrollDirections(element, clientRect, direction, pointerX, pointerY) {
+  const computedVertical = getVerticalScrollDirection(clientRect, pointerY);
+  const computedHorizontal = getHorizontalScrollDirection(clientRect, pointerX);
+  let verticalScrollDirection = AutoScrollVerticalDirection.NONE;
+  let horizontalScrollDirection = AutoScrollHorizontalDirection.NONE;
+  // Note that we here we do some extra checks for whether the element is actually scrollable in
+  // a certain direction and we only assign the scroll direction if it is. We do this so that we
+  // can allow other elements to be scrolled, if the current element can't be scrolled anymore.
+  // This allows us to handle cases where the scroll regions of two scrollable elements overlap.
+  if (computedVertical) {
+    const scrollTop = element.scrollTop;
+    if (computedVertical === AutoScrollVerticalDirection.UP) {
+      if (scrollTop > 0) {
+        verticalScrollDirection = AutoScrollVerticalDirection.UP;
+      }
+    } else if (element.scrollHeight - scrollTop > element.clientHeight) {
+      verticalScrollDirection = AutoScrollVerticalDirection.DOWN;
+    }
+  }
+  if (computedHorizontal) {
+    const scrollLeft = element.scrollLeft;
+    if (direction === 'rtl') {
+      if (computedHorizontal === AutoScrollHorizontalDirection.RIGHT) {
+        // In RTL `scrollLeft` will be negative when scrolled.
+        if (scrollLeft < 0) {
+          horizontalScrollDirection = AutoScrollHorizontalDirection.RIGHT;
+        }
+      } else if (element.scrollWidth + scrollLeft > element.clientWidth) {
+        horizontalScrollDirection = AutoScrollHorizontalDirection.LEFT;
+      }
+    } else {
+      if (computedHorizontal === AutoScrollHorizontalDirection.LEFT) {
+        if (scrollLeft > 0) {
+          horizontalScrollDirection = AutoScrollHorizontalDirection.LEFT;
+        }
+      } else if (element.scrollWidth - scrollLeft > element.clientWidth) {
+        horizontalScrollDirection = AutoScrollHorizontalDirection.RIGHT;
+      }
+    }
+  }
+  return [verticalScrollDirection, horizontalScrollDirection];
+}
+
+/** Event options that can be used to bind a capturing event. */
+const capturingEventOptions = {
+  capture: true
+};
+/** Event options that can be used to bind an active, capturing event. */
+const activeCapturingEventOptions = {
+  passive: false,
+  capture: true
+};
+/**
+ * Component used to load the drag&drop reset styles.
+ * @docs-private
+ */
+let _ResetsLoader = /*#__PURE__*/(() => {
+  class _ResetsLoader {
+    static ɵfac = function _ResetsLoader_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _ResetsLoader)();
+    };
+    static ɵcmp = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineComponent"]({
+      type: _ResetsLoader,
+      selectors: [["ng-component"]],
+      hostAttrs: ["cdk-drag-resets-container", ""],
+      decls: 0,
+      vars: 0,
+      template: function _ResetsLoader_Template(rf, ctx) {},
+      styles: ["@layer cdk-resets{.cdk-drag-preview{background:none;border:none;padding:0;color:inherit;inset:auto}}.cdk-drag-placeholder *,.cdk-drag-preview *{pointer-events:none !important}\n"],
+      encapsulation: 2,
+      changeDetection: 0
+    });
+  }
+  return _ResetsLoader;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+// TODO(crisbeto): remove generics when making breaking changes.
+/**
+ * Service that keeps track of all the drag item and drop container
+ * instances, and manages global event listeners on the `document`.
+ * @docs-private
+ */
+let DragDropRegistry = /*#__PURE__*/(() => {
+  class DragDropRegistry {
+    _ngZone = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_2__.NgZone);
+    _document = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_common__WEBPACK_IMPORTED_MODULE_11__.DOCUMENT);
+    _styleLoader = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_style_loader_Cu9AvjH9_mjs__WEBPACK_IMPORTED_MODULE_12__._);
+    _renderer = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_2__.RendererFactory2).createRenderer(null, null);
+    _cleanupDocumentTouchmove;
+    /** Registered drop container instances. */
+    _dropInstances = new Set();
+    /** Registered drag item instances. */
+    _dragInstances = new Set();
+    /** Drag item instances that are currently being dragged. */
+    _activeDragInstances = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.signal)([]);
+    /** Keeps track of the event listeners that we've bound to the `document`. */
+    _globalListeners;
+    /**
+     * Predicate function to check if an item is being dragged.  Moved out into a property,
+     * because it'll be called a lot and we don't want to create a new function every time.
+     */
+    _draggingPredicate = item => item.isDragging();
+    /**
+     * Map tracking DOM nodes and their corresponding drag directives. Note that this is different
+     * from looking through the `_dragInstances` and getting their root node, because the root node
+     * isn't necessarily the node that the directive is set on.
+     */
+    _domNodesToDirectives = null;
+    /**
+     * Emits the `touchmove` or `mousemove` events that are dispatched
+     * while the user is dragging a drag item instance.
+     */
+    pointerMove = new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+    /**
+     * Emits the `touchend` or `mouseup` events that are dispatched
+     * while the user is dragging a drag item instance.
+     */
+    pointerUp = new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+    /**
+     * Emits when the viewport has been scrolled while the user is dragging an item.
+     * @deprecated To be turned into a private member. Use the `scrolled` method instead.
+     * @breaking-change 13.0.0
+     */
+    scroll = new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+    constructor() {}
+    /** Adds a drop container to the registry. */
+    registerDropContainer(drop) {
+      if (!this._dropInstances.has(drop)) {
+        this._dropInstances.add(drop);
+      }
+    }
+    /** Adds a drag item instance to the registry. */
+    registerDragItem(drag) {
+      this._dragInstances.add(drag);
+      // The `touchmove` event gets bound once, ahead of time, because WebKit
+      // won't preventDefault on a dynamically-added `touchmove` listener.
+      // See https://bugs.webkit.org/show_bug.cgi?id=184250.
+      if (this._dragInstances.size === 1) {
+        this._ngZone.runOutsideAngular(() => {
+          // The event handler has to be explicitly active,
+          // because newer browsers make it passive by default.
+          this._cleanupDocumentTouchmove?.();
+          this._cleanupDocumentTouchmove = (0,_backwards_compatibility_DHR38MsD_mjs__WEBPACK_IMPORTED_MODULE_6__._)(this._renderer, this._document, 'touchmove', this._persistentTouchmoveListener, activeCapturingEventOptions);
+        });
+      }
+    }
+    /** Removes a drop container from the registry. */
+    removeDropContainer(drop) {
+      this._dropInstances.delete(drop);
+    }
+    /** Removes a drag item instance from the registry. */
+    removeDragItem(drag) {
+      this._dragInstances.delete(drag);
+      this.stopDragging(drag);
+      if (this._dragInstances.size === 0) {
+        this._cleanupDocumentTouchmove?.();
+      }
+    }
+    /**
+     * Starts the dragging sequence for a drag instance.
+     * @param drag Drag instance which is being dragged.
+     * @param event Event that initiated the dragging.
+     */
+    startDragging(drag, event) {
+      // Do not process the same drag twice to avoid memory leaks and redundant listeners
+      if (this._activeDragInstances().indexOf(drag) > -1) {
+        return;
+      }
+      this._styleLoader.load(_ResetsLoader);
+      this._activeDragInstances.update(instances => [...instances, drag]);
+      if (this._activeDragInstances().length === 1) {
+        // We explicitly bind __active__ listeners here, because newer browsers will default to
+        // passive ones for `mousemove` and `touchmove`. The events need to be active, because we
+        // use `preventDefault` to prevent the page from scrolling while the user is dragging.
+        const isTouchEvent = event.type.startsWith('touch');
+        const endEventHandler = e => this.pointerUp.next(e);
+        const toBind = [
+        // Use capturing so that we pick up scroll changes in any scrollable nodes that aren't
+        // the document. See https://github.com/angular/components/issues/17144.
+        ['scroll', e => this.scroll.next(e), capturingEventOptions],
+        // Preventing the default action on `mousemove` isn't enough to disable text selection
+        // on Safari so we need to prevent the selection event as well. Alternatively this can
+        // be done by setting `user-select: none` on the `body`, however it has causes a style
+        // recalculation which can be expensive on pages with a lot of elements.
+        ['selectstart', this._preventDefaultWhileDragging, activeCapturingEventOptions]];
+        if (isTouchEvent) {
+          toBind.push(['touchend', endEventHandler, capturingEventOptions], ['touchcancel', endEventHandler, capturingEventOptions]);
+        } else {
+          toBind.push(['mouseup', endEventHandler, capturingEventOptions]);
+        }
+        // We don't have to bind a move event for touch drag sequences, because
+        // we already have a persistent global one bound from `registerDragItem`.
+        if (!isTouchEvent) {
+          toBind.push(['mousemove', e => this.pointerMove.next(e), activeCapturingEventOptions]);
+        }
+        this._ngZone.runOutsideAngular(() => {
+          this._globalListeners = toBind.map(([name, handler, options]) => (0,_backwards_compatibility_DHR38MsD_mjs__WEBPACK_IMPORTED_MODULE_6__._)(this._renderer, this._document, name, handler, options));
+        });
+      }
+    }
+    /** Stops dragging a drag item instance. */
+    stopDragging(drag) {
+      this._activeDragInstances.update(instances => {
+        const index = instances.indexOf(drag);
+        if (index > -1) {
+          instances.splice(index, 1);
+          return [...instances];
+        }
+        return instances;
+      });
+      if (this._activeDragInstances().length === 0) {
+        this._clearGlobalListeners();
+      }
+    }
+    /** Gets whether a drag item instance is currently being dragged. */
+    isDragging(drag) {
+      return this._activeDragInstances().indexOf(drag) > -1;
+    }
+    /**
+     * Gets a stream that will emit when any element on the page is scrolled while an item is being
+     * dragged.
+     * @param shadowRoot Optional shadow root that the current dragging sequence started from.
+     *   Top-level listeners won't pick up events coming from the shadow DOM so this parameter can
+     *   be used to include an additional top-level listener at the shadow root level.
+     */
+    scrolled(shadowRoot) {
+      const streams = [this.scroll];
+      if (shadowRoot && shadowRoot !== this._document) {
+        // Note that this is basically the same as `fromEvent` from rxjs, but we do it ourselves,
+        // because we want to guarantee that the event is bound outside of the `NgZone`. With
+        // `fromEvent` it'll only happen if the subscription is outside the `NgZone`.
+        streams.push(new rxjs__WEBPACK_IMPORTED_MODULE_13__.Observable(observer => {
+          return this._ngZone.runOutsideAngular(() => {
+            const cleanup = (0,_backwards_compatibility_DHR38MsD_mjs__WEBPACK_IMPORTED_MODULE_6__._)(this._renderer, shadowRoot, 'scroll', event => {
+              if (this._activeDragInstances().length) {
+                observer.next(event);
+              }
+            }, capturingEventOptions);
+            return () => {
+              cleanup();
+            };
+          });
+        }));
+      }
+      return (0,rxjs__WEBPACK_IMPORTED_MODULE_14__.merge)(...streams);
+    }
+    /**
+     * Tracks the DOM node which has a draggable directive.
+     * @param node Node to track.
+     * @param dragRef Drag directive set on the node.
+     */
+    registerDirectiveNode(node, dragRef) {
+      this._domNodesToDirectives ??= new WeakMap();
+      this._domNodesToDirectives.set(node, dragRef);
+    }
+    /**
+     * Stops tracking a draggable directive node.
+     * @param node Node to stop tracking.
+     */
+    removeDirectiveNode(node) {
+      this._domNodesToDirectives?.delete(node);
+    }
+    /**
+     * Gets the drag directive corresponding to a specific DOM node, if any.
+     * @param node Node for which to do the lookup.
+     */
+    getDragDirectiveForNode(node) {
+      return this._domNodesToDirectives?.get(node) || null;
+    }
+    ngOnDestroy() {
+      this._dragInstances.forEach(instance => this.removeDragItem(instance));
+      this._dropInstances.forEach(instance => this.removeDropContainer(instance));
+      this._domNodesToDirectives = null;
+      this._clearGlobalListeners();
+      this.pointerMove.complete();
+      this.pointerUp.complete();
+    }
+    /**
+     * Event listener that will prevent the default browser action while the user is dragging.
+     * @param event Event whose default action should be prevented.
+     */
+    _preventDefaultWhileDragging = event => {
+      if (this._activeDragInstances().length > 0) {
+        event.preventDefault();
+      }
+    };
+    /** Event listener for `touchmove` that is bound even if no dragging is happening. */
+    _persistentTouchmoveListener = event => {
+      if (this._activeDragInstances().length > 0) {
+        // Note that we only want to prevent the default action after dragging has actually started.
+        // Usually this is the same time at which the item is added to the `_activeDragInstances`,
+        // but it could be pushed back if the user has set up a drag delay or threshold.
+        if (this._activeDragInstances().some(this._draggingPredicate)) {
+          event.preventDefault();
+        }
+        this.pointerMove.next(event);
+      }
+    };
+    /** Clears out the global event listeners from the `document`. */
+    _clearGlobalListeners() {
+      this._globalListeners?.forEach(cleanup => cleanup());
+      this._globalListeners = undefined;
+    }
+    static ɵfac = function DragDropRegistry_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || DragDropRegistry)();
+    };
+    static ɵprov = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineInjectable"]({
+      token: DragDropRegistry,
+      factory: DragDropRegistry.ɵfac,
+      providedIn: 'root'
+    });
+  }
+  return DragDropRegistry;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+/** Default configuration to be used when creating a `DragRef`. */
+const DEFAULT_CONFIG = {
+  dragStartThreshold: 5,
+  pointerDirectionChangeThreshold: 5
+};
+/**
+ * Service that allows for drag-and-drop functionality to be attached to DOM elements.
+ */
+let DragDrop = /*#__PURE__*/(() => {
+  class DragDrop {
+    _document = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_common__WEBPACK_IMPORTED_MODULE_11__.DOCUMENT);
+    _ngZone = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_2__.NgZone);
+    _viewportRuler = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_scrolling_mjs__WEBPACK_IMPORTED_MODULE_0__.ViewportRuler);
+    _dragDropRegistry = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(DragDropRegistry);
+    _renderer = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_2__.RendererFactory2).createRenderer(null, null);
+    constructor() {}
+    /**
+     * Turns an element into a draggable item.
+     * @param element Element to which to attach the dragging functionality.
+     * @param config Object used to configure the dragging behavior.
+     */
+    createDrag(element, config = DEFAULT_CONFIG) {
+      return new DragRef(element, config, this._document, this._ngZone, this._viewportRuler, this._dragDropRegistry, this._renderer);
+    }
+    /**
+     * Turns an element into a drop list.
+     * @param element Element to which to attach the drop list functionality.
+     */
+    createDropList(element) {
+      return new DropListRef(element, this._dragDropRegistry, this._document, this._ngZone, this._viewportRuler);
+    }
+    static ɵfac = function DragDrop_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || DragDrop)();
+    };
+    static ɵprov = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineInjectable"]({
+      token: DragDrop,
+      factory: DragDrop.ɵfac,
+      providedIn: 'root'
+    });
+  }
+  return DragDrop;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+/**
+ * Injection token that can be used for a `CdkDrag` to provide itself as a parent to the
+ * drag-specific child directive (`CdkDragHandle`, `CdkDragPreview` etc.). Used primarily
+ * to avoid circular imports.
+ * @docs-private
+ */
+const CDK_DRAG_PARENT = /*#__PURE__*/new _angular_core__WEBPACK_IMPORTED_MODULE_2__.InjectionToken('CDK_DRAG_PARENT');
+
+/**
+ * Asserts that a particular node is an element.
+ * @param node Node to be checked.
+ * @param name Name to attach to the error message.
+ */
+function assertElementNode(node, name) {
+  if (node.nodeType !== 1) {
+    throw Error(`${name} must be attached to an element node. ` + `Currently attached to "${node.nodeName}".`);
+  }
+}
+
+/**
+ * Injection token that can be used to reference instances of `CdkDragHandle`. It serves as
+ * alternative token to the actual `CdkDragHandle` class which could cause unnecessary
+ * retention of the class and its directive metadata.
+ */
+const CDK_DRAG_HANDLE = /*#__PURE__*/new _angular_core__WEBPACK_IMPORTED_MODULE_2__.InjectionToken('CdkDragHandle');
+/** Handle that can be used to drag a CdkDrag instance. */
+let CdkDragHandle = /*#__PURE__*/(() => {
+  class CdkDragHandle {
+    element = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_2__.ElementRef);
+    _parentDrag = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(CDK_DRAG_PARENT, {
+      optional: true,
+      skipSelf: true
+    });
+    _dragDropRegistry = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(DragDropRegistry);
+    /** Emits when the state of the handle has changed. */
+    _stateChanges = new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+    /** Whether starting to drag through this handle is disabled. */
+    get disabled() {
+      return this._disabled;
+    }
+    set disabled(value) {
+      this._disabled = value;
+      this._stateChanges.next(this);
+    }
+    _disabled = false;
+    constructor() {
+      if (typeof ngDevMode === 'undefined' || ngDevMode) {
+        assertElementNode(this.element.nativeElement, 'cdkDragHandle');
+      }
+      this._parentDrag?._addHandle(this);
+    }
+    ngAfterViewInit() {
+      if (!this._parentDrag) {
+        let parent = this.element.nativeElement.parentElement;
+        while (parent) {
+          const ref = this._dragDropRegistry.getDragDirectiveForNode(parent);
+          if (ref) {
+            this._parentDrag = ref;
+            ref._addHandle(this);
+            break;
+          }
+          parent = parent.parentElement;
+        }
+      }
+    }
+    ngOnDestroy() {
+      this._parentDrag?._removeHandle(this);
+      this._stateChanges.complete();
+    }
+    static ɵfac = function CdkDragHandle_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || CdkDragHandle)();
+    };
+    static ɵdir = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineDirective"]({
+      type: CdkDragHandle,
+      selectors: [["", "cdkDragHandle", ""]],
+      hostAttrs: [1, "cdk-drag-handle"],
+      inputs: {
+        disabled: [2, "cdkDragHandleDisabled", "disabled", _angular_core__WEBPACK_IMPORTED_MODULE_2__.booleanAttribute]
+      },
+      features: [_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵProvidersFeature"]([{
+        provide: CDK_DRAG_HANDLE,
+        useExisting: CdkDragHandle
+      }])]
+    });
+  }
+  return CdkDragHandle;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+/**
+ * Injection token that can be used to configure the
+ * behavior of the drag&drop-related components.
+ */
+const CDK_DRAG_CONFIG = /*#__PURE__*/new _angular_core__WEBPACK_IMPORTED_MODULE_2__.InjectionToken('CDK_DRAG_CONFIG');
+
+/**
+ * Injection token that can be used to reference instances of `CdkDropList`. It serves as
+ * alternative token to the actual `CdkDropList` class which could cause unnecessary
+ * retention of the class and its directive metadata.
+ */
+const CDK_DROP_LIST = /*#__PURE__*/new _angular_core__WEBPACK_IMPORTED_MODULE_2__.InjectionToken('CdkDropList');
+/** Element that can be moved inside a CdkDropList container. */
+let CdkDrag = /*#__PURE__*/(() => {
+  class CdkDrag {
+    element = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_2__.ElementRef);
+    dropContainer = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(CDK_DROP_LIST, {
+      optional: true,
+      skipSelf: true
+    });
+    _ngZone = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_2__.NgZone);
+    _viewContainerRef = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_2__.ViewContainerRef);
+    _dir = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_directionality_CBXD4hga_mjs__WEBPACK_IMPORTED_MODULE_15__.D, {
+      optional: true
+    });
+    _changeDetectorRef = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_2__.ChangeDetectorRef);
+    _selfHandle = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(CDK_DRAG_HANDLE, {
+      optional: true,
+      self: true
+    });
+    _parentDrag = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(CDK_DRAG_PARENT, {
+      optional: true,
+      skipSelf: true
+    });
+    _dragDropRegistry = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(DragDropRegistry);
+    _destroyed = new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+    _handles = new rxjs__WEBPACK_IMPORTED_MODULE_16__.BehaviorSubject([]);
+    _previewTemplate;
+    _placeholderTemplate;
+    /** Reference to the underlying drag instance. */
+    _dragRef;
+    /** Arbitrary data to attach to this drag instance. */
+    data;
+    /** Locks the position of the dragged element along the specified axis. */
+    lockAxis;
+    /**
+     * Selector that will be used to determine the root draggable element, starting from
+     * the `cdkDrag` element and going up the DOM. Passing an alternate root element is useful
+     * when trying to enable dragging on an element that you might not have access to.
+     */
+    rootElementSelector;
+    /**
+     * Node or selector that will be used to determine the element to which the draggable's
+     * position will be constrained. If a string is passed in, it'll be used as a selector that
+     * will be matched starting from the element's parent and going up the DOM until a match
+     * has been found.
+     */
+    boundaryElement;
+    /**
+     * Amount of milliseconds to wait after the user has put their
+     * pointer down before starting to drag the element.
+     */
+    dragStartDelay;
+    /**
+     * Sets the position of a `CdkDrag` that is outside of a drop container.
+     * Can be used to restore the element's position for a returning user.
+     */
+    freeDragPosition;
+    /** Whether starting to drag this element is disabled. */
+    get disabled() {
+      return this._disabled || !!(this.dropContainer && this.dropContainer.disabled);
+    }
+    set disabled(value) {
+      this._disabled = value;
+      this._dragRef.disabled = this._disabled;
+    }
+    _disabled;
+    /**
+     * Function that can be used to customize the logic of how the position of the drag item
+     * is limited while it's being dragged. Gets called with a point containing the current position
+     * of the user's pointer on the page, a reference to the item being dragged and its dimensions.
+     * Should return a point describing where the item should be rendered.
+     */
+    constrainPosition;
+    /** Class to be added to the preview element. */
+    previewClass;
+    /**
+     * Configures the place into which the preview of the item will be inserted. Can be configured
+     * globally through `CDK_DROP_LIST`. Possible values:
+     * - `global` - Preview will be inserted at the bottom of the `<body>`. The advantage is that
+     * you don't have to worry about `overflow: hidden` or `z-index`, but the item won't retain
+     * its inherited styles.
+     * - `parent` - Preview will be inserted into the parent of the drag item. The advantage is that
+     * inherited styles will be preserved, but it may be clipped by `overflow: hidden` or not be
+     * visible due to `z-index`. Furthermore, the preview is going to have an effect over selectors
+     * like `:nth-child` and some flexbox configurations.
+     * - `ElementRef<HTMLElement> | HTMLElement` - Preview will be inserted into a specific element.
+     * Same advantages and disadvantages as `parent`.
+     */
+    previewContainer;
+    /**
+     * If the parent of the dragged element has a `scale` transform, it can throw off the
+     * positioning when the user starts dragging. Use this input to notify the CDK of the scale.
+     */
+    scale = 1;
+    /** Emits when the user starts dragging the item. */
+    started = new _angular_core__WEBPACK_IMPORTED_MODULE_2__.EventEmitter();
+    /** Emits when the user has released a drag item, before any animations have started. */
+    released = new _angular_core__WEBPACK_IMPORTED_MODULE_2__.EventEmitter();
+    /** Emits when the user stops dragging an item in the container. */
+    ended = new _angular_core__WEBPACK_IMPORTED_MODULE_2__.EventEmitter();
+    /** Emits when the user has moved the item into a new container. */
+    entered = new _angular_core__WEBPACK_IMPORTED_MODULE_2__.EventEmitter();
+    /** Emits when the user removes the item its container by dragging it into another container. */
+    exited = new _angular_core__WEBPACK_IMPORTED_MODULE_2__.EventEmitter();
+    /** Emits when the user drops the item inside a container. */
+    dropped = new _angular_core__WEBPACK_IMPORTED_MODULE_2__.EventEmitter();
+    /**
+     * Emits as the user is dragging the item. Use with caution,
+     * because this event will fire for every pixel that the user has dragged.
+     */
+    moved = new rxjs__WEBPACK_IMPORTED_MODULE_13__.Observable(observer => {
+      const subscription = this._dragRef.moved.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_17__.map)(movedEvent => ({
+        source: this,
+        pointerPosition: movedEvent.pointerPosition,
+        event: movedEvent.event,
+        delta: movedEvent.delta,
+        distance: movedEvent.distance
+      }))).subscribe(observer);
+      return () => {
+        subscription.unsubscribe();
+      };
+    });
+    _injector = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_2__.Injector);
+    constructor() {
+      const dropContainer = this.dropContainer;
+      const config = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(CDK_DRAG_CONFIG, {
+        optional: true
+      });
+      const dragDrop = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(DragDrop);
+      this._dragRef = dragDrop.createDrag(this.element, {
+        dragStartThreshold: config && config.dragStartThreshold != null ? config.dragStartThreshold : 5,
+        pointerDirectionChangeThreshold: config && config.pointerDirectionChangeThreshold != null ? config.pointerDirectionChangeThreshold : 5,
+        zIndex: config?.zIndex
+      });
+      this._dragRef.data = this;
+      this._dragDropRegistry.registerDirectiveNode(this.element.nativeElement, this);
+      if (config) {
+        this._assignDefaults(config);
+      }
+      // Note that usually the container is assigned when the drop list is picks up the item, but in
+      // some cases (mainly transplanted views with OnPush, see #18341) we may end up in a situation
+      // where there are no items on the first change detection pass, but the items get picked up as
+      // soon as the user triggers another pass by dragging. This is a problem, because the item would
+      // have to switch from standalone mode to drag mode in the middle of the dragging sequence which
+      // is too late since the two modes save different kinds of information. We work around it by
+      // assigning the drop container both from here and the list.
+      if (dropContainer) {
+        this._dragRef._withDropContainer(dropContainer._dropListRef);
+        dropContainer.addItem(this);
+        // The drop container reads this so we need to sync it here.
+        dropContainer._dropListRef.beforeStarted.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_10__.takeUntil)(this._destroyed)).subscribe(() => {
+          this._dragRef.scale = this.scale;
+        });
+      }
+      this._syncInputs(this._dragRef);
+      this._handleEvents(this._dragRef);
+    }
+    /**
+     * Returns the element that is being used as a placeholder
+     * while the current element is being dragged.
+     */
+    getPlaceholderElement() {
+      return this._dragRef.getPlaceholderElement();
+    }
+    /** Returns the root draggable element. */
+    getRootElement() {
+      return this._dragRef.getRootElement();
+    }
+    /** Resets a standalone drag item to its initial position. */
+    reset() {
+      this._dragRef.reset();
+    }
+    /**
+     * Gets the pixel coordinates of the draggable outside of a drop container.
+     */
+    getFreeDragPosition() {
+      return this._dragRef.getFreeDragPosition();
+    }
+    /**
+     * Sets the current position in pixels the draggable outside of a drop container.
+     * @param value New position to be set.
+     */
+    setFreeDragPosition(value) {
+      this._dragRef.setFreeDragPosition(value);
+    }
+    ngAfterViewInit() {
+      // We need to wait until after render, in order for the reference
+      // element to be in the proper place in the DOM. This is mostly relevant
+      // for draggable elements inside portals since they get stamped out in
+      // their original DOM position, and then they get transferred to the portal.
+      (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.afterNextRender)(() => {
+        this._updateRootElement();
+        this._setupHandlesListener();
+        this._dragRef.scale = this.scale;
+        if (this.freeDragPosition) {
+          this._dragRef.setFreeDragPosition(this.freeDragPosition);
+        }
+      }, {
+        injector: this._injector
+      });
+    }
+    ngOnChanges(changes) {
+      const rootSelectorChange = changes['rootElementSelector'];
+      const positionChange = changes['freeDragPosition'];
+      // We don't have to react to the first change since it's being
+      // handled in the `afterNextRender` queued up in the constructor.
+      if (rootSelectorChange && !rootSelectorChange.firstChange) {
+        this._updateRootElement();
+      }
+      // Scale affects the free drag position so we need to sync it up here.
+      this._dragRef.scale = this.scale;
+      // Skip the first change since it's being handled in the `afterNextRender` queued up in the
+      // constructor.
+      if (positionChange && !positionChange.firstChange && this.freeDragPosition) {
+        this._dragRef.setFreeDragPosition(this.freeDragPosition);
+      }
+    }
+    ngOnDestroy() {
+      if (this.dropContainer) {
+        this.dropContainer.removeItem(this);
+      }
+      this._dragDropRegistry.removeDirectiveNode(this.element.nativeElement);
+      // Unnecessary in most cases, but used to avoid extra change detections with `zone-paths-rxjs`.
+      this._ngZone.runOutsideAngular(() => {
+        this._handles.complete();
+        this._destroyed.next();
+        this._destroyed.complete();
+        this._dragRef.dispose();
+      });
+    }
+    _addHandle(handle) {
+      const handles = this._handles.getValue();
+      handles.push(handle);
+      this._handles.next(handles);
+    }
+    _removeHandle(handle) {
+      const handles = this._handles.getValue();
+      const index = handles.indexOf(handle);
+      if (index > -1) {
+        handles.splice(index, 1);
+        this._handles.next(handles);
+      }
+    }
+    _setPreviewTemplate(preview) {
+      this._previewTemplate = preview;
+    }
+    _resetPreviewTemplate(preview) {
+      if (preview === this._previewTemplate) {
+        this._previewTemplate = null;
+      }
+    }
+    _setPlaceholderTemplate(placeholder) {
+      this._placeholderTemplate = placeholder;
+    }
+    _resetPlaceholderTemplate(placeholder) {
+      if (placeholder === this._placeholderTemplate) {
+        this._placeholderTemplate = null;
+      }
+    }
+    /** Syncs the root element with the `DragRef`. */
+    _updateRootElement() {
+      const element = this.element.nativeElement;
+      let rootElement = element;
+      if (this.rootElementSelector) {
+        rootElement = element.closest !== undefined ? element.closest(this.rootElementSelector) :
+        // Comment tag doesn't have closest method, so use parent's one.
+        element.parentElement?.closest(this.rootElementSelector);
+      }
+      if (rootElement && (typeof ngDevMode === 'undefined' || ngDevMode)) {
+        assertElementNode(rootElement, 'cdkDrag');
+      }
+      this._dragRef.withRootElement(rootElement || element);
+    }
+    /** Gets the boundary element, based on the `boundaryElement` value. */
+    _getBoundaryElement() {
+      const boundary = this.boundaryElement;
+      if (!boundary) {
+        return null;
+      }
+      if (typeof boundary === 'string') {
+        return this.element.nativeElement.closest(boundary);
+      }
+      return (0,_element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_5__.a)(boundary);
+    }
+    /** Syncs the inputs of the CdkDrag with the options of the underlying DragRef. */
+    _syncInputs(ref) {
+      ref.beforeStarted.subscribe(() => {
+        if (!ref.isDragging()) {
+          const dir = this._dir;
+          const dragStartDelay = this.dragStartDelay;
+          const placeholder = this._placeholderTemplate ? {
+            template: this._placeholderTemplate.templateRef,
+            context: this._placeholderTemplate.data,
+            viewContainer: this._viewContainerRef
+          } : null;
+          const preview = this._previewTemplate ? {
+            template: this._previewTemplate.templateRef,
+            context: this._previewTemplate.data,
+            matchSize: this._previewTemplate.matchSize,
+            viewContainer: this._viewContainerRef
+          } : null;
+          ref.disabled = this.disabled;
+          ref.lockAxis = this.lockAxis;
+          ref.scale = this.scale;
+          ref.dragStartDelay = typeof dragStartDelay === 'object' && dragStartDelay ? dragStartDelay : (0,_element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_5__.c)(dragStartDelay);
+          ref.constrainPosition = this.constrainPosition;
+          ref.previewClass = this.previewClass;
+          ref.withBoundaryElement(this._getBoundaryElement()).withPlaceholderTemplate(placeholder).withPreviewTemplate(preview).withPreviewContainer(this.previewContainer || 'global');
+          if (dir) {
+            ref.withDirection(dir.value);
+          }
+        }
+      });
+      // This only needs to be resolved once.
+      ref.beforeStarted.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_18__.take)(1)).subscribe(() => {
+        // If we managed to resolve a parent through DI, use it.
+        if (this._parentDrag) {
+          ref.withParent(this._parentDrag._dragRef);
+          return;
+        }
+        // Otherwise fall back to resolving the parent by looking up the DOM. This can happen if
+        // the item was projected into another item by something like `ngTemplateOutlet`.
+        let parent = this.element.nativeElement.parentElement;
+        while (parent) {
+          const parentDrag = this._dragDropRegistry.getDragDirectiveForNode(parent);
+          if (parentDrag) {
+            ref.withParent(parentDrag._dragRef);
+            break;
+          }
+          parent = parent.parentElement;
+        }
+      });
+    }
+    /** Handles the events from the underlying `DragRef`. */
+    _handleEvents(ref) {
+      ref.started.subscribe(startEvent => {
+        this.started.emit({
+          source: this,
+          event: startEvent.event
+        });
+        // Since all of these events run outside of change detection,
+        // we need to ensure that everything is marked correctly.
+        this._changeDetectorRef.markForCheck();
+      });
+      ref.released.subscribe(releaseEvent => {
+        this.released.emit({
+          source: this,
+          event: releaseEvent.event
+        });
+      });
+      ref.ended.subscribe(endEvent => {
+        this.ended.emit({
+          source: this,
+          distance: endEvent.distance,
+          dropPoint: endEvent.dropPoint,
+          event: endEvent.event
+        });
+        // Since all of these events run outside of change detection,
+        // we need to ensure that everything is marked correctly.
+        this._changeDetectorRef.markForCheck();
+      });
+      ref.entered.subscribe(enterEvent => {
+        this.entered.emit({
+          container: enterEvent.container.data,
+          item: this,
+          currentIndex: enterEvent.currentIndex
+        });
+      });
+      ref.exited.subscribe(exitEvent => {
+        this.exited.emit({
+          container: exitEvent.container.data,
+          item: this
+        });
+      });
+      ref.dropped.subscribe(dropEvent => {
+        this.dropped.emit({
+          previousIndex: dropEvent.previousIndex,
+          currentIndex: dropEvent.currentIndex,
+          previousContainer: dropEvent.previousContainer.data,
+          container: dropEvent.container.data,
+          isPointerOverContainer: dropEvent.isPointerOverContainer,
+          item: this,
+          distance: dropEvent.distance,
+          dropPoint: dropEvent.dropPoint,
+          event: dropEvent.event
+        });
+      });
+    }
+    /** Assigns the default input values based on a provided config object. */
+    _assignDefaults(config) {
+      const {
+        lockAxis,
+        dragStartDelay,
+        constrainPosition,
+        previewClass,
+        boundaryElement,
+        draggingDisabled,
+        rootElementSelector,
+        previewContainer
+      } = config;
+      this.disabled = draggingDisabled == null ? false : draggingDisabled;
+      this.dragStartDelay = dragStartDelay || 0;
+      if (lockAxis) {
+        this.lockAxis = lockAxis;
+      }
+      if (constrainPosition) {
+        this.constrainPosition = constrainPosition;
+      }
+      if (previewClass) {
+        this.previewClass = previewClass;
+      }
+      if (boundaryElement) {
+        this.boundaryElement = boundaryElement;
+      }
+      if (rootElementSelector) {
+        this.rootElementSelector = rootElementSelector;
+      }
+      if (previewContainer) {
+        this.previewContainer = previewContainer;
+      }
+    }
+    /** Sets up the listener that syncs the handles with the drag ref. */
+    _setupHandlesListener() {
+      // Listen for any newly-added handles.
+      this._handles.pipe(
+      // Sync the new handles with the DragRef.
+      (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_19__.tap)(handles => {
+        const handleElements = handles.map(handle => handle.element);
+        // Usually handles are only allowed to be a descendant of the drag element, but if
+        // the consumer defined a different drag root, we should allow the drag element
+        // itself to be a handle too.
+        if (this._selfHandle && this.rootElementSelector) {
+          handleElements.push(this.element);
+        }
+        this._dragRef.withHandles(handleElements);
+      }),
+      // Listen if the state of any of the handles changes.
+      (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_20__.switchMap)(handles => {
+        return (0,rxjs__WEBPACK_IMPORTED_MODULE_14__.merge)(...handles.map(item => item._stateChanges.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_21__.startWith)(item))));
+      }), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_10__.takeUntil)(this._destroyed)).subscribe(handleInstance => {
+        // Enabled/disable the handle that changed in the DragRef.
+        const dragRef = this._dragRef;
+        const handle = handleInstance.element.nativeElement;
+        handleInstance.disabled ? dragRef.disableHandle(handle) : dragRef.enableHandle(handle);
+      });
+    }
+    static ɵfac = function CdkDrag_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || CdkDrag)();
+    };
+    static ɵdir = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineDirective"]({
+      type: CdkDrag,
+      selectors: [["", "cdkDrag", ""]],
+      hostAttrs: [1, "cdk-drag"],
+      hostVars: 4,
+      hostBindings: function CdkDrag_HostBindings(rf, ctx) {
+        if (rf & 2) {
+          _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵclassProp"]("cdk-drag-disabled", ctx.disabled)("cdk-drag-dragging", ctx._dragRef.isDragging());
+        }
+      },
+      inputs: {
+        data: [0, "cdkDragData", "data"],
+        lockAxis: [0, "cdkDragLockAxis", "lockAxis"],
+        rootElementSelector: [0, "cdkDragRootElement", "rootElementSelector"],
+        boundaryElement: [0, "cdkDragBoundary", "boundaryElement"],
+        dragStartDelay: [0, "cdkDragStartDelay", "dragStartDelay"],
+        freeDragPosition: [0, "cdkDragFreeDragPosition", "freeDragPosition"],
+        disabled: [2, "cdkDragDisabled", "disabled", _angular_core__WEBPACK_IMPORTED_MODULE_2__.booleanAttribute],
+        constrainPosition: [0, "cdkDragConstrainPosition", "constrainPosition"],
+        previewClass: [0, "cdkDragPreviewClass", "previewClass"],
+        previewContainer: [0, "cdkDragPreviewContainer", "previewContainer"],
+        scale: [2, "cdkDragScale", "scale", _angular_core__WEBPACK_IMPORTED_MODULE_2__.numberAttribute]
+      },
+      outputs: {
+        started: "cdkDragStarted",
+        released: "cdkDragReleased",
+        ended: "cdkDragEnded",
+        entered: "cdkDragEntered",
+        exited: "cdkDragExited",
+        dropped: "cdkDragDropped",
+        moved: "cdkDragMoved"
+      },
+      exportAs: ["cdkDrag"],
+      features: [_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵProvidersFeature"]([{
+        provide: CDK_DRAG_PARENT,
+        useExisting: CdkDrag
+      }]), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵNgOnChangesFeature"]]
+    });
+  }
+  return CdkDrag;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+/**
+ * Injection token that can be used to reference instances of `CdkDropListGroup`. It serves as
+ * alternative token to the actual `CdkDropListGroup` class which could cause unnecessary
+ * retention of the class and its directive metadata.
+ */
+const CDK_DROP_LIST_GROUP = /*#__PURE__*/new _angular_core__WEBPACK_IMPORTED_MODULE_2__.InjectionToken('CdkDropListGroup');
+/**
+ * Declaratively connects sibling `cdkDropList` instances together. All of the `cdkDropList`
+ * elements that are placed inside a `cdkDropListGroup` will be connected to each other
+ * automatically. Can be used as an alternative to the `cdkDropListConnectedTo` input
+ * from `cdkDropList`.
+ */
+let CdkDropListGroup = /*#__PURE__*/(() => {
+  class CdkDropListGroup {
+    /** Drop lists registered inside the group. */
+    _items = new Set();
+    /** Whether starting a dragging sequence from inside this group is disabled. */
+    disabled = false;
+    ngOnDestroy() {
+      this._items.clear();
+    }
+    static ɵfac = function CdkDropListGroup_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || CdkDropListGroup)();
+    };
+    static ɵdir = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineDirective"]({
+      type: CdkDropListGroup,
+      selectors: [["", "cdkDropListGroup", ""]],
+      inputs: {
+        disabled: [2, "cdkDropListGroupDisabled", "disabled", _angular_core__WEBPACK_IMPORTED_MODULE_2__.booleanAttribute]
+      },
+      exportAs: ["cdkDropListGroup"],
+      features: [_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵProvidersFeature"]([{
+        provide: CDK_DROP_LIST_GROUP,
+        useExisting: CdkDropListGroup
+      }])]
+    });
+  }
+  return CdkDropListGroup;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+/** Container that wraps a set of draggable items. */
+let CdkDropList = /*#__PURE__*/(() => {
+  class CdkDropList {
+    element = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_2__.ElementRef);
+    _changeDetectorRef = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_2__.ChangeDetectorRef);
+    _scrollDispatcher = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_scrolling_mjs__WEBPACK_IMPORTED_MODULE_0__.ScrollDispatcher);
+    _dir = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_directionality_CBXD4hga_mjs__WEBPACK_IMPORTED_MODULE_15__.D, {
+      optional: true
+    });
+    _group = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(CDK_DROP_LIST_GROUP, {
+      optional: true,
+      skipSelf: true
+    });
+    /** Refs that have been synced with the drop ref most recently. */
+    _latestSortedRefs;
+    /** Emits when the list has been destroyed. */
+    _destroyed = new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject();
+    /** Whether the element's scrollable parents have been resolved. */
+    _scrollableParentsResolved;
+    /** Keeps track of the drop lists that are currently on the page. */
+    static _dropLists = [];
+    /** Reference to the underlying drop list instance. */
+    _dropListRef;
+    /**
+     * Other draggable containers that this container is connected to and into which the
+     * container's items can be transferred. Can either be references to other drop containers,
+     * or their unique IDs.
+     */
+    connectedTo = [];
+    /** Arbitrary data to attach to this container. */
+    data;
+    /** Direction in which the list is oriented. */
+    orientation;
+    /**
+     * Unique ID for the drop zone. Can be used as a reference
+     * in the `connectedTo` of another `CdkDropList`.
+     */
+    id = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_id_generator_Dw_9dSDu_mjs__WEBPACK_IMPORTED_MODULE_22__._).getId('cdk-drop-list-');
+    /** Locks the position of the draggable elements inside the container along the specified axis. */
+    lockAxis;
+    /** Whether starting a dragging sequence from this container is disabled. */
+    get disabled() {
+      return this._disabled || !!this._group && this._group.disabled;
+    }
+    set disabled(value) {
+      // Usually we sync the directive and ref state right before dragging starts, in order to have
+      // a single point of failure and to avoid having to use setters for everything. `disabled` is
+      // a special case, because it can prevent the `beforeStarted` event from firing, which can lock
+      // the user in a disabled state, so we also need to sync it as it's being set.
+      this._dropListRef.disabled = this._disabled = value;
+    }
+    _disabled;
+    /** Whether sorting within this drop list is disabled. */
+    sortingDisabled;
+    /**
+     * Function that is used to determine whether an item
+     * is allowed to be moved into a drop container.
+     */
+    enterPredicate = () => true;
+    /** Functions that is used to determine whether an item can be sorted into a particular index. */
+    sortPredicate = () => true;
+    /** Whether to auto-scroll the view when the user moves their pointer close to the edges. */
+    autoScrollDisabled;
+    /** Number of pixels to scroll for each frame when auto-scrolling an element. */
+    autoScrollStep;
+    /**
+     * Selector that will be used to resolve an alternate element container for the drop list.
+     * Passing an alternate container is useful for the cases where one might not have control
+     * over the parent node of the draggable items within the list (e.g. due to content projection).
+     * This allows for usages like:
+     *
+     * ```
+     * <div cdkDropList cdkDropListElementContainer=".inner">
+     *   <div class="inner">
+     *     <div cdkDrag></div>
+     *   </div>
+     * </div>
+     * ```
+     */
+    elementContainerSelector;
+    /** Emits when the user drops an item inside the container. */
+    dropped = new _angular_core__WEBPACK_IMPORTED_MODULE_2__.EventEmitter();
+    /**
+     * Emits when the user has moved a new drag item into this container.
+     */
+    entered = new _angular_core__WEBPACK_IMPORTED_MODULE_2__.EventEmitter();
+    /**
+     * Emits when the user removes an item from the container
+     * by dragging it into another container.
+     */
+    exited = new _angular_core__WEBPACK_IMPORTED_MODULE_2__.EventEmitter();
+    /** Emits as the user is swapping items while actively dragging. */
+    sorted = new _angular_core__WEBPACK_IMPORTED_MODULE_2__.EventEmitter();
+    /**
+     * Keeps track of the items that are registered with this container. Historically we used to
+     * do this with a `ContentChildren` query, however queries don't handle transplanted views very
+     * well which means that we can't handle cases like dragging the headers of a `mat-table`
+     * correctly. What we do instead is to have the items register themselves with the container
+     * and then we sort them based on their position in the DOM.
+     */
+    _unsortedItems = new Set();
+    constructor() {
+      const dragDrop = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(DragDrop);
+      const config = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(CDK_DRAG_CONFIG, {
+        optional: true
+      });
+      if (typeof ngDevMode === 'undefined' || ngDevMode) {
+        assertElementNode(this.element.nativeElement, 'cdkDropList');
+      }
+      this._dropListRef = dragDrop.createDropList(this.element);
+      this._dropListRef.data = this;
+      if (config) {
+        this._assignDefaults(config);
+      }
+      this._dropListRef.enterPredicate = (drag, drop) => {
+        return this.enterPredicate(drag.data, drop.data);
+      };
+      this._dropListRef.sortPredicate = (index, drag, drop) => {
+        return this.sortPredicate(index, drag.data, drop.data);
+      };
+      this._setupInputSyncSubscription(this._dropListRef);
+      this._handleEvents(this._dropListRef);
+      CdkDropList._dropLists.push(this);
+      if (this._group) {
+        this._group._items.add(this);
+      }
+    }
+    /** Registers an items with the drop list. */
+    addItem(item) {
+      this._unsortedItems.add(item);
+      // Only sync the items while dragging since this method is
+      // called when items are being initialized one-by-one.
+      if (this._dropListRef.isDragging()) {
+        this._syncItemsWithRef(this.getSortedItems().map(item => item._dragRef));
+      }
+    }
+    /** Removes an item from the drop list. */
+    removeItem(item) {
+      this._unsortedItems.delete(item);
+      // This method might be called on destroy so we always want to sync with the ref.
+      // Note that we reuse the last set of synced items, rather than re-sorting the whole
+      // list, because it can slow down re-renders of large lists (see #30737).
+      if (this._latestSortedRefs) {
+        const index = this._latestSortedRefs.indexOf(item._dragRef);
+        if (index > -1) {
+          this._latestSortedRefs.splice(index, 1);
+          this._syncItemsWithRef(this._latestSortedRefs);
+        }
+      }
+    }
+    /** Gets the registered items in the list, sorted by their position in the DOM. */
+    getSortedItems() {
+      return Array.from(this._unsortedItems).sort((a, b) => {
+        const documentPosition = a._dragRef.getVisibleElement().compareDocumentPosition(b._dragRef.getVisibleElement());
+        // `compareDocumentPosition` returns a bitmask so we have to use a bitwise operator.
+        // https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
+        // tslint:disable-next-line:no-bitwise
+        return documentPosition & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
+      });
+    }
+    ngOnDestroy() {
+      const index = CdkDropList._dropLists.indexOf(this);
+      if (index > -1) {
+        CdkDropList._dropLists.splice(index, 1);
+      }
+      if (this._group) {
+        this._group._items.delete(this);
+      }
+      this._latestSortedRefs = undefined;
+      this._unsortedItems.clear();
+      this._dropListRef.dispose();
+      this._destroyed.next();
+      this._destroyed.complete();
+    }
+    /** Syncs the inputs of the CdkDropList with the options of the underlying DropListRef. */
+    _setupInputSyncSubscription(ref) {
+      if (this._dir) {
+        this._dir.change.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_21__.startWith)(this._dir.value), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_10__.takeUntil)(this._destroyed)).subscribe(value => ref.withDirection(value));
+      }
+      ref.beforeStarted.subscribe(() => {
+        const siblings = (0,_array_I1yfCXUO_mjs__WEBPACK_IMPORTED_MODULE_23__.c)(this.connectedTo).map(drop => {
+          if (typeof drop === 'string') {
+            const correspondingDropList = CdkDropList._dropLists.find(list => list.id === drop);
+            if (!correspondingDropList && (typeof ngDevMode === 'undefined' || ngDevMode)) {
+              console.warn(`CdkDropList could not find connected drop list with id "${drop}"`);
+            }
+            return correspondingDropList;
+          }
+          return drop;
+        });
+        if (this._group) {
+          this._group._items.forEach(drop => {
+            if (siblings.indexOf(drop) === -1) {
+              siblings.push(drop);
+            }
+          });
+        }
+        // Note that we resolve the scrollable parents here so that we delay the resolution
+        // as long as possible, ensuring that the element is in its final place in the DOM.
+        if (!this._scrollableParentsResolved) {
+          const scrollableParents = this._scrollDispatcher.getAncestorScrollContainers(this.element).map(scrollable => scrollable.getElementRef().nativeElement);
+          this._dropListRef.withScrollableParents(scrollableParents);
+          // Only do this once since it involves traversing the DOM and the parents
+          // shouldn't be able to change without the drop list being destroyed.
+          this._scrollableParentsResolved = true;
+        }
+        if (this.elementContainerSelector) {
+          const container = this.element.nativeElement.querySelector(this.elementContainerSelector);
+          if (!container && (typeof ngDevMode === 'undefined' || ngDevMode)) {
+            throw new Error(`CdkDropList could not find an element container matching the selector "${this.elementContainerSelector}"`);
+          }
+          ref.withElementContainer(container);
+        }
+        ref.disabled = this.disabled;
+        ref.lockAxis = this.lockAxis;
+        ref.sortingDisabled = this.sortingDisabled;
+        ref.autoScrollDisabled = this.autoScrollDisabled;
+        ref.autoScrollStep = (0,_element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_5__.c)(this.autoScrollStep, 2);
+        ref.connectedTo(siblings.filter(drop => drop && drop !== this).map(list => list._dropListRef)).withOrientation(this.orientation);
+      });
+    }
+    /** Handles events from the underlying DropListRef. */
+    _handleEvents(ref) {
+      ref.beforeStarted.subscribe(() => {
+        this._syncItemsWithRef(this.getSortedItems().map(item => item._dragRef));
+        this._changeDetectorRef.markForCheck();
+      });
+      ref.entered.subscribe(event => {
+        this.entered.emit({
+          container: this,
+          item: event.item.data,
+          currentIndex: event.currentIndex
+        });
+      });
+      ref.exited.subscribe(event => {
+        this.exited.emit({
+          container: this,
+          item: event.item.data
+        });
+        this._changeDetectorRef.markForCheck();
+      });
+      ref.sorted.subscribe(event => {
+        this.sorted.emit({
+          previousIndex: event.previousIndex,
+          currentIndex: event.currentIndex,
+          container: this,
+          item: event.item.data
+        });
+      });
+      ref.dropped.subscribe(dropEvent => {
+        this.dropped.emit({
+          previousIndex: dropEvent.previousIndex,
+          currentIndex: dropEvent.currentIndex,
+          previousContainer: dropEvent.previousContainer.data,
+          container: dropEvent.container.data,
+          item: dropEvent.item.data,
+          isPointerOverContainer: dropEvent.isPointerOverContainer,
+          distance: dropEvent.distance,
+          dropPoint: dropEvent.dropPoint,
+          event: dropEvent.event
+        });
+        // Mark for check since all of these events run outside of change
+        // detection and we're not guaranteed for something else to have triggered it.
+        this._changeDetectorRef.markForCheck();
+      });
+      (0,rxjs__WEBPACK_IMPORTED_MODULE_14__.merge)(ref.receivingStarted, ref.receivingStopped).subscribe(() => this._changeDetectorRef.markForCheck());
+    }
+    /** Assigns the default input values based on a provided config object. */
+    _assignDefaults(config) {
+      const {
+        lockAxis,
+        draggingDisabled,
+        sortingDisabled,
+        listAutoScrollDisabled,
+        listOrientation
+      } = config;
+      this.disabled = draggingDisabled == null ? false : draggingDisabled;
+      this.sortingDisabled = sortingDisabled == null ? false : sortingDisabled;
+      this.autoScrollDisabled = listAutoScrollDisabled == null ? false : listAutoScrollDisabled;
+      this.orientation = listOrientation || 'vertical';
+      if (lockAxis) {
+        this.lockAxis = lockAxis;
+      }
+    }
+    /** Syncs up the registered drag items with underlying drop list ref. */
+    _syncItemsWithRef(items) {
+      this._latestSortedRefs = items;
+      this._dropListRef.withItems(items);
+    }
+    static ɵfac = function CdkDropList_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || CdkDropList)();
+    };
+    static ɵdir = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineDirective"]({
+      type: CdkDropList,
+      selectors: [["", "cdkDropList", ""], ["cdk-drop-list"]],
+      hostAttrs: [1, "cdk-drop-list"],
+      hostVars: 7,
+      hostBindings: function CdkDropList_HostBindings(rf, ctx) {
+        if (rf & 2) {
+          _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵattribute"]("id", ctx.id);
+          _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵclassProp"]("cdk-drop-list-disabled", ctx.disabled)("cdk-drop-list-dragging", ctx._dropListRef.isDragging())("cdk-drop-list-receiving", ctx._dropListRef.isReceiving());
+        }
+      },
+      inputs: {
+        connectedTo: [0, "cdkDropListConnectedTo", "connectedTo"],
+        data: [0, "cdkDropListData", "data"],
+        orientation: [0, "cdkDropListOrientation", "orientation"],
+        id: "id",
+        lockAxis: [0, "cdkDropListLockAxis", "lockAxis"],
+        disabled: [2, "cdkDropListDisabled", "disabled", _angular_core__WEBPACK_IMPORTED_MODULE_2__.booleanAttribute],
+        sortingDisabled: [2, "cdkDropListSortingDisabled", "sortingDisabled", _angular_core__WEBPACK_IMPORTED_MODULE_2__.booleanAttribute],
+        enterPredicate: [0, "cdkDropListEnterPredicate", "enterPredicate"],
+        sortPredicate: [0, "cdkDropListSortPredicate", "sortPredicate"],
+        autoScrollDisabled: [2, "cdkDropListAutoScrollDisabled", "autoScrollDisabled", _angular_core__WEBPACK_IMPORTED_MODULE_2__.booleanAttribute],
+        autoScrollStep: [0, "cdkDropListAutoScrollStep", "autoScrollStep"],
+        elementContainerSelector: [0, "cdkDropListElementContainer", "elementContainerSelector"]
+      },
+      outputs: {
+        dropped: "cdkDropListDropped",
+        entered: "cdkDropListEntered",
+        exited: "cdkDropListExited",
+        sorted: "cdkDropListSorted"
+      },
+      exportAs: ["cdkDropList"],
+      features: [_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵProvidersFeature"]([
+      // Prevent child drop lists from picking up the same group as their parent.
+      {
+        provide: CDK_DROP_LIST_GROUP,
+        useValue: undefined
+      }, {
+        provide: CDK_DROP_LIST,
+        useExisting: CdkDropList
+      }])]
+    });
+  }
+  return CdkDropList;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+/**
+ * Injection token that can be used to reference instances of `CdkDragPreview`. It serves as
+ * alternative token to the actual `CdkDragPreview` class which could cause unnecessary
+ * retention of the class and its directive metadata.
+ */
+const CDK_DRAG_PREVIEW = /*#__PURE__*/new _angular_core__WEBPACK_IMPORTED_MODULE_2__.InjectionToken('CdkDragPreview');
+/**
+ * Element that will be used as a template for the preview
+ * of a CdkDrag when it is being dragged.
+ */
+let CdkDragPreview = /*#__PURE__*/(() => {
+  class CdkDragPreview {
+    templateRef = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_2__.TemplateRef);
+    _drag = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(CDK_DRAG_PARENT, {
+      optional: true
+    });
+    /** Context data to be added to the preview template instance. */
+    data;
+    /** Whether the preview should preserve the same size as the item that is being dragged. */
+    matchSize = false;
+    constructor() {
+      this._drag?._setPreviewTemplate(this);
+    }
+    ngOnDestroy() {
+      this._drag?._resetPreviewTemplate(this);
+    }
+    static ɵfac = function CdkDragPreview_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || CdkDragPreview)();
+    };
+    static ɵdir = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineDirective"]({
+      type: CdkDragPreview,
+      selectors: [["ng-template", "cdkDragPreview", ""]],
+      inputs: {
+        data: "data",
+        matchSize: [2, "matchSize", "matchSize", _angular_core__WEBPACK_IMPORTED_MODULE_2__.booleanAttribute]
+      },
+      features: [_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵProvidersFeature"]([{
+        provide: CDK_DRAG_PREVIEW,
+        useExisting: CdkDragPreview
+      }])]
+    });
+  }
+  return CdkDragPreview;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+/**
+ * Injection token that can be used to reference instances of `CdkDragPlaceholder`. It serves as
+ * alternative token to the actual `CdkDragPlaceholder` class which could cause unnecessary
+ * retention of the class and its directive metadata.
+ */
+const CDK_DRAG_PLACEHOLDER = /*#__PURE__*/new _angular_core__WEBPACK_IMPORTED_MODULE_2__.InjectionToken('CdkDragPlaceholder');
+/**
+ * Element that will be used as a template for the placeholder of a CdkDrag when
+ * it is being dragged. The placeholder is displayed in place of the element being dragged.
+ */
+let CdkDragPlaceholder = /*#__PURE__*/(() => {
+  class CdkDragPlaceholder {
+    templateRef = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_2__.TemplateRef);
+    _drag = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(CDK_DRAG_PARENT, {
+      optional: true
+    });
+    /** Context data to be added to the placeholder template instance. */
+    data;
+    constructor() {
+      this._drag?._setPlaceholderTemplate(this);
+    }
+    ngOnDestroy() {
+      this._drag?._resetPlaceholderTemplate(this);
+    }
+    static ɵfac = function CdkDragPlaceholder_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || CdkDragPlaceholder)();
+    };
+    static ɵdir = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineDirective"]({
+      type: CdkDragPlaceholder,
+      selectors: [["ng-template", "cdkDragPlaceholder", ""]],
+      inputs: {
+        data: "data"
+      },
+      features: [_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵProvidersFeature"]([{
+        provide: CDK_DRAG_PLACEHOLDER,
+        useExisting: CdkDragPlaceholder
+      }])]
+    });
+  }
+  return CdkDragPlaceholder;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+const DRAG_DROP_DIRECTIVES = [CdkDropList, CdkDropListGroup, CdkDrag, CdkDragHandle, CdkDragPreview, CdkDragPlaceholder];
+let DragDropModule = /*#__PURE__*/(() => {
+  class DragDropModule {
+    static ɵfac = function DragDropModule_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || DragDropModule)();
+    };
+    static ɵmod = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineNgModule"]({
+      type: DragDropModule
+    });
+    static ɵinj = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineInjector"]({
+      providers: [DragDrop],
+      imports: [_scrolling_mjs__WEBPACK_IMPORTED_MODULE_0__.CdkScrollableModule]
+    });
+  }
+  return DragDropModule;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+
+/***/ }),
+
+/***/ 1019:
+/*!*********************************************************************!*\
+  !*** ./node_modules/@angular/cdk/fesm2022/data-source-D34wiQZj.mjs ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   D: () => (/* binding */ DataSource),
+/* harmony export */   i: () => (/* binding */ isDataSource)
+/* harmony export */ });
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! rxjs */ 4982);
+
+class DataSource {}
+/** Checks whether an object is a data source. */
+function isDataSource(value) {
+  // Check if the value is a DataSource by observing if it has a connect function. Cannot
+  // be checked as an `instanceof DataSource` since people could create their own sources
+  // that match the interface, but don't extend DataSource. We also can't use `isObservable`
+  // here, because of some internal apps.
+  return value && typeof value.connect === 'function' && !(value instanceof rxjs__WEBPACK_IMPORTED_MODULE_0__.ConnectableObservable);
+}
+
+
+/***/ }),
+
+/***/ 1235:
+/*!**********************************************************************!*\
+  !*** ./node_modules/@angular/cdk/fesm2022/style-loader-Cu9AvjH9.mjs ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   _: () => (/* binding */ _CdkPrivateStyleLoader)
+/* harmony export */ });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 7580);
+
+
+
+/** Apps in which we've loaded styles. */
+const appsWithLoaders = /*#__PURE__*/new WeakMap();
+/**
+ * Service that loads structural styles dynamically
+ * and ensures that they're only loaded once per app.
+ */
+let _CdkPrivateStyleLoader = /*#__PURE__*/(() => {
+  class _CdkPrivateStyleLoader {
+    _appRef;
+    _injector = (0,_angular_core__WEBPACK_IMPORTED_MODULE_0__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_0__.Injector);
+    _environmentInjector = (0,_angular_core__WEBPACK_IMPORTED_MODULE_0__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_0__.EnvironmentInjector);
+    /**
+     * Loads a set of styles.
+     * @param loader Component which will be instantiated to load the styles.
+     */
+    load(loader) {
+      // Resolve the app ref lazily to avoid circular dependency errors if this is called too early.
+      const appRef = this._appRef = this._appRef || this._injector.get(_angular_core__WEBPACK_IMPORTED_MODULE_0__.ApplicationRef);
+      let data = appsWithLoaders.get(appRef);
+      // If we haven't loaded for this app before, we have to initialize it.
+      if (!data) {
+        data = {
+          loaders: new Set(),
+          refs: []
+        };
+        appsWithLoaders.set(appRef, data);
+        // When the app is destroyed, we need to clean up all the related loaders.
+        appRef.onDestroy(() => {
+          appsWithLoaders.get(appRef)?.refs.forEach(ref => ref.destroy());
+          appsWithLoaders.delete(appRef);
+        });
+      }
+      // If the loader hasn't been loaded before, we need to instatiate it.
+      if (!data.loaders.has(loader)) {
+        data.loaders.add(loader);
+        data.refs.push((0,_angular_core__WEBPACK_IMPORTED_MODULE_0__.createComponent)(loader, {
+          environmentInjector: this._environmentInjector
+        }));
+      }
+    }
+    static ɵfac = function _CdkPrivateStyleLoader_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _CdkPrivateStyleLoader)();
+    };
+    static ɵprov = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({
+      token: _CdkPrivateStyleLoader,
+      factory: _CdkPrivateStyleLoader.ɵfac,
+      providedIn: 'root'
+    });
+  }
+  return _CdkPrivateStyleLoader;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+
+/***/ }),
+
+/***/ 1437:
+/*!*********************************************************************************!*\
+  !*** ./node_modules/@angular/cdk/fesm2022/backwards-compatibility-DHR38MsD.mjs ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   _: () => (/* binding */ _bindEventWithOptions)
+/* harmony export */ });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 7580);
+
+
+// TODO(crisbeto): remove this function when making breaking changes for v20.
+/**
+ * Binds an event listener with specific options in a backwards-compatible way.
+ * This function is necessary, because `Renderer2.listen` only supports listener options
+ * after 19.1 and during the v19 period we support any 19.x version.
+ * @docs-private
+ */
+function _bindEventWithOptions(renderer, target, eventName, callback, options) {
+  const major = parseInt(_angular_core__WEBPACK_IMPORTED_MODULE_0__.VERSION.major);
+  const minor = parseInt(_angular_core__WEBPACK_IMPORTED_MODULE_0__.VERSION.minor);
+  // Event options in `listen` are only supported in 19.1 and beyond.
+  // We also allow 0.0.x, because that indicates a build at HEAD.
+  if (major > 19 || major === 19 && minor > 0 || major === 0 && minor === 0) {
+    return renderer.listen(target, eventName, callback, options);
+  }
+  target.addEventListener(eventName, callback, options);
+  return () => {
+    target.removeEventListener(eventName, callback, options);
+  };
+}
+
+
+/***/ }),
+
+/***/ 1860:
+/*!*******************************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/scheduler/AnimationFrameAction.js ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AnimationFrameAction: () => (/* binding */ AnimationFrameAction)
+/* harmony export */ });
+/* harmony import */ var _AsyncAction__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AsyncAction */ 2083);
+/* harmony import */ var _animationFrameProvider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./animationFrameProvider */ 5571);
+
+
+class AnimationFrameAction extends _AsyncAction__WEBPACK_IMPORTED_MODULE_0__.AsyncAction {
+  constructor(scheduler, work) {
+    super(scheduler, work);
+    this.scheduler = scheduler;
+    this.work = work;
+  }
+  requestAsyncId(scheduler, id, delay = 0) {
+    if (delay !== null && delay > 0) {
+      return super.requestAsyncId(scheduler, id, delay);
+    }
+    scheduler.actions.push(this);
+    return scheduler._scheduled || (scheduler._scheduled = _animationFrameProvider__WEBPACK_IMPORTED_MODULE_1__.animationFrameProvider.requestAnimationFrame(() => scheduler.flush(undefined)));
+  }
+  recycleAsyncId(scheduler, id, delay = 0) {
+    var _a;
+    if (delay != null ? delay > 0 : this.delay > 0) {
+      return super.recycleAsyncId(scheduler, id, delay);
+    }
+    const {
+      actions
+    } = scheduler;
+    if (id != null && id === scheduler._scheduled && ((_a = actions[actions.length - 1]) === null || _a === void 0 ? void 0 : _a.id) !== id) {
+      _animationFrameProvider__WEBPACK_IMPORTED_MODULE_1__.animationFrameProvider.cancelAnimationFrame(id);
+      scheduler._scheduled = undefined;
+    }
+    return undefined;
+  }
+}
+
+/***/ }),
+
+/***/ 1870:
+/*!****************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/operators/share.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   share: () => (/* binding */ share)
+/* harmony export */ });
+/* harmony import */ var _observable_innerFrom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../observable/innerFrom */ 2645);
+/* harmony import */ var _Subject__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Subject */ 819);
+/* harmony import */ var _Subscriber__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Subscriber */ 9285);
+/* harmony import */ var _util_lift__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/lift */ 3200);
+
+
+
+
+function share(options = {}) {
+  const {
+    connector = () => new _Subject__WEBPACK_IMPORTED_MODULE_0__.Subject(),
+    resetOnError = true,
+    resetOnComplete = true,
+    resetOnRefCountZero = true
+  } = options;
+  return wrapperSource => {
+    let connection;
+    let resetConnection;
+    let subject;
+    let refCount = 0;
+    let hasCompleted = false;
+    let hasErrored = false;
+    const cancelReset = () => {
+      resetConnection === null || resetConnection === void 0 ? void 0 : resetConnection.unsubscribe();
+      resetConnection = undefined;
+    };
+    const reset = () => {
+      cancelReset();
+      connection = subject = undefined;
+      hasCompleted = hasErrored = false;
+    };
+    const resetAndUnsubscribe = () => {
+      const conn = connection;
+      reset();
+      conn === null || conn === void 0 ? void 0 : conn.unsubscribe();
+    };
+    return (0,_util_lift__WEBPACK_IMPORTED_MODULE_1__.operate)((source, subscriber) => {
+      refCount++;
+      if (!hasErrored && !hasCompleted) {
+        cancelReset();
+      }
+      const dest = subject = subject !== null && subject !== void 0 ? subject : connector();
+      subscriber.add(() => {
+        refCount--;
+        if (refCount === 0 && !hasErrored && !hasCompleted) {
+          resetConnection = handleReset(resetAndUnsubscribe, resetOnRefCountZero);
+        }
+      });
+      dest.subscribe(subscriber);
+      if (!connection && refCount > 0) {
+        connection = new _Subscriber__WEBPACK_IMPORTED_MODULE_2__.SafeSubscriber({
+          next: value => dest.next(value),
+          error: err => {
+            hasErrored = true;
+            cancelReset();
+            resetConnection = handleReset(reset, resetOnError, err);
+            dest.error(err);
+          },
+          complete: () => {
+            hasCompleted = true;
+            cancelReset();
+            resetConnection = handleReset(reset, resetOnComplete);
+            dest.complete();
+          }
+        });
+        (0,_observable_innerFrom__WEBPACK_IMPORTED_MODULE_3__.innerFrom)(source).subscribe(connection);
+      }
+    })(wrapperSource);
+  };
+}
+function handleReset(reset, on, ...args) {
+  if (on === true) {
+    reset();
+    return;
+  }
+  if (on === false) {
+    return;
+  }
+  const onSubscriber = new _Subscriber__WEBPACK_IMPORTED_MODULE_2__.SafeSubscriber({
+    next: () => {
+      onSubscriber.unsubscribe();
+      reset();
+    }
+  });
+  return (0,_observable_innerFrom__WEBPACK_IMPORTED_MODULE_3__.innerFrom)(on(...args)).subscribe(onSubscriber);
+}
+
+/***/ }),
+
+/***/ 2351:
+/*!********************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/operators/auditTime.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   auditTime: () => (/* binding */ auditTime)
+/* harmony export */ });
+/* harmony import */ var _scheduler_async__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scheduler/async */ 8473);
+/* harmony import */ var _audit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./audit */ 3658);
+/* harmony import */ var _observable_timer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../observable/timer */ 4876);
+
+
+
+function auditTime(duration, scheduler = _scheduler_async__WEBPACK_IMPORTED_MODULE_0__.asyncScheduler) {
+  return (0,_audit__WEBPACK_IMPORTED_MODULE_1__.audit)(() => (0,_observable_timer__WEBPACK_IMPORTED_MODULE_2__.timer)(duration, scheduler));
+}
+
+/***/ }),
+
+/***/ 2955:
+/*!****************************************************************************************!*\
+  !*** ./node_modules/@angular/cdk/fesm2022/recycle-view-repeater-strategy-DoWdPqVw.mjs ***!
+  \****************************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   A: () => (/* binding */ ArrayDataSource),
+/* harmony export */   _: () => (/* binding */ _RecycleViewRepeaterStrategy),
+/* harmony export */   a: () => (/* binding */ _ViewRepeaterOperation),
+/* harmony export */   b: () => (/* binding */ _VIEW_REPEATER_STRATEGY)
+/* harmony export */ });
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ 2551);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 9452);
+/* harmony import */ var _data_source_D34wiQZj_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./data-source-D34wiQZj.mjs */ 1019);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 7580);
+
+
+
+
+/** DataSource wrapper for a native array. */
+class ArrayDataSource extends _data_source_D34wiQZj_mjs__WEBPACK_IMPORTED_MODULE_0__.D {
+  _data;
+  constructor(_data) {
+    super();
+    this._data = _data;
+  }
+  connect() {
+    return (0,rxjs__WEBPACK_IMPORTED_MODULE_1__.isObservable)(this._data) ? this._data : (0,rxjs__WEBPACK_IMPORTED_MODULE_2__.of)(this._data);
+  }
+  disconnect() {}
+}
+
+/** Indicates how a view was changed by a {@link _ViewRepeater}. */
+var _ViewRepeaterOperation = /*#__PURE__*/function (_ViewRepeaterOperation) {
+  /** The content of an existing view was replaced with another item. */
+  _ViewRepeaterOperation[_ViewRepeaterOperation["REPLACED"] = 0] = "REPLACED";
+  /** A new view was created with `createEmbeddedView`. */
+  _ViewRepeaterOperation[_ViewRepeaterOperation["INSERTED"] = 1] = "INSERTED";
+  /** The position of a view changed, but the content remains the same. */
+  _ViewRepeaterOperation[_ViewRepeaterOperation["MOVED"] = 2] = "MOVED";
+  /** A view was detached from the view container. */
+  _ViewRepeaterOperation[_ViewRepeaterOperation["REMOVED"] = 3] = "REMOVED";
+  return _ViewRepeaterOperation;
+}(_ViewRepeaterOperation || {});
+/**
+ * Injection token for {@link _ViewRepeater}. This token is for use by Angular Material only.
+ * @docs-private
+ */
+const _VIEW_REPEATER_STRATEGY = /*#__PURE__*/new _angular_core__WEBPACK_IMPORTED_MODULE_3__.InjectionToken('_ViewRepeater');
+
+/**
+ * A repeater that caches views when they are removed from a
+ * {@link ViewContainerRef}. When new items are inserted into the container,
+ * the repeater will reuse one of the cached views instead of creating a new
+ * embedded view. Recycling cached views reduces the quantity of expensive DOM
+ * inserts.
+ *
+ * @template T The type for the embedded view's $implicit property.
+ * @template R The type for the item in each IterableDiffer change record.
+ * @template C The type for the context passed to each embedded view.
+ */
+class _RecycleViewRepeaterStrategy {
+  /**
+   * The size of the cache used to store unused views.
+   * Setting the cache size to `0` will disable caching. Defaults to 20 views.
+   */
+  viewCacheSize = 20;
+  /**
+   * View cache that stores embedded view instances that have been previously stamped out,
+   * but don't are not currently rendered. The view repeater will reuse these views rather than
+   * creating brand new ones.
+   *
+   * TODO(michaeljamesparsons) Investigate whether using a linked list would improve performance.
+   */
+  _viewCache = [];
+  /** Apply changes to the DOM. */
+  applyChanges(changes, viewContainerRef, itemContextFactory, itemValueResolver, itemViewChanged) {
+    // Rearrange the views to put them in the right location.
+    changes.forEachOperation((record, adjustedPreviousIndex, currentIndex) => {
+      let view;
+      let operation;
+      if (record.previousIndex == null) {
+        // Item added.
+        const viewArgsFactory = () => itemContextFactory(record, adjustedPreviousIndex, currentIndex);
+        view = this._insertView(viewArgsFactory, currentIndex, viewContainerRef, itemValueResolver(record));
+        operation = view ? _ViewRepeaterOperation.INSERTED : _ViewRepeaterOperation.REPLACED;
+      } else if (currentIndex == null) {
+        // Item removed.
+        this._detachAndCacheView(adjustedPreviousIndex, viewContainerRef);
+        operation = _ViewRepeaterOperation.REMOVED;
+      } else {
+        // Item moved.
+        view = this._moveView(adjustedPreviousIndex, currentIndex, viewContainerRef, itemValueResolver(record));
+        operation = _ViewRepeaterOperation.MOVED;
+      }
+      if (itemViewChanged) {
+        itemViewChanged({
+          context: view?.context,
+          operation,
+          record
+        });
+      }
+    });
+  }
+  detach() {
+    for (const view of this._viewCache) {
+      view.destroy();
+    }
+    this._viewCache = [];
+  }
+  /**
+   * Inserts a view for a new item, either from the cache or by creating a new
+   * one. Returns `undefined` if the item was inserted into a cached view.
+   */
+  _insertView(viewArgsFactory, currentIndex, viewContainerRef, value) {
+    const cachedView = this._insertViewFromCache(currentIndex, viewContainerRef);
+    if (cachedView) {
+      cachedView.context.$implicit = value;
+      return undefined;
+    }
+    const viewArgs = viewArgsFactory();
+    return viewContainerRef.createEmbeddedView(viewArgs.templateRef, viewArgs.context, viewArgs.index);
+  }
+  /** Detaches the view at the given index and inserts into the view cache. */
+  _detachAndCacheView(index, viewContainerRef) {
+    const detachedView = viewContainerRef.detach(index);
+    this._maybeCacheView(detachedView, viewContainerRef);
+  }
+  /** Moves view at the previous index to the current index. */
+  _moveView(adjustedPreviousIndex, currentIndex, viewContainerRef, value) {
+    const view = viewContainerRef.get(adjustedPreviousIndex);
+    viewContainerRef.move(view, currentIndex);
+    view.context.$implicit = value;
+    return view;
+  }
+  /**
+   * Cache the given detached view. If the cache is full, the view will be
+   * destroyed.
+   */
+  _maybeCacheView(view, viewContainerRef) {
+    if (this._viewCache.length < this.viewCacheSize) {
+      this._viewCache.push(view);
+    } else {
+      const index = viewContainerRef.indexOf(view);
+      // The host component could remove views from the container outside of
+      // the view repeater. It's unlikely this will occur, but just in case,
+      // destroy the view on its own, otherwise destroy it through the
+      // container to ensure that all the references are removed.
+      if (index === -1) {
+        view.destroy();
+      } else {
+        viewContainerRef.remove(index);
+      }
+    }
+  }
+  /** Inserts a recycled view from the cache at the given index. */
+  _insertViewFromCache(index, viewContainerRef) {
+    const cachedView = this._viewCache.pop();
+    if (cachedView) {
+      viewContainerRef.insert(cachedView, index);
+    }
+    return cachedView || null;
+  }
+}
+
+
+/***/ }),
+
+/***/ 3617:
+/*!*****************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/observable/merge.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   merge: () => (/* binding */ merge)
+/* harmony export */ });
+/* harmony import */ var _operators_mergeAll__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../operators/mergeAll */ 3222);
+/* harmony import */ var _innerFrom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./innerFrom */ 2645);
+/* harmony import */ var _empty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./empty */ 9400);
+/* harmony import */ var _util_args__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/args */ 4083);
+/* harmony import */ var _from__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./from */ 5429);
+
+
+
+
+
+function merge(...args) {
+  const scheduler = (0,_util_args__WEBPACK_IMPORTED_MODULE_0__.popScheduler)(args);
+  const concurrent = (0,_util_args__WEBPACK_IMPORTED_MODULE_0__.popNumber)(args, Infinity);
+  const sources = args;
+  return !sources.length ? _empty__WEBPACK_IMPORTED_MODULE_1__.EMPTY : sources.length === 1 ? (0,_innerFrom__WEBPACK_IMPORTED_MODULE_2__.innerFrom)(sources[0]) : (0,_operators_mergeAll__WEBPACK_IMPORTED_MODULE_3__.mergeAll)(concurrent)((0,_from__WEBPACK_IMPORTED_MODULE_4__.from)(sources, scheduler));
+}
+
+/***/ }),
+
+/***/ 3658:
+/*!****************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/operators/audit.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   audit: () => (/* binding */ audit)
+/* harmony export */ });
+/* harmony import */ var _util_lift__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/lift */ 3200);
+/* harmony import */ var _observable_innerFrom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../observable/innerFrom */ 2645);
+/* harmony import */ var _OperatorSubscriber__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./OperatorSubscriber */ 1687);
+
+
+
+function audit(durationSelector) {
+  return (0,_util_lift__WEBPACK_IMPORTED_MODULE_0__.operate)((source, subscriber) => {
+    let hasValue = false;
+    let lastValue = null;
+    let durationSubscriber = null;
+    let isComplete = false;
+    const endDuration = () => {
+      durationSubscriber === null || durationSubscriber === void 0 ? void 0 : durationSubscriber.unsubscribe();
+      durationSubscriber = null;
+      if (hasValue) {
+        hasValue = false;
+        const value = lastValue;
+        lastValue = null;
+        subscriber.next(value);
+      }
+      isComplete && subscriber.complete();
+    };
+    const cleanupDuration = () => {
+      durationSubscriber = null;
+      isComplete && subscriber.complete();
+    };
+    source.subscribe((0,_OperatorSubscriber__WEBPACK_IMPORTED_MODULE_1__.createOperatorSubscriber)(subscriber, value => {
+      hasValue = true;
+      lastValue = value;
+      if (!durationSubscriber) {
+        (0,_observable_innerFrom__WEBPACK_IMPORTED_MODULE_2__.innerFrom)(durationSelector(value)).subscribe(durationSubscriber = (0,_OperatorSubscriber__WEBPACK_IMPORTED_MODULE_1__.createOperatorSubscriber)(subscriber, endDuration, cleanupDuration));
+      }
+    }, () => {
+      isComplete = true;
+      (!hasValue || !durationSubscriber || durationSubscriber.closed) && subscriber.complete();
+    }));
+  });
+}
+
+/***/ }),
+
+/***/ 3680:
+/*!*****************************************************!*\
+  !*** ./node_modules/@angular/cdk/fesm2022/bidi.mjs ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BidiModule: () => (/* binding */ BidiModule),
+/* harmony export */   DIR_DOCUMENT: () => (/* reexport safe */ _directionality_CBXD4hga_mjs__WEBPACK_IMPORTED_MODULE_0__.a),
+/* harmony export */   Dir: () => (/* binding */ Dir),
+/* harmony export */   Directionality: () => (/* reexport safe */ _directionality_CBXD4hga_mjs__WEBPACK_IMPORTED_MODULE_0__.D)
+/* harmony export */ });
+/* harmony import */ var _directionality_CBXD4hga_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./directionality-CBXD4hga.mjs */ 9932);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 7580);
+
+
+
+
+
+
+/**
+ * Directive to listen for changes of direction of part of the DOM.
+ *
+ * Provides itself as Directionality such that descendant directives only need to ever inject
+ * Directionality to get the closest direction.
+ */
+let Dir = /*#__PURE__*/(() => {
+  class Dir {
+    /** Normalized direction that accounts for invalid/unsupported values. */
+    _dir = 'ltr';
+    /** Whether the `value` has been set to its initial value. */
+    _isInitialized = false;
+    /** Direction as passed in by the consumer. */
+    _rawDir;
+    /** Event emitted when the direction changes. */
+    change = new _angular_core__WEBPACK_IMPORTED_MODULE_1__.EventEmitter();
+    /** @docs-private */
+    get dir() {
+      return this._dir;
+    }
+    set dir(value) {
+      const previousValue = this._dir;
+      // Note: `_resolveDirectionality` resolves the language based on the browser's language,
+      // whereas the browser does it based on the content of the element. Since doing so based
+      // on the content can be expensive, for now we're doing the simpler matching.
+      this._dir = (0,_directionality_CBXD4hga_mjs__WEBPACK_IMPORTED_MODULE_0__._)(value);
+      this._rawDir = value;
+      if (previousValue !== this._dir && this._isInitialized) {
+        this.change.emit(this._dir);
+      }
+    }
+    /** Current layout direction of the element. */
+    get value() {
+      return this.dir;
+    }
+    /** Initialize once default value has been set. */
+    ngAfterContentInit() {
+      this._isInitialized = true;
+    }
+    ngOnDestroy() {
+      this.change.complete();
+    }
+    static ɵfac = function Dir_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || Dir)();
+    };
+    static ɵdir = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineDirective"]({
+      type: Dir,
+      selectors: [["", "dir", ""]],
+      hostVars: 1,
+      hostBindings: function Dir_HostBindings(rf, ctx) {
+        if (rf & 2) {
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵattribute"]("dir", ctx._rawDir);
+        }
+      },
+      inputs: {
+        dir: "dir"
+      },
+      outputs: {
+        change: "dirChange"
+      },
+      exportAs: ["dir"],
+      features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵProvidersFeature"]([{
+        provide: _directionality_CBXD4hga_mjs__WEBPACK_IMPORTED_MODULE_0__.D,
+        useExisting: Dir
+      }])]
+    });
+  }
+  return Dir;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+let BidiModule = /*#__PURE__*/(() => {
+  class BidiModule {
+    static ɵfac = function BidiModule_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || BidiModule)();
+    };
+    static ɵmod = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineNgModule"]({
+      type: BidiModule
+    });
+    static ɵinj = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjector"]({});
+  }
+  return BidiModule;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+
+/***/ }),
+
+/***/ 3701:
+/*!****************************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/scheduler/immediateProvider.js ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   immediateProvider: () => (/* binding */ immediateProvider)
+/* harmony export */ });
+/* harmony import */ var _util_Immediate__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/Immediate */ 733);
+
+const {
+  setImmediate,
+  clearImmediate
+} = _util_Immediate__WEBPACK_IMPORTED_MODULE_0__.Immediate;
+const immediateProvider = {
+  setImmediate(...args) {
+    const {
+      delegate
+    } = immediateProvider;
+    return ((delegate === null || delegate === void 0 ? void 0 : delegate.setImmediate) || setImmediate)(...args);
+  },
+  clearImmediate(handle) {
+    const {
+      delegate
+    } = immediateProvider;
+    return ((delegate === null || delegate === void 0 ? void 0 : delegate.clearImmediate) || clearImmediate)(handle);
+  },
+  delegate: undefined
+};
+
+/***/ }),
+
+/***/ 4724:
+/*!*****************************************************************!*\
+  !*** ./node_modules/@angular/cdk/fesm2022/element-x4z00URv.mjs ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   _: () => (/* binding */ _isNumberValue),
+/* harmony export */   a: () => (/* binding */ coerceElement),
+/* harmony export */   c: () => (/* binding */ coerceNumberProperty)
+/* harmony export */ });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 7580);
+
+function coerceNumberProperty(value, fallbackValue = 0) {
+  if (_isNumberValue(value)) {
+    return Number(value);
+  }
+  return arguments.length === 2 ? fallbackValue : 0;
+}
+/**
+ * Whether the provided value is considered a number.
+ * @docs-private
+ */
+function _isNumberValue(value) {
+  // parseFloat(value) handles most of the cases we're interested in (it treats null, empty string,
+  // and other non-number values as NaN, where Number just uses 0) but it considers the string
+  // '123hello' to be a valid number. Therefore we also check if Number(value) is NaN.
+  return !isNaN(parseFloat(value)) && !isNaN(Number(value));
+}
+
+/**
+ * Coerces an ElementRef or an Element into an element.
+ * Useful for APIs that can accept either a ref or the native element itself.
+ */
+function coerceElement(elementOrRef) {
+  return elementOrRef instanceof _angular_core__WEBPACK_IMPORTED_MODULE_0__.ElementRef ? elementOrRef.nativeElement : elementOrRef;
+}
+
+
+/***/ }),
+
+/***/ 4733:
+/*!******************************************************************!*\
+  !*** ./node_modules/@angular/cdk/fesm2022/platform-DmdVEw_C.mjs ***!
+  \******************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   P: () => (/* binding */ Platform)
+/* harmony export */ });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 7580);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common */ 8148);
+
+
+
+
+// Whether the current platform supports the V8 Break Iterator. The V8 check
+// is necessary to detect all Blink based browsers.
+let hasV8BreakIterator;
+// We need a try/catch around the reference to `Intl`, because accessing it in some cases can
+// cause IE to throw. These cases are tied to particular versions of Windows and can happen if
+// the consumer is providing a polyfilled `Map`. See:
+// https://github.com/Microsoft/ChakraCore/issues/3189
+// https://github.com/angular/components/issues/15687
+try {
+  hasV8BreakIterator = typeof Intl !== 'undefined' && Intl.v8BreakIterator;
+} catch {
+  hasV8BreakIterator = false;
+}
+/**
+ * Service to detect the current platform by comparing the userAgent strings and
+ * checking browser-specific global properties.
+ */
+let Platform = /*#__PURE__*/(() => {
+  class Platform {
+    _platformId = (0,_angular_core__WEBPACK_IMPORTED_MODULE_0__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_0__.PLATFORM_ID);
+    // We want to use the Angular platform check because if the Document is shimmed
+    // without the navigator, the following checks will fail. This is preferred because
+    // sometimes the Document may be shimmed without the user's knowledge or intention
+    /** Whether the Angular application is being rendered in the browser. */
+    isBrowser = this._platformId ? (0,_angular_common__WEBPACK_IMPORTED_MODULE_1__.isPlatformBrowser)(this._platformId) : typeof document === 'object' && !!document;
+    /** Whether the current browser is Microsoft Edge. */
+    EDGE = this.isBrowser && /(edge)/i.test(navigator.userAgent);
+    /** Whether the current rendering engine is Microsoft Trident. */
+    TRIDENT = this.isBrowser && /(msie|trident)/i.test(navigator.userAgent);
+    // EdgeHTML and Trident mock Blink specific things and need to be excluded from this check.
+    /** Whether the current rendering engine is Blink. */
+    BLINK = this.isBrowser && !!(window.chrome || hasV8BreakIterator) && typeof CSS !== 'undefined' && !this.EDGE && !this.TRIDENT;
+    // Webkit is part of the userAgent in EdgeHTML, Blink and Trident. Therefore we need to
+    // ensure that Webkit runs standalone and is not used as another engine's base.
+    /** Whether the current rendering engine is WebKit. */
+    WEBKIT = this.isBrowser && /AppleWebKit/i.test(navigator.userAgent) && !this.BLINK && !this.EDGE && !this.TRIDENT;
+    /** Whether the current platform is Apple iOS. */
+    IOS = this.isBrowser && /iPad|iPhone|iPod/.test(navigator.userAgent) && !('MSStream' in window);
+    // It's difficult to detect the plain Gecko engine, because most of the browsers identify
+    // them self as Gecko-like browsers and modify the userAgent's according to that.
+    // Since we only cover one explicit Firefox case, we can simply check for Firefox
+    // instead of having an unstable check for Gecko.
+    /** Whether the current browser is Firefox. */
+    FIREFOX = this.isBrowser && /(firefox|minefield)/i.test(navigator.userAgent);
+    /** Whether the current platform is Android. */
+    // Trident on mobile adds the android platform to the userAgent to trick detections.
+    ANDROID = this.isBrowser && /android/i.test(navigator.userAgent) && !this.TRIDENT;
+    // Safari browsers will include the Safari keyword in their userAgent. Some browsers may fake
+    // this and just place the Safari keyword in the userAgent. To be more safe about Safari every
+    // Safari browser should also use Webkit as its layout engine.
+    /** Whether the current browser is Safari. */
+    SAFARI = this.isBrowser && /safari/i.test(navigator.userAgent) && this.WEBKIT;
+    constructor() {}
+    static ɵfac = function Platform_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || Platform)();
+    };
+    static ɵprov = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({
+      token: Platform,
+      factory: Platform.ɵfac,
+      providedIn: 'root'
+    });
+  }
+  return Platform;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+
+/***/ }),
+
+/***/ 4876:
+/*!*****************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/observable/timer.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   timer: () => (/* binding */ timer)
+/* harmony export */ });
+/* harmony import */ var _Observable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Observable */ 3942);
+/* harmony import */ var _scheduler_async__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scheduler/async */ 8473);
+/* harmony import */ var _util_isScheduler__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/isScheduler */ 9397);
+/* harmony import */ var _util_isDate__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../util/isDate */ 5602);
+
+
+
+
+function timer(dueTime = 0, intervalOrScheduler, scheduler = _scheduler_async__WEBPACK_IMPORTED_MODULE_0__.async) {
+  let intervalDuration = -1;
+  if (intervalOrScheduler != null) {
+    if ((0,_util_isScheduler__WEBPACK_IMPORTED_MODULE_1__.isScheduler)(intervalOrScheduler)) {
+      scheduler = intervalOrScheduler;
+    } else {
+      intervalDuration = intervalOrScheduler;
+    }
+  }
+  return new _Observable__WEBPACK_IMPORTED_MODULE_2__.Observable(subscriber => {
+    let due = (0,_util_isDate__WEBPACK_IMPORTED_MODULE_3__.isValidDate)(dueTime) ? +dueTime - scheduler.now() : dueTime;
+    if (due < 0) {
+      due = 0;
+    }
+    let n = 0;
+    return scheduler.schedule(function () {
+      if (!subscriber.closed) {
+        subscriber.next(n++);
+        if (0 <= intervalDuration) {
+          this.schedule(undefined, intervalDuration);
+        } else {
+          subscriber.complete();
+        }
+      }
+    }, due);
+  });
+}
+
+/***/ }),
+
+/***/ 4909:
+/*!**********************************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/scheduler/AnimationFrameScheduler.js ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AnimationFrameScheduler: () => (/* binding */ AnimationFrameScheduler)
+/* harmony export */ });
+/* harmony import */ var _AsyncScheduler__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AsyncScheduler */ 2400);
+
+class AnimationFrameScheduler extends _AsyncScheduler__WEBPACK_IMPORTED_MODULE_0__.AsyncScheduler {
+  flush(action) {
+    this._active = true;
+    let flushId;
+    if (action) {
+      flushId = action.id;
+    } else {
+      flushId = this._scheduled;
+      this._scheduled = undefined;
+    }
+    const {
+      actions
+    } = this;
+    let error;
+    action = action || actions.shift();
+    do {
+      if (error = action.execute(action.state, action.delay)) {
+        break;
+      }
+    } while ((action = actions[0]) && action.id === flushId && actions.shift());
+    this._active = false;
+    if (error) {
+      while ((action = actions[0]) && action.id === flushId && actions.shift()) {
+        action.unsubscribe();
+      }
+      throw error;
+    }
+  }
+}
+
+/***/ }),
+
+/***/ 5057:
+/*!*******************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/operators/pairwise.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   pairwise: () => (/* binding */ pairwise)
+/* harmony export */ });
+/* harmony import */ var _util_lift__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/lift */ 3200);
+/* harmony import */ var _OperatorSubscriber__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./OperatorSubscriber */ 1687);
+
+
+function pairwise() {
+  return (0,_util_lift__WEBPACK_IMPORTED_MODULE_0__.operate)((source, subscriber) => {
+    let prev;
+    let hasPrev = false;
+    source.subscribe((0,_OperatorSubscriber__WEBPACK_IMPORTED_MODULE_1__.createOperatorSubscriber)(subscriber, value => {
+      const p = prev;
+      prev = value;
+      hasPrev && subscriber.next([p, value]);
+      hasPrev = true;
+    }));
+  });
+}
+
+/***/ }),
+
+/***/ 5571:
+/*!*********************************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/scheduler/animationFrameProvider.js ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   animationFrameProvider: () => (/* binding */ animationFrameProvider)
+/* harmony export */ });
+/* harmony import */ var _Subscription__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Subscription */ 2510);
+
+const animationFrameProvider = {
+  schedule(callback) {
+    let request = requestAnimationFrame;
+    let cancel = cancelAnimationFrame;
+    const {
+      delegate
+    } = animationFrameProvider;
+    if (delegate) {
+      request = delegate.requestAnimationFrame;
+      cancel = delegate.cancelAnimationFrame;
+    }
+    const handle = request(timestamp => {
+      cancel = undefined;
+      callback(timestamp);
+    });
+    return new _Subscription__WEBPACK_IMPORTED_MODULE_0__.Subscription(() => cancel === null || cancel === void 0 ? void 0 : cancel(handle));
+  },
+  requestAnimationFrame(...args) {
+    const {
+      delegate
+    } = animationFrameProvider;
+    return ((delegate === null || delegate === void 0 ? void 0 : delegate.requestAnimationFrame) || requestAnimationFrame)(...args);
+  },
+  cancelAnimationFrame(...args) {
+    const {
+      delegate
+    } = animationFrameProvider;
+    return ((delegate === null || delegate === void 0 ? void 0 : delegate.cancelAnimationFrame) || cancelAnimationFrame)(...args);
+  },
+  delegate: undefined
+};
+
+/***/ }),
+
+/***/ 5602:
+/*!************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/util/isDate.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   isValidDate: () => (/* binding */ isValidDate)
+/* harmony export */ });
+function isValidDate(value) {
+  return value instanceof Date && !isNaN(value);
+}
+
+/***/ }),
+
+/***/ 6042:
+/*!**************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/ReplaySubject.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ReplaySubject: () => (/* binding */ ReplaySubject)
+/* harmony export */ });
+/* harmony import */ var _Subject__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Subject */ 819);
+/* harmony import */ var _scheduler_dateTimestampProvider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./scheduler/dateTimestampProvider */ 5152);
+
+
+class ReplaySubject extends _Subject__WEBPACK_IMPORTED_MODULE_0__.Subject {
+  constructor(_bufferSize = Infinity, _windowTime = Infinity, _timestampProvider = _scheduler_dateTimestampProvider__WEBPACK_IMPORTED_MODULE_1__.dateTimestampProvider) {
+    super();
+    this._bufferSize = _bufferSize;
+    this._windowTime = _windowTime;
+    this._timestampProvider = _timestampProvider;
+    this._buffer = [];
+    this._infiniteTimeWindow = true;
+    this._infiniteTimeWindow = _windowTime === Infinity;
+    this._bufferSize = Math.max(1, _bufferSize);
+    this._windowTime = Math.max(1, _windowTime);
+  }
+  next(value) {
+    const {
+      isStopped,
+      _buffer,
+      _infiniteTimeWindow,
+      _timestampProvider,
+      _windowTime
+    } = this;
+    if (!isStopped) {
+      _buffer.push(value);
+      !_infiniteTimeWindow && _buffer.push(_timestampProvider.now() + _windowTime);
+    }
+    this._trimBuffer();
+    super.next(value);
+  }
+  _subscribe(subscriber) {
+    this._throwIfClosed();
+    this._trimBuffer();
+    const subscription = this._innerSubscribe(subscriber);
+    const {
+      _infiniteTimeWindow,
+      _buffer
+    } = this;
+    const copy = _buffer.slice();
+    for (let i = 0; i < copy.length && !subscriber.closed; i += _infiniteTimeWindow ? 1 : 2) {
+      subscriber.next(copy[i]);
+    }
+    this._checkFinalizedStatuses(subscriber);
+    return subscription;
+  }
+  _trimBuffer() {
+    const {
+      _bufferSize,
+      _timestampProvider,
+      _buffer,
+      _infiniteTimeWindow
+    } = this;
+    const adjustedBufferSize = (_infiniteTimeWindow ? 1 : 2) * _bufferSize;
+    _bufferSize < Infinity && adjustedBufferSize < _buffer.length && _buffer.splice(0, _buffer.length - adjustedBufferSize);
+    if (!_infiniteTimeWindow) {
+      const now = _timestampProvider.now();
+      let last = 0;
+      for (let i = 1; i < _buffer.length && _buffer[i] <= now; i += 2) {
+        last = i;
+      }
+      last && _buffer.splice(0, last + 1);
+    }
+  }
+}
+
+/***/ }),
+
+/***/ 6271:
+/*!**********************************************************************!*\
+  !*** ./node_modules/@angular/cdk/fesm2022/id-generator-Dw_9dSDu.mjs ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   _: () => (/* binding */ _IdGenerator)
+/* harmony export */ });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 7580);
+
+
+
+/**
+ * Keeps track of the ID count per prefix. This helps us make the IDs a bit more deterministic
+ * like they were before the service was introduced. Note that ideally we wouldn't have to do
+ * this, but there are some internal tests that rely on the IDs.
+ */
+const counters = {};
+/** Service that generates unique IDs for DOM nodes. */
+let _IdGenerator = /*#__PURE__*/(() => {
+  class _IdGenerator {
+    _appId = (0,_angular_core__WEBPACK_IMPORTED_MODULE_0__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_0__.APP_ID);
+    /**
+     * Generates a unique ID with a specific prefix.
+     * @param prefix Prefix to add to the ID.
+     */
+    getId(prefix) {
+      // Omit the app ID if it's the default `ng`. Since the vast majority of pages have one
+      // Angular app on them, we can reduce the amount of breakages by not adding it.
+      if (this._appId !== 'ng') {
+        prefix += this._appId;
+      }
+      if (!counters.hasOwnProperty(prefix)) {
+        counters[prefix] = 0;
+      }
+      return `${prefix}${counters[prefix]++}`;
+    }
+    static ɵfac = function _IdGenerator_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _IdGenerator)();
+    };
+    static ɵprov = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({
+      token: _IdGenerator,
+      factory: _IdGenerator.ɵfac,
+      providedIn: 'root'
+    });
+  }
+  return _IdGenerator;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+
+/***/ }),
+
+/***/ 6301:
+/*!**********************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/operators/shareReplay.js ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   shareReplay: () => (/* binding */ shareReplay)
+/* harmony export */ });
+/* harmony import */ var _ReplaySubject__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ReplaySubject */ 6042);
+/* harmony import */ var _share__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./share */ 1870);
+
+
+function shareReplay(configOrBufferSize, windowTime, scheduler) {
+  let bufferSize;
+  let refCount = false;
+  if (configOrBufferSize && typeof configOrBufferSize === 'object') {
+    ({
+      bufferSize = Infinity,
+      windowTime = Infinity,
+      refCount = false,
+      scheduler
+    } = configOrBufferSize);
+  } else {
+    bufferSize = configOrBufferSize !== null && configOrBufferSize !== void 0 ? configOrBufferSize : Infinity;
+  }
+  return (0,_share__WEBPACK_IMPORTED_MODULE_0__.share)({
+    connector: () => new _ReplaySubject__WEBPACK_IMPORTED_MODULE_1__.ReplaySubject(bufferSize, windowTime, scheduler),
+    resetOnError: true,
+    resetOnComplete: false,
+    resetOnRefCountZero: refCount
+  });
+}
+
+/***/ }),
+
+/***/ 6488:
+/*!********************************************************************!*\
+  !*** ./node_modules/@angular/cdk/fesm2022/shadow-dom-B0oHn41l.mjs ***!
+  \********************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   _: () => (/* binding */ _getEventTarget),
+/* harmony export */   a: () => (/* binding */ _getShadowRoot),
+/* harmony export */   b: () => (/* binding */ _supportsShadowDom),
+/* harmony export */   c: () => (/* binding */ _getFocusedElementPierceShadowDom)
+/* harmony export */ });
+let shadowDomIsSupported;
+/** Checks whether the user's browser support Shadow DOM. */
+function _supportsShadowDom() {
+  if (shadowDomIsSupported == null) {
+    const head = typeof document !== 'undefined' ? document.head : null;
+    shadowDomIsSupported = !!(head && (head.createShadowRoot || head.attachShadow));
+  }
+  return shadowDomIsSupported;
+}
+/** Gets the shadow root of an element, if supported and the element is inside the Shadow DOM. */
+function _getShadowRoot(element) {
+  if (_supportsShadowDom()) {
+    const rootNode = element.getRootNode ? element.getRootNode() : null;
+    // Note that this should be caught by `_supportsShadowDom`, but some
+    // teams have been able to hit this code path on unsupported browsers.
+    if (typeof ShadowRoot !== 'undefined' && ShadowRoot && rootNode instanceof ShadowRoot) {
+      return rootNode;
+    }
+  }
+  return null;
+}
+/**
+ * Gets the currently-focused element on the page while
+ * also piercing through Shadow DOM boundaries.
+ */
+function _getFocusedElementPierceShadowDom() {
+  let activeElement = typeof document !== 'undefined' && document ? document.activeElement : null;
+  while (activeElement && activeElement.shadowRoot) {
+    const newActiveElement = activeElement.shadowRoot.activeElement;
+    if (newActiveElement === activeElement) {
+      break;
+    } else {
+      activeElement = newActiveElement;
+    }
+  }
+  return activeElement;
+}
+/** Gets the target of an event while accounting for Shadow DOM. */
+function _getEventTarget(event) {
+  // If an event is bound outside the Shadow DOM, the `event.target` will
+  // point to the shadow root so we have to use `composedPath` instead.
+  return event.composedPath ? event.composedPath()[0] : event.target;
+}
+
+
+/***/ }),
+
+/***/ 6963:
+/*!*********************************************************!*\
+  !*** ./src/app/features/painel/imagens/imagens-page.ts ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ImagensPage: () => (/* binding */ ImagensPage)
+/* harmony export */ });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 7580);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/common */ 4460);
+/* harmony import */ var _angular_cdk_drag_drop__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/cdk/drag-drop */ 854);
+/* harmony import */ var _services_supplier_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/supplier.service */ 6972);
+
+
+
+
+
+
+const _forTrack0 = ($index, $item) => $item.id;
+function ImagensPage_Conditional_6_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 3)(1, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](3, "button", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function ImagensPage_Conditional_6_Template_button_click_3_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r1);
+      const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵresetView"](ctx_r1.error.set(null));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](4, "\u00D7");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](ctx_r1.error());
+  }
+}
+function ImagensPage_Conditional_7_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r3 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 4)(1, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](3, "button", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function ImagensPage_Conditional_7_Template_button_click_3_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r3);
+      const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵresetView"](ctx_r1.successMessage.set(null));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](4, "\u00D7");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](ctx_r1.successMessage());
+  }
+}
+function ImagensPage_Conditional_22_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 14);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](1, "div", 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "p", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+  }
+  if (rf & 2) {
+    const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵstyleProp"]("width", ctx_r1.uploadProgress(), "%");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"]("", ctx_r1.uploadProgress(), "%");
+  }
+}
+function ImagensPage_Conditional_23_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](1, "div", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "p");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](3, "Carregando imagens...");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+  }
+}
+function ImagensPage_Conditional_24_For_5_div_1_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 32)(1, "p");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](2, "\u2B07\uFE0F Soltar aqui \u2B07\uFE0F");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+  }
+}
+function ImagensPage_Conditional_24_For_5_Conditional_7_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1, "\u2B50 Principal");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+  }
+}
+function ImagensPage_Conditional_24_For_5_Conditional_13_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "button", 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function ImagensPage_Conditional_24_For_5_Conditional_13_Template_button_click_0_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r6);
+      const image_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]().$implicit;
+      const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2);
+      return _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵresetView"](ctx_r1.setPrimary(image_r7.id));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1, " \u2B50 Principal ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+  }
+}
+function ImagensPage_Conditional_24_For_5_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, ImagensPage_Conditional_24_For_5_div_1_Template, 3, 0, "div", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "div", 22)(3, "span", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](4, "\u22EE\u22EE");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](5, "div", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](7, ImagensPage_Conditional_24_For_5_Conditional_7_Template, 2, 0, "div", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](8, "img", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](9, "div", 27)(10, "div", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](12, "div", 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](13, ImagensPage_Conditional_24_For_5_Conditional_13_Template, 2, 0, "button", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](14, "button", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function ImagensPage_Conditional_24_For_5_Template_button_click_14_listener() {
+      const image_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r5).$implicit;
+      const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2);
+      return _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵresetView"](ctx_r1.deleteImage(image_r7.id));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](15, " \uD83D\uDDD1\uFE0F Excluir ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()()()();
+  }
+  if (rf & 2) {
+    const image_r7 = ctx.$implicit;
+    const ɵ$index_76_r8 = ctx.$index;
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"](" #", ɵ$index_76_r8 + 1, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵconditional"](image_r7.isPrimary ? 7 : -1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("src", image_r7.url, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵsanitizeUrl"])("alt", image_r7.filename);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](image_r7.filename);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵconditional"](!image_r7.isPrimary ? 13 : -1);
+  }
+}
+function ImagensPage_Conditional_24_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 11)(1, "p", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](2, "\uD83D\uDCA1 Arraste as imagens para reordenar");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](3, "div", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("cdkDropListDropped", function ImagensPage_Conditional_24_Template_div_cdkDropListDropped_3_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r4);
+      const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵresetView"](ctx_r1.drop($event));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrepeaterCreate"](4, ImagensPage_Conditional_24_For_5_Template, 16, 6, "div", 20, _forTrack0);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("cdkDropListAutoScrollDisabled", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrepeater"](ctx_r1.images());
+  }
+}
+function ImagensPage_Conditional_25_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 12)(1, "div", 34);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](2, "\uD83D\uDDBC\uFE0F");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](3, "h3");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](4, "Nenhuma imagem cadastrada");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](5, "p");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](6, "Adicione imagens para mostrar seu trabalho aos noivos.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](7, "button", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function ImagensPage_Conditional_25_Template_button_click_7_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r9);
+      const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵresetView"](ctx_r1.triggerFileInput());
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](8, " Enviar Primeira Imagem ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+  }
+}
+let ImagensPage = /*#__PURE__*/(() => {
+  class ImagensPage {
+    supplierService;
+    images = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.signal)([]);
+    isLoading = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.signal)(false);
+    isUploading = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.signal)(false);
+    error = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.signal)(null);
+    successMessage = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.signal)(null);
+    uploadProgress = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.signal)(0);
+    constructor(supplierService) {
+      this.supplierService = supplierService;
+    }
+    ngOnInit() {
+      this.loadImages();
+    }
+    loadImages() {
+      this.isLoading.set(true);
+      this.error.set(null);
+      this.supplierService.getImages().subscribe({
+        next: response => {
+          // Ordenar por orderIndex
+          const sortedImages = (response.data || []).sort((a, b) => {
+            return a.orderIndex - b.orderIndex;
+          });
+          this.images.set(sortedImages);
+          this.isLoading.set(false);
+        },
+        error: err => {
+          this.error.set('Erro ao carregar imagens. Tente novamente.');
+          this.isLoading.set(false);
+          console.error('Erro ao carregar imagens:', err);
+        }
+      });
+    }
+    onFileSelected(event) {
+      const input = event.target;
+      if (!input.files || input.files.length === 0) return;
+      const files = Array.from(input.files);
+      this.uploadImages(files);
+    }
+    uploadImages(files) {
+      this.isUploading.set(true);
+      this.error.set(null);
+      this.successMessage.set(null);
+      // Validar arquivos
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      for (const file of files) {
+        if (file.size > maxSize) {
+          this.error.set(`A imagem ${file.name} excede o tamanho máximo de 5MB.`);
+          this.isUploading.set(false);
+          return;
+        }
+        if (!allowedTypes.includes(file.type)) {
+          this.error.set(`A imagem ${file.name} não é um formato válido (JPEG, PNG, WEBP).`);
+          this.isUploading.set(false);
+          return;
+        }
+      }
+      // Verificar limite total (máximo 10 imagens)
+      const currentCount = this.images().length;
+      if (currentCount + files.length > 10) {
+        this.error.set(`Você pode ter no máximo 10 imagens. Atualmente tem ${currentCount}.`);
+        this.isUploading.set(false);
+        return;
+      }
+      // Upload das imagens
+      let uploadedCount = 0;
+      const totalFiles = files.length;
+      files.forEach((file, index) => {
+        this.supplierService.uploadImage(file).subscribe({
+          next: response => {
+            uploadedCount++;
+            this.uploadProgress.set(Math.round(uploadedCount / totalFiles * 100));
+            if (uploadedCount === totalFiles) {
+              this.successMessage.set(`${totalFiles} imagem(ns) enviada(s) com sucesso!`);
+              this.isUploading.set(false);
+              this.uploadProgress.set(0);
+              this.loadImages(); // Recarregar lista
+              // Limpar mensagem de sucesso após 3 segundos
+              setTimeout(() => this.successMessage.set(null), 3000);
+            }
+          },
+          error: err => {
+            this.error.set(`Erro ao enviar ${file.name}. Tente novamente.`);
+            this.isUploading.set(false);
+            this.uploadProgress.set(0);
+            console.error('Erro no upload:', err);
+          }
+        });
+      });
+    }
+    setPrimary(imageId) {
+      this.supplierService.setPrimaryImage(imageId).subscribe({
+        next: () => {
+          this.successMessage.set('Imagem principal definida com sucesso!');
+          this.loadImages();
+          setTimeout(() => this.successMessage.set(null), 3000);
+        },
+        error: err => {
+          this.error.set('Erro ao definir imagem principal.');
+          console.error('Erro ao definir imagem principal:', err);
+        }
+      });
+    }
+    deleteImage(imageId) {
+      if (!confirm('Tem certeza que deseja excluir esta imagem?')) {
+        return;
+      }
+      this.supplierService.deleteImage(imageId).subscribe({
+        next: () => {
+          this.successMessage.set('Imagem excluída com sucesso!');
+          this.loadImages();
+          setTimeout(() => this.successMessage.set(null), 3000);
+        },
+        error: err => {
+          this.error.set('Erro ao excluir imagem.');
+          console.error('Erro ao excluir imagem:', err);
+        }
+      });
+    }
+    drop(event) {
+      const imagesList = [...this.images()];
+      (0,_angular_cdk_drag_drop__WEBPACK_IMPORTED_MODULE_2__.moveItemInArray)(imagesList, event.previousIndex, event.currentIndex);
+      // Atualizar ordem local imediatamente
+      this.images.set(imagesList);
+      // Preparar nova ordem para enviar ao backend
+      // Nova ordem como array de IDs na sequência desejada (0-based)
+      const newOrderIds = imagesList.map(img => img.id);
+      // Enviar nova ordem ao backend
+      this.supplierService.reorderImages(newOrderIds).subscribe({
+        next: () => {
+          this.successMessage.set('Ordem atualizada com sucesso!');
+          setTimeout(() => this.successMessage.set(null), 3000);
+        },
+        error: err => {
+          this.error.set('Erro ao atualizar ordem das imagens.');
+          console.error('Erro ao reordenar:', err);
+          // Reverter mudança local
+          this.loadImages();
+        }
+      });
+    }
+    triggerFileInput() {
+      const fileInput = document.getElementById('fileInput');
+      fileInput?.click();
+    }
+    static ɵfac = function ImagensPage_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || ImagensPage)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_services_supplier_service__WEBPACK_IMPORTED_MODULE_0__.SupplierService));
+    };
+    static ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({
+      type: ImagensPage,
+      selectors: [["app-imagens-page"]],
+      decls: 26,
+      vars: 9,
+      consts: [[1, "imagens-page"], [1, "page-header"], [1, "subtitle"], [1, "alert", "alert-error"], [1, "alert", "alert-success"], [1, "upload-section"], [1, "upload-btn", 3, "click", "disabled"], [1, "icon"], ["type", "file", "id", "fileInput", "multiple", "", "accept", "image/jpeg,image/jpg,image/png,image/webp", 2, "display", "none", 3, "change"], [1, "upload-info"], [1, "loading"], [1, "images-grid-container"], [1, "empty-state"], [1, "close-btn", 3, "click"], [1, "progress-bar"], [1, "progress-fill"], [1, "progress-text"], [1, "spinner"], [1, "drag-hint"], ["cdkDropList", "", 1, "images-grid", 3, "cdkDropListDropped", "cdkDropListAutoScrollDisabled"], ["cdkDrag", "", 1, "image-card"], ["class", "image-placeholder", 4, "cdkDragPlaceholder"], ["cdkDragHandle", "", 1, "drag-handle"], [1, "drag-icon"], [1, "image-order-badge"], [1, "primary-badge"], [1, "image-preview", 3, "src", "alt"], [1, "image-info"], [1, "image-filename"], [1, "image-actions"], ["title", "Definir como principal", 1, "action-btn", "primary-btn"], ["title", "Excluir imagem", 1, "action-btn", "delete-btn", 3, "click"], [1, "image-placeholder"], ["title", "Definir como principal", 1, "action-btn", "primary-btn", 3, "click"], [1, "empty-icon"], [1, "upload-btn-large", 3, "click"]],
+      template: function ImagensPage_Template(rf, ctx) {
+        if (rf & 1) {
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "h1");
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](3, "Galeria de Imagens");
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](4, "p", 2);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](5, "Gerencie as imagens do seu perfil. Arraste para reordenar.");
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](6, ImagensPage_Conditional_6_Template, 5, 1, "div", 3)(7, ImagensPage_Conditional_7_Template, 5, 1, "div", 4);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](8, "div", 5)(9, "button", 6);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function ImagensPage_Template_button_click_9_listener() {
+            return ctx.triggerFileInput();
+          });
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](10, "span", 7);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](11, "\uD83D\uDCE4");
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](12, "span");
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](13);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](14, "input", 8);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("change", function ImagensPage_Template_input_change_14_listener($event) {
+            return ctx.onFileSelected($event);
+          });
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](15, "div", 9)(16, "p");
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](17);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](18, "p");
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](19, "\u2713 Formatos: JPEG, PNG, WEBP");
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](20, "p");
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](21, "\u2713 Tamanho m\u00E1ximo: 5MB por imagem");
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](22, ImagensPage_Conditional_22_Template, 4, 3);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](23, ImagensPage_Conditional_23_Template, 4, 0, "div", 10)(24, ImagensPage_Conditional_24_Template, 6, 1, "div", 11)(25, ImagensPage_Conditional_25_Template, 9, 0, "div", 12);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        }
+        if (rf & 2) {
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](6);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵconditional"](ctx.error() ? 6 : -1);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"]();
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵconditional"](ctx.successMessage() ? 7 : -1);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("disabled", ctx.isUploading() || ctx.images().length >= 10);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](4);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](ctx.isUploading() ? "Enviando..." : "Enviar Imagens");
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](4);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"]("\u2713 M\u00E1ximo 10 imagens (", ctx.images().length, "/10)");
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](5);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵconditional"](ctx.isUploading() && ctx.uploadProgress() > 0 ? 22 : -1);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"]();
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵconditional"](ctx.isLoading() ? 23 : -1);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"]();
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵconditional"](!ctx.isLoading() && ctx.images().length > 0 ? 24 : -1);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"]();
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵconditional"](!ctx.isLoading() && ctx.images().length === 0 ? 25 : -1);
+        }
+      },
+      dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_3__.CommonModule, _angular_cdk_drag_drop__WEBPACK_IMPORTED_MODULE_2__.DragDropModule, _angular_cdk_drag_drop__WEBPACK_IMPORTED_MODULE_2__.CdkDropList, _angular_cdk_drag_drop__WEBPACK_IMPORTED_MODULE_2__.CdkDrag, _angular_cdk_drag_drop__WEBPACK_IMPORTED_MODULE_2__.CdkDragHandle, _angular_cdk_drag_drop__WEBPACK_IMPORTED_MODULE_2__.CdkDragPlaceholder],
+      styles: [".imagens-page[_ngcontent-%COMP%] {\n  padding: 2rem;\n  max-width: 1400px;\n  margin: 0 auto;\n}\n\n.page-header[_ngcontent-%COMP%] {\n  margin-bottom: 2rem;\n}\n\n.page-header[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%] {\n  font-size: 2rem;\n  font-weight: 600;\n  color: #1a1a1a;\n  margin-bottom: 0.5rem;\n}\n\n.subtitle[_ngcontent-%COMP%] {\n  color: #666;\n  font-size: 0.95rem;\n}\n\n\n\n.alert[_ngcontent-%COMP%] {\n  padding: 1rem 1.5rem;\n  border-radius: 8px;\n  margin-bottom: 1.5rem;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n.alert-error[_ngcontent-%COMP%] {\n  background-color: #fee;\n  border: 1px solid #fcc;\n  color: #c33;\n}\n\n.alert-success[_ngcontent-%COMP%] {\n  background-color: #efe;\n  border: 1px solid #cfc;\n  color: #3c3;\n}\n\n.close-btn[_ngcontent-%COMP%] {\n  background: none;\n  border: none;\n  font-size: 1.5rem;\n  cursor: pointer;\n  color: inherit;\n  opacity: 0.7;\n  padding: 0;\n  width: 24px;\n  height: 24px;\n  line-height: 1;\n}\n\n.close-btn[_ngcontent-%COMP%]:hover {\n  opacity: 1;\n}\n\n\n\n.upload-section[_ngcontent-%COMP%] {\n  background: white;\n  border: 2px dashed #ddd;\n  border-radius: 12px;\n  padding: 2rem;\n  margin-bottom: 2rem;\n  text-align: center;\n}\n\n.upload-btn[_ngcontent-%COMP%] {\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  color: white;\n  border: none;\n  padding: 1rem 2rem;\n  border-radius: 8px;\n  font-size: 1rem;\n  font-weight: 500;\n  cursor: pointer;\n  display: inline-flex;\n  align-items: center;\n  gap: 0.5rem;\n  transition: transform 0.2s, box-shadow 0.2s;\n}\n\n.upload-btn[_ngcontent-%COMP%]:hover:not(:disabled) {\n  transform: translateY(-2px);\n  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);\n}\n\n.upload-btn[_ngcontent-%COMP%]:disabled {\n  opacity: 0.5;\n  cursor: not-allowed;\n}\n\n.upload-btn[_ngcontent-%COMP%]   .icon[_ngcontent-%COMP%] {\n  font-size: 1.2rem;\n}\n\n.upload-info[_ngcontent-%COMP%] {\n  margin-top: 1.5rem;\n  display: flex;\n  justify-content: center;\n  gap: 2rem;\n  flex-wrap: wrap;\n}\n\n.upload-info[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  color: #666;\n  font-size: 0.9rem;\n  margin: 0;\n}\n\n\n\n.progress-bar[_ngcontent-%COMP%] {\n  width: 100%;\n  max-width: 400px;\n  height: 8px;\n  background: #eee;\n  border-radius: 4px;\n  overflow: hidden;\n  margin: 1rem auto 0.5rem;\n}\n\n.progress-fill[_ngcontent-%COMP%] {\n  height: 100%;\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  transition: width 0.3s ease;\n}\n\n.progress-text[_ngcontent-%COMP%] {\n  font-size: 0.9rem;\n  color: #666;\n  margin-top: 0.5rem;\n}\n\n\n\n.loading[_ngcontent-%COMP%] {\n  text-align: center;\n  padding: 3rem;\n}\n\n.spinner[_ngcontent-%COMP%] {\n  border: 3px solid #f3f3f3;\n  border-top: 3px solid #667eea;\n  border-radius: 50%;\n  width: 40px;\n  height: 40px;\n  animation: _ngcontent-%COMP%_spin 1s linear infinite;\n  margin: 0 auto 1rem;\n}\n\n@keyframes _ngcontent-%COMP%_spin {\n  0% { transform: rotate(0deg); }\n  100% { transform: rotate(360deg); }\n}\n\n\n\n.images-grid-container[_ngcontent-%COMP%] {\n  background: white;\n  border-radius: 12px;\n  padding: 2rem;\n}\n\n.drag-hint[_ngcontent-%COMP%] {\n  text-align: center;\n  color: #e91e63;\n  font-size: 1rem;\n  font-weight: 600;\n  margin-bottom: 1.5rem;\n  padding: 1rem;\n  background: #fce4ec;\n  border-radius: 8px;\n  border: 2px dashed #e91e63;\n  font-style: italic;\n}\n\n.images-grid[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 1rem;\n  max-width: 800px;\n  margin: 0 auto;\n}\n\n\n\n.image-card[_ngcontent-%COMP%] {\n  position: relative;\n  background: white;\n  border: 1px solid #ddd;\n  border-radius: 8px;\n  overflow: visible;\n  transition: transform 0.2s, box-shadow 0.2s;\n  cursor: move;\n  display: flex;\n  align-items: center;\n  gap: 1rem;\n  padding: 1rem;\n  min-height: 120px;\n}\n\n.image-card[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 4px 12px rgba(0,0,0,0.1);\n}\n\n.cdk-drag-preview[_ngcontent-%COMP%] {\n  opacity: 0.9;\n  box-shadow: 0 12px 32px rgba(0,0,0,0.3);\n  border: 2px solid #e91e63;\n  transform: rotate(3deg);\n}\n\n.image-placeholder[_ngcontent-%COMP%] {\n  background: #fce4ec;\n  border: 3px dashed #e91e63;\n  border-radius: 8px;\n  width: 100%;\n  height: 100px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin: 0.5rem 0;\n}\n\n.image-placeholder[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  color: #e91e63;\n  font-weight: bold;\n  font-size: 1.1rem;\n  margin: 0;\n}\n\n.cdk-drag-animating[_ngcontent-%COMP%] {\n  transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);\n}\n\n.images-grid.cdk-drop-list-dragging[_ngcontent-%COMP%]   .image-card[_ngcontent-%COMP%]:not(.cdk-drag-placeholder) {\n  transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);\n}\n\n\n\n.cdk-drag[_ngcontent-%COMP%] {\n  box-sizing: border-box;\n}\n\n.images-grid[_ngcontent-%COMP%] {\n  position: relative;\n}\n\n.drag-handle[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 8px;\n  left: 8px;\n  background: rgba(233, 30, 99, 0.9);\n  border-radius: 6px;\n  padding: 6px 10px;\n  cursor: move;\n  z-index: 10;\n  box-shadow: 0 2px 8px rgba(0,0,0,0.2);\n  transition: all 0.2s ease;\n}\n\n.drag-handle[_ngcontent-%COMP%]:hover {\n  background: rgba(233, 30, 99, 1);\n  transform: scale(1.1);\n}\n\n.drag-icon[_ngcontent-%COMP%] {\n  color: #fff;\n  font-size: 1.2rem;\n  font-weight: bold;\n}\n\n.primary-badge[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 8px;\n  right: 8px;\n  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);\n  color: white;\n  padding: 4px 12px;\n  border-radius: 4px;\n  font-size: 0.85rem;\n  font-weight: 500;\n  z-index: 10;\n  box-shadow: 0 2px 4px rgba(0,0,0,0.2);\n}\n\n.image-preview[_ngcontent-%COMP%] {\n  width: 150px;\n  height: 100px;\n  object-fit: cover;\n  display: block;\n  border-radius: 6px;\n  flex-shrink: 0;\n}\n\n.image-actions[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 0.5rem;\n  flex-wrap: wrap;\n}\n\n.action-btn[_ngcontent-%COMP%] {\n  flex: 1;\n  padding: 0.5rem 1rem;\n  border: none;\n  border-radius: 6px;\n  font-size: 0.9rem;\n  cursor: pointer;\n  transition: transform 0.2s, opacity 0.2s;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.25rem;\n}\n\n.action-btn[_ngcontent-%COMP%]:hover {\n  transform: translateY(-1px);\n  opacity: 0.9;\n}\n\n.primary-btn[_ngcontent-%COMP%] {\n  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);\n  color: white;\n  font-weight: 500;\n}\n\n.delete-btn[_ngcontent-%COMP%] {\n  background: #f44336;\n  color: white;\n  font-weight: 500;\n}\n\n.image-order-badge[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 10px;\n  right: 10px;\n  background: #e91e63;\n  color: white;\n  padding: 0.4rem 0.8rem;\n  border-radius: 20px;\n  font-weight: bold;\n  font-size: 0.9rem;\n  z-index: 5;\n}\n\n.image-info[_ngcontent-%COMP%] {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  gap: 0.8rem;\n}\n\n.image-filename[_ngcontent-%COMP%] {\n  font-size: 0.95rem;\n  color: #333;\n  font-weight: 500;\n}\n\n\n\n.empty-state[_ngcontent-%COMP%] {\n  text-align: center;\n  padding: 4rem 2rem;\n  background: white;\n  border-radius: 12px;\n  border: 2px dashed #ddd;\n}\n\n.empty-icon[_ngcontent-%COMP%] {\n  font-size: 4rem;\n  margin-bottom: 1rem;\n}\n\n.empty-state[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  font-size: 1.5rem;\n  color: #333;\n  margin-bottom: 0.5rem;\n}\n\n.empty-state[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  color: #666;\n  margin-bottom: 2rem;\n}\n\n.upload-btn-large[_ngcontent-%COMP%] {\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  color: white;\n  border: none;\n  padding: 1rem 2.5rem;\n  border-radius: 8px;\n  font-size: 1.1rem;\n  font-weight: 500;\n  cursor: pointer;\n  transition: transform 0.2s, box-shadow 0.2s;\n}\n\n.upload-btn-large[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);\n}\n\n\n\n@media (max-width: 768px) {\n  .imagens-page[_ngcontent-%COMP%] {\n    padding: 1rem;\n  }\n\n  .page-header[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%] {\n    font-size: 1.5rem;\n  }\n\n  .upload-section[_ngcontent-%COMP%] {\n    padding: 1.5rem;\n  }\n\n  .upload-info[_ngcontent-%COMP%] {\n    flex-direction: column;\n    gap: 0.5rem;\n  }\n\n  .images-grid[_ngcontent-%COMP%] {\n    gap: 1rem;\n  }\n\n  .image-card[_ngcontent-%COMP%] {\n    width: 100%;\n    max-width: 200px;\n  }\n\n  .image-placeholder[_ngcontent-%COMP%] {\n    width: 100%;\n    max-width: 200px;\n    min-height: 250px;\n  }\n\n  .image-preview[_ngcontent-%COMP%] {\n    height: 150px;\n  }\n\n  .image-actions[_ngcontent-%COMP%] {\n    flex-direction: column;\n    gap: 0.5rem;\n  }\n\n  .action-btn[_ngcontent-%COMP%] {\n    width: 100%;\n  }\n}\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImltYWdlbnMtcGFnZS5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSxhQUFhO0VBQ2IsaUJBQWlCO0VBQ2pCLGNBQWM7QUFDaEI7O0FBRUE7RUFDRSxtQkFBbUI7QUFDckI7O0FBRUE7RUFDRSxlQUFlO0VBQ2YsZ0JBQWdCO0VBQ2hCLGNBQWM7RUFDZCxxQkFBcUI7QUFDdkI7O0FBRUE7RUFDRSxXQUFXO0VBQ1gsa0JBQWtCO0FBQ3BCOztBQUVBLFdBQVc7QUFDWDtFQUNFLG9CQUFvQjtFQUNwQixrQkFBa0I7RUFDbEIscUJBQXFCO0VBQ3JCLGFBQWE7RUFDYiw4QkFBOEI7RUFDOUIsbUJBQW1CO0FBQ3JCOztBQUVBO0VBQ0Usc0JBQXNCO0VBQ3RCLHNCQUFzQjtFQUN0QixXQUFXO0FBQ2I7O0FBRUE7RUFDRSxzQkFBc0I7RUFDdEIsc0JBQXNCO0VBQ3RCLFdBQVc7QUFDYjs7QUFFQTtFQUNFLGdCQUFnQjtFQUNoQixZQUFZO0VBQ1osaUJBQWlCO0VBQ2pCLGVBQWU7RUFDZixjQUFjO0VBQ2QsWUFBWTtFQUNaLFVBQVU7RUFDVixXQUFXO0VBQ1gsWUFBWTtFQUNaLGNBQWM7QUFDaEI7O0FBRUE7RUFDRSxVQUFVO0FBQ1o7O0FBRUEsbUJBQW1CO0FBQ25CO0VBQ0UsaUJBQWlCO0VBQ2pCLHVCQUF1QjtFQUN2QixtQkFBbUI7RUFDbkIsYUFBYTtFQUNiLG1CQUFtQjtFQUNuQixrQkFBa0I7QUFDcEI7O0FBRUE7RUFDRSw2REFBNkQ7RUFDN0QsWUFBWTtFQUNaLFlBQVk7RUFDWixrQkFBa0I7RUFDbEIsa0JBQWtCO0VBQ2xCLGVBQWU7RUFDZixnQkFBZ0I7RUFDaEIsZUFBZTtFQUNmLG9CQUFvQjtFQUNwQixtQkFBbUI7RUFDbkIsV0FBVztFQUNYLDJDQUEyQztBQUM3Qzs7QUFFQTtFQUNFLDJCQUEyQjtFQUMzQiwrQ0FBK0M7QUFDakQ7O0FBRUE7RUFDRSxZQUFZO0VBQ1osbUJBQW1CO0FBQ3JCOztBQUVBO0VBQ0UsaUJBQWlCO0FBQ25COztBQUVBO0VBQ0Usa0JBQWtCO0VBQ2xCLGFBQWE7RUFDYix1QkFBdUI7RUFDdkIsU0FBUztFQUNULGVBQWU7QUFDakI7O0FBRUE7RUFDRSxXQUFXO0VBQ1gsaUJBQWlCO0VBQ2pCLFNBQVM7QUFDWDs7QUFFQSxpQkFBaUI7QUFDakI7RUFDRSxXQUFXO0VBQ1gsZ0JBQWdCO0VBQ2hCLFdBQVc7RUFDWCxnQkFBZ0I7RUFDaEIsa0JBQWtCO0VBQ2xCLGdCQUFnQjtFQUNoQix3QkFBd0I7QUFDMUI7O0FBRUE7RUFDRSxZQUFZO0VBQ1osNkRBQTZEO0VBQzdELDJCQUEyQjtBQUM3Qjs7QUFFQTtFQUNFLGlCQUFpQjtFQUNqQixXQUFXO0VBQ1gsa0JBQWtCO0FBQ3BCOztBQUVBLFlBQVk7QUFDWjtFQUNFLGtCQUFrQjtFQUNsQixhQUFhO0FBQ2Y7O0FBRUE7RUFDRSx5QkFBeUI7RUFDekIsNkJBQTZCO0VBQzdCLGtCQUFrQjtFQUNsQixXQUFXO0VBQ1gsWUFBWTtFQUNaLGtDQUFrQztFQUNsQyxtQkFBbUI7QUFDckI7O0FBRUE7RUFDRSxLQUFLLHVCQUF1QixFQUFFO0VBQzlCLE9BQU8seUJBQXlCLEVBQUU7QUFDcEM7O0FBRUEsMEJBQTBCO0FBQzFCO0VBQ0UsaUJBQWlCO0VBQ2pCLG1CQUFtQjtFQUNuQixhQUFhO0FBQ2Y7O0FBRUE7RUFDRSxrQkFBa0I7RUFDbEIsY0FBYztFQUNkLGVBQWU7RUFDZixnQkFBZ0I7RUFDaEIscUJBQXFCO0VBQ3JCLGFBQWE7RUFDYixtQkFBbUI7RUFDbkIsa0JBQWtCO0VBQ2xCLDBCQUEwQjtFQUMxQixrQkFBa0I7QUFDcEI7O0FBRUE7RUFDRSxhQUFhO0VBQ2Isc0JBQXNCO0VBQ3RCLFNBQVM7RUFDVCxnQkFBZ0I7RUFDaEIsY0FBYztBQUNoQjs7QUFFQSxlQUFlO0FBQ2Y7RUFDRSxrQkFBa0I7RUFDbEIsaUJBQWlCO0VBQ2pCLHNCQUFzQjtFQUN0QixrQkFBa0I7RUFDbEIsaUJBQWlCO0VBQ2pCLDJDQUEyQztFQUMzQyxZQUFZO0VBQ1osYUFBYTtFQUNiLG1CQUFtQjtFQUNuQixTQUFTO0VBQ1QsYUFBYTtFQUNiLGlCQUFpQjtBQUNuQjs7QUFFQTtFQUNFLDJCQUEyQjtFQUMzQixzQ0FBc0M7QUFDeEM7O0FBRUE7RUFDRSxZQUFZO0VBQ1osdUNBQXVDO0VBQ3ZDLHlCQUF5QjtFQUN6Qix1QkFBdUI7QUFDekI7O0FBRUE7RUFDRSxtQkFBbUI7RUFDbkIsMEJBQTBCO0VBQzFCLGtCQUFrQjtFQUNsQixXQUFXO0VBQ1gsYUFBYTtFQUNiLGFBQWE7RUFDYixtQkFBbUI7RUFDbkIsdUJBQXVCO0VBQ3ZCLGdCQUFnQjtBQUNsQjs7QUFFQTtFQUNFLGNBQWM7RUFDZCxpQkFBaUI7RUFDakIsaUJBQWlCO0VBQ2pCLFNBQVM7QUFDWDs7QUFFQTtFQUNFLHNEQUFzRDtBQUN4RDs7QUFFQTtFQUNFLHNEQUFzRDtBQUN4RDs7QUFFQSxzREFBc0Q7QUFDdEQ7RUFDRSxzQkFBc0I7QUFDeEI7O0FBRUE7RUFDRSxrQkFBa0I7QUFDcEI7O0FBRUE7RUFDRSxrQkFBa0I7RUFDbEIsUUFBUTtFQUNSLFNBQVM7RUFDVCxrQ0FBa0M7RUFDbEMsa0JBQWtCO0VBQ2xCLGlCQUFpQjtFQUNqQixZQUFZO0VBQ1osV0FBVztFQUNYLHFDQUFxQztFQUNyQyx5QkFBeUI7QUFDM0I7O0FBRUE7RUFDRSxnQ0FBZ0M7RUFDaEMscUJBQXFCO0FBQ3ZCOztBQUVBO0VBQ0UsV0FBVztFQUNYLGlCQUFpQjtFQUVqQixpQkFBaUI7QUFDbkI7O0FBRUE7RUFDRSxrQkFBa0I7RUFDbEIsUUFBUTtFQUNSLFVBQVU7RUFDViw2REFBNkQ7RUFDN0QsWUFBWTtFQUNaLGlCQUFpQjtFQUNqQixrQkFBa0I7RUFDbEIsa0JBQWtCO0VBQ2xCLGdCQUFnQjtFQUNoQixXQUFXO0VBQ1gscUNBQXFDO0FBQ3ZDOztBQUVBO0VBQ0UsWUFBWTtFQUNaLGFBQWE7RUFDYixpQkFBaUI7RUFDakIsY0FBYztFQUNkLGtCQUFrQjtFQUNsQixjQUFjO0FBQ2hCOztBQUVBO0VBQ0UsYUFBYTtFQUNiLFdBQVc7RUFDWCxlQUFlO0FBQ2pCOztBQUVBO0VBQ0UsT0FBTztFQUNQLG9CQUFvQjtFQUNwQixZQUFZO0VBQ1osa0JBQWtCO0VBQ2xCLGlCQUFpQjtFQUNqQixlQUFlO0VBQ2Ysd0NBQXdDO0VBQ3hDLGFBQWE7RUFDYixtQkFBbUI7RUFDbkIsdUJBQXVCO0VBQ3ZCLFlBQVk7QUFDZDs7QUFFQTtFQUNFLDJCQUEyQjtFQUMzQixZQUFZO0FBQ2Q7O0FBRUE7RUFDRSw2REFBNkQ7RUFDN0QsWUFBWTtFQUNaLGdCQUFnQjtBQUNsQjs7QUFFQTtFQUNFLG1CQUFtQjtFQUNuQixZQUFZO0VBQ1osZ0JBQWdCO0FBQ2xCOztBQUVBO0VBQ0Usa0JBQWtCO0VBQ2xCLFNBQVM7RUFDVCxXQUFXO0VBQ1gsbUJBQW1CO0VBQ25CLFlBQVk7RUFDWixzQkFBc0I7RUFDdEIsbUJBQW1CO0VBQ25CLGlCQUFpQjtFQUNqQixpQkFBaUI7RUFDakIsVUFBVTtBQUNaOztBQUVBO0VBQ0UsT0FBTztFQUNQLGFBQWE7RUFDYixzQkFBc0I7RUFDdEIsV0FBVztBQUNiOztBQUVBO0VBQ0Usa0JBQWtCO0VBQ2xCLFdBQVc7RUFDWCxnQkFBZ0I7QUFDbEI7O0FBRUEsZ0JBQWdCO0FBQ2hCO0VBQ0Usa0JBQWtCO0VBQ2xCLGtCQUFrQjtFQUNsQixpQkFBaUI7RUFDakIsbUJBQW1CO0VBQ25CLHVCQUF1QjtBQUN6Qjs7QUFFQTtFQUNFLGVBQWU7RUFDZixtQkFBbUI7QUFDckI7O0FBRUE7RUFDRSxpQkFBaUI7RUFDakIsV0FBVztFQUNYLHFCQUFxQjtBQUN2Qjs7QUFFQTtFQUNFLFdBQVc7RUFDWCxtQkFBbUI7QUFDckI7O0FBRUE7RUFDRSw2REFBNkQ7RUFDN0QsWUFBWTtFQUNaLFlBQVk7RUFDWixvQkFBb0I7RUFDcEIsa0JBQWtCO0VBQ2xCLGlCQUFpQjtFQUNqQixnQkFBZ0I7RUFDaEIsZUFBZTtFQUNmLDJDQUEyQztBQUM3Qzs7QUFFQTtFQUNFLDJCQUEyQjtFQUMzQiwrQ0FBK0M7QUFDakQ7O0FBRUEsc0JBQXNCO0FBQ3RCO0VBQ0U7SUFDRSxhQUFhO0VBQ2Y7O0VBRUE7SUFDRSxpQkFBaUI7RUFDbkI7O0VBRUE7SUFDRSxlQUFlO0VBQ2pCOztFQUVBO0lBQ0Usc0JBQXNCO0lBQ3RCLFdBQVc7RUFDYjs7RUFFQTtJQUNFLFNBQVM7RUFDWDs7RUFFQTtJQUNFLFdBQVc7SUFDWCxnQkFBZ0I7RUFDbEI7O0VBRUE7SUFDRSxXQUFXO0lBQ1gsZ0JBQWdCO0lBQ2hCLGlCQUFpQjtFQUNuQjs7RUFFQTtJQUNFLGFBQWE7RUFDZjs7RUFFQTtJQUNFLHNCQUFzQjtJQUN0QixXQUFXO0VBQ2I7O0VBRUE7SUFDRSxXQUFXO0VBQ2I7QUFDRiIsImZpbGUiOiJpbWFnZW5zLXBhZ2UuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmltYWdlbnMtcGFnZSB7XG4gIHBhZGRpbmc6IDJyZW07XG4gIG1heC13aWR0aDogMTQwMHB4O1xuICBtYXJnaW46IDAgYXV0bztcbn1cblxuLnBhZ2UtaGVhZGVyIHtcbiAgbWFyZ2luLWJvdHRvbTogMnJlbTtcbn1cblxuLnBhZ2UtaGVhZGVyIGgxIHtcbiAgZm9udC1zaXplOiAycmVtO1xuICBmb250LXdlaWdodDogNjAwO1xuICBjb2xvcjogIzFhMWExYTtcbiAgbWFyZ2luLWJvdHRvbTogMC41cmVtO1xufVxuXG4uc3VidGl0bGUge1xuICBjb2xvcjogIzY2NjtcbiAgZm9udC1zaXplOiAwLjk1cmVtO1xufVxuXG4vKiBBbGVydHMgKi9cbi5hbGVydCB7XG4gIHBhZGRpbmc6IDFyZW0gMS41cmVtO1xuICBib3JkZXItcmFkaXVzOiA4cHg7XG4gIG1hcmdpbi1ib3R0b206IDEuNXJlbTtcbiAgZGlzcGxheTogZmxleDtcbiAganVzdGlmeS1jb250ZW50OiBzcGFjZS1iZXR3ZWVuO1xuICBhbGlnbi1pdGVtczogY2VudGVyO1xufVxuXG4uYWxlcnQtZXJyb3Ige1xuICBiYWNrZ3JvdW5kLWNvbG9yOiAjZmVlO1xuICBib3JkZXI6IDFweCBzb2xpZCAjZmNjO1xuICBjb2xvcjogI2MzMztcbn1cblxuLmFsZXJ0LXN1Y2Nlc3Mge1xuICBiYWNrZ3JvdW5kLWNvbG9yOiAjZWZlO1xuICBib3JkZXI6IDFweCBzb2xpZCAjY2ZjO1xuICBjb2xvcjogIzNjMztcbn1cblxuLmNsb3NlLWJ0biB7XG4gIGJhY2tncm91bmQ6IG5vbmU7XG4gIGJvcmRlcjogbm9uZTtcbiAgZm9udC1zaXplOiAxLjVyZW07XG4gIGN1cnNvcjogcG9pbnRlcjtcbiAgY29sb3I6IGluaGVyaXQ7XG4gIG9wYWNpdHk6IDAuNztcbiAgcGFkZGluZzogMDtcbiAgd2lkdGg6IDI0cHg7XG4gIGhlaWdodDogMjRweDtcbiAgbGluZS1oZWlnaHQ6IDE7XG59XG5cbi5jbG9zZS1idG46aG92ZXIge1xuICBvcGFjaXR5OiAxO1xufVxuXG4vKiBVcGxvYWQgU2VjdGlvbiAqL1xuLnVwbG9hZC1zZWN0aW9uIHtcbiAgYmFja2dyb3VuZDogd2hpdGU7XG4gIGJvcmRlcjogMnB4IGRhc2hlZCAjZGRkO1xuICBib3JkZXItcmFkaXVzOiAxMnB4O1xuICBwYWRkaW5nOiAycmVtO1xuICBtYXJnaW4tYm90dG9tOiAycmVtO1xuICB0ZXh0LWFsaWduOiBjZW50ZXI7XG59XG5cbi51cGxvYWQtYnRuIHtcbiAgYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDEzNWRlZywgIzY2N2VlYSAwJSwgIzc2NGJhMiAxMDAlKTtcbiAgY29sb3I6IHdoaXRlO1xuICBib3JkZXI6IG5vbmU7XG4gIHBhZGRpbmc6IDFyZW0gMnJlbTtcbiAgYm9yZGVyLXJhZGl1czogOHB4O1xuICBmb250LXNpemU6IDFyZW07XG4gIGZvbnQtd2VpZ2h0OiA1MDA7XG4gIGN1cnNvcjogcG9pbnRlcjtcbiAgZGlzcGxheTogaW5saW5lLWZsZXg7XG4gIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gIGdhcDogMC41cmVtO1xuICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4ycywgYm94LXNoYWRvdyAwLjJzO1xufVxuXG4udXBsb2FkLWJ0bjpob3Zlcjpub3QoOmRpc2FibGVkKSB7XG4gIHRyYW5zZm9ybTogdHJhbnNsYXRlWSgtMnB4KTtcbiAgYm94LXNoYWRvdzogMCA0cHggMTJweCByZ2JhKDEwMiwgMTI2LCAyMzQsIDAuNCk7XG59XG5cbi51cGxvYWQtYnRuOmRpc2FibGVkIHtcbiAgb3BhY2l0eTogMC41O1xuICBjdXJzb3I6IG5vdC1hbGxvd2VkO1xufVxuXG4udXBsb2FkLWJ0biAuaWNvbiB7XG4gIGZvbnQtc2l6ZTogMS4ycmVtO1xufVxuXG4udXBsb2FkLWluZm8ge1xuICBtYXJnaW4tdG9wOiAxLjVyZW07XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICBnYXA6IDJyZW07XG4gIGZsZXgtd3JhcDogd3JhcDtcbn1cblxuLnVwbG9hZC1pbmZvIHAge1xuICBjb2xvcjogIzY2NjtcbiAgZm9udC1zaXplOiAwLjlyZW07XG4gIG1hcmdpbjogMDtcbn1cblxuLyogUHJvZ3Jlc3MgQmFyICovXG4ucHJvZ3Jlc3MtYmFyIHtcbiAgd2lkdGg6IDEwMCU7XG4gIG1heC13aWR0aDogNDAwcHg7XG4gIGhlaWdodDogOHB4O1xuICBiYWNrZ3JvdW5kOiAjZWVlO1xuICBib3JkZXItcmFkaXVzOiA0cHg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIG1hcmdpbjogMXJlbSBhdXRvIDAuNXJlbTtcbn1cblxuLnByb2dyZXNzLWZpbGwge1xuICBoZWlnaHQ6IDEwMCU7XG4gIGJhY2tncm91bmQ6IGxpbmVhci1ncmFkaWVudCgxMzVkZWcsICM2NjdlZWEgMCUsICM3NjRiYTIgMTAwJSk7XG4gIHRyYW5zaXRpb246IHdpZHRoIDAuM3MgZWFzZTtcbn1cblxuLnByb2dyZXNzLXRleHQge1xuICBmb250LXNpemU6IDAuOXJlbTtcbiAgY29sb3I6ICM2NjY7XG4gIG1hcmdpbi10b3A6IDAuNXJlbTtcbn1cblxuLyogTG9hZGluZyAqL1xuLmxvYWRpbmcge1xuICB0ZXh0LWFsaWduOiBjZW50ZXI7XG4gIHBhZGRpbmc6IDNyZW07XG59XG5cbi5zcGlubmVyIHtcbiAgYm9yZGVyOiAzcHggc29saWQgI2YzZjNmMztcbiAgYm9yZGVyLXRvcDogM3B4IHNvbGlkICM2NjdlZWE7XG4gIGJvcmRlci1yYWRpdXM6IDUwJTtcbiAgd2lkdGg6IDQwcHg7XG4gIGhlaWdodDogNDBweDtcbiAgYW5pbWF0aW9uOiBzcGluIDFzIGxpbmVhciBpbmZpbml0ZTtcbiAgbWFyZ2luOiAwIGF1dG8gMXJlbTtcbn1cblxuQGtleWZyYW1lcyBzcGluIHtcbiAgMCUgeyB0cmFuc2Zvcm06IHJvdGF0ZSgwZGVnKTsgfVxuICAxMDAlIHsgdHJhbnNmb3JtOiByb3RhdGUoMzYwZGVnKTsgfVxufVxuXG4vKiBJbWFnZXMgR3JpZCBDb250YWluZXIgKi9cbi5pbWFnZXMtZ3JpZC1jb250YWluZXIge1xuICBiYWNrZ3JvdW5kOiB3aGl0ZTtcbiAgYm9yZGVyLXJhZGl1czogMTJweDtcbiAgcGFkZGluZzogMnJlbTtcbn1cblxuLmRyYWctaGludCB7XG4gIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgY29sb3I6ICNlOTFlNjM7XG4gIGZvbnQtc2l6ZTogMXJlbTtcbiAgZm9udC13ZWlnaHQ6IDYwMDtcbiAgbWFyZ2luLWJvdHRvbTogMS41cmVtO1xuICBwYWRkaW5nOiAxcmVtO1xuICBiYWNrZ3JvdW5kOiAjZmNlNGVjO1xuICBib3JkZXItcmFkaXVzOiA4cHg7XG4gIGJvcmRlcjogMnB4IGRhc2hlZCAjZTkxZTYzO1xuICBmb250LXN0eWxlOiBpdGFsaWM7XG59XG5cbi5pbWFnZXMtZ3JpZCB7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsZXgtZGlyZWN0aW9uOiBjb2x1bW47XG4gIGdhcDogMXJlbTtcbiAgbWF4LXdpZHRoOiA4MDBweDtcbiAgbWFyZ2luOiAwIGF1dG87XG59XG5cbi8qIEltYWdlIENhcmQgKi9cbi5pbWFnZS1jYXJkIHtcbiAgcG9zaXRpb246IHJlbGF0aXZlO1xuICBiYWNrZ3JvdW5kOiB3aGl0ZTtcbiAgYm9yZGVyOiAxcHggc29saWQgI2RkZDtcbiAgYm9yZGVyLXJhZGl1czogOHB4O1xuICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgdHJhbnNpdGlvbjogdHJhbnNmb3JtIDAuMnMsIGJveC1zaGFkb3cgMC4ycztcbiAgY3Vyc29yOiBtb3ZlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBhbGlnbi1pdGVtczogY2VudGVyO1xuICBnYXA6IDFyZW07XG4gIHBhZGRpbmc6IDFyZW07XG4gIG1pbi1oZWlnaHQ6IDEyMHB4O1xufVxuXG4uaW1hZ2UtY2FyZDpob3ZlciB7XG4gIHRyYW5zZm9ybTogdHJhbnNsYXRlWSgtMnB4KTtcbiAgYm94LXNoYWRvdzogMCA0cHggMTJweCByZ2JhKDAsMCwwLDAuMSk7XG59XG5cbi5jZGstZHJhZy1wcmV2aWV3IHtcbiAgb3BhY2l0eTogMC45O1xuICBib3gtc2hhZG93OiAwIDEycHggMzJweCByZ2JhKDAsMCwwLDAuMyk7XG4gIGJvcmRlcjogMnB4IHNvbGlkICNlOTFlNjM7XG4gIHRyYW5zZm9ybTogcm90YXRlKDNkZWcpO1xufVxuXG4uaW1hZ2UtcGxhY2Vob2xkZXIge1xuICBiYWNrZ3JvdW5kOiAjZmNlNGVjO1xuICBib3JkZXI6IDNweCBkYXNoZWQgI2U5MWU2MztcbiAgYm9yZGVyLXJhZGl1czogOHB4O1xuICB3aWR0aDogMTAwJTtcbiAgaGVpZ2h0OiAxMDBweDtcbiAgZGlzcGxheTogZmxleDtcbiAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gIG1hcmdpbjogMC41cmVtIDA7XG59XG5cbi5pbWFnZS1wbGFjZWhvbGRlciBwIHtcbiAgY29sb3I6ICNlOTFlNjM7XG4gIGZvbnQtd2VpZ2h0OiBib2xkO1xuICBmb250LXNpemU6IDEuMXJlbTtcbiAgbWFyZ2luOiAwO1xufVxuXG4uY2RrLWRyYWctYW5pbWF0aW5nIHtcbiAgdHJhbnNpdGlvbjogdHJhbnNmb3JtIDMwMG1zIGN1YmljLWJlemllcigwLCAwLCAwLjIsIDEpO1xufVxuXG4uaW1hZ2VzLWdyaWQuY2RrLWRyb3AtbGlzdC1kcmFnZ2luZyAuaW1hZ2UtY2FyZDpub3QoLmNkay1kcmFnLXBsYWNlaG9sZGVyKSB7XG4gIHRyYW5zaXRpb246IHRyYW5zZm9ybSAzMDBtcyBjdWJpYy1iZXppZXIoMCwgMCwgMC4yLCAxKTtcbn1cblxuLyogR2FyYW50aXIgcXVlIG8gZXNwYcOnbyBzZWphIG1hbnRpZG8gZHVyYW50ZSBvIGRyYWcgKi9cbi5jZGstZHJhZyB7XG4gIGJveC1zaXppbmc6IGJvcmRlci1ib3g7XG59XG5cbi5pbWFnZXMtZ3JpZCB7XG4gIHBvc2l0aW9uOiByZWxhdGl2ZTtcbn1cblxuLmRyYWctaGFuZGxlIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICB0b3A6IDhweDtcbiAgbGVmdDogOHB4O1xuICBiYWNrZ3JvdW5kOiByZ2JhKDIzMywgMzAsIDk5LCAwLjkpO1xuICBib3JkZXItcmFkaXVzOiA2cHg7XG4gIHBhZGRpbmc6IDZweCAxMHB4O1xuICBjdXJzb3I6IG1vdmU7XG4gIHotaW5kZXg6IDEwO1xuICBib3gtc2hhZG93OiAwIDJweCA4cHggcmdiYSgwLDAsMCwwLjIpO1xuICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlO1xufVxuXG4uZHJhZy1oYW5kbGU6aG92ZXIge1xuICBiYWNrZ3JvdW5kOiByZ2JhKDIzMywgMzAsIDk5LCAxKTtcbiAgdHJhbnNmb3JtOiBzY2FsZSgxLjEpO1xufVxuXG4uZHJhZy1pY29uIHtcbiAgY29sb3I6ICNmZmY7XG4gIGZvbnQtc2l6ZTogMS4ycmVtO1xuICBmb250LXdlaWdodDogYm9sZDtcbiAgZm9udC13ZWlnaHQ6IGJvbGQ7XG59XG5cbi5wcmltYXJ5LWJhZGdlIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICB0b3A6IDhweDtcbiAgcmlnaHQ6IDhweDtcbiAgYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDEzNWRlZywgI2YwOTNmYiAwJSwgI2Y1NTc2YyAxMDAlKTtcbiAgY29sb3I6IHdoaXRlO1xuICBwYWRkaW5nOiA0cHggMTJweDtcbiAgYm9yZGVyLXJhZGl1czogNHB4O1xuICBmb250LXNpemU6IDAuODVyZW07XG4gIGZvbnQtd2VpZ2h0OiA1MDA7XG4gIHotaW5kZXg6IDEwO1xuICBib3gtc2hhZG93OiAwIDJweCA0cHggcmdiYSgwLDAsMCwwLjIpO1xufVxuXG4uaW1hZ2UtcHJldmlldyB7XG4gIHdpZHRoOiAxNTBweDtcbiAgaGVpZ2h0OiAxMDBweDtcbiAgb2JqZWN0LWZpdDogY292ZXI7XG4gIGRpc3BsYXk6IGJsb2NrO1xuICBib3JkZXItcmFkaXVzOiA2cHg7XG4gIGZsZXgtc2hyaW5rOiAwO1xufVxuXG4uaW1hZ2UtYWN0aW9ucyB7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGdhcDogMC41cmVtO1xuICBmbGV4LXdyYXA6IHdyYXA7XG59XG5cbi5hY3Rpb24tYnRuIHtcbiAgZmxleDogMTtcbiAgcGFkZGluZzogMC41cmVtIDFyZW07XG4gIGJvcmRlcjogbm9uZTtcbiAgYm9yZGVyLXJhZGl1czogNnB4O1xuICBmb250LXNpemU6IDAuOXJlbTtcbiAgY3Vyc29yOiBwb2ludGVyO1xuICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4ycywgb3BhY2l0eSAwLjJzO1xuICBkaXNwbGF5OiBmbGV4O1xuICBhbGlnbi1pdGVtczogY2VudGVyO1xuICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgZ2FwOiAwLjI1cmVtO1xufVxuXG4uYWN0aW9uLWJ0bjpob3ZlciB7XG4gIHRyYW5zZm9ybTogdHJhbnNsYXRlWSgtMXB4KTtcbiAgb3BhY2l0eTogMC45O1xufVxuXG4ucHJpbWFyeS1idG4ge1xuICBiYWNrZ3JvdW5kOiBsaW5lYXItZ3JhZGllbnQoMTM1ZGVnLCAjZjA5M2ZiIDAlLCAjZjU1NzZjIDEwMCUpO1xuICBjb2xvcjogd2hpdGU7XG4gIGZvbnQtd2VpZ2h0OiA1MDA7XG59XG5cbi5kZWxldGUtYnRuIHtcbiAgYmFja2dyb3VuZDogI2Y0NDMzNjtcbiAgY29sb3I6IHdoaXRlO1xuICBmb250LXdlaWdodDogNTAwO1xufVxuXG4uaW1hZ2Utb3JkZXItYmFkZ2Uge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIHRvcDogMTBweDtcbiAgcmlnaHQ6IDEwcHg7XG4gIGJhY2tncm91bmQ6ICNlOTFlNjM7XG4gIGNvbG9yOiB3aGl0ZTtcbiAgcGFkZGluZzogMC40cmVtIDAuOHJlbTtcbiAgYm9yZGVyLXJhZGl1czogMjBweDtcbiAgZm9udC13ZWlnaHQ6IGJvbGQ7XG4gIGZvbnQtc2l6ZTogMC45cmVtO1xuICB6LWluZGV4OiA1O1xufVxuXG4uaW1hZ2UtaW5mbyB7XG4gIGZsZXg6IDE7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsZXgtZGlyZWN0aW9uOiBjb2x1bW47XG4gIGdhcDogMC44cmVtO1xufVxuXG4uaW1hZ2UtZmlsZW5hbWUge1xuICBmb250LXNpemU6IDAuOTVyZW07XG4gIGNvbG9yOiAjMzMzO1xuICBmb250LXdlaWdodDogNTAwO1xufVxuXG4vKiBFbXB0eSBTdGF0ZSAqL1xuLmVtcHR5LXN0YXRlIHtcbiAgdGV4dC1hbGlnbjogY2VudGVyO1xuICBwYWRkaW5nOiA0cmVtIDJyZW07XG4gIGJhY2tncm91bmQ6IHdoaXRlO1xuICBib3JkZXItcmFkaXVzOiAxMnB4O1xuICBib3JkZXI6IDJweCBkYXNoZWQgI2RkZDtcbn1cblxuLmVtcHR5LWljb24ge1xuICBmb250LXNpemU6IDRyZW07XG4gIG1hcmdpbi1ib3R0b206IDFyZW07XG59XG5cbi5lbXB0eS1zdGF0ZSBoMyB7XG4gIGZvbnQtc2l6ZTogMS41cmVtO1xuICBjb2xvcjogIzMzMztcbiAgbWFyZ2luLWJvdHRvbTogMC41cmVtO1xufVxuXG4uZW1wdHktc3RhdGUgcCB7XG4gIGNvbG9yOiAjNjY2O1xuICBtYXJnaW4tYm90dG9tOiAycmVtO1xufVxuXG4udXBsb2FkLWJ0bi1sYXJnZSB7XG4gIGJhY2tncm91bmQ6IGxpbmVhci1ncmFkaWVudCgxMzVkZWcsICM2NjdlZWEgMCUsICM3NjRiYTIgMTAwJSk7XG4gIGNvbG9yOiB3aGl0ZTtcbiAgYm9yZGVyOiBub25lO1xuICBwYWRkaW5nOiAxcmVtIDIuNXJlbTtcbiAgYm9yZGVyLXJhZGl1czogOHB4O1xuICBmb250LXNpemU6IDEuMXJlbTtcbiAgZm9udC13ZWlnaHQ6IDUwMDtcbiAgY3Vyc29yOiBwb2ludGVyO1xuICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4ycywgYm94LXNoYWRvdyAwLjJzO1xufVxuXG4udXBsb2FkLWJ0bi1sYXJnZTpob3ZlciB7XG4gIHRyYW5zZm9ybTogdHJhbnNsYXRlWSgtMnB4KTtcbiAgYm94LXNoYWRvdzogMCA2cHggMjBweCByZ2JhKDEwMiwgMTI2LCAyMzQsIDAuNCk7XG59XG5cbi8qIE1vYmlsZSBSZXNwb25zaXZlICovXG5AbWVkaWEgKG1heC13aWR0aDogNzY4cHgpIHtcbiAgLmltYWdlbnMtcGFnZSB7XG4gICAgcGFkZGluZzogMXJlbTtcbiAgfVxuXG4gIC5wYWdlLWhlYWRlciBoMSB7XG4gICAgZm9udC1zaXplOiAxLjVyZW07XG4gIH1cblxuICAudXBsb2FkLXNlY3Rpb24ge1xuICAgIHBhZGRpbmc6IDEuNXJlbTtcbiAgfVxuXG4gIC51cGxvYWQtaW5mbyB7XG4gICAgZmxleC1kaXJlY3Rpb246IGNvbHVtbjtcbiAgICBnYXA6IDAuNXJlbTtcbiAgfVxuXG4gIC5pbWFnZXMtZ3JpZCB7XG4gICAgZ2FwOiAxcmVtO1xuICB9XG5cbiAgLmltYWdlLWNhcmQge1xuICAgIHdpZHRoOiAxMDAlO1xuICAgIG1heC13aWR0aDogMjAwcHg7XG4gIH1cblxuICAuaW1hZ2UtcGxhY2Vob2xkZXIge1xuICAgIHdpZHRoOiAxMDAlO1xuICAgIG1heC13aWR0aDogMjAwcHg7XG4gICAgbWluLWhlaWdodDogMjUwcHg7XG4gIH1cblxuICAuaW1hZ2UtcHJldmlldyB7XG4gICAgaGVpZ2h0OiAxNTBweDtcbiAgfVxuXG4gIC5pbWFnZS1hY3Rpb25zIHtcbiAgICBmbGV4LWRpcmVjdGlvbjogY29sdW1uO1xuICAgIGdhcDogMC41cmVtO1xuICB9XG5cbiAgLmFjdGlvbi1idG4ge1xuICAgIHdpZHRoOiAxMDAlO1xuICB9XG59XG4iXX0= */\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvZmVhdHVyZXMvcGFpbmVsL2ltYWdlbnMvaW1hZ2Vucy1wYWdlLmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLGFBQWE7RUFDYixpQkFBaUI7RUFDakIsY0FBYztBQUNoQjs7QUFFQTtFQUNFLG1CQUFtQjtBQUNyQjs7QUFFQTtFQUNFLGVBQWU7RUFDZixnQkFBZ0I7RUFDaEIsY0FBYztFQUNkLHFCQUFxQjtBQUN2Qjs7QUFFQTtFQUNFLFdBQVc7RUFDWCxrQkFBa0I7QUFDcEI7O0FBRUEsV0FBVztBQUNYO0VBQ0Usb0JBQW9CO0VBQ3BCLGtCQUFrQjtFQUNsQixxQkFBcUI7RUFDckIsYUFBYTtFQUNiLDhCQUE4QjtFQUM5QixtQkFBbUI7QUFDckI7O0FBRUE7RUFDRSxzQkFBc0I7RUFDdEIsc0JBQXNCO0VBQ3RCLFdBQVc7QUFDYjs7QUFFQTtFQUNFLHNCQUFzQjtFQUN0QixzQkFBc0I7RUFDdEIsV0FBVztBQUNiOztBQUVBO0VBQ0UsZ0JBQWdCO0VBQ2hCLFlBQVk7RUFDWixpQkFBaUI7RUFDakIsZUFBZTtFQUNmLGNBQWM7RUFDZCxZQUFZO0VBQ1osVUFBVTtFQUNWLFdBQVc7RUFDWCxZQUFZO0VBQ1osY0FBYztBQUNoQjs7QUFFQTtFQUNFLFVBQVU7QUFDWjs7QUFFQSxtQkFBbUI7QUFDbkI7RUFDRSxpQkFBaUI7RUFDakIsdUJBQXVCO0VBQ3ZCLG1CQUFtQjtFQUNuQixhQUFhO0VBQ2IsbUJBQW1CO0VBQ25CLGtCQUFrQjtBQUNwQjs7QUFFQTtFQUNFLDZEQUE2RDtFQUM3RCxZQUFZO0VBQ1osWUFBWTtFQUNaLGtCQUFrQjtFQUNsQixrQkFBa0I7RUFDbEIsZUFBZTtFQUNmLGdCQUFnQjtFQUNoQixlQUFlO0VBQ2Ysb0JBQW9CO0VBQ3BCLG1CQUFtQjtFQUNuQixXQUFXO0VBQ1gsMkNBQTJDO0FBQzdDOztBQUVBO0VBQ0UsMkJBQTJCO0VBQzNCLCtDQUErQztBQUNqRDs7QUFFQTtFQUNFLFlBQVk7RUFDWixtQkFBbUI7QUFDckI7O0FBRUE7RUFDRSxpQkFBaUI7QUFDbkI7O0FBRUE7RUFDRSxrQkFBa0I7RUFDbEIsYUFBYTtFQUNiLHVCQUF1QjtFQUN2QixTQUFTO0VBQ1QsZUFBZTtBQUNqQjs7QUFFQTtFQUNFLFdBQVc7RUFDWCxpQkFBaUI7RUFDakIsU0FBUztBQUNYOztBQUVBLGlCQUFpQjtBQUNqQjtFQUNFLFdBQVc7RUFDWCxnQkFBZ0I7RUFDaEIsV0FBVztFQUNYLGdCQUFnQjtFQUNoQixrQkFBa0I7RUFDbEIsZ0JBQWdCO0VBQ2hCLHdCQUF3QjtBQUMxQjs7QUFFQTtFQUNFLFlBQVk7RUFDWiw2REFBNkQ7RUFDN0QsMkJBQTJCO0FBQzdCOztBQUVBO0VBQ0UsaUJBQWlCO0VBQ2pCLFdBQVc7RUFDWCxrQkFBa0I7QUFDcEI7O0FBRUEsWUFBWTtBQUNaO0VBQ0Usa0JBQWtCO0VBQ2xCLGFBQWE7QUFDZjs7QUFFQTtFQUNFLHlCQUF5QjtFQUN6Qiw2QkFBNkI7RUFDN0Isa0JBQWtCO0VBQ2xCLFdBQVc7RUFDWCxZQUFZO0VBQ1osa0NBQWtDO0VBQ2xDLG1CQUFtQjtBQUNyQjs7QUFFQTtFQUNFLEtBQUssdUJBQXVCLEVBQUU7RUFDOUIsT0FBTyx5QkFBeUIsRUFBRTtBQUNwQzs7QUFFQSwwQkFBMEI7QUFDMUI7RUFDRSxpQkFBaUI7RUFDakIsbUJBQW1CO0VBQ25CLGFBQWE7QUFDZjs7QUFFQTtFQUNFLGtCQUFrQjtFQUNsQixjQUFjO0VBQ2QsZUFBZTtFQUNmLGdCQUFnQjtFQUNoQixxQkFBcUI7RUFDckIsYUFBYTtFQUNiLG1CQUFtQjtFQUNuQixrQkFBa0I7RUFDbEIsMEJBQTBCO0VBQzFCLGtCQUFrQjtBQUNwQjs7QUFFQTtFQUNFLGFBQWE7RUFDYixzQkFBc0I7RUFDdEIsU0FBUztFQUNULGdCQUFnQjtFQUNoQixjQUFjO0FBQ2hCOztBQUVBLGVBQWU7QUFDZjtFQUNFLGtCQUFrQjtFQUNsQixpQkFBaUI7RUFDakIsc0JBQXNCO0VBQ3RCLGtCQUFrQjtFQUNsQixpQkFBaUI7RUFDakIsMkNBQTJDO0VBQzNDLFlBQVk7RUFDWixhQUFhO0VBQ2IsbUJBQW1CO0VBQ25CLFNBQVM7RUFDVCxhQUFhO0VBQ2IsaUJBQWlCO0FBQ25COztBQUVBO0VBQ0UsMkJBQTJCO0VBQzNCLHNDQUFzQztBQUN4Qzs7QUFFQTtFQUNFLFlBQVk7RUFDWix1Q0FBdUM7RUFDdkMseUJBQXlCO0VBQ3pCLHVCQUF1QjtBQUN6Qjs7QUFFQTtFQUNFLG1CQUFtQjtFQUNuQiwwQkFBMEI7RUFDMUIsa0JBQWtCO0VBQ2xCLFdBQVc7RUFDWCxhQUFhO0VBQ2IsYUFBYTtFQUNiLG1CQUFtQjtFQUNuQix1QkFBdUI7RUFDdkIsZ0JBQWdCO0FBQ2xCOztBQUVBO0VBQ0UsY0FBYztFQUNkLGlCQUFpQjtFQUNqQixpQkFBaUI7RUFDakIsU0FBUztBQUNYOztBQUVBO0VBQ0Usc0RBQXNEO0FBQ3hEOztBQUVBO0VBQ0Usc0RBQXNEO0FBQ3hEOztBQUVBLHNEQUFzRDtBQUN0RDtFQUNFLHNCQUFzQjtBQUN4Qjs7QUFFQTtFQUNFLGtCQUFrQjtBQUNwQjs7QUFFQTtFQUNFLGtCQUFrQjtFQUNsQixRQUFRO0VBQ1IsU0FBUztFQUNULGtDQUFrQztFQUNsQyxrQkFBa0I7RUFDbEIsaUJBQWlCO0VBQ2pCLFlBQVk7RUFDWixXQUFXO0VBQ1gscUNBQXFDO0VBQ3JDLHlCQUF5QjtBQUMzQjs7QUFFQTtFQUNFLGdDQUFnQztFQUNoQyxxQkFBcUI7QUFDdkI7O0FBRUE7RUFDRSxXQUFXO0VBQ1gsaUJBQWlCO0VBRWpCLGlCQUFpQjtBQUNuQjs7QUFFQTtFQUNFLGtCQUFrQjtFQUNsQixRQUFRO0VBQ1IsVUFBVTtFQUNWLDZEQUE2RDtFQUM3RCxZQUFZO0VBQ1osaUJBQWlCO0VBQ2pCLGtCQUFrQjtFQUNsQixrQkFBa0I7RUFDbEIsZ0JBQWdCO0VBQ2hCLFdBQVc7RUFDWCxxQ0FBcUM7QUFDdkM7O0FBRUE7RUFDRSxZQUFZO0VBQ1osYUFBYTtFQUNiLGlCQUFpQjtFQUNqQixjQUFjO0VBQ2Qsa0JBQWtCO0VBQ2xCLGNBQWM7QUFDaEI7O0FBRUE7RUFDRSxhQUFhO0VBQ2IsV0FBVztFQUNYLGVBQWU7QUFDakI7O0FBRUE7RUFDRSxPQUFPO0VBQ1Asb0JBQW9CO0VBQ3BCLFlBQVk7RUFDWixrQkFBa0I7RUFDbEIsaUJBQWlCO0VBQ2pCLGVBQWU7RUFDZix3Q0FBd0M7RUFDeEMsYUFBYTtFQUNiLG1CQUFtQjtFQUNuQix1QkFBdUI7RUFDdkIsWUFBWTtBQUNkOztBQUVBO0VBQ0UsMkJBQTJCO0VBQzNCLFlBQVk7QUFDZDs7QUFFQTtFQUNFLDZEQUE2RDtFQUM3RCxZQUFZO0VBQ1osZ0JBQWdCO0FBQ2xCOztBQUVBO0VBQ0UsbUJBQW1CO0VBQ25CLFlBQVk7RUFDWixnQkFBZ0I7QUFDbEI7O0FBRUE7RUFDRSxrQkFBa0I7RUFDbEIsU0FBUztFQUNULFdBQVc7RUFDWCxtQkFBbUI7RUFDbkIsWUFBWTtFQUNaLHNCQUFzQjtFQUN0QixtQkFBbUI7RUFDbkIsaUJBQWlCO0VBQ2pCLGlCQUFpQjtFQUNqQixVQUFVO0FBQ1o7O0FBRUE7RUFDRSxPQUFPO0VBQ1AsYUFBYTtFQUNiLHNCQUFzQjtFQUN0QixXQUFXO0FBQ2I7O0FBRUE7RUFDRSxrQkFBa0I7RUFDbEIsV0FBVztFQUNYLGdCQUFnQjtBQUNsQjs7QUFFQSxnQkFBZ0I7QUFDaEI7RUFDRSxrQkFBa0I7RUFDbEIsa0JBQWtCO0VBQ2xCLGlCQUFpQjtFQUNqQixtQkFBbUI7RUFDbkIsdUJBQXVCO0FBQ3pCOztBQUVBO0VBQ0UsZUFBZTtFQUNmLG1CQUFtQjtBQUNyQjs7QUFFQTtFQUNFLGlCQUFpQjtFQUNqQixXQUFXO0VBQ1gscUJBQXFCO0FBQ3ZCOztBQUVBO0VBQ0UsV0FBVztFQUNYLG1CQUFtQjtBQUNyQjs7QUFFQTtFQUNFLDZEQUE2RDtFQUM3RCxZQUFZO0VBQ1osWUFBWTtFQUNaLG9CQUFvQjtFQUNwQixrQkFBa0I7RUFDbEIsaUJBQWlCO0VBQ2pCLGdCQUFnQjtFQUNoQixlQUFlO0VBQ2YsMkNBQTJDO0FBQzdDOztBQUVBO0VBQ0UsMkJBQTJCO0VBQzNCLCtDQUErQztBQUNqRDs7QUFFQSxzQkFBc0I7QUFDdEI7RUFDRTtJQUNFLGFBQWE7RUFDZjs7RUFFQTtJQUNFLGlCQUFpQjtFQUNuQjs7RUFFQTtJQUNFLGVBQWU7RUFDakI7O0VBRUE7SUFDRSxzQkFBc0I7SUFDdEIsV0FBVztFQUNiOztFQUVBO0lBQ0UsU0FBUztFQUNYOztFQUVBO0lBQ0UsV0FBVztJQUNYLGdCQUFnQjtFQUNsQjs7RUFFQTtJQUNFLFdBQVc7SUFDWCxnQkFBZ0I7SUFDaEIsaUJBQWlCO0VBQ25COztFQUVBO0lBQ0UsYUFBYTtFQUNmOztFQUVBO0lBQ0Usc0JBQXNCO0lBQ3RCLFdBQVc7RUFDYjs7RUFFQTtJQUNFLFdBQVc7RUFDYjtBQUNGOztBQUNBLHd2ZUFBd3ZlIiwic291cmNlc0NvbnRlbnQiOlsiLmltYWdlbnMtcGFnZSB7XG4gIHBhZGRpbmc6IDJyZW07XG4gIG1heC13aWR0aDogMTQwMHB4O1xuICBtYXJnaW46IDAgYXV0bztcbn1cblxuLnBhZ2UtaGVhZGVyIHtcbiAgbWFyZ2luLWJvdHRvbTogMnJlbTtcbn1cblxuLnBhZ2UtaGVhZGVyIGgxIHtcbiAgZm9udC1zaXplOiAycmVtO1xuICBmb250LXdlaWdodDogNjAwO1xuICBjb2xvcjogIzFhMWExYTtcbiAgbWFyZ2luLWJvdHRvbTogMC41cmVtO1xufVxuXG4uc3VidGl0bGUge1xuICBjb2xvcjogIzY2NjtcbiAgZm9udC1zaXplOiAwLjk1cmVtO1xufVxuXG4vKiBBbGVydHMgKi9cbi5hbGVydCB7XG4gIHBhZGRpbmc6IDFyZW0gMS41cmVtO1xuICBib3JkZXItcmFkaXVzOiA4cHg7XG4gIG1hcmdpbi1ib3R0b206IDEuNXJlbTtcbiAgZGlzcGxheTogZmxleDtcbiAganVzdGlmeS1jb250ZW50OiBzcGFjZS1iZXR3ZWVuO1xuICBhbGlnbi1pdGVtczogY2VudGVyO1xufVxuXG4uYWxlcnQtZXJyb3Ige1xuICBiYWNrZ3JvdW5kLWNvbG9yOiAjZmVlO1xuICBib3JkZXI6IDFweCBzb2xpZCAjZmNjO1xuICBjb2xvcjogI2MzMztcbn1cblxuLmFsZXJ0LXN1Y2Nlc3Mge1xuICBiYWNrZ3JvdW5kLWNvbG9yOiAjZWZlO1xuICBib3JkZXI6IDFweCBzb2xpZCAjY2ZjO1xuICBjb2xvcjogIzNjMztcbn1cblxuLmNsb3NlLWJ0biB7XG4gIGJhY2tncm91bmQ6IG5vbmU7XG4gIGJvcmRlcjogbm9uZTtcbiAgZm9udC1zaXplOiAxLjVyZW07XG4gIGN1cnNvcjogcG9pbnRlcjtcbiAgY29sb3I6IGluaGVyaXQ7XG4gIG9wYWNpdHk6IDAuNztcbiAgcGFkZGluZzogMDtcbiAgd2lkdGg6IDI0cHg7XG4gIGhlaWdodDogMjRweDtcbiAgbGluZS1oZWlnaHQ6IDE7XG59XG5cbi5jbG9zZS1idG46aG92ZXIge1xuICBvcGFjaXR5OiAxO1xufVxuXG4vKiBVcGxvYWQgU2VjdGlvbiAqL1xuLnVwbG9hZC1zZWN0aW9uIHtcbiAgYmFja2dyb3VuZDogd2hpdGU7XG4gIGJvcmRlcjogMnB4IGRhc2hlZCAjZGRkO1xuICBib3JkZXItcmFkaXVzOiAxMnB4O1xuICBwYWRkaW5nOiAycmVtO1xuICBtYXJnaW4tYm90dG9tOiAycmVtO1xuICB0ZXh0LWFsaWduOiBjZW50ZXI7XG59XG5cbi51cGxvYWQtYnRuIHtcbiAgYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDEzNWRlZywgIzY2N2VlYSAwJSwgIzc2NGJhMiAxMDAlKTtcbiAgY29sb3I6IHdoaXRlO1xuICBib3JkZXI6IG5vbmU7XG4gIHBhZGRpbmc6IDFyZW0gMnJlbTtcbiAgYm9yZGVyLXJhZGl1czogOHB4O1xuICBmb250LXNpemU6IDFyZW07XG4gIGZvbnQtd2VpZ2h0OiA1MDA7XG4gIGN1cnNvcjogcG9pbnRlcjtcbiAgZGlzcGxheTogaW5saW5lLWZsZXg7XG4gIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gIGdhcDogMC41cmVtO1xuICB0cmFuc2l0aW9uOiB0cmFuc2Zvcm0gMC4ycywgYm94LXNoYWRvdyAwLjJzO1xufVxuXG4udXBsb2FkLWJ0bjpob3Zlcjpub3QoOmRpc2FibGVkKSB7XG4gIHRyYW5zZm9ybTogdHJhbnNsYXRlWSgtMnB4KTtcbiAgYm94LXNoYWRvdzogMCA0cHggMTJweCByZ2JhKDEwMiwgMTI2LCAyMzQsIDAuNCk7XG59XG5cbi51cGxvYWQtYnRuOmRpc2FibGVkIHtcbiAgb3BhY2l0eTogMC41O1xuICBjdXJzb3I6IG5vdC1hbGxvd2VkO1xufVxuXG4udXBsb2FkLWJ0biAuaWNvbiB7XG4gIGZvbnQtc2l6ZTogMS4ycmVtO1xufVxuXG4udXBsb2FkLWluZm8ge1xuICBtYXJnaW4tdG9wOiAxLjVyZW07XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICBnYXA6IDJyZW07XG4gIGZsZXgtd3JhcDogd3JhcDtcbn1cblxuLnVwbG9hZC1pbmZvIHAge1xuICBjb2xvcjogIzY2NjtcbiAgZm9udC1zaXplOiAwLjlyZW07XG4gIG1hcmdpbjogMDtcbn1cblxuLyogUHJvZ3Jlc3MgQmFyICovXG4ucHJvZ3Jlc3MtYmFyIHtcbiAgd2lkdGg6IDEwMCU7XG4gIG1heC13aWR0aDogNDAwcHg7XG4gIGhlaWdodDogOHB4O1xuICBiYWNrZ3JvdW5kOiAjZWVlO1xuICBib3JkZXItcmFkaXVzOiA0cHg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIG1hcmdpbjogMXJlbSBhdXRvIDAuNXJlbTtcbn1cblxuLnByb2dyZXNzLWZpbGwge1xuICBoZWlnaHQ6IDEwMCU7XG4gIGJhY2tncm91bmQ6IGxpbmVhci1ncmFkaWVudCgxMzVkZWcsICM2NjdlZWEgMCUsICM3NjRiYTIgMTAwJSk7XG4gIHRyYW5zaXRpb246IHdpZHRoIDAuM3MgZWFzZTtcbn1cblxuLnByb2dyZXNzLXRleHQge1xuICBmb250LXNpemU6IDAuOXJlbTtcbiAgY29sb3I6ICM2NjY7XG4gIG1hcmdpbi10b3A6IDAuNXJlbTtcbn1cblxuLyogTG9hZGluZyAqL1xuLmxvYWRpbmcge1xuICB0ZXh0LWFsaWduOiBjZW50ZXI7XG4gIHBhZGRpbmc6IDNyZW07XG59XG5cbi5zcGlubmVyIHtcbiAgYm9yZGVyOiAzcHggc29saWQgI2YzZjNmMztcbiAgYm9yZGVyLXRvcDogM3B4IHNvbGlkICM2NjdlZWE7XG4gIGJvcmRlci1yYWRpdXM6IDUwJTtcbiAgd2lkdGg6IDQwcHg7XG4gIGhlaWdodDogNDBweDtcbiAgYW5pbWF0aW9uOiBzcGluIDFzIGxpbmVhciBpbmZpbml0ZTtcbiAgbWFyZ2luOiAwIGF1dG8gMXJlbTtcbn1cblxuQGtleWZyYW1lcyBzcGluIHtcbiAgMCUgeyB0cmFuc2Zvcm06IHJvdGF0ZSgwZGVnKTsgfVxuICAxMDAlIHsgdHJhbnNmb3JtOiByb3RhdGUoMzYwZGVnKTsgfVxufVxuXG4vKiBJbWFnZXMgR3JpZCBDb250YWluZXIgKi9cbi5pbWFnZXMtZ3JpZC1jb250YWluZXIge1xuICBiYWNrZ3JvdW5kOiB3aGl0ZTtcbiAgYm9yZGVyLXJhZGl1czogMTJweDtcbiAgcGFkZGluZzogMnJlbTtcbn1cblxuLmRyYWctaGludCB7XG4gIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgY29sb3I6ICNlOTFlNjM7XG4gIGZvbnQtc2l6ZTogMXJlbTtcbiAgZm9udC13ZWlnaHQ6IDYwMDtcbiAgbWFyZ2luLWJvdHRvbTogMS41cmVtO1xuICBwYWRkaW5nOiAxcmVtO1xuICBiYWNrZ3JvdW5kOiAjZmNlNGVjO1xuICBib3JkZXItcmFkaXVzOiA4cHg7XG4gIGJvcmRlcjogMnB4IGRhc2hlZCAjZTkxZTYzO1xuICBmb250LXN0eWxlOiBpdGFsaWM7XG59XG5cbi5pbWFnZXMtZ3JpZCB7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsZXgtZGlyZWN0aW9uOiBjb2x1bW47XG4gIGdhcDogMXJlbTtcbiAgbWF4LXdpZHRoOiA4MDBweDtcbiAgbWFyZ2luOiAwIGF1dG87XG59XG5cbi8qIEltYWdlIENhcmQgKi9cbi5pbWFnZS1jYXJkIHtcbiAgcG9zaXRpb246IHJlbGF0aXZlO1xuICBiYWNrZ3JvdW5kOiB3aGl0ZTtcbiAgYm9yZGVyOiAxcHggc29saWQgI2RkZDtcbiAgYm9yZGVyLXJhZGl1czogOHB4O1xuICBvdmVyZmxvdzogdmlzaWJsZTtcbiAgdHJhbnNpdGlvbjogdHJhbnNmb3JtIDAuMnMsIGJveC1zaGFkb3cgMC4ycztcbiAgY3Vyc29yOiBtb3ZlO1xuICBkaXNwbGF5OiBmbGV4O1xuICBhbGlnbi1pdGVtczogY2VudGVyO1xuICBnYXA6IDFyZW07XG4gIHBhZGRpbmc6IDFyZW07XG4gIG1pbi1oZWlnaHQ6IDEyMHB4O1xufVxuXG4uaW1hZ2UtY2FyZDpob3ZlciB7XG4gIHRyYW5zZm9ybTogdHJhbnNsYXRlWSgtMnB4KTtcbiAgYm94LXNoYWRvdzogMCA0cHggMTJweCByZ2JhKDAsMCwwLDAuMSk7XG59XG5cbi5jZGstZHJhZy1wcmV2aWV3IHtcbiAgb3BhY2l0eTogMC45O1xuICBib3gtc2hhZG93OiAwIDEycHggMzJweCByZ2JhKDAsMCwwLDAuMyk7XG4gIGJvcmRlcjogMnB4IHNvbGlkICNlOTFlNjM7XG4gIHRyYW5zZm9ybTogcm90YXRlKDNkZWcpO1xufVxuXG4uaW1hZ2UtcGxhY2Vob2xkZXIge1xuICBiYWNrZ3JvdW5kOiAjZmNlNGVjO1xuICBib3JkZXI6IDNweCBkYXNoZWQgI2U5MWU2MztcbiAgYm9yZGVyLXJhZGl1czogOHB4O1xuICB3aWR0aDogMTAwJTtcbiAgaGVpZ2h0OiAxMDBweDtcbiAgZGlzcGxheTogZmxleDtcbiAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gIG1hcmdpbjogMC41cmVtIDA7XG59XG5cbi5pbWFnZS1wbGFjZWhvbGRlciBwIHtcbiAgY29sb3I6ICNlOTFlNjM7XG4gIGZvbnQtd2VpZ2h0OiBib2xkO1xuICBmb250LXNpemU6IDEuMXJlbTtcbiAgbWFyZ2luOiAwO1xufVxuXG4uY2RrLWRyYWctYW5pbWF0aW5nIHtcbiAgdHJhbnNpdGlvbjogdHJhbnNmb3JtIDMwMG1zIGN1YmljLWJlemllcigwLCAwLCAwLjIsIDEpO1xufVxuXG4uaW1hZ2VzLWdyaWQuY2RrLWRyb3AtbGlzdC1kcmFnZ2luZyAuaW1hZ2UtY2FyZDpub3QoLmNkay1kcmFnLXBsYWNlaG9sZGVyKSB7XG4gIHRyYW5zaXRpb246IHRyYW5zZm9ybSAzMDBtcyBjdWJpYy1iZXppZXIoMCwgMCwgMC4yLCAxKTtcbn1cblxuLyogR2FyYW50aXIgcXVlIG8gZXNwYcODwqdvIHNlamEgbWFudGlkbyBkdXJhbnRlIG8gZHJhZyAqL1xuLmNkay1kcmFnIHtcbiAgYm94LXNpemluZzogYm9yZGVyLWJveDtcbn1cblxuLmltYWdlcy1ncmlkIHtcbiAgcG9zaXRpb246IHJlbGF0aXZlO1xufVxuXG4uZHJhZy1oYW5kbGUge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIHRvcDogOHB4O1xuICBsZWZ0OiA4cHg7XG4gIGJhY2tncm91bmQ6IHJnYmEoMjMzLCAzMCwgOTksIDAuOSk7XG4gIGJvcmRlci1yYWRpdXM6IDZweDtcbiAgcGFkZGluZzogNnB4IDEwcHg7XG4gIGN1cnNvcjogbW92ZTtcbiAgei1pbmRleDogMTA7XG4gIGJveC1zaGFkb3c6IDAgMnB4IDhweCByZ2JhKDAsMCwwLDAuMik7XG4gIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2U7XG59XG5cbi5kcmFnLWhhbmRsZTpob3ZlciB7XG4gIGJhY2tncm91bmQ6IHJnYmEoMjMzLCAzMCwgOTksIDEpO1xuICB0cmFuc2Zvcm06IHNjYWxlKDEuMSk7XG59XG5cbi5kcmFnLWljb24ge1xuICBjb2xvcjogI2ZmZjtcbiAgZm9udC1zaXplOiAxLjJyZW07XG4gIGZvbnQtd2VpZ2h0OiBib2xkO1xuICBmb250LXdlaWdodDogYm9sZDtcbn1cblxuLnByaW1hcnktYmFkZ2Uge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIHRvcDogOHB4O1xuICByaWdodDogOHB4O1xuICBiYWNrZ3JvdW5kOiBsaW5lYXItZ3JhZGllbnQoMTM1ZGVnLCAjZjA5M2ZiIDAlLCAjZjU1NzZjIDEwMCUpO1xuICBjb2xvcjogd2hpdGU7XG4gIHBhZGRpbmc6IDRweCAxMnB4O1xuICBib3JkZXItcmFkaXVzOiA0cHg7XG4gIGZvbnQtc2l6ZTogMC44NXJlbTtcbiAgZm9udC13ZWlnaHQ6IDUwMDtcbiAgei1pbmRleDogMTA7XG4gIGJveC1zaGFkb3c6IDAgMnB4IDRweCByZ2JhKDAsMCwwLDAuMik7XG59XG5cbi5pbWFnZS1wcmV2aWV3IHtcbiAgd2lkdGg6IDE1MHB4O1xuICBoZWlnaHQ6IDEwMHB4O1xuICBvYmplY3QtZml0OiBjb3ZlcjtcbiAgZGlzcGxheTogYmxvY2s7XG4gIGJvcmRlci1yYWRpdXM6IDZweDtcbiAgZmxleC1zaHJpbms6IDA7XG59XG5cbi5pbWFnZS1hY3Rpb25zIHtcbiAgZGlzcGxheTogZmxleDtcbiAgZ2FwOiAwLjVyZW07XG4gIGZsZXgtd3JhcDogd3JhcDtcbn1cblxuLmFjdGlvbi1idG4ge1xuICBmbGV4OiAxO1xuICBwYWRkaW5nOiAwLjVyZW0gMXJlbTtcbiAgYm9yZGVyOiBub25lO1xuICBib3JkZXItcmFkaXVzOiA2cHg7XG4gIGZvbnQtc2l6ZTogMC45cmVtO1xuICBjdXJzb3I6IHBvaW50ZXI7XG4gIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjJzLCBvcGFjaXR5IDAuMnM7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICBnYXA6IDAuMjVyZW07XG59XG5cbi5hY3Rpb24tYnRuOmhvdmVyIHtcbiAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKC0xcHgpO1xuICBvcGFjaXR5OiAwLjk7XG59XG5cbi5wcmltYXJ5LWJ0biB7XG4gIGJhY2tncm91bmQ6IGxpbmVhci1ncmFkaWVudCgxMzVkZWcsICNmMDkzZmIgMCUsICNmNTU3NmMgMTAwJSk7XG4gIGNvbG9yOiB3aGl0ZTtcbiAgZm9udC13ZWlnaHQ6IDUwMDtcbn1cblxuLmRlbGV0ZS1idG4ge1xuICBiYWNrZ3JvdW5kOiAjZjQ0MzM2O1xuICBjb2xvcjogd2hpdGU7XG4gIGZvbnQtd2VpZ2h0OiA1MDA7XG59XG5cbi5pbWFnZS1vcmRlci1iYWRnZSB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgdG9wOiAxMHB4O1xuICByaWdodDogMTBweDtcbiAgYmFja2dyb3VuZDogI2U5MWU2MztcbiAgY29sb3I6IHdoaXRlO1xuICBwYWRkaW5nOiAwLjRyZW0gMC44cmVtO1xuICBib3JkZXItcmFkaXVzOiAyMHB4O1xuICBmb250LXdlaWdodDogYm9sZDtcbiAgZm9udC1zaXplOiAwLjlyZW07XG4gIHotaW5kZXg6IDU7XG59XG5cbi5pbWFnZS1pbmZvIHtcbiAgZmxleDogMTtcbiAgZGlzcGxheTogZmxleDtcbiAgZmxleC1kaXJlY3Rpb246IGNvbHVtbjtcbiAgZ2FwOiAwLjhyZW07XG59XG5cbi5pbWFnZS1maWxlbmFtZSB7XG4gIGZvbnQtc2l6ZTogMC45NXJlbTtcbiAgY29sb3I6ICMzMzM7XG4gIGZvbnQtd2VpZ2h0OiA1MDA7XG59XG5cbi8qIEVtcHR5IFN0YXRlICovXG4uZW1wdHktc3RhdGUge1xuICB0ZXh0LWFsaWduOiBjZW50ZXI7XG4gIHBhZGRpbmc6IDRyZW0gMnJlbTtcbiAgYmFja2dyb3VuZDogd2hpdGU7XG4gIGJvcmRlci1yYWRpdXM6IDEycHg7XG4gIGJvcmRlcjogMnB4IGRhc2hlZCAjZGRkO1xufVxuXG4uZW1wdHktaWNvbiB7XG4gIGZvbnQtc2l6ZTogNHJlbTtcbiAgbWFyZ2luLWJvdHRvbTogMXJlbTtcbn1cblxuLmVtcHR5LXN0YXRlIGgzIHtcbiAgZm9udC1zaXplOiAxLjVyZW07XG4gIGNvbG9yOiAjMzMzO1xuICBtYXJnaW4tYm90dG9tOiAwLjVyZW07XG59XG5cbi5lbXB0eS1zdGF0ZSBwIHtcbiAgY29sb3I6ICM2NjY7XG4gIG1hcmdpbi1ib3R0b206IDJyZW07XG59XG5cbi51cGxvYWQtYnRuLWxhcmdlIHtcbiAgYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDEzNWRlZywgIzY2N2VlYSAwJSwgIzc2NGJhMiAxMDAlKTtcbiAgY29sb3I6IHdoaXRlO1xuICBib3JkZXI6IG5vbmU7XG4gIHBhZGRpbmc6IDFyZW0gMi41cmVtO1xuICBib3JkZXItcmFkaXVzOiA4cHg7XG4gIGZvbnQtc2l6ZTogMS4xcmVtO1xuICBmb250LXdlaWdodDogNTAwO1xuICBjdXJzb3I6IHBvaW50ZXI7XG4gIHRyYW5zaXRpb246IHRyYW5zZm9ybSAwLjJzLCBib3gtc2hhZG93IDAuMnM7XG59XG5cbi51cGxvYWQtYnRuLWxhcmdlOmhvdmVyIHtcbiAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKC0ycHgpO1xuICBib3gtc2hhZG93OiAwIDZweCAyMHB4IHJnYmEoMTAyLCAxMjYsIDIzNCwgMC40KTtcbn1cblxuLyogTW9iaWxlIFJlc3BvbnNpdmUgKi9cbkBtZWRpYSAobWF4LXdpZHRoOiA3NjhweCkge1xuICAuaW1hZ2Vucy1wYWdlIHtcbiAgICBwYWRkaW5nOiAxcmVtO1xuICB9XG5cbiAgLnBhZ2UtaGVhZGVyIGgxIHtcbiAgICBmb250LXNpemU6IDEuNXJlbTtcbiAgfVxuXG4gIC51cGxvYWQtc2VjdGlvbiB7XG4gICAgcGFkZGluZzogMS41cmVtO1xuICB9XG5cbiAgLnVwbG9hZC1pbmZvIHtcbiAgICBmbGV4LWRpcmVjdGlvbjogY29sdW1uO1xuICAgIGdhcDogMC41cmVtO1xuICB9XG5cbiAgLmltYWdlcy1ncmlkIHtcbiAgICBnYXA6IDFyZW07XG4gIH1cblxuICAuaW1hZ2UtY2FyZCB7XG4gICAgd2lkdGg6IDEwMCU7XG4gICAgbWF4LXdpZHRoOiAyMDBweDtcbiAgfVxuXG4gIC5pbWFnZS1wbGFjZWhvbGRlciB7XG4gICAgd2lkdGg6IDEwMCU7XG4gICAgbWF4LXdpZHRoOiAyMDBweDtcbiAgICBtaW4taGVpZ2h0OiAyNTBweDtcbiAgfVxuXG4gIC5pbWFnZS1wcmV2aWV3IHtcbiAgICBoZWlnaHQ6IDE1MHB4O1xuICB9XG5cbiAgLmltYWdlLWFjdGlvbnMge1xuICAgIGZsZXgtZGlyZWN0aW9uOiBjb2x1bW47XG4gICAgZ2FwOiAwLjVyZW07XG4gIH1cblxuICAuYWN0aW9uLWJ0biB7XG4gICAgd2lkdGg6IDEwMCU7XG4gIH1cbn1cbiJdLCJzb3VyY2VSb290IjoiIn0= */"],
+      changeDetection: 0
+    });
+  }
+  return ImagensPage;
+})();
+
+/***/ }),
+
+/***/ 7180:
+/*!***************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/scheduler/asap.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   asap: () => (/* binding */ asap),
+/* harmony export */   asapScheduler: () => (/* binding */ asapScheduler)
+/* harmony export */ });
+/* harmony import */ var _AsapAction__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AsapAction */ 8206);
+/* harmony import */ var _AsapScheduler__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AsapScheduler */ 9835);
+
+
+const asapScheduler = new _AsapScheduler__WEBPACK_IMPORTED_MODULE_0__.AsapScheduler(_AsapAction__WEBPACK_IMPORTED_MODULE_1__.AsapAction);
+const asap = asapScheduler;
+
+/***/ }),
+
+/***/ 7184:
+/*!***************************************************************!*\
+  !*** ./node_modules/@angular/cdk/fesm2022/array-I1yfCXUO.mjs ***!
+  \***************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   c: () => (/* binding */ coerceArray)
+/* harmony export */ });
+function coerceArray(value) {
+  return Array.isArray(value) ? value : [value];
+}
+
+
+/***/ }),
+
+/***/ 8206:
+/*!*********************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/scheduler/AsapAction.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AsapAction: () => (/* binding */ AsapAction)
+/* harmony export */ });
+/* harmony import */ var _AsyncAction__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AsyncAction */ 2083);
+/* harmony import */ var _immediateProvider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./immediateProvider */ 3701);
+
+
+class AsapAction extends _AsyncAction__WEBPACK_IMPORTED_MODULE_0__.AsyncAction {
+  constructor(scheduler, work) {
+    super(scheduler, work);
+    this.scheduler = scheduler;
+    this.work = work;
+  }
+  requestAsyncId(scheduler, id, delay = 0) {
+    if (delay !== null && delay > 0) {
+      return super.requestAsyncId(scheduler, id, delay);
+    }
+    scheduler.actions.push(this);
+    return scheduler._scheduled || (scheduler._scheduled = _immediateProvider__WEBPACK_IMPORTED_MODULE_1__.immediateProvider.setImmediate(scheduler.flush.bind(scheduler, undefined)));
+  }
+  recycleAsyncId(scheduler, id, delay = 0) {
+    var _a;
+    if (delay != null ? delay > 0 : this.delay > 0) {
+      return super.recycleAsyncId(scheduler, id, delay);
+    }
+    const {
+      actions
+    } = scheduler;
+    if (id != null && ((_a = actions[actions.length - 1]) === null || _a === void 0 ? void 0 : _a.id) !== id) {
+      _immediateProvider__WEBPACK_IMPORTED_MODULE_1__.immediateProvider.clearImmediate(id);
+      if (scheduler._scheduled === id) {
+        scheduler._scheduled = undefined;
+      }
+    }
+    return undefined;
+  }
+}
+
+/***/ }),
+
+/***/ 9240:
+/*!********************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/observable/interval.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   interval: () => (/* binding */ interval)
+/* harmony export */ });
+/* harmony import */ var _scheduler_async__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scheduler/async */ 8473);
+/* harmony import */ var _timer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./timer */ 4876);
+
+
+function interval(period = 0, scheduler = _scheduler_async__WEBPACK_IMPORTED_MODULE_0__.asyncScheduler) {
+  if (period < 0) {
+    period = 0;
+  }
+  return (0,_timer__WEBPACK_IMPORTED_MODULE_1__.timer)(period, period, scheduler);
+}
+
+/***/ }),
+
+/***/ 9566:
+/*!*******************************************************************!*\
+  !*** ./node_modules/@angular/cdk/fesm2022/scrolling-BkvA05C8.mjs ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   R: () => (/* binding */ RtlScrollAxisType),
+/* harmony export */   g: () => (/* binding */ getRtlScrollAxisType),
+/* harmony export */   s: () => (/* binding */ supportsScrollBehavior)
+/* harmony export */ });
+/** The possible ways the browser may handle the horizontal scroll axis in RTL languages. */
+var RtlScrollAxisType = /*#__PURE__*/function (RtlScrollAxisType) {
+  /**
+   * scrollLeft is 0 when scrolled all the way left and (scrollWidth - clientWidth) when scrolled
+   * all the way right.
+   */
+  RtlScrollAxisType[RtlScrollAxisType["NORMAL"] = 0] = "NORMAL";
+  /**
+   * scrollLeft is -(scrollWidth - clientWidth) when scrolled all the way left and 0 when scrolled
+   * all the way right.
+   */
+  RtlScrollAxisType[RtlScrollAxisType["NEGATED"] = 1] = "NEGATED";
+  /**
+   * scrollLeft is (scrollWidth - clientWidth) when scrolled all the way left and 0 when scrolled
+   * all the way right.
+   */
+  RtlScrollAxisType[RtlScrollAxisType["INVERTED"] = 2] = "INVERTED";
+  return RtlScrollAxisType;
+}(RtlScrollAxisType || {});
+/** Cached result of the way the browser handles the horizontal scroll axis in RTL mode. */
+let rtlScrollAxisType;
+/** Cached result of the check that indicates whether the browser supports scroll behaviors. */
+let scrollBehaviorSupported;
+/** Check whether the browser supports scroll behaviors. */
+function supportsScrollBehavior() {
+  if (scrollBehaviorSupported == null) {
+    // If we're not in the browser, it can't be supported. Also check for `Element`, because
+    // some projects stub out the global `document` during SSR which can throw us off.
+    if (typeof document !== 'object' || !document || typeof Element !== 'function' || !Element) {
+      scrollBehaviorSupported = false;
+      return scrollBehaviorSupported;
+    }
+    // If the element can have a `scrollBehavior` style, we can be sure that it's supported.
+    if ('scrollBehavior' in document.documentElement.style) {
+      scrollBehaviorSupported = true;
+    } else {
+      // At this point we have 3 possibilities: `scrollTo` isn't supported at all, it's
+      // supported but it doesn't handle scroll behavior, or it has been polyfilled.
+      const scrollToFunction = Element.prototype.scrollTo;
+      if (scrollToFunction) {
+        // We can detect if the function has been polyfilled by calling `toString` on it. Native
+        // functions are obfuscated using `[native code]`, whereas if it was overwritten we'd get
+        // the actual function source. Via https://davidwalsh.name/detect-native-function. Consider
+        // polyfilled functions as supporting scroll behavior.
+        scrollBehaviorSupported = !/\{\s*\[native code\]\s*\}/.test(scrollToFunction.toString());
+      } else {
+        scrollBehaviorSupported = false;
+      }
+    }
+  }
+  return scrollBehaviorSupported;
+}
+/**
+ * Checks the type of RTL scroll axis used by this browser. As of time of writing, Chrome is NORMAL,
+ * Firefox & Safari are NEGATED, and IE & Edge are INVERTED.
+ */
+function getRtlScrollAxisType() {
+  // We can't check unless we're on the browser. Just assume 'normal' if we're not.
+  if (typeof document !== 'object' || !document) {
+    return RtlScrollAxisType.NORMAL;
+  }
+  if (rtlScrollAxisType == null) {
+    // Create a 1px wide scrolling container and a 2px wide content element.
+    const scrollContainer = document.createElement('div');
+    const containerStyle = scrollContainer.style;
+    scrollContainer.dir = 'rtl';
+    containerStyle.width = '1px';
+    containerStyle.overflow = 'auto';
+    containerStyle.visibility = 'hidden';
+    containerStyle.pointerEvents = 'none';
+    containerStyle.position = 'absolute';
+    const content = document.createElement('div');
+    const contentStyle = content.style;
+    contentStyle.width = '2px';
+    contentStyle.height = '1px';
+    scrollContainer.appendChild(content);
+    document.body.appendChild(scrollContainer);
+    rtlScrollAxisType = RtlScrollAxisType.NORMAL;
+    // The viewport starts scrolled all the way to the right in RTL mode. If we are in a NORMAL
+    // browser this would mean that the scrollLeft should be 1. If it's zero instead we know we're
+    // dealing with one of the other two types of browsers.
+    if (scrollContainer.scrollLeft === 0) {
+      // In a NEGATED browser the scrollLeft is always somewhere in [-maxScrollAmount, 0]. For an
+      // INVERTED browser it is always somewhere in [0, maxScrollAmount]. We can determine which by
+      // setting to the scrollLeft to 1. This is past the max for a NEGATED browser, so it will
+      // return 0 when we read it again.
+      scrollContainer.scrollLeft = 1;
+      rtlScrollAxisType = scrollContainer.scrollLeft === 0 ? RtlScrollAxisType.NEGATED : RtlScrollAxisType.INVERTED;
+    }
+    scrollContainer.remove();
+  }
+  return rtlScrollAxisType;
+}
+
+
+/***/ }),
+
+/***/ 9835:
+/*!************************************************************************!*\
+  !*** ./node_modules/rxjs/dist/esm/internal/scheduler/AsapScheduler.js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AsapScheduler: () => (/* binding */ AsapScheduler)
+/* harmony export */ });
+/* harmony import */ var _AsyncScheduler__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AsyncScheduler */ 2400);
+
+class AsapScheduler extends _AsyncScheduler__WEBPACK_IMPORTED_MODULE_0__.AsyncScheduler {
+  flush(action) {
+    this._active = true;
+    const flushId = this._scheduled;
+    this._scheduled = undefined;
+    const {
+      actions
+    } = this;
+    let error;
+    action = action || actions.shift();
+    do {
+      if (error = action.execute(action.state, action.delay)) {
+        break;
+      }
+    } while ((action = actions[0]) && action.id === flushId && actions.shift());
+    this._active = false;
+    if (error) {
+      while ((action = actions[0]) && action.id === flushId && actions.shift()) {
+        action.unsubscribe();
+      }
+      throw error;
+    }
+  }
+}
+
+/***/ }),
+
+/***/ 9932:
+/*!************************************************************************!*\
+  !*** ./node_modules/@angular/cdk/fesm2022/directionality-CBXD4hga.mjs ***!
+  \************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   D: () => (/* binding */ Directionality),
+/* harmony export */   _: () => (/* binding */ _resolveDirectionality),
+/* harmony export */   a: () => (/* binding */ DIR_DOCUMENT)
+/* harmony export */ });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 7580);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common */ 9770);
+
+
+
+
+/**
+ * Injection token used to inject the document into Directionality.
+ * This is used so that the value can be faked in tests.
+ *
+ * We can't use the real document in tests because changing the real `dir` causes geometry-based
+ * tests in Safari to fail.
+ *
+ * We also can't re-provide the DOCUMENT token from platform-browser because the unit tests
+ * themselves use things like `querySelector` in test code.
+ *
+ * This token is defined in a separate file from Directionality as a workaround for
+ * https://github.com/angular/angular/issues/22559
+ *
+ * @docs-private
+ */
+const DIR_DOCUMENT = /*#__PURE__*/new _angular_core__WEBPACK_IMPORTED_MODULE_0__.InjectionToken('cdk-dir-doc', {
+  providedIn: 'root',
+  factory: DIR_DOCUMENT_FACTORY
+});
+/**
+ * @docs-private
+ * @deprecated No longer used, will be removed.
+ * @breaking-change 21.0.0
+ */
+function DIR_DOCUMENT_FACTORY() {
+  return (0,_angular_core__WEBPACK_IMPORTED_MODULE_0__.inject)(_angular_common__WEBPACK_IMPORTED_MODULE_1__.DOCUMENT);
+}
+
+/** Regex that matches locales with an RTL script. Taken from `goog.i18n.bidi.isRtlLanguage`. */
+const RTL_LOCALE_PATTERN = /^(ar|ckb|dv|he|iw|fa|nqo|ps|sd|ug|ur|yi|.*[-_](Adlm|Arab|Hebr|Nkoo|Rohg|Thaa))(?!.*[-_](Latn|Cyrl)($|-|_))($|-|_)/i;
+/** Resolves a string value to a specific direction. */
+function _resolveDirectionality(rawValue) {
+  const value = rawValue?.toLowerCase() || '';
+  if (value === 'auto' && typeof navigator !== 'undefined' && navigator?.language) {
+    return RTL_LOCALE_PATTERN.test(navigator.language) ? 'rtl' : 'ltr';
+  }
+  return value === 'rtl' ? 'rtl' : 'ltr';
+}
+/**
+ * The directionality (LTR / RTL) context for the application (or a subtree of it).
+ * Exposes the current direction and a stream of direction changes.
+ */
+let Directionality = /*#__PURE__*/(() => {
+  class Directionality {
+    /** The current 'ltr' or 'rtl' value. */
+    value = 'ltr';
+    /** Stream that emits whenever the 'ltr' / 'rtl' state changes. */
+    change = new _angular_core__WEBPACK_IMPORTED_MODULE_0__.EventEmitter();
+    constructor() {
+      const _document = (0,_angular_core__WEBPACK_IMPORTED_MODULE_0__.inject)(DIR_DOCUMENT, {
+        optional: true
+      });
+      if (_document) {
+        const bodyDir = _document.body ? _document.body.dir : null;
+        const htmlDir = _document.documentElement ? _document.documentElement.dir : null;
+        this.value = _resolveDirectionality(bodyDir || htmlDir || 'ltr');
+      }
+    }
+    ngOnDestroy() {
+      this.change.complete();
+    }
+    static ɵfac = function Directionality_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || Directionality)();
+    };
+    static ɵprov = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({
+      token: Directionality,
+      factory: Directionality.ɵfac,
+      providedIn: 'root'
+    });
+  }
+  return Directionality;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+
+/***/ }),
+
+/***/ 9975:
+/*!**********************************************************!*\
+  !*** ./node_modules/@angular/cdk/fesm2022/scrolling.mjs ***!
+  \**********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CdkFixedSizeVirtualScroll: () => (/* binding */ CdkFixedSizeVirtualScroll),
+/* harmony export */   CdkScrollable: () => (/* binding */ CdkScrollable),
+/* harmony export */   CdkScrollableModule: () => (/* binding */ CdkScrollableModule),
+/* harmony export */   CdkVirtualForOf: () => (/* binding */ CdkVirtualForOf),
+/* harmony export */   CdkVirtualScrollViewport: () => (/* binding */ CdkVirtualScrollViewport),
+/* harmony export */   CdkVirtualScrollable: () => (/* binding */ CdkVirtualScrollable),
+/* harmony export */   CdkVirtualScrollableElement: () => (/* binding */ CdkVirtualScrollableElement),
+/* harmony export */   CdkVirtualScrollableWindow: () => (/* binding */ CdkVirtualScrollableWindow),
+/* harmony export */   DEFAULT_RESIZE_TIME: () => (/* binding */ DEFAULT_RESIZE_TIME),
+/* harmony export */   DEFAULT_SCROLL_TIME: () => (/* binding */ DEFAULT_SCROLL_TIME),
+/* harmony export */   FixedSizeVirtualScrollStrategy: () => (/* binding */ FixedSizeVirtualScrollStrategy),
+/* harmony export */   ScrollDispatcher: () => (/* binding */ ScrollDispatcher),
+/* harmony export */   ScrollingModule: () => (/* binding */ ScrollingModule),
+/* harmony export */   VIRTUAL_SCROLLABLE: () => (/* binding */ VIRTUAL_SCROLLABLE),
+/* harmony export */   VIRTUAL_SCROLL_STRATEGY: () => (/* binding */ VIRTUAL_SCROLL_STRATEGY),
+/* harmony export */   ViewportRuler: () => (/* binding */ ViewportRuler),
+/* harmony export */   _fixedSizeVirtualScrollStrategyFactory: () => (/* binding */ _fixedSizeVirtualScrollStrategyFactory),
+/* harmony export */   "ɵɵDir": () => (/* reexport safe */ _bidi_mjs__WEBPACK_IMPORTED_MODULE_0__.Dir)
+/* harmony export */ });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 7580);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 819);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs */ 9452);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! rxjs */ 3942);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! rxjs */ 614);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! rxjs */ 7180);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! rxjs */ 2510);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! rxjs */ 2551);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ 1817);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! rxjs/operators */ 2351);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! rxjs/operators */ 1567);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! rxjs/operators */ 3037);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! rxjs/operators */ 3900);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! rxjs/operators */ 5057);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! rxjs/operators */ 6647);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! rxjs/operators */ 6301);
+/* harmony import */ var _element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./element-x4z00URv.mjs */ 4724);
+/* harmony import */ var _platform_DmdVEw_C_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./platform-DmdVEw_C.mjs */ 4733);
+/* harmony import */ var _directionality_CBXD4hga_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./directionality-CBXD4hga.mjs */ 9932);
+/* harmony import */ var _scrolling_BkvA05C8_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./scrolling-BkvA05C8.mjs */ 9566);
+/* harmony import */ var _bidi_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./bidi.mjs */ 3680);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/common */ 9770);
+/* harmony import */ var _recycle_view_repeater_strategy_DoWdPqVw_mjs__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./recycle-view-repeater-strategy-DoWdPqVw.mjs */ 2955);
+/* harmony import */ var _data_source_D34wiQZj_mjs__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./data-source-D34wiQZj.mjs */ 1019);
+
+
+
+
+
+
+
+
+
+const _c0 = ["contentWrapper"];
+const _c1 = ["*"];
+
+
+
+
+
+/** The injection token used to specify the virtual scrolling strategy. */
+const VIRTUAL_SCROLL_STRATEGY = /*#__PURE__*/new _angular_core__WEBPACK_IMPORTED_MODULE_1__.InjectionToken('VIRTUAL_SCROLL_STRATEGY');
+
+/** Virtual scrolling strategy for lists with items of known fixed size. */
+class FixedSizeVirtualScrollStrategy {
+  _scrolledIndexChange = /*#__PURE__*/new rxjs__WEBPACK_IMPORTED_MODULE_2__.Subject();
+  /** @docs-private Implemented as part of VirtualScrollStrategy. */
+  scrolledIndexChange = /*#__PURE__*/this._scrolledIndexChange.pipe(/*#__PURE__*/(0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.distinctUntilChanged)());
+  /** The attached viewport. */
+  _viewport = null;
+  /** The size of the items in the virtually scrolling list. */
+  _itemSize;
+  /** The minimum amount of buffer rendered beyond the viewport (in pixels). */
+  _minBufferPx;
+  /** The number of buffer items to render beyond the edge of the viewport (in pixels). */
+  _maxBufferPx;
+  /**
+   * @param itemSize The size of the items in the virtually scrolling list.
+   * @param minBufferPx The minimum amount of buffer (in pixels) before needing to render more
+   * @param maxBufferPx The amount of buffer (in pixels) to render when rendering more.
+   */
+  constructor(itemSize, minBufferPx, maxBufferPx) {
+    this._itemSize = itemSize;
+    this._minBufferPx = minBufferPx;
+    this._maxBufferPx = maxBufferPx;
+  }
+  /**
+   * Attaches this scroll strategy to a viewport.
+   * @param viewport The viewport to attach this strategy to.
+   */
+  attach(viewport) {
+    this._viewport = viewport;
+    this._updateTotalContentSize();
+    this._updateRenderedRange();
+  }
+  /** Detaches this scroll strategy from the currently attached viewport. */
+  detach() {
+    this._scrolledIndexChange.complete();
+    this._viewport = null;
+  }
+  /**
+   * Update the item size and buffer size.
+   * @param itemSize The size of the items in the virtually scrolling list.
+   * @param minBufferPx The minimum amount of buffer (in pixels) before needing to render more
+   * @param maxBufferPx The amount of buffer (in pixels) to render when rendering more.
+   */
+  updateItemAndBufferSize(itemSize, minBufferPx, maxBufferPx) {
+    if (maxBufferPx < minBufferPx && (typeof ngDevMode === 'undefined' || ngDevMode)) {
+      throw Error('CDK virtual scroll: maxBufferPx must be greater than or equal to minBufferPx');
+    }
+    this._itemSize = itemSize;
+    this._minBufferPx = minBufferPx;
+    this._maxBufferPx = maxBufferPx;
+    this._updateTotalContentSize();
+    this._updateRenderedRange();
+  }
+  /** @docs-private Implemented as part of VirtualScrollStrategy. */
+  onContentScrolled() {
+    this._updateRenderedRange();
+  }
+  /** @docs-private Implemented as part of VirtualScrollStrategy. */
+  onDataLengthChanged() {
+    this._updateTotalContentSize();
+    this._updateRenderedRange();
+  }
+  /** @docs-private Implemented as part of VirtualScrollStrategy. */
+  onContentRendered() {
+    /* no-op */
+  }
+  /** @docs-private Implemented as part of VirtualScrollStrategy. */
+  onRenderedOffsetChanged() {
+    /* no-op */
+  }
+  /**
+   * Scroll to the offset for the given index.
+   * @param index The index of the element to scroll to.
+   * @param behavior The ScrollBehavior to use when scrolling.
+   */
+  scrollToIndex(index, behavior) {
+    if (this._viewport) {
+      this._viewport.scrollToOffset(index * this._itemSize, behavior);
+    }
+  }
+  /** Update the viewport's total content size. */
+  _updateTotalContentSize() {
+    if (!this._viewport) {
+      return;
+    }
+    this._viewport.setTotalContentSize(this._viewport.getDataLength() * this._itemSize);
+  }
+  /** Update the viewport's rendered range. */
+  _updateRenderedRange() {
+    if (!this._viewport) {
+      return;
+    }
+    const renderedRange = this._viewport.getRenderedRange();
+    const newRange = {
+      start: renderedRange.start,
+      end: renderedRange.end
+    };
+    const viewportSize = this._viewport.getViewportSize();
+    const dataLength = this._viewport.getDataLength();
+    let scrollOffset = this._viewport.measureScrollOffset();
+    // Prevent NaN as result when dividing by zero.
+    let firstVisibleIndex = this._itemSize > 0 ? scrollOffset / this._itemSize : 0;
+    // If user scrolls to the bottom of the list and data changes to a smaller list
+    if (newRange.end > dataLength) {
+      // We have to recalculate the first visible index based on new data length and viewport size.
+      const maxVisibleItems = Math.ceil(viewportSize / this._itemSize);
+      const newVisibleIndex = Math.max(0, Math.min(firstVisibleIndex, dataLength - maxVisibleItems));
+      // If first visible index changed we must update scroll offset to handle start/end buffers
+      // Current range must also be adjusted to cover the new position (bottom of new list).
+      if (firstVisibleIndex != newVisibleIndex) {
+        firstVisibleIndex = newVisibleIndex;
+        scrollOffset = newVisibleIndex * this._itemSize;
+        newRange.start = Math.floor(firstVisibleIndex);
+      }
+      newRange.end = Math.max(0, Math.min(dataLength, newRange.start + maxVisibleItems));
+    }
+    const startBuffer = scrollOffset - newRange.start * this._itemSize;
+    if (startBuffer < this._minBufferPx && newRange.start != 0) {
+      const expandStart = Math.ceil((this._maxBufferPx - startBuffer) / this._itemSize);
+      newRange.start = Math.max(0, newRange.start - expandStart);
+      newRange.end = Math.min(dataLength, Math.ceil(firstVisibleIndex + (viewportSize + this._minBufferPx) / this._itemSize));
+    } else {
+      const endBuffer = newRange.end * this._itemSize - (scrollOffset + viewportSize);
+      if (endBuffer < this._minBufferPx && newRange.end != dataLength) {
+        const expandEnd = Math.ceil((this._maxBufferPx - endBuffer) / this._itemSize);
+        if (expandEnd > 0) {
+          newRange.end = Math.min(dataLength, newRange.end + expandEnd);
+          newRange.start = Math.max(0, Math.floor(firstVisibleIndex - this._minBufferPx / this._itemSize));
+        }
+      }
+    }
+    this._viewport.setRenderedRange(newRange);
+    this._viewport.setRenderedContentOffset(this._itemSize * newRange.start);
+    this._scrolledIndexChange.next(Math.floor(firstVisibleIndex));
+  }
+}
+/**
+ * Provider factory for `FixedSizeVirtualScrollStrategy` that simply extracts the already created
+ * `FixedSizeVirtualScrollStrategy` from the given directive.
+ * @param fixedSizeDir The instance of `CdkFixedSizeVirtualScroll` to extract the
+ *     `FixedSizeVirtualScrollStrategy` from.
+ */
+function _fixedSizeVirtualScrollStrategyFactory(fixedSizeDir) {
+  return fixedSizeDir._scrollStrategy;
+}
+/** A virtual scroll strategy that supports fixed-size items. */
+let CdkFixedSizeVirtualScroll = /*#__PURE__*/(() => {
+  class CdkFixedSizeVirtualScroll {
+    /** The size of the items in the list (in pixels). */
+    get itemSize() {
+      return this._itemSize;
+    }
+    set itemSize(value) {
+      this._itemSize = (0,_element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_4__.c)(value);
+    }
+    _itemSize = 20;
+    /**
+     * The minimum amount of buffer rendered beyond the viewport (in pixels).
+     * If the amount of buffer dips below this number, more items will be rendered. Defaults to 100px.
+     */
+    get minBufferPx() {
+      return this._minBufferPx;
+    }
+    set minBufferPx(value) {
+      this._minBufferPx = (0,_element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_4__.c)(value);
+    }
+    _minBufferPx = 100;
+    /**
+     * The number of pixels worth of buffer to render for when rendering new items. Defaults to 200px.
+     */
+    get maxBufferPx() {
+      return this._maxBufferPx;
+    }
+    set maxBufferPx(value) {
+      this._maxBufferPx = (0,_element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_4__.c)(value);
+    }
+    _maxBufferPx = 200;
+    /** The scroll strategy used by this directive. */
+    _scrollStrategy = new FixedSizeVirtualScrollStrategy(this.itemSize, this.minBufferPx, this.maxBufferPx);
+    ngOnChanges() {
+      this._scrollStrategy.updateItemAndBufferSize(this.itemSize, this.minBufferPx, this.maxBufferPx);
+    }
+    static ɵfac = function CdkFixedSizeVirtualScroll_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || CdkFixedSizeVirtualScroll)();
+    };
+    static ɵdir = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineDirective"]({
+      type: CdkFixedSizeVirtualScroll,
+      selectors: [["cdk-virtual-scroll-viewport", "itemSize", ""]],
+      inputs: {
+        itemSize: "itemSize",
+        minBufferPx: "minBufferPx",
+        maxBufferPx: "maxBufferPx"
+      },
+      features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵProvidersFeature"]([{
+        provide: VIRTUAL_SCROLL_STRATEGY,
+        useFactory: _fixedSizeVirtualScrollStrategyFactory,
+        deps: [(0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.forwardRef)(() => CdkFixedSizeVirtualScroll)]
+      }]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵNgOnChangesFeature"]]
+    });
+  }
+  return CdkFixedSizeVirtualScroll;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+/** Time in ms to throttle the scrolling events by default. */
+const DEFAULT_SCROLL_TIME = 20;
+/**
+ * Service contained all registered Scrollable references and emits an event when any one of the
+ * Scrollable references emit a scrolled event.
+ */
+let ScrollDispatcher = /*#__PURE__*/(() => {
+  class ScrollDispatcher {
+    _ngZone = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_1__.NgZone);
+    _platform = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_platform_DmdVEw_C_mjs__WEBPACK_IMPORTED_MODULE_5__.P);
+    _renderer = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_1__.RendererFactory2).createRenderer(null, null);
+    _cleanupGlobalListener;
+    constructor() {}
+    /** Subject for notifying that a registered scrollable reference element has been scrolled. */
+    _scrolled = new rxjs__WEBPACK_IMPORTED_MODULE_2__.Subject();
+    /** Keeps track of the amount of subscriptions to `scrolled`. Used for cleaning up afterwards. */
+    _scrolledCount = 0;
+    /**
+     * Map of all the scrollable references that are registered with the service and their
+     * scroll event subscriptions.
+     */
+    scrollContainers = new Map();
+    /**
+     * Registers a scrollable instance with the service and listens for its scrolled events. When the
+     * scrollable is scrolled, the service emits the event to its scrolled observable.
+     * @param scrollable Scrollable instance to be registered.
+     */
+    register(scrollable) {
+      if (!this.scrollContainers.has(scrollable)) {
+        this.scrollContainers.set(scrollable, scrollable.elementScrolled().subscribe(() => this._scrolled.next(scrollable)));
+      }
+    }
+    /**
+     * De-registers a Scrollable reference and unsubscribes from its scroll event observable.
+     * @param scrollable Scrollable instance to be deregistered.
+     */
+    deregister(scrollable) {
+      const scrollableReference = this.scrollContainers.get(scrollable);
+      if (scrollableReference) {
+        scrollableReference.unsubscribe();
+        this.scrollContainers.delete(scrollable);
+      }
+    }
+    /**
+     * Returns an observable that emits an event whenever any of the registered Scrollable
+     * references (or window, document, or body) fire a scrolled event. Can provide a time in ms
+     * to override the default "throttle" time.
+     *
+     * **Note:** in order to avoid hitting change detection for every scroll event,
+     * all of the events emitted from this stream will be run outside the Angular zone.
+     * If you need to update any data bindings as a result of a scroll event, you have
+     * to run the callback using `NgZone.run`.
+     */
+    scrolled(auditTimeInMs = DEFAULT_SCROLL_TIME) {
+      if (!this._platform.isBrowser) {
+        return (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.of)();
+      }
+      return new rxjs__WEBPACK_IMPORTED_MODULE_7__.Observable(observer => {
+        if (!this._cleanupGlobalListener) {
+          this._cleanupGlobalListener = this._ngZone.runOutsideAngular(() => this._renderer.listen('document', 'scroll', () => this._scrolled.next()));
+        }
+        // In the case of a 0ms delay, use an observable without auditTime
+        // since it does add a perceptible delay in processing overhead.
+        const subscription = auditTimeInMs > 0 ? this._scrolled.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.auditTime)(auditTimeInMs)).subscribe(observer) : this._scrolled.subscribe(observer);
+        this._scrolledCount++;
+        return () => {
+          subscription.unsubscribe();
+          this._scrolledCount--;
+          if (!this._scrolledCount) {
+            this._cleanupGlobalListener?.();
+            this._cleanupGlobalListener = undefined;
+          }
+        };
+      });
+    }
+    ngOnDestroy() {
+      this._cleanupGlobalListener?.();
+      this._cleanupGlobalListener = undefined;
+      this.scrollContainers.forEach((_, container) => this.deregister(container));
+      this._scrolled.complete();
+    }
+    /**
+     * Returns an observable that emits whenever any of the
+     * scrollable ancestors of an element are scrolled.
+     * @param elementOrElementRef Element whose ancestors to listen for.
+     * @param auditTimeInMs Time to throttle the scroll events.
+     */
+    ancestorScrolled(elementOrElementRef, auditTimeInMs) {
+      const ancestors = this.getAncestorScrollContainers(elementOrElementRef);
+      return this.scrolled(auditTimeInMs).pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.filter)(target => !target || ancestors.indexOf(target) > -1));
+    }
+    /** Returns all registered Scrollables that contain the provided element. */
+    getAncestorScrollContainers(elementOrElementRef) {
+      const scrollingContainers = [];
+      this.scrollContainers.forEach((_subscription, scrollable) => {
+        if (this._scrollableContainsElement(scrollable, elementOrElementRef)) {
+          scrollingContainers.push(scrollable);
+        }
+      });
+      return scrollingContainers;
+    }
+    /** Returns true if the element is contained within the provided Scrollable. */
+    _scrollableContainsElement(scrollable, elementOrElementRef) {
+      let element = (0,_element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_4__.a)(elementOrElementRef);
+      let scrollableElement = scrollable.getElementRef().nativeElement;
+      // Traverse through the element parents until we reach null, checking if any of the elements
+      // are the scrollable's element.
+      do {
+        if (element == scrollableElement) {
+          return true;
+        }
+      } while (element = element.parentElement);
+      return false;
+    }
+    static ɵfac = function ScrollDispatcher_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || ScrollDispatcher)();
+    };
+    static ɵprov = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({
+      token: ScrollDispatcher,
+      factory: ScrollDispatcher.ɵfac,
+      providedIn: 'root'
+    });
+  }
+  return ScrollDispatcher;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+/**
+ * Sends an event when the directive's element is scrolled. Registers itself with the
+ * ScrollDispatcher service to include itself as part of its collection of scrolling events that it
+ * can be listened to through the service.
+ */
+let CdkScrollable = /*#__PURE__*/(() => {
+  class CdkScrollable {
+    elementRef = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_1__.ElementRef);
+    scrollDispatcher = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(ScrollDispatcher);
+    ngZone = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_1__.NgZone);
+    dir = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_directionality_CBXD4hga_mjs__WEBPACK_IMPORTED_MODULE_10__.D, {
+      optional: true
+    });
+    _scrollElement = this.elementRef.nativeElement;
+    _destroyed = new rxjs__WEBPACK_IMPORTED_MODULE_2__.Subject();
+    _renderer = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_1__.Renderer2);
+    _cleanupScroll;
+    _elementScrolled = new rxjs__WEBPACK_IMPORTED_MODULE_2__.Subject();
+    constructor() {}
+    ngOnInit() {
+      this._cleanupScroll = this.ngZone.runOutsideAngular(() => this._renderer.listen(this._scrollElement, 'scroll', event => this._elementScrolled.next(event)));
+      this.scrollDispatcher.register(this);
+    }
+    ngOnDestroy() {
+      this._cleanupScroll?.();
+      this._elementScrolled.complete();
+      this.scrollDispatcher.deregister(this);
+      this._destroyed.next();
+      this._destroyed.complete();
+    }
+    /** Returns observable that emits when a scroll event is fired on the host element. */
+    elementScrolled() {
+      return this._elementScrolled;
+    }
+    /** Gets the ElementRef for the viewport. */
+    getElementRef() {
+      return this.elementRef;
+    }
+    /**
+     * Scrolls to the specified offsets. This is a normalized version of the browser's native scrollTo
+     * method, since browsers are not consistent about what scrollLeft means in RTL. For this method
+     * left and right always refer to the left and right side of the scrolling container irrespective
+     * of the layout direction. start and end refer to left and right in an LTR context and vice-versa
+     * in an RTL context.
+     * @param options specified the offsets to scroll to.
+     */
+    scrollTo(options) {
+      const el = this.elementRef.nativeElement;
+      const isRtl = this.dir && this.dir.value == 'rtl';
+      // Rewrite start & end offsets as right or left offsets.
+      if (options.left == null) {
+        options.left = isRtl ? options.end : options.start;
+      }
+      if (options.right == null) {
+        options.right = isRtl ? options.start : options.end;
+      }
+      // Rewrite the bottom offset as a top offset.
+      if (options.bottom != null) {
+        options.top = el.scrollHeight - el.clientHeight - options.bottom;
+      }
+      // Rewrite the right offset as a left offset.
+      if (isRtl && (0,_scrolling_BkvA05C8_mjs__WEBPACK_IMPORTED_MODULE_11__.g)() != _scrolling_BkvA05C8_mjs__WEBPACK_IMPORTED_MODULE_11__.R.NORMAL) {
+        if (options.left != null) {
+          options.right = el.scrollWidth - el.clientWidth - options.left;
+        }
+        if ((0,_scrolling_BkvA05C8_mjs__WEBPACK_IMPORTED_MODULE_11__.g)() == _scrolling_BkvA05C8_mjs__WEBPACK_IMPORTED_MODULE_11__.R.INVERTED) {
+          options.left = options.right;
+        } else if ((0,_scrolling_BkvA05C8_mjs__WEBPACK_IMPORTED_MODULE_11__.g)() == _scrolling_BkvA05C8_mjs__WEBPACK_IMPORTED_MODULE_11__.R.NEGATED) {
+          options.left = options.right ? -options.right : options.right;
+        }
+      } else {
+        if (options.right != null) {
+          options.left = el.scrollWidth - el.clientWidth - options.right;
+        }
+      }
+      this._applyScrollToOptions(options);
+    }
+    _applyScrollToOptions(options) {
+      const el = this.elementRef.nativeElement;
+      if ((0,_scrolling_BkvA05C8_mjs__WEBPACK_IMPORTED_MODULE_11__.s)()) {
+        el.scrollTo(options);
+      } else {
+        if (options.top != null) {
+          el.scrollTop = options.top;
+        }
+        if (options.left != null) {
+          el.scrollLeft = options.left;
+        }
+      }
+    }
+    /**
+     * Measures the scroll offset relative to the specified edge of the viewport. This method can be
+     * used instead of directly checking scrollLeft or scrollTop, since browsers are not consistent
+     * about what scrollLeft means in RTL. The values returned by this method are normalized such that
+     * left and right always refer to the left and right side of the scrolling container irrespective
+     * of the layout direction. start and end refer to left and right in an LTR context and vice-versa
+     * in an RTL context.
+     * @param from The edge to measure from.
+     */
+    measureScrollOffset(from) {
+      const LEFT = 'left';
+      const RIGHT = 'right';
+      const el = this.elementRef.nativeElement;
+      if (from == 'top') {
+        return el.scrollTop;
+      }
+      if (from == 'bottom') {
+        return el.scrollHeight - el.clientHeight - el.scrollTop;
+      }
+      // Rewrite start & end as left or right offsets.
+      const isRtl = this.dir && this.dir.value == 'rtl';
+      if (from == 'start') {
+        from = isRtl ? RIGHT : LEFT;
+      } else if (from == 'end') {
+        from = isRtl ? LEFT : RIGHT;
+      }
+      if (isRtl && (0,_scrolling_BkvA05C8_mjs__WEBPACK_IMPORTED_MODULE_11__.g)() == _scrolling_BkvA05C8_mjs__WEBPACK_IMPORTED_MODULE_11__.R.INVERTED) {
+        // For INVERTED, scrollLeft is (scrollWidth - clientWidth) when scrolled all the way left and
+        // 0 when scrolled all the way right.
+        if (from == LEFT) {
+          return el.scrollWidth - el.clientWidth - el.scrollLeft;
+        } else {
+          return el.scrollLeft;
+        }
+      } else if (isRtl && (0,_scrolling_BkvA05C8_mjs__WEBPACK_IMPORTED_MODULE_11__.g)() == _scrolling_BkvA05C8_mjs__WEBPACK_IMPORTED_MODULE_11__.R.NEGATED) {
+        // For NEGATED, scrollLeft is -(scrollWidth - clientWidth) when scrolled all the way left and
+        // 0 when scrolled all the way right.
+        if (from == LEFT) {
+          return el.scrollLeft + el.scrollWidth - el.clientWidth;
+        } else {
+          return -el.scrollLeft;
+        }
+      } else {
+        // For NORMAL, as well as non-RTL contexts, scrollLeft is 0 when scrolled all the way left and
+        // (scrollWidth - clientWidth) when scrolled all the way right.
+        if (from == LEFT) {
+          return el.scrollLeft;
+        } else {
+          return el.scrollWidth - el.clientWidth - el.scrollLeft;
+        }
+      }
+    }
+    static ɵfac = function CdkScrollable_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || CdkScrollable)();
+    };
+    static ɵdir = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineDirective"]({
+      type: CdkScrollable,
+      selectors: [["", "cdk-scrollable", ""], ["", "cdkScrollable", ""]]
+    });
+  }
+  return CdkScrollable;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+/** Time in ms to throttle the resize events by default. */
+const DEFAULT_RESIZE_TIME = 20;
+/**
+ * Simple utility for getting the bounds of the browser viewport.
+ * @docs-private
+ */
+let ViewportRuler = /*#__PURE__*/(() => {
+  class ViewportRuler {
+    _platform = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_platform_DmdVEw_C_mjs__WEBPACK_IMPORTED_MODULE_5__.P);
+    _listeners;
+    /** Cached viewport dimensions. */
+    _viewportSize;
+    /** Stream of viewport change events. */
+    _change = new rxjs__WEBPACK_IMPORTED_MODULE_2__.Subject();
+    /** Used to reference correct document/window */
+    _document = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_common__WEBPACK_IMPORTED_MODULE_12__.DOCUMENT, {
+      optional: true
+    });
+    constructor() {
+      const ngZone = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_1__.NgZone);
+      const renderer = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_1__.RendererFactory2).createRenderer(null, null);
+      ngZone.runOutsideAngular(() => {
+        if (this._platform.isBrowser) {
+          const changeListener = event => this._change.next(event);
+          this._listeners = [renderer.listen('window', 'resize', changeListener), renderer.listen('window', 'orientationchange', changeListener)];
+        }
+        // Clear the cached position so that the viewport is re-measured next time it is required.
+        // We don't need to keep track of the subscription, because it is completed on destroy.
+        this.change().subscribe(() => this._viewportSize = null);
+      });
+    }
+    ngOnDestroy() {
+      this._listeners?.forEach(cleanup => cleanup());
+      this._change.complete();
+    }
+    /** Returns the viewport's width and height. */
+    getViewportSize() {
+      if (!this._viewportSize) {
+        this._updateViewportSize();
+      }
+      const output = {
+        width: this._viewportSize.width,
+        height: this._viewportSize.height
+      };
+      // If we're not on a browser, don't cache the size since it'll be mocked out anyway.
+      if (!this._platform.isBrowser) {
+        this._viewportSize = null;
+      }
+      return output;
+    }
+    /** Gets a DOMRect for the viewport's bounds. */
+    getViewportRect() {
+      // Use the document element's bounding rect rather than the window scroll properties
+      // (e.g. pageYOffset, scrollY) due to in issue in Chrome and IE where window scroll
+      // properties and client coordinates (boundingClientRect, clientX/Y, etc.) are in different
+      // conceptual viewports. Under most circumstances these viewports are equivalent, but they
+      // can disagree when the page is pinch-zoomed (on devices that support touch).
+      // See https://bugs.chromium.org/p/chromium/issues/detail?id=489206#c4
+      // We use the documentElement instead of the body because, by default (without a css reset)
+      // browsers typically give the document body an 8px margin, which is not included in
+      // getBoundingClientRect().
+      const scrollPosition = this.getViewportScrollPosition();
+      const {
+        width,
+        height
+      } = this.getViewportSize();
+      return {
+        top: scrollPosition.top,
+        left: scrollPosition.left,
+        bottom: scrollPosition.top + height,
+        right: scrollPosition.left + width,
+        height,
+        width
+      };
+    }
+    /** Gets the (top, left) scroll position of the viewport. */
+    getViewportScrollPosition() {
+      // While we can get a reference to the fake document
+      // during SSR, it doesn't have getBoundingClientRect.
+      if (!this._platform.isBrowser) {
+        return {
+          top: 0,
+          left: 0
+        };
+      }
+      // The top-left-corner of the viewport is determined by the scroll position of the document
+      // body, normally just (scrollLeft, scrollTop). However, Chrome and Firefox disagree about
+      // whether `document.body` or `document.documentElement` is the scrolled element, so reading
+      // `scrollTop` and `scrollLeft` is inconsistent. However, using the bounding rect of
+      // `document.documentElement` works consistently, where the `top` and `left` values will
+      // equal negative the scroll position.
+      const document = this._document;
+      const window = this._getWindow();
+      const documentElement = document.documentElement;
+      const documentRect = documentElement.getBoundingClientRect();
+      const top = -documentRect.top || document.body.scrollTop || window.scrollY || documentElement.scrollTop || 0;
+      const left = -documentRect.left || document.body.scrollLeft || window.scrollX || documentElement.scrollLeft || 0;
+      return {
+        top,
+        left
+      };
+    }
+    /**
+     * Returns a stream that emits whenever the size of the viewport changes.
+     * This stream emits outside of the Angular zone.
+     * @param throttleTime Time in milliseconds to throttle the stream.
+     */
+    change(throttleTime = DEFAULT_RESIZE_TIME) {
+      return throttleTime > 0 ? this._change.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.auditTime)(throttleTime)) : this._change;
+    }
+    /** Use defaultView of injected document if available or fallback to global window reference */
+    _getWindow() {
+      return this._document.defaultView || window;
+    }
+    /** Updates the cached viewport size. */
+    _updateViewportSize() {
+      const window = this._getWindow();
+      this._viewportSize = this._platform.isBrowser ? {
+        width: window.innerWidth,
+        height: window.innerHeight
+      } : {
+        width: 0,
+        height: 0
+      };
+    }
+    static ɵfac = function ViewportRuler_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || ViewportRuler)();
+    };
+    static ɵprov = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({
+      token: ViewportRuler,
+      factory: ViewportRuler.ɵfac,
+      providedIn: 'root'
+    });
+  }
+  return ViewportRuler;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+const VIRTUAL_SCROLLABLE = /*#__PURE__*/new _angular_core__WEBPACK_IMPORTED_MODULE_1__.InjectionToken('VIRTUAL_SCROLLABLE');
+/**
+ * Extending the {@link CdkScrollable} to be used as scrolling container for virtual scrolling.
+ */
+let CdkVirtualScrollable = /*#__PURE__*/(() => {
+  class CdkVirtualScrollable extends CdkScrollable {
+    constructor() {
+      super();
+    }
+    /**
+     * Measure the viewport size for the provided orientation.
+     *
+     * @param orientation The orientation to measure the size from.
+     */
+    measureViewportSize(orientation) {
+      const viewportEl = this.elementRef.nativeElement;
+      return orientation === 'horizontal' ? viewportEl.clientWidth : viewportEl.clientHeight;
+    }
+    static ɵfac = function CdkVirtualScrollable_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || CdkVirtualScrollable)();
+    };
+    static ɵdir = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineDirective"]({
+      type: CdkVirtualScrollable,
+      features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]]
+    });
+  }
+  return CdkVirtualScrollable;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+/** Checks if the given ranges are equal. */
+function rangesEqual(r1, r2) {
+  return r1.start == r2.start && r1.end == r2.end;
+}
+/**
+ * Scheduler to be used for scroll events. Needs to fall back to
+ * something that doesn't rely on requestAnimationFrame on environments
+ * that don't support it (e.g. server-side rendering).
+ */
+const SCROLL_SCHEDULER = typeof requestAnimationFrame !== 'undefined' ? rxjs__WEBPACK_IMPORTED_MODULE_13__.animationFrameScheduler : rxjs__WEBPACK_IMPORTED_MODULE_14__.asapScheduler;
+/** A viewport that virtualizes its scrolling with the help of `CdkVirtualForOf`. */
+let CdkVirtualScrollViewport = /*#__PURE__*/(() => {
+  class CdkVirtualScrollViewport extends CdkVirtualScrollable {
+    elementRef = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_1__.ElementRef);
+    _changeDetectorRef = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_1__.ChangeDetectorRef);
+    _scrollStrategy = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(VIRTUAL_SCROLL_STRATEGY, {
+      optional: true
+    });
+    scrollable = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(VIRTUAL_SCROLLABLE, {
+      optional: true
+    });
+    _platform = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_platform_DmdVEw_C_mjs__WEBPACK_IMPORTED_MODULE_5__.P);
+    /** Emits when the viewport is detached from a CdkVirtualForOf. */
+    _detachedSubject = new rxjs__WEBPACK_IMPORTED_MODULE_2__.Subject();
+    /** Emits when the rendered range changes. */
+    _renderedRangeSubject = new rxjs__WEBPACK_IMPORTED_MODULE_2__.Subject();
+    /** The direction the viewport scrolls. */
+    get orientation() {
+      return this._orientation;
+    }
+    set orientation(orientation) {
+      if (this._orientation !== orientation) {
+        this._orientation = orientation;
+        this._calculateSpacerSize();
+      }
+    }
+    _orientation = 'vertical';
+    /**
+     * Whether rendered items should persist in the DOM after scrolling out of view. By default, items
+     * will be removed.
+     */
+    appendOnly = false;
+    // Note: we don't use the typical EventEmitter here because we need to subscribe to the scroll
+    // strategy lazily (i.e. only if the user is actually listening to the events). We do this because
+    // depending on how the strategy calculates the scrolled index, it may come at a cost to
+    // performance.
+    /** Emits when the index of the first element visible in the viewport changes. */
+    scrolledIndexChange = new rxjs__WEBPACK_IMPORTED_MODULE_7__.Observable(observer => this._scrollStrategy.scrolledIndexChange.subscribe(index => Promise.resolve().then(() => this.ngZone.run(() => observer.next(index)))));
+    /** The element that wraps the rendered content. */
+    _contentWrapper;
+    /** A stream that emits whenever the rendered range changes. */
+    renderedRangeStream = this._renderedRangeSubject;
+    /**
+     * The total size of all content (in pixels), including content that is not currently rendered.
+     */
+    _totalContentSize = 0;
+    /** A string representing the `style.width` property value to be used for the spacer element. */
+    _totalContentWidth = '';
+    /** A string representing the `style.height` property value to be used for the spacer element. */
+    _totalContentHeight = '';
+    /**
+     * The CSS transform applied to the rendered subset of items so that they appear within the bounds
+     * of the visible viewport.
+     */
+    _renderedContentTransform;
+    /** The currently rendered range of indices. */
+    _renderedRange = {
+      start: 0,
+      end: 0
+    };
+    /** The length of the data bound to this viewport (in number of items). */
+    _dataLength = 0;
+    /** The size of the viewport (in pixels). */
+    _viewportSize = 0;
+    /** the currently attached CdkVirtualScrollRepeater. */
+    _forOf;
+    /** The last rendered content offset that was set. */
+    _renderedContentOffset = 0;
+    /**
+     * Whether the last rendered content offset was to the end of the content (and therefore needs to
+     * be rewritten as an offset to the start of the content).
+     */
+    _renderedContentOffsetNeedsRewrite = false;
+    /** Whether there is a pending change detection cycle. */
+    _isChangeDetectionPending = false;
+    /** A list of functions to run after the next change detection cycle. */
+    _runAfterChangeDetection = [];
+    /** Subscription to changes in the viewport size. */
+    _viewportChanges = rxjs__WEBPACK_IMPORTED_MODULE_15__.Subscription.EMPTY;
+    _injector = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_1__.Injector);
+    _isDestroyed = false;
+    constructor() {
+      super();
+      const viewportRuler = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(ViewportRuler);
+      if (!this._scrollStrategy && (typeof ngDevMode === 'undefined' || ngDevMode)) {
+        throw Error('Error: cdk-virtual-scroll-viewport requires the "itemSize" property to be set.');
+      }
+      this._viewportChanges = viewportRuler.change().subscribe(() => {
+        this.checkViewportSize();
+      });
+      if (!this.scrollable) {
+        // No scrollable is provided, so the virtual-scroll-viewport needs to become a scrollable
+        this.elementRef.nativeElement.classList.add('cdk-virtual-scrollable');
+        this.scrollable = this;
+      }
+    }
+    ngOnInit() {
+      // Scrolling depends on the element dimensions which we can't get during SSR.
+      if (!this._platform.isBrowser) {
+        return;
+      }
+      if (this.scrollable === this) {
+        super.ngOnInit();
+      }
+      // It's still too early to measure the viewport at this point. Deferring with a promise allows
+      // the Viewport to be rendered with the correct size before we measure. We run this outside the
+      // zone to avoid causing more change detection cycles. We handle the change detection loop
+      // ourselves instead.
+      this.ngZone.runOutsideAngular(() => Promise.resolve().then(() => {
+        this._measureViewportSize();
+        this._scrollStrategy.attach(this);
+        this.scrollable.elementScrolled().pipe(
+        // Start off with a fake scroll event so we properly detect our initial position.
+        (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_16__.startWith)(null),
+        // Collect multiple events into one until the next animation frame. This way if
+        // there are multiple scroll events in the same frame we only need to recheck
+        // our layout once.
+        (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.auditTime)(0, SCROLL_SCHEDULER),
+        // Usually `elementScrolled` is completed when the scrollable is destroyed, but
+        // that may not be the case if a `CdkVirtualScrollableElement` is used so we have
+        // to unsubscribe here just in case.
+        (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_17__.takeUntil)(this._destroyed)).subscribe(() => this._scrollStrategy.onContentScrolled());
+        this._markChangeDetectionNeeded();
+      }));
+    }
+    ngOnDestroy() {
+      this.detach();
+      this._scrollStrategy.detach();
+      // Complete all subjects
+      this._renderedRangeSubject.complete();
+      this._detachedSubject.complete();
+      this._viewportChanges.unsubscribe();
+      this._isDestroyed = true;
+      super.ngOnDestroy();
+    }
+    /** Attaches a `CdkVirtualScrollRepeater` to this viewport. */
+    attach(forOf) {
+      if (this._forOf && (typeof ngDevMode === 'undefined' || ngDevMode)) {
+        throw Error('CdkVirtualScrollViewport is already attached.');
+      }
+      // Subscribe to the data stream of the CdkVirtualForOf to keep track of when the data length
+      // changes. Run outside the zone to avoid triggering change detection, since we're managing the
+      // change detection loop ourselves.
+      this.ngZone.runOutsideAngular(() => {
+        this._forOf = forOf;
+        this._forOf.dataStream.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_17__.takeUntil)(this._detachedSubject)).subscribe(data => {
+          const newLength = data.length;
+          if (newLength !== this._dataLength) {
+            this._dataLength = newLength;
+            this._scrollStrategy.onDataLengthChanged();
+          }
+          this._doChangeDetection();
+        });
+      });
+    }
+    /** Detaches the current `CdkVirtualForOf`. */
+    detach() {
+      this._forOf = null;
+      this._detachedSubject.next();
+    }
+    /** Gets the length of the data bound to this viewport (in number of items). */
+    getDataLength() {
+      return this._dataLength;
+    }
+    /** Gets the size of the viewport (in pixels). */
+    getViewportSize() {
+      return this._viewportSize;
+    }
+    // TODO(mmalerba): This is technically out of sync with what's really rendered until a render
+    // cycle happens. I'm being careful to only call it after the render cycle is complete and before
+    // setting it to something else, but its error prone and should probably be split into
+    // `pendingRange` and `renderedRange`, the latter reflecting whats actually in the DOM.
+    /** Get the current rendered range of items. */
+    getRenderedRange() {
+      return this._renderedRange;
+    }
+    measureBoundingClientRectWithScrollOffset(from) {
+      return this.getElementRef().nativeElement.getBoundingClientRect()[from];
+    }
+    /**
+     * Sets the total size of all content (in pixels), including content that is not currently
+     * rendered.
+     */
+    setTotalContentSize(size) {
+      if (this._totalContentSize !== size) {
+        this._totalContentSize = size;
+        this._calculateSpacerSize();
+        this._markChangeDetectionNeeded();
+      }
+    }
+    /** Sets the currently rendered range of indices. */
+    setRenderedRange(range) {
+      if (!rangesEqual(this._renderedRange, range)) {
+        if (this.appendOnly) {
+          range = {
+            start: 0,
+            end: Math.max(this._renderedRange.end, range.end)
+          };
+        }
+        this._renderedRangeSubject.next(this._renderedRange = range);
+        this._markChangeDetectionNeeded(() => this._scrollStrategy.onContentRendered());
+      }
+    }
+    /**
+     * Gets the offset from the start of the viewport to the start of the rendered data (in pixels).
+     */
+    getOffsetToRenderedContentStart() {
+      return this._renderedContentOffsetNeedsRewrite ? null : this._renderedContentOffset;
+    }
+    /**
+     * Sets the offset from the start of the viewport to either the start or end of the rendered data
+     * (in pixels).
+     */
+    setRenderedContentOffset(offset, to = 'to-start') {
+      // In appendOnly, we always start from the top
+      offset = this.appendOnly && to === 'to-start' ? 0 : offset;
+      // For a horizontal viewport in a right-to-left language we need to translate along the x-axis
+      // in the negative direction.
+      const isRtl = this.dir && this.dir.value == 'rtl';
+      const isHorizontal = this.orientation == 'horizontal';
+      const axis = isHorizontal ? 'X' : 'Y';
+      const axisDirection = isHorizontal && isRtl ? -1 : 1;
+      let transform = `translate${axis}(${Number(axisDirection * offset)}px)`;
+      this._renderedContentOffset = offset;
+      if (to === 'to-end') {
+        transform += ` translate${axis}(-100%)`;
+        // The viewport should rewrite this as a `to-start` offset on the next render cycle. Otherwise
+        // elements will appear to expand in the wrong direction (e.g. `mat-expansion-panel` would
+        // expand upward).
+        this._renderedContentOffsetNeedsRewrite = true;
+      }
+      if (this._renderedContentTransform != transform) {
+        // We know this value is safe because we parse `offset` with `Number()` before passing it
+        // into the string.
+        this._renderedContentTransform = transform;
+        this._markChangeDetectionNeeded(() => {
+          if (this._renderedContentOffsetNeedsRewrite) {
+            this._renderedContentOffset -= this.measureRenderedContentSize();
+            this._renderedContentOffsetNeedsRewrite = false;
+            this.setRenderedContentOffset(this._renderedContentOffset);
+          } else {
+            this._scrollStrategy.onRenderedOffsetChanged();
+          }
+        });
+      }
+    }
+    /**
+     * Scrolls to the given offset from the start of the viewport. Please note that this is not always
+     * the same as setting `scrollTop` or `scrollLeft`. In a horizontal viewport with right-to-left
+     * direction, this would be the equivalent of setting a fictional `scrollRight` property.
+     * @param offset The offset to scroll to.
+     * @param behavior The ScrollBehavior to use when scrolling. Default is behavior is `auto`.
+     */
+    scrollToOffset(offset, behavior = 'auto') {
+      const options = {
+        behavior
+      };
+      if (this.orientation === 'horizontal') {
+        options.start = offset;
+      } else {
+        options.top = offset;
+      }
+      this.scrollable.scrollTo(options);
+    }
+    /**
+     * Scrolls to the offset for the given index.
+     * @param index The index of the element to scroll to.
+     * @param behavior The ScrollBehavior to use when scrolling. Default is behavior is `auto`.
+     */
+    scrollToIndex(index, behavior = 'auto') {
+      this._scrollStrategy.scrollToIndex(index, behavior);
+    }
+    /**
+     * Gets the current scroll offset from the start of the scrollable (in pixels).
+     * @param from The edge to measure the offset from. Defaults to 'top' in vertical mode and 'start'
+     *     in horizontal mode.
+     */
+    measureScrollOffset(from) {
+      // This is to break the call cycle
+      let measureScrollOffset;
+      if (this.scrollable == this) {
+        measureScrollOffset = _from => super.measureScrollOffset(_from);
+      } else {
+        measureScrollOffset = _from => this.scrollable.measureScrollOffset(_from);
+      }
+      return Math.max(0, measureScrollOffset(from ?? (this.orientation === 'horizontal' ? 'start' : 'top')) - this.measureViewportOffset());
+    }
+    /**
+     * Measures the offset of the viewport from the scrolling container
+     * @param from The edge to measure from.
+     */
+    measureViewportOffset(from) {
+      let fromRect;
+      const LEFT = 'left';
+      const RIGHT = 'right';
+      const isRtl = this.dir?.value == 'rtl';
+      if (from == 'start') {
+        fromRect = isRtl ? RIGHT : LEFT;
+      } else if (from == 'end') {
+        fromRect = isRtl ? LEFT : RIGHT;
+      } else if (from) {
+        fromRect = from;
+      } else {
+        fromRect = this.orientation === 'horizontal' ? 'left' : 'top';
+      }
+      const scrollerClientRect = this.scrollable.measureBoundingClientRectWithScrollOffset(fromRect);
+      const viewportClientRect = this.elementRef.nativeElement.getBoundingClientRect()[fromRect];
+      return viewportClientRect - scrollerClientRect;
+    }
+    /** Measure the combined size of all of the rendered items. */
+    measureRenderedContentSize() {
+      const contentEl = this._contentWrapper.nativeElement;
+      return this.orientation === 'horizontal' ? contentEl.offsetWidth : contentEl.offsetHeight;
+    }
+    /**
+     * Measure the total combined size of the given range. Throws if the range includes items that are
+     * not rendered.
+     */
+    measureRangeSize(range) {
+      if (!this._forOf) {
+        return 0;
+      }
+      return this._forOf.measureRangeSize(range, this.orientation);
+    }
+    /** Update the viewport dimensions and re-render. */
+    checkViewportSize() {
+      // TODO: Cleanup later when add logic for handling content resize
+      this._measureViewportSize();
+      this._scrollStrategy.onDataLengthChanged();
+    }
+    /** Measure the viewport size. */
+    _measureViewportSize() {
+      this._viewportSize = this.scrollable.measureViewportSize(this.orientation);
+    }
+    /** Queue up change detection to run. */
+    _markChangeDetectionNeeded(runAfter) {
+      if (runAfter) {
+        this._runAfterChangeDetection.push(runAfter);
+      }
+      // Use a Promise to batch together calls to `_doChangeDetection`. This way if we set a bunch of
+      // properties sequentially we only have to run `_doChangeDetection` once at the end.
+      if (!this._isChangeDetectionPending) {
+        this._isChangeDetectionPending = true;
+        this.ngZone.runOutsideAngular(() => Promise.resolve().then(() => {
+          this._doChangeDetection();
+        }));
+      }
+    }
+    /** Run change detection. */
+    _doChangeDetection() {
+      if (this._isDestroyed) {
+        return;
+      }
+      this.ngZone.run(() => {
+        // Apply changes to Angular bindings. Note: We must call `markForCheck` to run change detection
+        // from the root, since the repeated items are content projected in. Calling `detectChanges`
+        // instead does not properly check the projected content.
+        this._changeDetectorRef.markForCheck();
+        // Apply the content transform. The transform can't be set via an Angular binding because
+        // bypassSecurityTrustStyle is banned in Google. However the value is safe, it's composed of
+        // string literals, a variable that can only be 'X' or 'Y', and user input that is run through
+        // the `Number` function first to coerce it to a numeric value.
+        this._contentWrapper.nativeElement.style.transform = this._renderedContentTransform;
+        (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.afterNextRender)(() => {
+          this._isChangeDetectionPending = false;
+          const runAfterChangeDetection = this._runAfterChangeDetection;
+          this._runAfterChangeDetection = [];
+          for (const fn of runAfterChangeDetection) {
+            fn();
+          }
+        }, {
+          injector: this._injector
+        });
+      });
+    }
+    /** Calculates the `style.width` and `style.height` for the spacer element. */
+    _calculateSpacerSize() {
+      this._totalContentHeight = this.orientation === 'horizontal' ? '' : `${this._totalContentSize}px`;
+      this._totalContentWidth = this.orientation === 'horizontal' ? `${this._totalContentSize}px` : '';
+    }
+    static ɵfac = function CdkVirtualScrollViewport_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || CdkVirtualScrollViewport)();
+    };
+    static ɵcmp = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({
+      type: CdkVirtualScrollViewport,
+      selectors: [["cdk-virtual-scroll-viewport"]],
+      viewQuery: function CdkVirtualScrollViewport_Query(rf, ctx) {
+        if (rf & 1) {
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵviewQuery"](_c0, 7);
+        }
+        if (rf & 2) {
+          let _t;
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx._contentWrapper = _t.first);
+        }
+      },
+      hostAttrs: [1, "cdk-virtual-scroll-viewport"],
+      hostVars: 4,
+      hostBindings: function CdkVirtualScrollViewport_HostBindings(rf, ctx) {
+        if (rf & 2) {
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassProp"]("cdk-virtual-scroll-orientation-horizontal", ctx.orientation === "horizontal")("cdk-virtual-scroll-orientation-vertical", ctx.orientation !== "horizontal");
+        }
+      },
+      inputs: {
+        orientation: "orientation",
+        appendOnly: [2, "appendOnly", "appendOnly", _angular_core__WEBPACK_IMPORTED_MODULE_1__.booleanAttribute]
+      },
+      outputs: {
+        scrolledIndexChange: "scrolledIndexChange"
+      },
+      features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵProvidersFeature"]([{
+        provide: CdkScrollable,
+        useFactory: (virtualScrollable, viewport) => virtualScrollable || viewport,
+        deps: [[new _angular_core__WEBPACK_IMPORTED_MODULE_1__.Optional(), new _angular_core__WEBPACK_IMPORTED_MODULE_1__.Inject(VIRTUAL_SCROLLABLE)], CdkVirtualScrollViewport]
+      }]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]],
+      ngContentSelectors: _c1,
+      decls: 4,
+      vars: 4,
+      consts: [["contentWrapper", ""], [1, "cdk-virtual-scroll-content-wrapper"], [1, "cdk-virtual-scroll-spacer"]],
+      template: function CdkVirtualScrollViewport_Template(rf, ctx) {
+        if (rf & 1) {
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵprojectionDef"]();
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 1, 0);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵprojection"](2);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](3, "div", 2);
+        }
+        if (rf & 2) {
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
+          _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵstyleProp"]("width", ctx._totalContentWidth)("height", ctx._totalContentHeight);
+        }
+      },
+      styles: ["cdk-virtual-scroll-viewport{display:block;position:relative;transform:translateZ(0)}.cdk-virtual-scrollable{overflow:auto;will-change:scroll-position;contain:strict}.cdk-virtual-scroll-content-wrapper{position:absolute;top:0;left:0;contain:content}[dir=rtl] .cdk-virtual-scroll-content-wrapper{right:0;left:auto}.cdk-virtual-scroll-orientation-horizontal .cdk-virtual-scroll-content-wrapper{min-height:100%}.cdk-virtual-scroll-orientation-horizontal .cdk-virtual-scroll-content-wrapper>dl:not([cdkVirtualFor]),.cdk-virtual-scroll-orientation-horizontal .cdk-virtual-scroll-content-wrapper>ol:not([cdkVirtualFor]),.cdk-virtual-scroll-orientation-horizontal .cdk-virtual-scroll-content-wrapper>table:not([cdkVirtualFor]),.cdk-virtual-scroll-orientation-horizontal .cdk-virtual-scroll-content-wrapper>ul:not([cdkVirtualFor]){padding-left:0;padding-right:0;margin-left:0;margin-right:0;border-left-width:0;border-right-width:0;outline:none}.cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper{min-width:100%}.cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper>dl:not([cdkVirtualFor]),.cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper>ol:not([cdkVirtualFor]),.cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper>table:not([cdkVirtualFor]),.cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper>ul:not([cdkVirtualFor]){padding-top:0;padding-bottom:0;margin-top:0;margin-bottom:0;border-top-width:0;border-bottom-width:0;outline:none}.cdk-virtual-scroll-spacer{height:1px;transform-origin:0 0;flex:0 0 auto}[dir=rtl] .cdk-virtual-scroll-spacer{transform-origin:100% 0}\n"],
+      encapsulation: 2,
+      changeDetection: 0
+    });
+  }
+  return CdkVirtualScrollViewport;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+/** Helper to extract the offset of a DOM Node in a certain direction. */
+function getOffset(orientation, direction, node) {
+  const el = node;
+  if (!el.getBoundingClientRect) {
+    return 0;
+  }
+  const rect = el.getBoundingClientRect();
+  if (orientation === 'horizontal') {
+    return direction === 'start' ? rect.left : rect.right;
+  }
+  return direction === 'start' ? rect.top : rect.bottom;
+}
+/**
+ * A directive similar to `ngForOf` to be used for rendering data inside a virtual scrolling
+ * container.
+ */
+let CdkVirtualForOf = /*#__PURE__*/(() => {
+  class CdkVirtualForOf {
+    _viewContainerRef = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_1__.ViewContainerRef);
+    _template = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_1__.TemplateRef);
+    _differs = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_1__.IterableDiffers);
+    _viewRepeater = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_recycle_view_repeater_strategy_DoWdPqVw_mjs__WEBPACK_IMPORTED_MODULE_18__.b);
+    _viewport = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(CdkVirtualScrollViewport, {
+      skipSelf: true
+    });
+    /** Emits when the rendered view of the data changes. */
+    viewChange = new rxjs__WEBPACK_IMPORTED_MODULE_2__.Subject();
+    /** Subject that emits when a new DataSource instance is given. */
+    _dataSourceChanges = new rxjs__WEBPACK_IMPORTED_MODULE_2__.Subject();
+    /** The DataSource to display. */
+    get cdkVirtualForOf() {
+      return this._cdkVirtualForOf;
+    }
+    set cdkVirtualForOf(value) {
+      this._cdkVirtualForOf = value;
+      if ((0,_data_source_D34wiQZj_mjs__WEBPACK_IMPORTED_MODULE_19__.i)(value)) {
+        this._dataSourceChanges.next(value);
+      } else {
+        // If value is an an NgIterable, convert it to an array.
+        this._dataSourceChanges.next(new _recycle_view_repeater_strategy_DoWdPqVw_mjs__WEBPACK_IMPORTED_MODULE_18__.A((0,rxjs__WEBPACK_IMPORTED_MODULE_20__.isObservable)(value) ? value : Array.from(value || [])));
+      }
+    }
+    _cdkVirtualForOf;
+    /**
+     * The `TrackByFunction` to use for tracking changes. The `TrackByFunction` takes the index and
+     * the item and produces a value to be used as the item's identity when tracking changes.
+     */
+    get cdkVirtualForTrackBy() {
+      return this._cdkVirtualForTrackBy;
+    }
+    set cdkVirtualForTrackBy(fn) {
+      this._needsUpdate = true;
+      this._cdkVirtualForTrackBy = fn ? (index, item) => fn(index + (this._renderedRange ? this._renderedRange.start : 0), item) : undefined;
+    }
+    _cdkVirtualForTrackBy;
+    /** The template used to stamp out new elements. */
+    set cdkVirtualForTemplate(value) {
+      if (value) {
+        this._needsUpdate = true;
+        this._template = value;
+      }
+    }
+    /**
+     * The size of the cache used to store templates that are not being used for re-use later.
+     * Setting the cache size to `0` will disable caching. Defaults to 20 templates.
+     */
+    get cdkVirtualForTemplateCacheSize() {
+      return this._viewRepeater.viewCacheSize;
+    }
+    set cdkVirtualForTemplateCacheSize(size) {
+      this._viewRepeater.viewCacheSize = (0,_element_x4z00URv_mjs__WEBPACK_IMPORTED_MODULE_4__.c)(size);
+    }
+    /** Emits whenever the data in the current DataSource changes. */
+    dataStream = this._dataSourceChanges.pipe(
+    // Start off with null `DataSource`.
+    (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_16__.startWith)(null),
+    // Bundle up the previous and current data sources so we can work with both.
+    (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_21__.pairwise)(),
+    // Use `_changeDataSource` to disconnect from the previous data source and connect to the
+    // new one, passing back a stream of data changes which we run through `switchMap` to give
+    // us a data stream that emits the latest data from whatever the current `DataSource` is.
+    (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_22__.switchMap)(([prev, cur]) => this._changeDataSource(prev, cur)),
+    // Replay the last emitted data when someone subscribes.
+    (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_23__.shareReplay)(1));
+    /** The differ used to calculate changes to the data. */
+    _differ = null;
+    /** The most recent data emitted from the DataSource. */
+    _data;
+    /** The currently rendered items. */
+    _renderedItems;
+    /** The currently rendered range of indices. */
+    _renderedRange;
+    /** Whether the rendered data should be updated during the next ngDoCheck cycle. */
+    _needsUpdate = false;
+    _destroyed = new rxjs__WEBPACK_IMPORTED_MODULE_2__.Subject();
+    constructor() {
+      const ngZone = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_core__WEBPACK_IMPORTED_MODULE_1__.NgZone);
+      this.dataStream.subscribe(data => {
+        this._data = data;
+        this._onRenderedDataChange();
+      });
+      this._viewport.renderedRangeStream.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_17__.takeUntil)(this._destroyed)).subscribe(range => {
+        this._renderedRange = range;
+        if (this.viewChange.observers.length) {
+          ngZone.run(() => this.viewChange.next(this._renderedRange));
+        }
+        this._onRenderedDataChange();
+      });
+      this._viewport.attach(this);
+    }
+    /**
+     * Measures the combined size (width for horizontal orientation, height for vertical) of all items
+     * in the specified range. Throws an error if the range includes items that are not currently
+     * rendered.
+     */
+    measureRangeSize(range, orientation) {
+      if (range.start >= range.end) {
+        return 0;
+      }
+      if ((range.start < this._renderedRange.start || range.end > this._renderedRange.end) && (typeof ngDevMode === 'undefined' || ngDevMode)) {
+        throw Error(`Error: attempted to measure an item that isn't rendered.`);
+      }
+      // The index into the list of rendered views for the first item in the range.
+      const renderedStartIndex = range.start - this._renderedRange.start;
+      // The length of the range we're measuring.
+      const rangeLen = range.end - range.start;
+      // Loop over all the views, find the first and land node and compute the size by subtracting
+      // the top of the first node from the bottom of the last one.
+      let firstNode;
+      let lastNode;
+      // Find the first node by starting from the beginning and going forwards.
+      for (let i = 0; i < rangeLen; i++) {
+        const view = this._viewContainerRef.get(i + renderedStartIndex);
+        if (view && view.rootNodes.length) {
+          firstNode = lastNode = view.rootNodes[0];
+          break;
+        }
+      }
+      // Find the last node by starting from the end and going backwards.
+      for (let i = rangeLen - 1; i > -1; i--) {
+        const view = this._viewContainerRef.get(i + renderedStartIndex);
+        if (view && view.rootNodes.length) {
+          lastNode = view.rootNodes[view.rootNodes.length - 1];
+          break;
+        }
+      }
+      return firstNode && lastNode ? getOffset(orientation, 'end', lastNode) - getOffset(orientation, 'start', firstNode) : 0;
+    }
+    ngDoCheck() {
+      if (this._differ && this._needsUpdate) {
+        // TODO(mmalerba): We should differentiate needs update due to scrolling and a new portion of
+        // this list being rendered (can use simpler algorithm) vs needs update due to data actually
+        // changing (need to do this diff).
+        const changes = this._differ.diff(this._renderedItems);
+        if (!changes) {
+          this._updateContext();
+        } else {
+          this._applyChanges(changes);
+        }
+        this._needsUpdate = false;
+      }
+    }
+    ngOnDestroy() {
+      this._viewport.detach();
+      this._dataSourceChanges.next(undefined);
+      this._dataSourceChanges.complete();
+      this.viewChange.complete();
+      this._destroyed.next();
+      this._destroyed.complete();
+      this._viewRepeater.detach();
+    }
+    /** React to scroll state changes in the viewport. */
+    _onRenderedDataChange() {
+      if (!this._renderedRange) {
+        return;
+      }
+      this._renderedItems = this._data.slice(this._renderedRange.start, this._renderedRange.end);
+      if (!this._differ) {
+        // Use a wrapper function for the `trackBy` so any new values are
+        // picked up automatically without having to recreate the differ.
+        this._differ = this._differs.find(this._renderedItems).create((index, item) => {
+          return this.cdkVirtualForTrackBy ? this.cdkVirtualForTrackBy(index, item) : item;
+        });
+      }
+      this._needsUpdate = true;
+    }
+    /** Swap out one `DataSource` for another. */
+    _changeDataSource(oldDs, newDs) {
+      if (oldDs) {
+        oldDs.disconnect(this);
+      }
+      this._needsUpdate = true;
+      return newDs ? newDs.connect(this) : (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.of)();
+    }
+    /** Update the `CdkVirtualForOfContext` for all views. */
+    _updateContext() {
+      const count = this._data.length;
+      let i = this._viewContainerRef.length;
+      while (i--) {
+        const view = this._viewContainerRef.get(i);
+        view.context.index = this._renderedRange.start + i;
+        view.context.count = count;
+        this._updateComputedContextProperties(view.context);
+        view.detectChanges();
+      }
+    }
+    /** Apply changes to the DOM. */
+    _applyChanges(changes) {
+      this._viewRepeater.applyChanges(changes, this._viewContainerRef, (record, _adjustedPreviousIndex, currentIndex) => this._getEmbeddedViewArgs(record, currentIndex), record => record.item);
+      // Update $implicit for any items that had an identity change.
+      changes.forEachIdentityChange(record => {
+        const view = this._viewContainerRef.get(record.currentIndex);
+        view.context.$implicit = record.item;
+      });
+      // Update the context variables on all items.
+      const count = this._data.length;
+      let i = this._viewContainerRef.length;
+      while (i--) {
+        const view = this._viewContainerRef.get(i);
+        view.context.index = this._renderedRange.start + i;
+        view.context.count = count;
+        this._updateComputedContextProperties(view.context);
+      }
+    }
+    /** Update the computed properties on the `CdkVirtualForOfContext`. */
+    _updateComputedContextProperties(context) {
+      context.first = context.index === 0;
+      context.last = context.index === context.count - 1;
+      context.even = context.index % 2 === 0;
+      context.odd = !context.even;
+    }
+    _getEmbeddedViewArgs(record, index) {
+      // Note that it's important that we insert the item directly at the proper index,
+      // rather than inserting it and the moving it in place, because if there's a directive
+      // on the same node that injects the `ViewContainerRef`, Angular will insert another
+      // comment node which can throw off the move when it's being repeated for all items.
+      return {
+        templateRef: this._template,
+        context: {
+          $implicit: record.item,
+          // It's guaranteed that the iterable is not "undefined" or "null" because we only
+          // generate views for elements if the "cdkVirtualForOf" iterable has elements.
+          cdkVirtualForOf: this._cdkVirtualForOf,
+          index: -1,
+          count: -1,
+          first: false,
+          last: false,
+          odd: false,
+          even: false
+        },
+        index
+      };
+    }
+    static ngTemplateContextGuard(directive, context) {
+      return true;
+    }
+    static ɵfac = function CdkVirtualForOf_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || CdkVirtualForOf)();
+    };
+    static ɵdir = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineDirective"]({
+      type: CdkVirtualForOf,
+      selectors: [["", "cdkVirtualFor", "", "cdkVirtualForOf", ""]],
+      inputs: {
+        cdkVirtualForOf: "cdkVirtualForOf",
+        cdkVirtualForTrackBy: "cdkVirtualForTrackBy",
+        cdkVirtualForTemplate: "cdkVirtualForTemplate",
+        cdkVirtualForTemplateCacheSize: "cdkVirtualForTemplateCacheSize"
+      },
+      features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵProvidersFeature"]([{
+        provide: _recycle_view_repeater_strategy_DoWdPqVw_mjs__WEBPACK_IMPORTED_MODULE_18__.b,
+        useClass: _recycle_view_repeater_strategy_DoWdPqVw_mjs__WEBPACK_IMPORTED_MODULE_18__._
+      }])]
+    });
+  }
+  return CdkVirtualForOf;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+/**
+ * Provides a virtual scrollable for the element it is attached to.
+ */
+let CdkVirtualScrollableElement = /*#__PURE__*/(() => {
+  class CdkVirtualScrollableElement extends CdkVirtualScrollable {
+    constructor() {
+      super();
+    }
+    measureBoundingClientRectWithScrollOffset(from) {
+      return this.getElementRef().nativeElement.getBoundingClientRect()[from] - this.measureScrollOffset(from);
+    }
+    static ɵfac = function CdkVirtualScrollableElement_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || CdkVirtualScrollableElement)();
+    };
+    static ɵdir = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineDirective"]({
+      type: CdkVirtualScrollableElement,
+      selectors: [["", "cdkVirtualScrollingElement", ""]],
+      hostAttrs: [1, "cdk-virtual-scrollable"],
+      features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵProvidersFeature"]([{
+        provide: VIRTUAL_SCROLLABLE,
+        useExisting: CdkVirtualScrollableElement
+      }]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]]
+    });
+  }
+  return CdkVirtualScrollableElement;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+/**
+ * Provides as virtual scrollable for the global / window scrollbar.
+ */
+let CdkVirtualScrollableWindow = /*#__PURE__*/(() => {
+  class CdkVirtualScrollableWindow extends CdkVirtualScrollable {
+    constructor() {
+      super();
+      const document = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_common__WEBPACK_IMPORTED_MODULE_12__.DOCUMENT);
+      this.elementRef = new _angular_core__WEBPACK_IMPORTED_MODULE_1__.ElementRef(document.documentElement);
+      this._scrollElement = document;
+    }
+    measureBoundingClientRectWithScrollOffset(from) {
+      return this.getElementRef().nativeElement.getBoundingClientRect()[from];
+    }
+    static ɵfac = function CdkVirtualScrollableWindow_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || CdkVirtualScrollableWindow)();
+    };
+    static ɵdir = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineDirective"]({
+      type: CdkVirtualScrollableWindow,
+      selectors: [["cdk-virtual-scroll-viewport", "scrollWindow", ""]],
+      features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵProvidersFeature"]([{
+        provide: VIRTUAL_SCROLLABLE,
+        useExisting: CdkVirtualScrollableWindow
+      }]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]]
+    });
+  }
+  return CdkVirtualScrollableWindow;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+let CdkScrollableModule = /*#__PURE__*/(() => {
+  class CdkScrollableModule {
+    static ɵfac = function CdkScrollableModule_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || CdkScrollableModule)();
+    };
+    static ɵmod = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineNgModule"]({
+      type: CdkScrollableModule
+    });
+    static ɵinj = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjector"]({});
+  }
+  return CdkScrollableModule;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+/**
+ * @docs-primary-export
+ */
+let ScrollingModule = /*#__PURE__*/(() => {
+  class ScrollingModule {
+    static ɵfac = function ScrollingModule_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || ScrollingModule)();
+    };
+    static ɵmod = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineNgModule"]({
+      type: ScrollingModule
+    });
+    static ɵinj = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjector"]({
+      imports: [_bidi_mjs__WEBPACK_IMPORTED_MODULE_0__.BidiModule, CdkScrollableModule, _bidi_mjs__WEBPACK_IMPORTED_MODULE_0__.BidiModule, CdkScrollableModule]
+    });
+  }
+  return ScrollingModule;
+})();
+/*#__PURE__*/(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && void 0;
+})();
+
+
+/***/ })
+
+}]);
+//# sourceMappingURL=963.js.map

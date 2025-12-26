@@ -22,7 +22,7 @@ export class BlogDetailPage implements OnInit {
   // Safe HTML content
   safeContent = computed<SafeHtml | undefined>(() => {
     const content = this.post()?.content;
-    return content ? this.sanitizer.sanitize(1, content) || content : undefined;
+    return content ? this.sanitizer.bypassSecurityTrustHtml(content) : undefined;
   });
 
   private meta = inject(Meta);
@@ -34,10 +34,17 @@ export class BlogDetailPage implements OnInit {
   private sanitizer = inject(DomSanitizer);
 
   ngOnInit(): void {
-    const slug = this.route.snapshot.params['slug'];
-    if (slug) {
-      this.loadPost(slug);
-    }
+    // Subscribe to route params to reload when navigating between articles
+    this.route.params.subscribe(params => {
+      const slug = params['slug'];
+      if (slug) {
+        this.loadPost(slug);
+        // Scroll to top when navigating to a new article
+        if (typeof window !== 'undefined') {
+          window.scrollTo(0, 0);
+        }
+      }
+    });
   }
 
   loadPost(slug: string): void {

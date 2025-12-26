@@ -1,0 +1,118 @@
+<div class="container mx-auto px-4 py-12">
+  <!-- Header -->
+  <div class="text-center mb-12">
+    <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">Blog Guia Noivas</h1>
+    <p class="text-xl text-gray-600">Dicas, inspirações e guias para o seu casamento perfeito</p>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="max-w-2xl mx-auto mb-12">
+    <div class="flex gap-2">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (keydown.enter)="search()"
+        placeholder="Buscar artigos..."
+        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500" />
+      <button
+        (click)="search()"
+        class="bg-rose-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-rose-700 transition">
+        Buscar
+      </button>
+    </div>
+  </div>
+
+  <!-- Category Filters -->
+  <div class="flex flex-wrap gap-2 justify-center mb-12">
+    <button
+      (click)="filterByCategory('')"
+      [class.bg-rose-600]="!selectedCategory()"
+      [class.text-white]="!selectedCategory()"
+      [class.bg-gray-100]="selectedCategory()"
+      [class.text-gray-700]="selectedCategory()"
+      class="px-4 py-2 rounded-full font-semibold hover:bg-rose-700 hover:text-white transition">
+      Todos
+    </button>
+    <button
+      (click)="filterByCategory('dicas')"
+      [class.bg-rose-600]="selectedCategory() === 'dicas'"
+      [class.text-white]="selectedCategory() === 'dicas'"
+      [class.bg-gray-100]="selectedCategory() !== 'dicas'"
+      [class.text-gray-700]="selectedCategory() !== 'dicas'"
+      class="px-4 py-2 rounded-full font-semibold hover:bg-rose-700 hover:text-white transition">
+      Dicas
+    </button>
+    <button
+      (click)="filterByCategory('inspiracao')"
+      [class.bg-rose-600]="selectedCategory() === 'inspiracao'"
+      [class.text-white]="selectedCategory() === 'inspiracao'"
+      [class.bg-gray-100]="selectedCategory() !== 'inspiracao'"
+      [class.text-gray-700]="selectedCategory() !== 'inspiracao'"
+      class="px-4 py-2 rounded-full font-semibold hover:bg-rose-700 hover:text-white transition">
+      Inspiração
+    </button>
+    <button
+      (click)="filterByCategory('guias')"
+      [class.bg-rose-600]="selectedCategory() === 'guias'"
+      [class.text-white]="selectedCategory() === 'guias'"
+      [class.bg-gray-100]="selectedCategory() !== 'guias'"
+      [class.text-gray-700]="selectedCategory() !== 'guias'"
+      class="px-4 py-2 rounded-full font-semibold hover:bg-rose-700 hover:text-white transition">
+      Guias
+    </button>
+  </div>
+
+  <!-- Posts Grid -->
+  <div *ngIf="!isLoading(); else loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <article *ngFor="let post of posts()" class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+      <a [routerLink]="buildUrl(['blog', post.slug])">
+        <div class="relative h-48 bg-gray-200">
+          <img
+            *ngIf="post.featuredImage"
+            [ngSrc]="post.featuredImage"
+            [alt]="post.title"
+            width="400"
+            height="300"
+            loading="lazy"
+            class="w-full h-full object-cover" />
+        </div>
+        <div class="p-6">
+          <div class="flex items-center gap-2 mb-3">
+            <span *ngIf="post.category" class="text-xs bg-rose-100 text-rose-600 px-3 py-1 rounded-full font-semibold">
+              {{ post.category }}
+            </span>
+            <span class="text-xs text-gray-500">{{ formatDate(post.publishedAt) }}</span>
+          </div>
+          <h2 class="text-xl font-serif font-bold text-gray-900 mb-3 hover:text-rose-600 transition">
+            {{ post.title }}
+          </h2>
+          <p class="text-gray-600 line-clamp-3 mb-4">{{ post.excerpt }}</p>
+          <div class="flex items-center justify-between">
+            <span *ngIf="post.author" class="text-sm text-gray-500">Por {{ post.author }}</span>
+            <span class="text-rose-600 font-semibold text-sm">Ler mais →</span>
+          </div>
+        </div>
+      </a>
+    </article>
+  </div>
+
+  <!-- Loading State -->
+  <ng-template #loading>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div *ngFor="let i of [1,2,3,4,5,6]" class="bg-white rounded-xl shadow-lg overflow-hidden animate-pulse">
+        <div class="h-48 bg-gray-200"></div>
+        <div class="p-6">
+          <div class="h-4 bg-gray-200 rounded w-20 mb-3"></div>
+          <div class="h-6 bg-gray-200 rounded w-full mb-3"></div>
+          <div class="h-4 bg-gray-200 rounded w-full mb-2"></div>
+          <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading() && posts().length === 0" class="text-center py-12">
+    <p class="text-xl text-gray-500">Nenhum artigo encontrado.</p>
+  </div>
+</div>

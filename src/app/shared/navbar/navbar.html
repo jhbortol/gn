@@ -11,6 +11,7 @@
 		<div class="hidden md:flex items-center space-x-8 text-sm font-semibold text-gray-600">
 			<a [routerLink]="buildUrl('/')" class="hover:text-rose-600 transition py-2">INÍCIO</a>
 			<a [routerLink]="buildUrl('categorias')" class="hover:text-rose-600 transition py-2">CATEGORIAS</a>
+			<a [routerLink]="buildUrl('blog')" class="hover:text-rose-600 transition py-2">BLOG</a>
 			<a [routerLink]="buildUrl('anuncie')" class="hover:text-rose-600 transition py-2">ANUNCIE</a>
             <a [routerLink]="buildUrl('contato')" class="hover:text-rose-600 transition py-2">CONTATO</a>
 			<a routerLink="/painel/login" class="px-4 py-2 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-md">PAINEL FORNECEDOR</a>
@@ -30,6 +31,7 @@
 		<div class="container mx-auto px-4 py-4 flex flex-col space-y-3">
 			<a [routerLink]="buildUrl('/')" (click)="closeMobileMenu()" class="text-gray-700 hover:text-rose-600 font-semibold py-2">INÍCIO</a>
 			<a [routerLink]="buildUrl('categorias')" (click)="closeMobileMenu()" class="text-gray-700 hover:text-rose-600 font-semibold py-2">CATEGORIAS</a>
+			<a [routerLink]="buildUrl('blog')" (click)="closeMobileMenu()" class="text-gray-700 hover:text-rose-600 font-semibold py-2">BLOG</a>
 			<a [routerLink]="buildUrl('anuncie')" (click)="closeMobileMenu()" class="text-gray-700 hover:text-rose-600 font-semibold py-2">ANUNCIE</a>
 			<a [routerLink]="buildUrl('contato')" (click)="closeMobileMenu()" class="text-gray-700 hover:text-rose-600 font-semibold py-2">CONTATO</a>
 			<a routerLink="/painel/login" (click)="closeMobileMenu()" class="text-center px-4 py-2 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-md font-semibold">PAINEL FORNECEDOR</a>

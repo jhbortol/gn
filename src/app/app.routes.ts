@@ -39,6 +39,10 @@ export const routes: Routes = [
 			{
 				path: 'contato',
 				loadChildren: () => import('./features/contato/contato-module').then(m => m.ContatoModule)
+			},
+			{
+				path: 'blog',
+				loadChildren: () => import('./features/blog/blog-module').then(m => m.BlogModule)
 			}
 		]
 	},

@@ -135,8 +135,24 @@
         </div>
         <div class="info-item">
           <span class="info-label">Publicado:</span>
-          <span class="info-value">{{ fornecedor.publicado ? 'Sim' : 'Não' }}</span>
+          <span class="info-value" [class.status-pending]="!fornecedor.publicado" [class.status-active]="fornecedor.publicado">
+            {{ fornecedor.publicado ? 'Sim' : 'Não' }}
+          </span>
         </div>
+      </div>
+      
+      <!-- Preview Button -->
+      <div class="preview-section" *ngIf="fornecedor">
+        <button type="button" class="btn-preview" (click)="openPreview()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          Visualizar Perfil Público
+        </button>
+        <span class="preview-hint" *ngIf="!fornecedor.publicado">
+          ⚠️ Seu perfil ainda não está publicado. Use o preview para ver como ficará quando for aprovado.
+        </span>
       </div>
     </div>
 

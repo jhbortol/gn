@@ -174,6 +174,60 @@ textarea.form-control {
   font-weight: 600;
 }
 
+.info-value.status-pending {
+  color: #ed8936;
+}
+
+.info-value.status-active {
+  color: #48bb78;
+}
+
+.preview-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: fit-content;
+}
+
+.btn-preview:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
+}
+
+.btn-preview svg {
+  flex-shrink: 0;
+}
+
+.preview-hint {
+  font-size: 13px;
+  color: #ed8936;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: #fffaf0;
+  border-radius: 6px;
+  border: 1px solid #fbd38d;
+}
+
 .form-actions {
   display: flex;
   gap: 12px;

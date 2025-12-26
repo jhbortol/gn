@@ -1,7 +1,7 @@
-import { Component, OnInit, ChangeDetectionStrategy, signal, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-import { Meta, Title } from '@angular/platform-browser';
+import { Meta, Title, DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BlogData, BlogPost, BlogPostListDto } from '../services/blog-data';
 import { CidadeService } from '../../../core/cidade.service';
 import { TrackingService } from '../../../core/tracking.service';
@@ -18,6 +18,12 @@ export class BlogDetailPage implements OnInit {
   post = signal<BlogPost | undefined>(undefined);
   relatedPosts = signal<BlogPostListDto[]>([]);
   isLoading = signal(true);
+  
+  // Safe HTML content
+  safeContent = computed<SafeHtml | undefined>(() => {
+    const content = this.post()?.content;
+    return content ? this.sanitizer.sanitize(1, content) || content : undefined;
+  });
 
   private meta = inject(Meta);
   private title = inject(Title);
@@ -25,6 +31,7 @@ export class BlogDetailPage implements OnInit {
   private blogData = inject(BlogData);
   private cidadeService = inject(CidadeService);
   private tracking = inject(TrackingService);
+  private sanitizer = inject(DomSanitizer);
 
   ngOnInit(): void {
     const slug = this.route.snapshot.params['slug'];

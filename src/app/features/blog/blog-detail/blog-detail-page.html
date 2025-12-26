@@ -63,7 +63,7 @@
     </header>
 
     <!-- Content -->
-    <div class="prose prose-lg max-w-none mb-12" [innerHTML]="post()?.content"></div>
+    <div class="prose prose-lg max-w-none mb-12" [innerHTML]="safeContent()"></div>
 
     <!-- Tags -->
     <div *ngIf="post()?.tags && post()!.tags!.length > 0" class="mb-12">

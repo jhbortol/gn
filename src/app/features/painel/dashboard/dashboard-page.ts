@@ -36,4 +36,9 @@ export class DashboardPageComponent implements OnInit {
       }
     });
   }
+
+  getMaxViews(): number {
+    if (!this.stats?.ultimasVisualizacoes) return 1;
+    return Math.max(...this.stats.ultimasVisualizacoes.map(v => v.quantidade), 1);
+  }
 }

@@ -2,29 +2,76 @@
   <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
-      <h1 class="logo">Guia Noivas</h1>
-      <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
+      <div class="logo-container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+        <h1 class="logo">Guia Noivas</h1>
+      </div>
+      <button class="toggle-btn" (click)="toggleSidebar()" aria-label="Toggle menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
     </div>
 
     <nav class="sidebar-nav">
-      <a 
-        *ngFor="let item of menuItems"
-        [routerLink]="item.path"
-        routerLinkActive="active"
-        class="nav-item"
-      >
-        <span class="nav-icon">{{item.icon}}</span>
-        <span class="nav-label">{{item.label}}</span>
+      <a [routerLink]="'/painel/dashboard'" routerLinkActive="active" class="nav-item">
+        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        <span class="nav-label">Dashboard</span>
+      </a>
+      <a [routerLink]="'/painel/perfil'" routerLinkActive="active" class="nav-item">
+        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span class="nav-label">Meu Perfil</span>
+      </a>
+      <a [routerLink]="'/painel/imagens'" routerLinkActive="active" class="nav-item">
+        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+          <polyline points="21 15 16 10 5 21"></polyline>
+        </svg>
+        <span class="nav-label">Imagens</span>
+      </a>
+      <a [routerLink]="'/painel/testemunhos'" routerLinkActive="active" class="nav-item">
+        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span class="nav-label">Testemunhos</span>
+      </a>
+      <a [routerLink]="'/painel/alterar-senha'" routerLinkActive="active" class="nav-item">
+        <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <span class="nav-label">Alterar Senha</span>
       </a>
     </nav>
 
     <div class="sidebar-footer">
       <button class="btn-ghost" (click)="viewSite()">
-        <span class="nav-icon">🌐</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
         <span class="nav-label">Ver Site</span>
       </button>
-      <button class="btn-ghost" (click)="logout()">
-        <span class="nav-icon">🚪</span>
+      <button class="btn-ghost btn-logout" (click)="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
         <span class="nav-label">Sair</span>
       </button>
     </div>
@@ -33,8 +80,17 @@
   <!-- Main Content -->
   <div class="main-content">
     <header class="topbar">
-      <button class="mobile-menu-btn" (click)="toggleSidebar()">☰</button>
+      <button class="mobile-menu-btn" (click)="toggleSidebar()" aria-label="Toggle menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
       <div class="topbar-user">
+        <div class="user-avatar">
+          {{ userName.charAt(0).toUpperCase() }}
+        </div>
         <span class="user-name">{{userName}}</span>
       </div>
     </header>

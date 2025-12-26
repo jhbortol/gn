@@ -40,6 +40,7 @@ export interface FornecedorDetailDto {
   destaque?: boolean;
   seloFornecedor?: boolean;
   ativo?: boolean;
+  publicado?: boolean;
   rating?: number | null;
   visitas?: number;
   imagens?: MediaDto[]; // array de objetos completos vindos da API
@@ -66,6 +67,7 @@ export interface Fornecedor {
   destaque?: boolean;
   seloFornecedor?: boolean;
   ativo?: boolean;
+  publicado?: boolean;
   rating?: number | null;
   visitas?: number;
   categoria?: string; // apenas o nome para compatibilidade prévia
@@ -139,15 +141,23 @@ export class FornecedoresData {
     );
   }
 
-  getById(identifier: string): Observable<Fornecedor> {
+  getById(identifier: string, preview = false): Observable<Fornecedor> {
     const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(identifier);
     const endpoint = isGuid ? `/fornecedores/${identifier}` : `/fornecedores/slug/${identifier}`;
-    return this.api.get<FornecedorDetailDto>(endpoint).pipe(
+    
+    // If preview mode, add query param to bypass publicado filter
+    const params: any = {};
+    if (preview) {
+      params.preview = 'true';
+    }
+    
+    return this.api.get<FornecedorDetailDto>(endpoint, params).pipe(
       map(detail => ({
         id: detail.id,
         nome: detail.nome,
         slug: detail.slug,
         descricao: detail.descricao,
+        publicado: detail.publicado,
         cidade: detail.cidade,
         endereco: detail.endereco,
         horarioFuncionamento: detail.horarioFuncionamento,

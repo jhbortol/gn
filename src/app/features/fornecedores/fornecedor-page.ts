@@ -1,9 +1,10 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
 import { TrackingService } from '../../core/tracking.service';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-fornecedor-page',
@@ -16,9 +17,12 @@ import { Observable } from 'rxjs';
 export class FornecedorPageComponent implements OnInit {
   fornecedor?: Fornecedor;
   selectedImage?: string;
+  isPreviewMode = false;
+  notFound = false;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private fornecedores: FornecedoresData,
     private cdr: ChangeDetectorRef,
     private tracking: TrackingService
@@ -26,16 +30,33 @@ export class FornecedorPageComponent implements OnInit {
 
   ngOnInit(): void {
     const identifier = this.route.snapshot.params['id']; // pode ser GUID ou slug
+    this.isPreviewMode = this.route.snapshot.queryParams['preview'] === 'true';
+    
     if (identifier) {
-      this.fornecedores.getById(identifier).subscribe(f => {
-        this.fornecedor = f;
-        this.tracking.trackVendorView({
-          vendorId: f.id,
-          vendorName: f.nome,
-          vendorCategory: f.categoria
-        });
-        // For OnPush change detection, ensure view updates after async data arrives
-        this.cdr.markForCheck();
+      this.fornecedores.getById(identifier, this.isPreviewMode).subscribe({
+        next: (f) => {
+          // Validate publicado field if environment requires it
+          // Only enforce if FORNECEDOR_PUBLICADO is true (production) and not in preview mode
+          if (environment.FORNECEDOR_PUBLICADO === true && !this.isPreviewMode && !f.publicado) {
+            console.warn('Fornecedor não publicado acessado diretamente:', f.id);
+            this.notFound = true;
+            this.cdr.markForCheck();
+            return;
+          }
+          
+          this.fornecedor = f;
+          this.tracking.trackVendorView({
+            vendorId: f.id,
+            vendorName: f.nome,
+            vendorCategory: f.categoria
+          });
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          console.error('Error loading fornecedor:', err);
+          this.notFound = true;
+          this.cdr.markForCheck();
+        }
       });
     }
   }

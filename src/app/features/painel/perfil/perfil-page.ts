@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { Router } from '@angular/router';
 import { SupplierService, FornecedorDto, FornecedorUpdateDto } from '../services/supplier.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { CidadeService } from '../../../core/cidade.service';
 
 @Component({
   selector: 'app-perfil-page',
@@ -22,7 +24,9 @@ export class PerfilPageComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private supplierService: SupplierService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private router: Router,
+    private cidadeService: CidadeService
   ) {
     this.perfilForm = this.fb.group({
       nome: ['', [Validators.required, Validators.maxLength(200)]],
@@ -199,5 +203,19 @@ export class PerfilPageComponent implements OnInit {
         this.saving = false;
       }
     });
+  }
+
+  openPreview(): void {
+    if (!this.fornecedor?.slug) {
+      this.toastService.error('Slug do fornecedor não disponível');
+      return;
+    }
+
+    // Build URL with preview parameter
+    const cidade = this.fornecedor.cidade || 'piracicaba';
+    const url = this.cidadeService.buildUrl(`fornecedores/${this.fornecedor.slug}?preview=true`);
+    
+    // Open in new tab
+    window.open(url, '_blank');
   }
 }

@@ -1,5 +1,7 @@
 <div id="app-top" tabindex="-1"></div>
-<app-navbar></app-navbar>
+@if (showNavbar()) {
+	<app-navbar></app-navbar>
+}
 <app-clickwrap-agreement></app-clickwrap-agreement>
 <main id="main-content" class="focus:outline-none" tabindex="-1">
 	<router-outlet />

@@ -43,6 +43,14 @@ export const routes: Routes = [
 			{
 				path: 'blog',
 				loadChildren: () => import('./features/blog/blog-module').then(m => m.BlogModule)
+			},
+			{
+				path: 'guia-precos',
+				loadChildren: () => import('./features/guia-precos/guia-precos-module').then(m => m.GuiaPrecosModule)
+			},
+			{
+				path: 'midia-kit',
+				loadComponent: () => import('./features/midia-kit/midia-kit-page').then(m => m.MidiaKitPage)
 			}
 		]
 	},

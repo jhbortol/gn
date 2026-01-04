@@ -1,0 +1,56 @@
+.guia-precos-container {
+  background: linear-gradient(to bottom, #fdf2f8, #ffffff);
+  min-height: 100vh;
+}
+
+.header-section h1 {
+  background: linear-gradient(135deg, #f43f5e 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.benefits-grid {
+  margin-bottom: 4rem;
+}
+
+.benefit-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.benefit-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.benefit-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1rem;
+  background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f43f5e;
+}
+
+.form-card {
+  border: 1px solid #f3f4f6;
+}
+
+.form-group label {
+  font-weight: 600;
+}
+
+.social-proof {
+  padding: 2rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}

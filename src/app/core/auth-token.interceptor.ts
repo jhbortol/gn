@@ -4,10 +4,21 @@ import { Observable, switchMap, throwError } from 'rxjs';
 import { AuthTokenService } from './auth-token.service';
 
 export const authTokenInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
-  // Não anexar token em chamadas de login
-  if (req.url.includes('/auth/login')) {
+  // Rotas públicas que não precisam de autenticação
+  const publicRoutes = [
+    '/auth/login',
+    '/newsletter/subscribe',
+    '/files/download',
+    '/leads/guia-precos',
+    '/leads/contact',
+    '/contato'
+  ];
+  
+  // Não anexar token em chamadas públicas
+  if (publicRoutes.some(route => req.url.includes(route))) {
     return next(req);
   }
+  
   const auth = inject(AuthTokenService);
   return auth.getToken().pipe(
     switchMap(token => {

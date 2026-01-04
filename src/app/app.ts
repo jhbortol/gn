@@ -14,14 +14,18 @@ import { FooterComponent } from './shared/footer/footer';
 })
 export class App implements AfterViewInit {
   protected readonly title = signal('guia-noivas');
+  showNavbar = signal(true);
   showFooter = signal(true);
   private router = inject(Router);
 
   ngAfterViewInit() {
     this.router.events.subscribe(ev => {
       if (ev instanceof NavigationEnd) {
-        // Hide footer on painel routes
-        this.showFooter.set(!ev.url.includes('/painel'));
+        const hideNavbar = ev.url.includes('/midia-kit');
+        const hideFooter = ev.url.includes('/painel') || ev.url.includes('/midia-kit');
+
+        this.showNavbar.set(!hideNavbar);
+        this.showFooter.set(!hideFooter);
         
         // Scroll already handled by router config; ensure focus for accessibility
         const main = document.getElementById('main-content');

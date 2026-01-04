@@ -9,6 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W5VV70FNKL"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-W5VV70FNKL');
+    </script>
+    
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #fffaf1; scroll-behavior: smooth; }
         .font-serif { font-family: 'Playfair Display', serif; }
@@ -262,7 +272,7 @@
         <div class="container mx-auto max-w-3xl text-center">
             <h2 class="text-3xl md:text-4xl font-serif font-bold mb-6 burgundy">Acesse o Portal</h2>
             <p class="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">Visite a plataforma oficial do Guia de Noivas Piracicaba e descubra todas as oportunidades para sua marca.</p>
-            <a href="https://guianoivas.com/piracicaba" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-rose-900 text-white font-bold px-8 py-4 rounded-lg hover:bg-rose-800 transition shadow-lg hover:shadow-rose-900/40">
+            <a href="https://guianoivas.com/piracicaba" target="_blank" rel="noopener noreferrer" onclick="gtag('event', 'click', {'event_category': 'midia_kit', 'event_label': 'visit_portal'});" class="inline-flex items-center gap-2 bg-rose-900 text-white font-bold px-8 py-4 rounded-lg hover:bg-rose-800 transition shadow-lg hover:shadow-rose-900/40">
                 Visite guianoivas.com/piracicaba 
                 <i class="fa fa-external-link-alt text-sm"></i>
             </a>
@@ -271,7 +281,7 @@
     <footer class="py-24 px-6 text-center bg-white">
         <div class="container mx-auto max-w-3xl">
             <h2 class="text-4xl md:text-6xl font-serif font-bold mb-10 burgundy leading-tight">Sua marca será protagonista ou coadjuvante em 2026?</h2>
-            <a href="https://wa.me/5519989786156?text=Quero%20garantir%20meu%20espaço%20no%20Guia%202026" class="inline-flex items-center gap-3 bg-rose-900 text-white px-10 py-6 rounded-full text-xl font-bold hover:bg-rose-800 transition shadow-xl hover:shadow-rose-900/40 transform hover:scale-105 duration-200">FALAR COM O CADASTRO <i class="fab fa-whatsapp"></i></a>
+            <a href="https://wa.me/5519989786156?text=Quero%20garantir%20meu%20espaço%20no%20Guia%202026" onclick="gtag('event', 'click', {'event_category': 'midia_kit', 'event_label': 'whatsapp_cta'});" class="inline-flex items-center gap-3 bg-rose-900 text-white px-10 py-6 rounded-full text-xl font-bold hover:bg-rose-800 transition shadow-xl hover:shadow-rose-900/40 transform hover:scale-105 duration-200">FALAR COM O CADASTRO <i class="fab fa-whatsapp"></i></a>
             <p class="mt-12 text-slate-400 text-[10px] max-w-lg mx-auto leading-relaxed uppercase tracking-widest">⚠️ O Guia Noivas Piracicaba atua exclusivamente como plataforma de divulgação e catálogo digital. A contratação e execução dos serviços são de responsabilidade direta entre noivas e fornecedores. © 2026 Todos os direitos reservados.</p>
         </div>
     </footer>

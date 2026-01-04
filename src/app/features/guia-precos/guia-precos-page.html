@@ -1,0 +1,156 @@
+<div class="guia-precos-container">
+  <div class="container mx-auto px-4 py-16">
+    <!-- Header -->
+    <div class="header-section text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">
+        Guia de Preços Piracicaba 2026
+      </h1>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        Planeje seu casamento com segurança! Baixe gratuitamente nosso guia completo com estimativa de preços de casamento em Piracicaba.
+      </p>
+    </div>
+
+    <!-- Formulário -->
+    <div class="form-section max-w-2xl mx-auto">
+      <div class="form-card bg-white rounded-2xl shadow-xl p-8 md:p-12">
+        <div *ngIf="!submitted(); else successMessage">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+            Preencha seus dados para receber o guia
+          </h2>
+
+          <form [formGroup]="leadForm" (ngSubmit)="onSubmit()" class="space-y-6">
+            <!-- Nome -->
+            <div class="form-group">
+              <label for="nome" class="block text-sm font-semibold text-gray-700 mb-2">
+                Nome Completo *
+              </label>
+              <input
+                id="nome"
+                type="text"
+                formControlName="nome"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                placeholder="Maria Silva"
+              />
+              <span class="text-sm text-red-600 mt-1" *ngIf="leadForm.get('nome')?.invalid && leadForm.get('nome')?.touched">
+                Nome é obrigatório
+              </span>
+            </div>
+
+            <!-- WhatsApp -->
+            <div class="form-group">
+              <label for="whatsapp" class="block text-sm font-semibold text-gray-700 mb-2">
+                WhatsApp (com DDD) *
+              </label>
+              <input
+                id="whatsapp"
+                type="tel"
+                formControlName="whatsapp"
+                (input)="formatWhatsApp($event)"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                placeholder="(19) 99999-9999"
+                maxlength="15"
+              />
+              <span class="text-sm text-red-600 mt-1" *ngIf="leadForm.get('whatsapp')?.invalid && leadForm.get('whatsapp')?.touched">
+                WhatsApp é obrigatório (mínimo 10 dígitos)
+              </span>
+            </div>
+
+            <!-- Data do Casamento -->
+            <div class="form-group">
+              <label for="dataCasamento" class="block text-sm font-semibold text-gray-700 mb-2">
+                Data Prevista do Casamento *
+              </label>
+              <input
+                id="dataCasamento"
+                type="text"
+                formControlName="dataCasamento"
+                (input)="formatDate($event)"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                placeholder="DD/MM/AAAA"
+                maxlength="10"
+              />
+              <span class="text-sm text-red-600 mt-1" *ngIf="leadForm.get('dataCasamento')?.invalid && leadForm.get('dataCasamento')?.touched">
+                Data do casamento é obrigatória (formato: DD/MM/AAAA)
+              </span>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+              <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+                E-mail *
+              </label>
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                placeholder="maria@email.com"
+              />
+              <span class="text-sm text-red-600 mt-1" *ngIf="leadForm.get('email')?.invalid && leadForm.get('email')?.touched">
+                Informe um e-mail válido
+              </span>
+            </div>
+
+            <!-- Erro -->
+            <div *ngIf="error()" class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
+              {{ error() }}
+            </div>
+
+            <!-- Botão Submit -->
+            <button
+              type="submit"
+              [disabled]="leadForm.invalid || loading()"
+              class="w-full bg-gradient-to-r from-rose-500 to-rose-600 text-white font-bold py-4 px-6 rounded-lg hover:from-rose-600 hover:to-rose-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+            >
+              <span *ngIf="!loading()">Baixar Guia Grátis</span>
+              <span *ngIf="loading()">Enviando...</span>
+            </button>
+
+            <p class="text-xs text-gray-500 text-center mt-4">
+              Ao baixar, você concorda em receber comunicações do Guia Noivas. Seus dados estão seguros e você pode cancelar a qualquer momento.
+            </p>
+          </form>
+        </div>
+
+        <!-- Mensagem de Sucesso com Download -->
+        <ng-template #successMessage>
+          <div class="text-center py-8">
+            <div class="mb-6">
+              <svg class="mx-auto w-16 h-16 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Cadastro realizado com sucesso!</h2>
+            <p class="text-gray-600 mb-8">Clique no botão abaixo para baixar seu guia de preços.</p>
+            
+            <button
+              (click)="downloadPDF()"
+              type="button"
+              [disabled]="loading()"
+              class="inline-flex items-center gap-2 bg-gradient-to-r from-rose-500 to-rose-600 text-white font-bold py-4 px-8 rounded-lg hover:from-rose-600 hover:to-rose-700 transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span *ngIf="!loading()">Download do Guia (PDF)</span>
+              <span *ngIf="loading()">Baixando...</span>
+            </button>
+
+            <p class="text-sm text-gray-500 mt-6">
+              Enviamos também uma cópia para seu WhatsApp!
+            </p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Social Proof -->
+    <div class="social-proof text-center mt-16">
+      <p class="text-gray-600 text-lg">
+        Mais de <strong class="text-rose-600">500 noivas</strong> já baixaram o guia este ano!
+      </p>
+    </div>
+  </div>
+</div>

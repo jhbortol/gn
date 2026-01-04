@@ -1,0 +1,130 @@
+<div class="guia-precos-section">
+  <!-- Background decorativo -->
+  <div class="background-decoration"></div>
+
+  <div class="container mx-auto px-4 relative z-10">
+    <div class="guia-precos-content">
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <h2 class="section-title">Não sabe quanto guardar de dinheiro?</h2>
+        <p class="section-subtitle">Baixe o Guia de Preços de Piracicaba 2026</p>
+        <p class="section-description">
+          Descubra quanto realmente custa cada aspecto do seu casamento dos sonhos. 
+          Valores reais de fornecedores locais para ajudar no seu planejamento financeiro.
+        </p>
+      </div>
+
+      <!-- Formulário ou Mensagem de Sucesso -->
+      <div class="guia-precos-wrapper">
+        <!-- Formulário -->
+        <div class="form-section" *ngIf="!submitted()">
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="guia-precos-form">
+            <div class="form-grid">
+              <!-- Nome -->
+              <div class="form-group">
+                <label for="nome">Nome da Noiva *</label>
+                <input
+                  id="nome"
+                  type="text"
+                  formControlName="nome"
+                  placeholder="Seu nome completo"
+                  class="form-input"
+                  [class.error]="form.get('nome')?.invalid && form.get('nome')?.touched"
+                />
+                <span class="error-text" *ngIf="form.get('nome')?.invalid && form.get('nome')?.touched">
+                  Nome é obrigatório e deve ter pelo menos 3 caracteres
+                </span>
+              </div>
+
+              <!-- WhatsApp -->
+              <div class="form-group">
+                <label for="whatsapp">WhatsApp (com DDD) *</label>
+                <input
+                  id="whatsapp"
+                  type="tel"
+                  formControlName="whatsapp"
+                  placeholder="11999999999"
+                  class="form-input"
+                  [class.error]="form.get('whatsapp')?.invalid && form.get('whatsapp')?.touched"
+                />
+                <span class="error-text" *ngIf="form.get('whatsapp')?.invalid && form.get('whatsapp')?.touched">
+                  WhatsApp inválido. Use apenas números (ex: 11999999999)
+                </span>
+              </div>
+
+              <!-- Data do Casamento -->
+              <div class="form-group">
+                <label for="datasCasamento">Data prevista do Casamento *</label>
+                <input
+                  id="datasCasamento"
+                  type="date"
+                  formControlName="datasCasamento"
+                  class="form-input"
+                  [class.error]="form.get('datasCasamento')?.invalid && form.get('datasCasamento')?.touched"
+                />
+                <span class="error-text" *ngIf="form.get('datasCasamento')?.invalid && form.get('datasCasamento')?.touched">
+                  Data do casamento é obrigatória
+                </span>
+              </div>
+            </div>
+
+            <div class="form-footer">
+              <button 
+                type="submit" 
+                [disabled]="submitting() || form.invalid"
+                class="btn-download"
+              >
+                <span *ngIf="!submitting()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  Baixar Guia Gratuito
+                </span>
+                <span *ngIf="submitting()" class="flex items-center gap-2">
+                  <span class="spinner-mini"></span>
+                  Processando...
+                </span>
+              </button>
+            </div>
+
+            <p class="form-note">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm-.5-5h1v2h-1v-2zm0-8h1v6h-1V7z"></path>
+              </svg>
+              Seus dados serão usados apenas para enviar o guia. Sem spam, promessa.
+            </p>
+          </form>
+        </div>
+
+        <!-- Mensagem de Sucesso -->
+        <div class="success-section" *ngIf="submitted()">
+          <div class="success-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+
+          <h3 class="success-title">Parabéns!</h3>
+          <p class="success-message">
+            Seu guia de preços está pronto para download. Clique no botão abaixo para receber.
+          </p>
+
+          <button (click)="downloadPDF()" class="btn-download-success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Baixar Guia de Preços
+          </button>
+
+          <button (click)="reset()" class="btn-reset">
+            Enviar para outra pessoa
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

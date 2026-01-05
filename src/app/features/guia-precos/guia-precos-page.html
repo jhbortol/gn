@@ -138,6 +138,18 @@
               <span *ngIf="loading()">Baixando...</span>
             </button>
 
+            <button
+              type="button"
+              (click)="goToCategorias()"
+              class="inline-flex items-center gap-2 mt-4 w-full justify-center bg-white border border-rose-300 text-rose-800 font-semibold py-3.5 px-6 rounded-lg hover:bg-rose-50 hover:border-rose-400 transition shadow-md"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12h18"></path>
+                <path d="M13 5l7 7-7 7"></path>
+              </svg>
+              Explorar fornecedores por categoria
+            </button>
+
             <p class="text-sm text-gray-500 mt-6">
               Enviamos também uma cópia para seu WhatsApp!
             </p>

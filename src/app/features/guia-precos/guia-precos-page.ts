@@ -150,6 +150,14 @@ export class GuiaPrecosPage {
           ? `${environment.API_BASE_URL}${url}`
           : `${environment.API_BASE_URL}/${url}`;
 
+      // Instagram in-app browser bloqueia downloads por blob; use navegação direta
+      const ua = navigator.userAgent || '';
+      const isInstagram = ua.toLowerCase().includes('instagram');
+      if (isInstagram) {
+        window.open(fullUrl, '_blank', 'noopener');
+        return;
+      }
+
       this.loading.set(true);
       this.http.get(fullUrl, { responseType: 'blob', observe: 'response' }).subscribe({
         next: (resp) => {
@@ -169,5 +177,22 @@ export class GuiaPrecosPage {
         }
       });
     }
+  }
+
+  goToCategorias(): void {
+    // Obtém a cidade a partir da URL atual (/:cidade/guia-precos)
+    const segments = this.router.url.split('?')[0].split('/').filter(Boolean);
+    const cidade = segments.length > 0 ? segments[0] : 'piracicaba';
+
+    // Evento opcional para analytics
+    if (typeof window !== 'undefined' && (window as any).dataLayer) {
+      (window as any).dataLayer.push({
+        event: 'navigate_categorias',
+        source: 'guia_precos_success',
+        cidade
+      });
+    }
+
+    this.router.navigate(['/', cidade, 'categorias']);
   }
 }

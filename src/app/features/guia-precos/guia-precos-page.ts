@@ -15,7 +15,6 @@ import { environment } from '../../../environments/environment';
 })
 export class GuiaPrecosPage {
   leadForm: FormGroup;
-  minDate: string;
 
   submitted = signal(false);
   loading = signal(false);
@@ -28,14 +27,9 @@ export class GuiaPrecosPage {
     private router: Router,
     private fb: FormBuilder
   ) {
-    // Set minimum date to today
-    const today = new Date();
-    this.minDate = today.toISOString().split('T')[0];
-
     // Initialize form
     this.leadForm = this.fb.group({
       nome: ['', [Validators.required]],
-      whatsapp: ['', [Validators.required, Validators.minLength(10)]],
       dataCasamento: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]]
     });
@@ -51,21 +45,18 @@ export class GuiaPrecosPage {
 
     const formData = this.leadForm.value;
 
-    // Validar WhatsApp (apenas números, 10-11 dígitos)
-    const whatsappClean = formData.whatsapp.replace(/\D/g, '');
-    if (whatsappClean.length < 10 || whatsappClean.length > 11) {
-      this.error.set('WhatsApp inválido. Digite apenas números com DDD.');
+    // Converter ano selecionado para data completa (DD/MM -> 01/01)
+    const yearValue = formData.dataCasamento;
+    let isoDate = '';
+    if (!yearValue) {
+      this.error.set('Escolha o ano pretendido.');
       return;
     }
-
-    // Validar e converter data brasileira (DD/MM/AAAA) para ISO (YYYY-MM-DD)
-    const dateMatch = formData.dataCasamento.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-    if (!dateMatch) {
-      this.error.set('Data inválida. Use o formato DD/MM/AAAA.');
-      return;
+    if (yearValue === 'nao_decidi') {
+      isoDate = '2099-01-01';
+    } else {
+      isoDate = `${yearValue}-01-01`;
     }
-    const [, day, month, year] = dateMatch;
-    const isoDate = `${year}-${month}-${day}`;
 
     this.loading.set(true);
     this.error.set('');
@@ -74,7 +65,6 @@ export class GuiaPrecosPage {
     this.api.post('/newsletter/subscribe', {
       email: formData.email,
       nome: formData.nome,
-      whatsapp: formData.whatsapp,
       dataCasamento: isoDate
     }).subscribe({
       next: (response: any) => {
@@ -108,36 +98,6 @@ export class GuiaPrecosPage {
         this.loading.set(false);
       }
     });
-  }
-
-  formatWhatsApp(event: any): void {
-    let value = event.target.value.replace(/\D/g, '');
-    if (value.length > 11) value = value.substring(0, 11);
-    
-    // Formato: (99) 99999-9999
-    if (value.length >= 11) {
-      value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
-    } else if (value.length >= 7) {
-      value = value.replace(/^(\d{2})(\d{4,5})(\d{0,4}).*/, '($1) $2-$3');
-    } else if (value.length >= 3) {
-      value = value.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
-    }
-    
-    this.leadForm.patchValue({ whatsapp: value });
-  }
-
-  formatDate(event: any): void {
-    let value = event.target.value.replace(/\D/g, '');
-    if (value.length > 8) value = value.substring(0, 8);
-    
-    // Formato: DD/MM/AAAA
-    if (value.length >= 5) {
-      value = value.replace(/^(\d{2})(\d{2})(\d{0,4}).*/, '$1/$2/$3');
-    } else if (value.length >= 3) {
-      value = value.replace(/^(\d{2})(\d{0,2})/, '$1/$2');
-    }
-    
-    this.leadForm.patchValue({ dataCasamento: value });
   }
 
   downloadPDF(): void {

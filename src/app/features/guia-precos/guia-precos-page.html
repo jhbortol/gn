@@ -22,55 +22,38 @@
             <!-- Nome -->
             <div class="form-group">
               <label for="nome" class="block text-sm font-semibold text-gray-700 mb-2">
-                Nome Completo *
+                Seu Nome *
               </label>
               <input
                 id="nome"
                 type="text"
                 formControlName="nome"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
-                placeholder="Maria Silva"
+                placeholder="Como podemos te chamar?"
               />
               <span class="text-sm text-red-600 mt-1" *ngIf="leadForm.get('nome')?.invalid && leadForm.get('nome')?.touched">
                 Nome é obrigatório
               </span>
             </div>
 
-            <!-- WhatsApp -->
-            <div class="form-group">
-              <label for="whatsapp" class="block text-sm font-semibold text-gray-700 mb-2">
-                WhatsApp (com DDD) *
-              </label>
-              <input
-                id="whatsapp"
-                type="tel"
-                formControlName="whatsapp"
-                (input)="formatWhatsApp($event)"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
-                placeholder="(19) 99999-9999"
-                maxlength="15"
-              />
-              <span class="text-sm text-red-600 mt-1" *ngIf="leadForm.get('whatsapp')?.invalid && leadForm.get('whatsapp')?.touched">
-                WhatsApp é obrigatório (mínimo 10 dígitos)
-              </span>
-            </div>
-
-            <!-- Data do Casamento -->
+            <!-- Ano Pretendido -->
             <div class="form-group">
               <label for="dataCasamento" class="block text-sm font-semibold text-gray-700 mb-2">
-                Data Prevista do Casamento *
+                Ano pretendido *
               </label>
-              <input
+              <select
                 id="dataCasamento"
-                type="text"
                 formControlName="dataCasamento"
-                (input)="formatDate($event)"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
-                placeholder="DD/MM/AAAA"
-                maxlength="10"
-              />
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition bg-white"
+              >
+                <option value="" disabled>Selecione uma opção</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="nao_decidi">Ainda não decidi</option>
+              </select>
               <span class="text-sm text-red-600 mt-1" *ngIf="leadForm.get('dataCasamento')?.invalid && leadForm.get('dataCasamento')?.touched">
-                Data do casamento é obrigatória (formato: DD/MM/AAAA)
+                Escolha o ano pretendido
               </span>
             </div>
 
@@ -100,9 +83,9 @@
             <button
               type="submit"
               [disabled]="leadForm.invalid || loading()"
-              class="w-full bg-gradient-to-r from-rose-500 to-rose-600 text-white font-bold py-4 px-6 rounded-lg hover:from-rose-600 hover:to-rose-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              class="w-full bg-white border border-rose-300 text-rose-800 font-bold py-4 px-6 rounded-lg hover:bg-rose-50 hover:border-rose-400 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
-              <span *ngIf="!loading()">Baixar Guia Grátis</span>
+              <span *ngIf="!loading()">Receber Tabela de Preços</span>
               <span *ngIf="loading()">Enviando...</span>
             </button>
 
@@ -121,27 +104,12 @@
               </svg>
             </div>
             <h2 class="text-2xl font-bold text-gray-900 mb-4">Cadastro realizado com sucesso!</h2>
-            <p class="text-gray-600 mb-8">Clique no botão abaixo para baixar seu guia de preços.</p>
+            <p class="text-gray-600 mb-8">Escolha se quer receber a tabela agora ou já explorar os fornecedores.</p>
             
-            <button
-              (click)="downloadPDF()"
-              type="button"
-              [disabled]="loading()"
-              class="inline-flex items-center gap-2 bg-gradient-to-r from-rose-500 to-rose-600 text-white font-bold py-4 px-8 rounded-lg hover:from-rose-600 hover:to-rose-700 transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              <span *ngIf="!loading()">Download do Guia (PDF)</span>
-              <span *ngIf="loading()">Baixando...</span>
-            </button>
-
             <button
               type="button"
               (click)="goToCategorias()"
-              class="inline-flex items-center gap-2 mt-4 w-full justify-center bg-white border border-rose-300 text-rose-800 font-semibold py-3.5 px-6 rounded-lg hover:bg-rose-50 hover:border-rose-400 transition shadow-md"
+              class="inline-flex items-center gap-2 w-full justify-center bg-gradient-to-r from-rose-500 to-rose-600 text-white font-bold py-4 px-8 rounded-lg hover:from-rose-600 hover:to-rose-700 transition shadow-lg"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M3 12h18"></path>
@@ -150,9 +118,21 @@
               Explorar fornecedores por categoria
             </button>
 
-            <p class="text-sm text-gray-500 mt-6">
-              Enviamos também uma cópia para seu WhatsApp!
-            </p>
+            <button
+              (click)="downloadPDF()"
+              type="button"
+              [disabled]="loading()"
+              class="inline-flex items-center gap-2 mt-4 w-full justify-center bg-white border border-rose-300 text-rose-800 font-semibold py-3.5 px-6 rounded-lg hover:bg-rose-50 hover:border-rose-400 transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span *ngIf="!loading()">Receber Tabela de Preços</span>
+              <span *ngIf="loading()">Baixando...</span>
+            </button>
+
           </div>
         </ng-template>
       </div>

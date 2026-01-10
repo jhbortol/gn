@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ClickwrapAgreementComponent } from '../../shared/clickwrap-agreement/clickwrap-agreement';
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
 import { TrackingService } from '../../core/tracking.service';
 import { Observable } from 'rxjs';
@@ -11,7 +12,7 @@ import { environment } from '../../../environments/environment';
   standalone: true,
   templateUrl: './fornecedor-page.html',
   styleUrls: ['./fornecedor-page.css'],
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ClickwrapAgreementComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FornecedorPageComponent implements OnInit {

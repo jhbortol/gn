@@ -103,8 +103,13 @@ export class HomePageComponent {
   resolveImage(url?: string | null, fallback: string = 'assets/fornecedores/placeholder.jpg'): string {
     if (!url) return fallback;
     if (url.startsWith('http')) return url;
+    if (url.startsWith('assets/')) return url;
     const base = environment.API_BASE_URL?.replace(/\/$/, '') || '';
-    const path = url.startsWith('/') ? url : `/${url}`;
+    let path = url.startsWith('/') ? url : `/${url}`;
+    // Remove duplicate /api/v1 if base already contains it
+    if (base.includes('/api/v1') && path.startsWith('/api/v1/')) {
+      path = path.replace('/api/v1', '');
+    }
     return `${base}${path}`;
   }
 

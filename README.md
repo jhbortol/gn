@@ -63,7 +63,7 @@ In GitHub:
 
 ### Notes
 
-- The previous Netlify configuration (e.g., `public/_redirects`) is not used by GitHub Pages. You may keep it for local testing or remove it if not needed.
+
 - If your repository name or owner changes, update the base href accordingly.
 
 ### Deploy to External Repositories

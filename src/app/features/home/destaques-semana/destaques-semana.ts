@@ -5,6 +5,7 @@ import { FornecedoresData, FornecedorListDto } from '../../fornecedores/services
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CidadeService } from '../../../core/cidade.service';
+import { environment } from '../../../../environments/environment';
 
 export interface DestaqueView {
   id: string;
@@ -61,7 +62,7 @@ export class DestaquesSemanaComponent implements OnInit {
             local: f.cidade,
             descricao: undefined,
             nota: f.rating || 0,
-            imagem: f.primaryImage?.url || 'assets/fornecedores/placeholder.jpg'
+            imagem: this.resolveImage(f.primaryImage?.url, 'assets/fornecedores/placeholder.jpg')
           }));
         if (!result.length) {
           console.warn('[DESTAQUES] nenhum resultado após filtragem.');
@@ -79,5 +80,18 @@ export class DestaquesSemanaComponent implements OnInit {
       return this.cidadeService.buildUrl(fullPath);
     }
     return this.cidadeService.buildUrl(path);
+  }
+
+  private resolveImage(url?: string | null, fallback: string = 'assets/fornecedores/placeholder.jpg'): string {
+    if (!url) return fallback;
+    if (url.startsWith('http')) return url;
+    if (url.startsWith('assets/')) return url;
+    const base = environment.API_BASE_URL?.replace(/\/$/, '') || '';
+    let path = url.startsWith('/') ? url : `/${url}`;
+    // Remove duplicate /api/v1 if base already contains it
+    if (base.includes('/api/v1') && path.startsWith('/api/v1/')) {
+      path = path.replace('/api/v1', '');
+    }
+    return `${base}${path}`;
   }
 }

@@ -1,0 +1,16 @@
+.guia-custos-page{background:#fdfbf7;color:#4a4a4a;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;}
+.hero-pattern{background-image:radial-gradient(#bfa15f 1px,transparent 1px);background-size:20px 20px;opacity:0.1;}
+.font-serif{font-family:'Playfair Display',serif;}
+.card-shadow{box-shadow:0 10px 25px -5px rgba(0,0,0,0.05),0 8px 10px -6px rgba(0,0,0,0.01);}
+.gold-border{border-color:#bfa15f;}
+.section-label{font-weight:700;color:#1f2937;border-bottom:1px solid #f1f5f9;padding-bottom:0.5rem;margin-bottom:0.75rem;text-transform:uppercase;font-size:0.75rem;letter-spacing:0.04em;}
+.item-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.5rem;font-size:0.9375rem;color:#4b5563;}
+.item-list li{display:flex;justify-content:space-between;gap:1rem;}
+.icon-circle{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:9999px;background-color:#f7f3e8;color:#bfa15f;}
+.info-card{background:#f8fafc;border:1px solid #e2e8f0;padding:1.25rem;border-radius:0.75rem;transition:border-color .2s ease,box-shadow .2s ease;}
+.info-card:hover{border-color:#bfa15f;box-shadow:0 8px 20px -8px rgba(0,0,0,0.1);}
+.info-card h3{font-weight:700;color:#111827;margin-bottom:0.35rem;}
+.info-card p{color:#4b5563;font-size:0.9375rem;line-height:1.5;}
+.table-row{border-bottom:1px solid #f1f5f9;}
+.table-row:hover{background:#f8fafc;}
+@media (max-width:767px){.item-list li{font-size:0.875rem;}}

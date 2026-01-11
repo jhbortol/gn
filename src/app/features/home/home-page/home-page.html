@@ -1,7 +1,13 @@
 <div class="animate-fade-in">
 	<!-- Hero Section -->
 	<div class="relative h-[400px] flex items-center justify-center bg-rose-900 text-white hero-wrapper">
-		<div class="absolute inset-0 overflow-hidden hero-bg"></div>
+		<div class="absolute inset-0 overflow-hidden hero-bg" aria-hidden="true">
+			<picture>
+				<source media="(max-width: 768px)" srcset="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=70" />
+				<source media="(min-width: 769px)" srcset="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=70" />
+				<img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1400&q=70" alt="" class="w-full h-full object-cover" loading="eager" decoding="async" fetchpriority="high" />
+			</picture>
+		</div>
 		<div class="relative z-10 container mx-auto px-4 flex flex-col items-center justify-center h-full text-center gap-4">
 			<h1 class="text-4xl md:text-6xl font-serif font-bold mb-4 hero-title">O Casamento dos seus Sonhos</h1>
 			<p class="text-xl md:text-2xl text-rose-100 mb-8 font-light hero-subtitle">Começa aqui, em Piracicaba.</p>
@@ -31,10 +37,10 @@
 				</button>
 				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 flex-1">
 					<div *ngFor="let fornecedor of (currentPageItems$ | async)" class="border border-gray-100 rounded-lg overflow-hidden shadow-sm">
-						<a [routerLink]="buildUrl(['fornecedores', fornecedor.slug])" [attr.data-event-category]="'Navigation'" [attr.data-event-action]="'Click Card - Busca'" [attr.data-vendor-id]="fornecedor.id" [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria?.nome" class="block">
-							<div class="h-32 bg-gray-50" style="aspect-ratio:300/220;">
-								<img [ngSrc]="fornecedor.primaryImage?.url || 'assets/fornecedores/placeholder.jpg'" [alt]="fornecedor.nome" loading="lazy" decoding="async" width="300" height="220" class="w-full h-full object-cover" />
-							</div>
+							<a [routerLink]="buildUrl(['fornecedores', fornecedor.slug])" [attr.data-event-category]="'Navigation'" [attr.data-event-action]="'Click Card - Busca'" [attr.data-vendor-id]="fornecedor.id" [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria?.nome" class="block">
+								<div class="h-32 bg-gray-50" style="aspect-ratio:300/220;">
+									<img [ngSrc]="resolveImage(fornecedor.primaryImage?.url)" [alt]="fornecedor.nome" loading="lazy" decoding="async" width="300" height="220" class="w-full h-full object-cover" />
+								</div>
 							<div class="p-3">
 								<div class="font-semibold text-gray-800">{{ fornecedor.nome }}</div>
 								<div class="text-xs text-gray-500" *ngIf="fornecedor.categoria?.nome">{{ fornecedor.categoria?.nome }}</div>
@@ -75,7 +81,7 @@
 			<ng-container *ngFor="let cat of cats">
 				<a [routerLink]="buildUrl(['categorias', cat.slug])" class="group flex flex-col bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden hover:-translate-y-1 cat-card">
 					<div class="relative w-full overflow-hidden img-wrap aspect-[4/3]">
-						<img [ngSrc]="cat.imageUrl || 'assets/categorias/placeholder.jpg'" [alt]="cat.nome" loading="lazy" decoding="async" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+						<img [ngSrc]="resolveImage(cat.imageUrl, 'assets/categorias/placeholder.jpg')" [alt]="cat.nome" loading="lazy" decoding="async" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
 						<div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent"></div>
 					</div>
 					<div class="p-4 text-center flex flex-col gap-1">

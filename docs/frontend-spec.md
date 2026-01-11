@@ -6,7 +6,7 @@ Propósito: este documento descreve os requisitos, contratos de API e orientaç�
 
 Visão geral
 - Framework: Angular 19 (TypeScript, RxJS)
-- Hospedagem: Netlify (build: `ng build --configuration=production`)
+- Hospedagem: GitHub Pages (build: `ng build --configuration=production`)
 - Autenticação: JWT (Bearer) + Refresh Token (endpoints no backend em `/api/v1/auth`)
  - Upload de imagens: o upload é realizado diretamente pelo backend via endpoint dedicado, amarrando a imagem ao fornecedor. O frontend envia o arquivo e os metadados para o backend, que realiza o armazenamento e retorna a URL pública.
 - Observação operacional: a infra usa SQL Server em produção; nos testes locais/integrados usamos SQLite — o frontend não precisa tratar isso, mas testes automatizados devem considerar diferenças de API quando aplicável.
@@ -22,7 +22,7 @@ Conteúdo deste documento
 - Serviços, Interceptors e Guards sugeridos
 - Contrato de API (endpoints, DTOs e exemplos)
 - UX / Acessibilidade / Notificações
-- Netlify / Deploy / Dev proxy
+- Build & Deploy
 - QA / Critérios de aceitação e E2E
 - CI/CD (migrations & smoke-tests)
 - Backlog e estimativas
@@ -61,7 +61,6 @@ Conteúdo deste documento
 - `src/app/shared/` — UI components (toasts, modal confirm, spinner, pagination, empty-state)
 - `src/app/features/fornecedores/` — `list/`, `detail/`, `form/`, `media/`
 - `proxy.conf.json` — proxy para desenvolvimento (`/api` → `https://localhost:5001`)
-- `netlify.toml` — config Netlify
 
 Observação: mantenha os serviços pequenos e testáveis; prefira `HttpClient` com métodos centrados em contratos (DTOs) e mapeamento de erros central.
 
@@ -310,19 +309,9 @@ Error shapes
 
 --------------------------------------------------------------------------------
 
-12) Netlify / Build / Dev proxy
+12) Build & Deploy
 
-netlify.toml (exemplo)
-```toml
-[build]
-  command = "npm run build"
-  publish = "dist/<app-name>"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-```
+GitHub Pages deployment via GitHub Actions workflow.
 
 `proxy.conf.json` (dev)
 ```json
@@ -331,9 +320,8 @@ netlify.toml (exemplo)
 }
 ```
 
-Env vars Netlify recomendadas:
+Environment variables:
 - `API_BASE_URL` = `https://guia-noivas.somee.com/api/v1`
-- `NG_BUILD_CONFIGURATION` = `production`
 
 --------------------------------------------------------------------------------
 
@@ -387,7 +375,7 @@ CI/CD recommendation (GitHub Actions)
   - MediaManager (upload/preview/reorder): 16h
 - Shared components: 6h
 - E2E tests (Cypress): 10h
-- Docs, Swagger examples & deploy scripts: 6h
+- Docs, Swagger examples & deploy configuration: 6h
 
 Estimativa total ≈ 78h (ajustado)
 

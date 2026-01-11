@@ -9,6 +9,7 @@ import { FornecedoresData, FornecedorListDto } from '../../fornecedores/services
 import { TrackingService } from '../../../core/tracking.service';
 import { forkJoin, map, switchMap, Observable, BehaviorSubject, of, combineLatest, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CidadeService } from '../../../core/cidade.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-home-page',
@@ -97,6 +98,19 @@ export class HomePageComponent {
 
   closeResults() {
     this.showResults = false;
+  }
+
+  resolveImage(url?: string | null, fallback: string = 'assets/fornecedores/placeholder.jpg'): string {
+    if (!url) return fallback;
+    if (url.startsWith('http')) return url;
+    if (url.startsWith('assets/')) return url;
+    const base = environment.API_BASE_URL?.replace(/\/$/, '') || '';
+    let path = url.startsWith('/') ? url : `/${url}`;
+    // Remove duplicate /api/v1 if base already contains it
+    if (base.includes('/api/v1') && path.startsWith('/api/v1/')) {
+      path = path.replace('/api/v1', '');
+    }
+    return `${base}${path}`;
   }
 
   private shuffleArray<T>(array: T[]): T[] {

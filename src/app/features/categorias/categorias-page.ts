@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { FornecedoresData, FornecedorListDto } from '../fornecedores/services/fornecedores-data';
 import { forkJoin, map, switchMap } from 'rxjs';
 import { CidadeService } from '../../core/cidade.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-categorias-page',
@@ -46,6 +47,17 @@ export class CategoriasPageComponent {
       return this.cidadeService.buildUrl(fullPath);
     }
     return this.cidadeService.buildUrl(path);
+  }
+
+  resolveImage(url?: string | null, fallback: string = 'assets/categorias/placeholder.jpg'): string {
+    if (!url) return fallback;
+    if (url.startsWith('http') || url.startsWith('assets/')) return url;
+    const base = environment.API_BASE_URL;
+    const path = url.startsWith('/') ? url : `/${url}`;
+    if (base.includes('/api/v1') && path.includes('/api/v1')) {
+      return base.replace(/\/api\/v1$/, '') + path;
+    }
+    return base + path;
   }
 
   private shuffleArray<T>(array: T[]): T[] {

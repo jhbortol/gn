@@ -102,4 +102,18 @@ export class TrackingService {
       (window as any).fbq('track', formType === 'newsletter' ? 'Lead' : 'Contact');
     }
   }
+
+  /**
+   * Rastreia visualização de página (SPA pageview) para Google Analytics via GTM
+   */
+  trackPageView(pagePath: string, pageTitle?: string) {
+    if (typeof window !== 'undefined' && (window as any).dataLayer) {
+      (window as any).dataLayer.push({
+        event: 'page_view',
+        page_path: pagePath,
+        page_title: pageTitle || document.title,
+        page_location: typeof window !== 'undefined' ? window.location.href : undefined
+      });
+    }
+  }
 }

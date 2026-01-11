@@ -3,6 +3,7 @@ import { Component, signal, inject, AfterViewInit } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { NavbarComponent } from './shared/navbar/navbar';
 import { FooterComponent } from './shared/footer/footer';
+import { TrackingService } from './core/tracking.service';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +17,7 @@ export class App implements AfterViewInit {
   showNavbar = signal(true);
   showFooter = signal(true);
   private router = inject(Router);
+  private tracking = inject(TrackingService);
 
   ngAfterViewInit() {
     this.router.events.subscribe(ev => {
@@ -25,6 +27,8 @@ export class App implements AfterViewInit {
 
         this.showNavbar.set(!hideNavbar);
         this.showFooter.set(!hideFooter);
+        // Track SPA page view for GA via GTM
+        this.tracking.trackPageView(ev.urlAfterRedirects || ev.url, document.title);
         
         // Scroll already handled by router config; ensure focus for accessibility
         const main = document.getElementById('main-content');

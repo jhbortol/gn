@@ -49,6 +49,10 @@ export const routes: Routes = [
 				loadChildren: () => import('./features/guia-precos/guia-precos-module').then(m => m.GuiaPrecosModule)
 			},
 			{
+				path: 'guia-custos',
+				loadComponent: () => import('./features/guia-custos/guia-custos-page').then(m => m.GuiaCustosPage)
+			},
+			{
 				path: 'midia-kit',
 				loadComponent: () => import('./features/midia-kit/midia-kit-page').then(m => m.MidiaKitPage)
 			}

@@ -1,9 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ApiService } from '../../core/api.service';
+import { CidadeService } from '../../core/cidade.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -20,6 +21,8 @@ export class GuiaPrecosPage {
   loading = signal(false);
   error = signal('');
   downloadUrl = signal('');
+
+  private cidadeService = inject(CidadeService);
 
   constructor(
     private api: ApiService,
@@ -70,8 +73,10 @@ export class GuiaPrecosPage {
       next: (response: any) => {
         this.submitted.set(true);
         this.loading.set(false);
-        // Forçar uso do endpoint proxy no backend (evita CSP e não expõe o blob)
-        this.downloadUrl.set('/files/download/guia-precos');
+        
+        // Redirecionar para a página guia-custos em vez de fazer download do PDF
+        const cidade = this.cidadeService.getCidadeAtual();
+        this.router.navigate([cidade, 'guia-custos']);
         
         // Track conversion
         if (typeof window !== 'undefined') {

@@ -75,7 +75,7 @@ export class GuiaPrecosPage {
         this.loading.set(false);
         
         // Redirecionar para a página guia-custos em vez de fazer download do PDF
-        const cidade = this.cidadeService.getCidadeAtual();
+        const cidade = this.cidadeService.cidadeAtual();
         this.router.navigate([cidade, 'guia-custos']);
         
         // Track conversion

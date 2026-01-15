@@ -145,7 +145,7 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
 
     for (let i = tamanho - 1; i >= 0; i--) {
       pos++;
-      soma += numeros.charAt(tamanho - pos) * Math.pow(2, (pos % 8));
+      soma += parseInt(numeros.charAt(tamanho - pos)) * Math.pow(2, (pos % 8));
     }
 
     let resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
@@ -158,7 +158,7 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
 
     for (let i = tamanho - 1; i >= 0; i--) {
       pos++;
-      soma += numeros.charAt(tamanho - pos) * Math.pow(2, (pos % 8));
+      soma += parseInt(numeros.charAt(tamanho - pos)) * Math.pow(2, (pos % 8));
     }
 
     resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;

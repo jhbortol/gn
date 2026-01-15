@@ -55,10 +55,6 @@ export const routes: Routes = [
 			{
 				path: 'midia-kit',
 				loadComponent: () => import('./features/midia-kit/midia-kit-page').then(m => m.MidiaKitPage)
-			},
-			{
-				path: 'indicado',
-				loadComponent: () => import('./features/comecar/comecar-page').then(m => m.ComecarPage)
 			}
 		]
 	},
@@ -66,6 +62,11 @@ export const routes: Routes = [
 	{
 		path: 'painel',
 		loadChildren: () => import('./features/painel/painel-module').then(m => m.PainelModule)
+	},
+	// Página de Adesão Express - acesso direto sem cidade
+	{
+		path: 'indicado',
+		loadComponent: () => import('./features/comecar/comecar-page').then(m => m.ComecarPage)
 	},
 	// Rotas legadas sem cidade - redirecionar para /piracicaba (compatibilidade)
 	{

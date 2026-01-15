@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gradient-to-b from-gray-900 via-gray-50 to-gray-100">
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
   <!-- BLOCO A: Header Premium -->
   <div class="relative bg-gradient-to-r from-rose-700 to-rose-900 text-white overflow-hidden">
     <!-- Background pattern -->
@@ -19,7 +19,7 @@
       <p class="text-rose-100 text-lg md:text-xl mb-12 max-w-xl">Torne-se fornecedor do Guia Noivas Piracicaba 2026</p>
 
       <!-- Oferta Card -->
-      <div class="bg-white rounded-2xl p-8 md:p-12 text-gray-900 shadow-2xl max-w-2xl border border-gray-200">
+      <div class="bg-white rounded-2xl p-8 md:p-12 text-gray-900 shadow-2xl max-w-2xl mx-auto border border-gray-200">
         <div class="grid md:grid-cols-2 gap-8 items-center">
           <!-- Left side: Details -->
           <div>
@@ -52,17 +52,17 @@
   <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
     <form [formGroup]="adesaoForm" (ngSubmit)="onSubmit()" class="space-y-8">
       <!-- Alertas -->
-      <div *ngIf="error()" class="bg-red-50 border-l-4 border-red-600 rounded-lg p-5 shadow-md animate-pulse">
+      <div *ngIf="error()" class="bg-red-100 border-l-4 border-red-600 rounded-lg p-5 shadow-md animate-pulse">
         <div class="flex items-start gap-3">
-          <span class="text-red-600 text-xl flex-shrink-0">⚠</span>
-          <p class="text-red-800 font-medium">{{ error() }}</p>
+          <span class="text-red-700 text-xl flex-shrink-0">⚠</span>
+          <p class="text-red-900 font-medium">{{ error() }}</p>
         </div>
       </div>
 
-      <div *ngIf="submitted()" class="bg-green-50 border-l-4 border-green-600 rounded-lg p-5 shadow-md">
+      <div *ngIf="submitted()" class="bg-green-100 border-l-4 border-green-600 rounded-lg p-5 shadow-md">
         <div class="flex items-start gap-3">
-          <span class="text-green-600 text-xl flex-shrink-0">✓</span>
-          <p class="text-green-800 font-medium">Cadastro recebido! Redirecionando para pagamento seguro...</p>
+          <span class="text-green-700 text-xl flex-shrink-0">✓</span>
+          <p class="text-green-900 font-medium">Cadastro recebido! Redirecionando para pagamento seguro...</p>
         </div>
       </div>
 
@@ -78,7 +78,7 @@
             <p class="text-sm text-gray-600 mt-1">Informações da sua loja</p>
           </div>
 
-          <fieldset class="border-2 border-gray-200 rounded-xl p-8 bg-white shadow-sm hover:shadow-md transition-shadow" [disabled]="submitted()">
+          <fieldset class="border-2 border-gray-300 rounded-xl p-8 bg-white shadow-md hover:shadow-lg transition-shadow" [disabled]="submitted()">
             <div class="space-y-6">
               <!-- Nome Fantasia -->
               <div class="form-group">
@@ -145,7 +145,7 @@
             <p class="text-sm text-gray-600 mt-1">Como podemos contactá-lo</p>
           </div>
 
-          <fieldset class="border-2 border-gray-200 rounded-xl p-8 bg-white shadow-sm hover:shadow-md transition-shadow" [disabled]="submitted()">
+          <fieldset class="border-2 border-gray-300 rounded-xl p-8 bg-white shadow-md hover:shadow-lg transition-shadow" [disabled]="submitted()">
             <div class="space-y-6">
               <!-- Nome Responsável -->
               <div class="form-group">
@@ -214,9 +214,9 @@
           <p class="text-sm text-gray-600 mt-1">Confirme sua concordância</p>
         </div>
 
-        <fieldset class="border-2 border-gray-200 rounded-xl p-8 bg-white shadow-sm" [disabled]="submitted()">
+        <fieldset class="border-2 border-gray-300 rounded-xl p-8 bg-white shadow-md" [disabled]="submitted()">
           <!-- Checkbox 1: Fotos Instagram -->
-          <div class="flex items-start gap-4 mb-6 pb-6 border-b border-gray-200">
+          <div class="flex items-start gap-4 mb-6 pb-6 border-b border-gray-300">
             <input
               type="checkbox"
               formControlName="autorizaFotos"
@@ -232,7 +232,7 @@
           <!-- Termos Scrolláveis -->
           <div class="mb-6">
             <p class="text-xs font-semibold text-gray-700 mb-3">Termos de Uso e Responsabilidade</p>
-            <div class="bg-gray-50 border border-gray-300 rounded-lg p-4 h-48 overflow-y-auto text-xs text-gray-700 leading-relaxed">
+            <div class="bg-gray-100 border border-gray-300 rounded-lg p-4 h-48 overflow-y-auto text-xs text-gray-700 leading-relaxed">
               <pre class="font-sans whitespace-pre-wrap">{{ TERMOS_LEGAIS }}</pre>
             </div>
           </div>

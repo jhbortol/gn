@@ -55,6 +55,10 @@ export const routes: Routes = [
 			{
 				path: 'midia-kit',
 				loadComponent: () => import('./features/midia-kit/midia-kit-page').then(m => m.MidiaKitPage)
+			},
+			{
+				path: 'comecar',
+				loadComponent: () => import('./features/comecar/comecar-page').then(m => m.ComecarPage)
 			}
 		]
 	},

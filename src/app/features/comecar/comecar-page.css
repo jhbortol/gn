@@ -2,7 +2,7 @@
 
 :host {
   display: block;
-  background: #f9fafb;
+  background: linear-gradient(to bottom right, #f9fafb, #f3f4f6);
   min-height: 100vh;
 }
 
@@ -61,11 +61,18 @@ textarea:focus {
 /* Tablet and up */
 @media (min-width: 768px) {
   :host {
-    padding: 2rem 0;
+    padding: 1rem 0;
   }
 
   fieldset {
-    background: #f9fafb;
+    background: white;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 1024px) {
+  :host {
+    padding: 2rem 0;
   }
 }
 

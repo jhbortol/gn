@@ -1,147 +1,157 @@
-<div class="min-h-screen bg-white">
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
   <!-- BLOCO A: Header & Oferta -->
-  <div class="bg-gradient-to-b from-rose-700 to-rose-800 text-white pt-8 pb-6 px-4">
-    <h1 class="text-2xl md:text-3xl font-serif font-bold mb-2">Ativação de Cadastro</h1>
-    <p class="text-rose-100 text-sm md:text-base mb-6">Condição Parceiro</p>
+  <div class="bg-gradient-to-r from-rose-700 to-rose-800 text-white pt-12 pb-8 shadow-xl">
+    <div class="max-w-6xl mx-auto px-4 md:px-8">
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-2">Ativação de Cadastro</h1>
+      <p class="text-rose-100 text-base md:text-lg mb-8">Condição Parceiro</p>
 
-    <div class="bg-white rounded-lg p-4 text-gray-900 shadow-lg">
-      <p class="text-xs md:text-sm font-medium text-gray-600 mb-2">Plano Anual Guia Noivas 2026</p>
+      <div class="bg-white rounded-xl p-6 md:p-8 text-gray-900 shadow-2xl max-w-2xl">
+        <p class="text-sm font-medium text-gray-600 mb-4">Plano Anual Guia Noivas 2026</p>
 
-      <div class="flex items-baseline justify-center gap-3 mb-4">
-        <span class="text-sm line-through text-gray-500">De: R$ {{ PRECO_ORIGINAL | number: '1.2-2' }}</span>
-        <div class="text-center">
-          <span class="text-3xl md:text-4xl font-bold text-green-600">R$ {{ PRECO_FINAL | number: '1.2-2' }}</span>
-          <p class="text-xs text-gray-500 mt-1">por apenas</p>
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-6">
+          <div>
+            <span class="text-base line-through text-gray-500">De: R$ {{ PRECO_ORIGINAL | number: '1.2-2' }}</span>
+          </div>
+          <div class="text-center md:text-right">
+            <p class="text-5xl md:text-6xl font-bold text-green-600">R$ {{ PRECO_FINAL | number: '1.2-2' }}</p>
+            <p class="text-sm text-gray-500 mt-2">por apenas</p>
+          </div>
         </div>
-      </div>
 
-      <div class="inline-block w-full bg-green-100 border border-green-400 rounded px-3 py-2 text-center">
-        <p class="text-xs md:text-sm font-semibold text-green-700">
-          🎁 Oferta exclusiva via Indicação
-        </p>
+        <div class="bg-green-50 border-2 border-green-400 rounded-lg px-4 py-3 text-center">
+          <p class="text-sm md:text-base font-semibold text-green-700">
+            🎁 Oferta exclusiva via Indicação
+          </p>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- BLOCO B: O Formulário -->
-  <div class="px-4 py-8 max-w-2xl mx-auto">
+  <div class="px-4 md:px-8 py-12 max-w-6xl mx-auto">
     <form [formGroup]="adesaoForm" (ngSubmit)="onSubmit()" class="space-y-6">
       <!-- Erro Geral -->
-      <div *ngIf="error()" class="bg-red-50 border border-red-300 rounded-lg p-4">
-        <p class="text-red-700 text-sm font-medium">{{ error() }}</p>
+      <div *ngIf="error()" class="bg-red-50 border-l-4 border-red-500 rounded-lg p-4 shadow-md">
+        <p class="text-red-700 font-medium">{{ error() }}</p>
       </div>
 
       <!-- Sucesso -->
-      <div *ngIf="submitted()" class="bg-green-50 border border-green-300 rounded-lg p-4">
-        <p class="text-green-700 text-sm font-medium">✓ Cadastro recebido! Redirecionando para pagamento...</p>
+      <div *ngIf="submitted()" class="bg-green-50 border-l-4 border-green-500 rounded-lg p-4 shadow-md">
+        <p class="text-green-700 font-medium">✓ Cadastro recebido! Redirecionando para pagamento...</p>
       </div>
 
-      <!-- Dados da Empresa -->
-      <fieldset class="border border-gray-300 rounded-lg p-4" [disabled]="submitted()">
-        <legend class="text-sm font-bold text-gray-800 px-2">Dados da Empresa</legend>
+      <div class="grid md:grid-cols-2 gap-8">
+        <!-- Dados da Empresa -->
+        <div class="md:col-span-1">
+          <fieldset class="border-2 border-gray-200 rounded-xl p-6 bg-white shadow-sm" [disabled]="submitted()">
+            <legend class="text-base font-bold text-gray-800 px-3 bg-white">Dados da Empresa</legend>
 
-        <div class="space-y-4 mt-4">
-          <!-- Nome Fantasia -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Nome Fantasia *</label>
-            <input
-              type="text"
-              formControlName="nomeFantasia"
-              class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-              [class.border-red-500]="adesaoForm.get('nomeFantasia')?.invalid && adesaoForm.get('nomeFantasia')?.touched"
-              placeholder="Ex: Decorações Florais"
-            />
-            <p class="text-xs text-red-600 mt-1" *ngIf="getFieldError('nomeFantasia')">
-              {{ getFieldError('nomeFantasia') }}
-            </p>
-          </div>
+            <div class="space-y-5 mt-6">
+              <!-- Nome Fantasia -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-800 mb-2">Nome Fantasia *</label>
+                <input
+                  type="text"
+                  formControlName="nomeFantasia"
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                  [class.border-red-500]="adesaoForm.get('nomeFantasia')?.invalid && adesaoForm.get('nomeFantasia')?.touched"
+                  placeholder="Ex: Decorações Florais"
+                />
+                <p class="text-xs text-red-600 mt-2" *ngIf="getFieldError('nomeFantasia')">
+                  {{ getFieldError('nomeFantasia') }}
+                </p>
+              </div>
 
-          <!-- Instagram -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Instagram Oficial *</label>
-            <input
-              type="text"
-              formControlName="instagramOficial"
-              class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-              [class.border-red-500]="adesaoForm.get('instagramOficial')?.invalid && adesaoForm.get('instagramOficial')?.touched"
-              placeholder="@sualoja"
-            />
-            <p class="text-xs text-red-600 mt-1" *ngIf="getFieldError('instagramOficial')">
-              {{ getFieldError('instagramOficial') }}
-            </p>
-          </div>
+              <!-- Instagram -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-800 mb-2">Instagram Oficial *</label>
+                <input
+                  type="text"
+                  formControlName="instagramOficial"
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                  [class.border-red-500]="adesaoForm.get('instagramOficial')?.invalid && adesaoForm.get('instagramOficial')?.touched"
+                  placeholder="@sualoja"
+                />
+                <p class="text-xs text-red-600 mt-2" *ngIf="getFieldError('instagramOficial')">
+                  {{ getFieldError('instagramOficial') }}
+                </p>
+              </div>
 
-          <!-- CNPJ/CPF -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">CNPJ ou CPF *</label>
-            <input
-              type="text"
-              formControlName="cnpjCpf"
-              (input)="aplicarMaskCNPJCPF($event)"
-              class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-              [class.border-red-500]="adesaoForm.get('cnpjCpf')?.invalid && adesaoForm.get('cnpjCpf')?.touched"
-              placeholder="00.000.000/0000-00"
-            />
-            <p class="text-xs text-red-600 mt-1" *ngIf="getFieldError('cnpjCpf')">
-              {{ getFieldError('cnpjCpf') }}
-            </p>
-          </div>
+              <!-- CNPJ/CPF -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-800 mb-2">CNPJ ou CPF *</label>
+                <input
+                  type="text"
+                  formControlName="cnpjCpf"
+                  (input)="aplicarMaskCNPJCPF($event)"
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                  [class.border-red-500]="adesaoForm.get('cnpjCpf')?.invalid && adesaoForm.get('cnpjCpf')?.touched"
+                  placeholder="00.000.000/0000-00"
+                />
+                <p class="text-xs text-red-600 mt-2" *ngIf="getFieldError('cnpjCpf')">
+                  {{ getFieldError('cnpjCpf') }}
+                </p>
+              </div>
+            </div>
+          </fieldset>
         </div>
-      </fieldset>
 
-      <!-- Dados de Contato -->
-      <fieldset class="border border-gray-300 rounded-lg p-4" [disabled]="submitted()">
-        <legend class="text-sm font-bold text-gray-800 px-2">Dados de Contato</legend>
+        <!-- Dados de Contato -->
+        <div class="md:col-span-1">
+          <fieldset class="border-2 border-gray-200 rounded-xl p-6 bg-white shadow-sm" [disabled]="submitted()">
+            <legend class="text-base font-bold text-gray-800 px-3 bg-white">Dados de Contato</legend>
 
-        <div class="space-y-4 mt-4">
-          <!-- Nome Responsável -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Nome do Responsável *</label>
-            <input
-              type="text"
-              formControlName="nomeResponsavel"
-              class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-              [class.border-red-500]="adesaoForm.get('nomeResponsavel')?.invalid && adesaoForm.get('nomeResponsavel')?.touched"
-              placeholder="Seu nome completo"
-            />
-            <p class="text-xs text-red-600 mt-1" *ngIf="getFieldError('nomeResponsavel')">
-              {{ getFieldError('nomeResponsavel') }}
-            </p>
-          </div>
+            <div class="space-y-5 mt-6">
+              <!-- Nome Responsável -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-800 mb-2">Nome do Responsável *</label>
+                <input
+                  type="text"
+                  formControlName="nomeResponsavel"
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                  [class.border-red-500]="adesaoForm.get('nomeResponsavel')?.invalid && adesaoForm.get('nomeResponsavel')?.touched"
+                  placeholder="Seu nome completo"
+                />
+                <p class="text-xs text-red-600 mt-2" *ngIf="getFieldError('nomeResponsavel')">
+                  {{ getFieldError('nomeResponsavel') }}
+                </p>
+              </div>
 
-          <!-- WhatsApp -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">WhatsApp *</label>
-            <input
-              type="tel"
-              formControlName="whatsapp"
-              (input)="aplicarMaskWhatsApp($event)"
-              class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-              [class.border-red-500]="adesaoForm.get('whatsapp')?.invalid && adesaoForm.get('whatsapp')?.touched"
-              placeholder="(11) 99999-9999"
-            />
-            <p class="text-xs text-red-600 mt-1" *ngIf="getFieldError('whatsapp')">
-              {{ getFieldError('whatsapp') }}
-            </p>
-          </div>
+              <!-- WhatsApp -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-800 mb-2">WhatsApp *</label>
+                <input
+                  type="tel"
+                  formControlName="whatsapp"
+                  (input)="aplicarMaskWhatsApp($event)"
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                  [class.border-red-500]="adesaoForm.get('whatsapp')?.invalid && adesaoForm.get('whatsapp')?.touched"
+                  placeholder="(11) 99999-9999"
+                />
+                <p class="text-xs text-red-600 mt-2" *ngIf="getFieldError('whatsapp')">
+                  {{ getFieldError('whatsapp') }}
+                </p>
+              </div>
 
-          <!-- E-mail -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">E-mail *</label>
-            <input
-              type="email"
-              formControlName="email"
-              class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
-              [class.border-red-500]="adesaoForm.get('email')?.invalid && adesaoForm.get('email')?.touched"
-              placeholder="seu@email.com"
-            />
-            <p class="text-xs text-gray-500 mt-1 italic">💡 Este será seu login de acesso</p>
-            <p class="text-xs text-red-600 mt-1" *ngIf="getFieldError('email')">
-              {{ getFieldError('email') }}
-            </p>
-          </div>
+              <!-- E-mail -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-800 mb-2">E-mail *</label>
+                <input
+                  type="email"
+                  formControlName="email"
+                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                  [class.border-red-500]="adesaoForm.get('email')?.invalid && adesaoForm.get('email')?.touched"
+                  placeholder="seu@email.com"
+                />
+                <p class="text-xs text-gray-600 mt-2 italic">💡 Este será seu login de acesso</p>
+                <p class="text-xs text-red-600 mt-1" *ngIf="getFieldError('email')">
+                  {{ getFieldError('email') }}
+                </p>
+              </div>
+            </div>
+          </fieldset>
         </div>
-      </fieldset>
+      </div>
 
       <!-- BLOCO C: Concierge & Legal -->
       <fieldset class="border border-gray-300 rounded-lg p-4 space-y-4" [disabled]="submitted()">

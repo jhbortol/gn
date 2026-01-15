@@ -86,7 +86,7 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
       instagramOficial: ['', [Validators.required, Validators.pattern(/^@[a-zA-Z0-9_.]+$/)]],
       cnpjCpf: ['', [Validators.required, this.validarCNPJCPF.bind(this)]],
       nomeResponsavel: ['', [Validators.required, Validators.minLength(3)]],
-      whatsapp: ['', [Validators.required, Validators.pattern(/^\d{10,11}$/)]],
+      whatsapp: ['', [Validators.required, this.validarWhatsApp.bind(this)]],
       email: ['', [Validators.required, Validators.email]],
       autorizaFotos: [true], // Pre-marcado
       aceitaTermos: [false, [Validators.requiredTrue]]
@@ -187,6 +187,28 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
     this.adesaoForm.get('cnpjCpf')?.setValue(valor, { emitEvent: false });
   }
 
+  validarWhatsApp(control: any): { [key: string]: any } | null {
+    const valor = control.value?.replace(/\D/g, '') || '';
+    
+    if (!valor) return null;
+    
+    // Check if length is between 10-11 digits (10 for fixed line, 11 for mobile with area code)
+    if (valor.length < 10 || valor.length > 11) {
+      return { whatsappInvalido: true };
+    }
+    
+    // Check if it's a valid Brazilian phone (starts with 1-9 after area code)
+    if (valor.length >= 2) {
+      const areaCode = parseInt(valor.substring(0, 2));
+      // Area code must be between 11 and 99
+      if (areaCode < 11 || areaCode > 99) {
+        return { whatsappInvalido: true };
+      }
+    }
+    
+    return null;
+  }
+
   aplicarMaskWhatsApp(event: any): void {
     let valor = event.target.value.replace(/\D/g, '');
 
@@ -253,8 +275,8 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
     if (field.errors['email']) return 'E-mail inválido';
     if (field.errors['pattern']) {
       if (fieldName === 'instagramOficial') return 'Use o formato: @sualoja';
-      if (fieldName === 'whatsapp') return 'WhatsApp inválido (10-11 dígitos)';
     }
+    if (field.errors['whatsappInvalido']) return 'WhatsApp inválido (10-11 dígitos)';
     if (field.errors['cnpjCpfInvalido']) return 'CPF ou CNPJ inválido';
     if (field.errors['requiredTrue']) return 'Você deve aceitar os termos para continuar';
 

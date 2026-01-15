@@ -1,94 +1,133 @@
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-  <!-- BLOCO A: Header & Oferta -->
-  <div class="bg-gradient-to-r from-rose-700 to-rose-800 text-white pt-12 pb-8 shadow-xl">
-    <div class="max-w-6xl mx-auto px-4 md:px-8">
-      <h1 class="text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-2">Ativação de Cadastro</h1>
-      <p class="text-rose-100 text-base md:text-lg mb-8">Condição Parceiro</p>
+<div class="min-h-screen bg-gradient-to-b from-gray-900 via-gray-50 to-gray-100">
+  <!-- BLOCO A: Header Premium -->
+  <div class="relative bg-gradient-to-r from-rose-700 to-rose-900 text-white overflow-hidden">
+    <!-- Background pattern -->
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/2"></div>
+      <div class="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/2"></div>
+    </div>
 
-      <div class="bg-white rounded-xl p-6 md:p-8 text-gray-900 shadow-2xl max-w-2xl">
-        <p class="text-sm font-medium text-gray-600 mb-4">Plano Anual Guia Noivas 2026</p>
+    <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <!-- Breadcrumb/Label -->
+      <div class="flex items-center gap-2 mb-4">
+        <span class="inline-block px-3 py-1 bg-rose-100 bg-opacity-20 text-rose-100 text-xs font-semibold rounded-full">CONDIÇÃO ESPECIAL</span>
+      </div>
 
-        <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-6">
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold mb-3 leading-tight">
+        Ativação de Cadastro
+      </h1>
+      <p class="text-rose-100 text-lg md:text-xl mb-12 max-w-xl">Torne-se parceiro premium do Guia Noivas 2026</p>
+
+      <!-- Oferta Card -->
+      <div class="bg-white rounded-2xl p-8 md:p-12 text-gray-900 shadow-2xl max-w-2xl border border-gray-200">
+        <div class="grid md:grid-cols-2 gap-8 items-center">
+          <!-- Left side: Details -->
           <div>
-            <span class="text-base line-through text-gray-500">De: R$ {{ PRECO_ORIGINAL | number: '1.2-2' }}</span>
+            <p class="text-sm font-medium text-gray-500 mb-4 uppercase tracking-widest">Plano Anual Completo</p>
+            <h2 class="text-sm text-gray-600 line-through mb-4">De: R$ {{ PRECO_ORIGINAL | number: '1.2-2' }}</h2>
+            <div class="space-y-2 mb-6">
+              <p class="text-4xl md:text-5xl font-bold text-green-600">R$ {{ PRECO_FINAL | number: '1.2-2' }}</p>
+              <p class="text-sm text-gray-500">por apenas</p>
+            </div>
+            <div class="flex items-start gap-2 text-xs text-gray-600">
+              <span>✓</span>
+              <span>Pagamento único anual 2026</span>
+            </div>
           </div>
-          <div class="text-center md:text-right">
-            <p class="text-5xl md:text-6xl font-bold text-green-600">R$ {{ PRECO_FINAL | number: '1.2-2' }}</p>
-            <p class="text-sm text-gray-500 mt-2">por apenas</p>
-          </div>
-        </div>
 
-        <div class="bg-green-50 border-2 border-green-400 rounded-lg px-4 py-3 text-center">
-          <p class="text-sm md:text-base font-semibold text-green-700">
-            🎁 Oferta exclusiva via Indicação
-          </p>
+          <!-- Right side: Badge -->
+          <div class="text-center">
+            <div class="inline-block bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-400 rounded-xl px-6 py-4">
+              <p class="text-2xl mb-2">🎁</p>
+              <p class="font-bold text-green-700">Oferta Exclusiva</p>
+              <p class="text-xs text-green-600 mt-1">Via Indicação</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- BLOCO B: O Formulário -->
-  <div class="px-4 md:px-8 py-12 max-w-6xl mx-auto">
-    <form [formGroup]="adesaoForm" (ngSubmit)="onSubmit()" class="space-y-6">
-      <!-- Erro Geral -->
-      <div *ngIf="error()" class="bg-red-50 border-l-4 border-red-500 rounded-lg p-4 shadow-md">
-        <p class="text-red-700 font-medium">{{ error() }}</p>
+  <!-- BLOCO B: Formulário Principal -->
+  <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+    <form [formGroup]="adesaoForm" (ngSubmit)="onSubmit()" class="space-y-8">
+      <!-- Alertas -->
+      <div *ngIf="error()" class="bg-red-50 border-l-4 border-red-600 rounded-lg p-5 shadow-md animate-pulse">
+        <div class="flex items-start gap-3">
+          <span class="text-red-600 text-xl flex-shrink-0">⚠</span>
+          <p class="text-red-800 font-medium">{{ error() }}</p>
+        </div>
       </div>
 
-      <!-- Sucesso -->
-      <div *ngIf="submitted()" class="bg-green-50 border-l-4 border-green-500 rounded-lg p-4 shadow-md">
-        <p class="text-green-700 font-medium">✓ Cadastro recebido! Redirecionando para pagamento...</p>
+      <div *ngIf="submitted()" class="bg-green-50 border-l-4 border-green-600 rounded-lg p-5 shadow-md">
+        <div class="flex items-start gap-3">
+          <span class="text-green-600 text-xl flex-shrink-0">✓</span>
+          <p class="text-green-800 font-medium">Cadastro recebido! Redirecionando para pagamento seguro...</p>
+        </div>
       </div>
 
+      <!-- Grid de Formulário -->
       <div class="grid md:grid-cols-2 gap-8">
-        <!-- Dados da Empresa -->
-        <div class="md:col-span-1">
-          <fieldset class="border-2 border-gray-200 rounded-xl p-6 bg-white shadow-sm" [disabled]="submitted()">
-            <legend class="text-base font-bold text-gray-800 px-3 bg-white">Dados da Empresa</legend>
+        <!-- SEÇÃO 1: Dados da Empresa -->
+        <div class="flex flex-col">
+          <div class="mb-4">
+            <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-100 text-rose-700 font-semibold">1</span>
+              Dados da Empresa
+            </h3>
+            <p class="text-sm text-gray-600 mt-1">Informações da sua loja</p>
+          </div>
 
-            <div class="space-y-5 mt-6">
+          <fieldset class="border-2 border-gray-200 rounded-xl p-8 bg-white shadow-sm hover:shadow-md transition-shadow" [disabled]="submitted()">
+            <div class="space-y-6">
               <!-- Nome Fantasia -->
-              <div>
-                <label class="block text-sm font-semibold text-gray-800 mb-2">Nome Fantasia *</label>
+              <div class="form-group">
+                <label class="block text-sm font-bold text-gray-900 mb-3">
+                  Nome Fantasia <span class="text-rose-600">*</span>
+                </label>
                 <input
                   type="text"
                   formControlName="nomeFantasia"
-                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                  class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
                   [class.border-red-500]="adesaoForm.get('nomeFantasia')?.invalid && adesaoForm.get('nomeFantasia')?.touched"
-                  placeholder="Ex: Decorações Florais"
+                  placeholder="Ex: Decorações Florais Luxo"
                 />
-                <p class="text-xs text-red-600 mt-2" *ngIf="getFieldError('nomeFantasia')">
+                <p class="text-xs text-red-600 mt-2 font-medium" *ngIf="getFieldError('nomeFantasia')">
                   {{ getFieldError('nomeFantasia') }}
                 </p>
               </div>
 
               <!-- Instagram -->
-              <div>
-                <label class="block text-sm font-semibold text-gray-800 mb-2">Instagram Oficial *</label>
+              <div class="form-group">
+                <label class="block text-sm font-bold text-gray-900 mb-3">
+                  Instagram Oficial <span class="text-rose-600">*</span>
+                </label>
                 <input
                   type="text"
                   formControlName="instagramOficial"
-                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                  class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
                   [class.border-red-500]="adesaoForm.get('instagramOficial')?.invalid && adesaoForm.get('instagramOficial')?.touched"
                   placeholder="@sualoja"
                 />
-                <p class="text-xs text-red-600 mt-2" *ngIf="getFieldError('instagramOficial')">
+                <p class="text-xs text-red-600 mt-2 font-medium" *ngIf="getFieldError('instagramOficial')">
                   {{ getFieldError('instagramOficial') }}
                 </p>
               </div>
 
               <!-- CNPJ/CPF -->
-              <div>
-                <label class="block text-sm font-semibold text-gray-800 mb-2">CNPJ ou CPF *</label>
+              <div class="form-group">
+                <label class="block text-sm font-bold text-gray-900 mb-3">
+                  CNPJ ou CPF <span class="text-rose-600">*</span>
+                </label>
                 <input
                   type="text"
                   formControlName="cnpjCpf"
                   (input)="aplicarMaskCNPJCPF($event)"
-                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                  class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition font-mono"
                   [class.border-red-500]="adesaoForm.get('cnpjCpf')?.invalid && adesaoForm.get('cnpjCpf')?.touched"
                   placeholder="00.000.000/0000-00"
                 />
-                <p class="text-xs text-red-600 mt-2" *ngIf="getFieldError('cnpjCpf')">
+                <p class="text-xs text-red-600 mt-2 font-medium" *ngIf="getFieldError('cnpjCpf')">
                   {{ getFieldError('cnpjCpf') }}
                 </p>
               </div>
@@ -96,55 +135,67 @@
           </fieldset>
         </div>
 
-        <!-- Dados de Contato -->
-        <div class="md:col-span-1">
-          <fieldset class="border-2 border-gray-200 rounded-xl p-6 bg-white shadow-sm" [disabled]="submitted()">
-            <legend class="text-base font-bold text-gray-800 px-3 bg-white">Dados de Contato</legend>
+        <!-- SEÇÃO 2: Dados de Contato -->
+        <div class="flex flex-col">
+          <div class="mb-4">
+            <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-100 text-rose-700 font-semibold">2</span>
+              Dados de Contato
+            </h3>
+            <p class="text-sm text-gray-600 mt-1">Como podemos contactá-lo</p>
+          </div>
 
-            <div class="space-y-5 mt-6">
+          <fieldset class="border-2 border-gray-200 rounded-xl p-8 bg-white shadow-sm hover:shadow-md transition-shadow" [disabled]="submitted()">
+            <div class="space-y-6">
               <!-- Nome Responsável -->
-              <div>
-                <label class="block text-sm font-semibold text-gray-800 mb-2">Nome do Responsável *</label>
+              <div class="form-group">
+                <label class="block text-sm font-bold text-gray-900 mb-3">
+                  Nome do Responsável <span class="text-rose-600">*</span>
+                </label>
                 <input
                   type="text"
                   formControlName="nomeResponsavel"
-                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                  class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
                   [class.border-red-500]="adesaoForm.get('nomeResponsavel')?.invalid && adesaoForm.get('nomeResponsavel')?.touched"
                   placeholder="Seu nome completo"
                 />
-                <p class="text-xs text-red-600 mt-2" *ngIf="getFieldError('nomeResponsavel')">
+                <p class="text-xs text-red-600 mt-2 font-medium" *ngIf="getFieldError('nomeResponsavel')">
                   {{ getFieldError('nomeResponsavel') }}
                 </p>
               </div>
 
               <!-- WhatsApp -->
-              <div>
-                <label class="block text-sm font-semibold text-gray-800 mb-2">WhatsApp *</label>
+              <div class="form-group">
+                <label class="block text-sm font-bold text-gray-900 mb-3">
+                  WhatsApp <span class="text-rose-600">*</span>
+                </label>
                 <input
                   type="tel"
                   formControlName="whatsapp"
                   (input)="aplicarMaskWhatsApp($event)"
-                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                  class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition font-mono"
                   [class.border-red-500]="adesaoForm.get('whatsapp')?.invalid && adesaoForm.get('whatsapp')?.touched"
                   placeholder="(11) 99999-9999"
                 />
-                <p class="text-xs text-red-600 mt-2" *ngIf="getFieldError('whatsapp')">
+                <p class="text-xs text-red-600 mt-2 font-medium" *ngIf="getFieldError('whatsapp')">
                   {{ getFieldError('whatsapp') }}
                 </p>
               </div>
 
               <!-- E-mail -->
-              <div>
-                <label class="block text-sm font-semibold text-gray-800 mb-2">E-mail *</label>
+              <div class="form-group">
+                <label class="block text-sm font-bold text-gray-900 mb-3">
+                  E-mail <span class="text-rose-600">*</span>
+                </label>
                 <input
                   type="email"
                   formControlName="email"
-                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                  class="w-full px-4 py-3.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
                   [class.border-red-500]="adesaoForm.get('email')?.invalid && adesaoForm.get('email')?.touched"
                   placeholder="seu@email.com"
                 />
-                <p class="text-xs text-gray-600 mt-2 italic">💡 Este será seu login de acesso</p>
-                <p class="text-xs text-red-600 mt-1" *ngIf="getFieldError('email')">
+                <p class="text-xs text-gray-500 mt-2">💡 Será seu login de acesso</p>
+                <p class="text-xs text-red-600 mt-1 font-medium" *ngIf="getFieldError('email')">
                   {{ getFieldError('email') }}
                 </p>
               </div>
@@ -153,64 +204,80 @@
         </div>
       </div>
 
-      <!-- BLOCO C: Concierge & Legal -->
-      <fieldset class="border border-gray-300 rounded-lg p-4 space-y-4" [disabled]="submitted()">
-        <legend class="text-sm font-bold text-gray-800 px-2">Autorização & Termos</legend>
-
-        <!-- Checkbox 1: Concierge (pré-marcado) -->
-        <div class="flex items-start gap-3 mt-4">
-          <input
-            type="checkbox"
-            formControlName="autorizaFotos"
-            id="autorizaFotos"
-            class="mt-1 w-4 h-4 accent-green-600 cursor-pointer"
-          />
-          <label for="autorizaFotos" class="text-sm text-gray-700 cursor-pointer flex-1">
-            Autorizo o Guia Noivas a utilizar as fotos públicas do meu Instagram para a montagem inicial da minha vitrine.
-          </label>
+      <!-- BLOCO C: Autorização & Termos -->
+      <div class="flex flex-col">
+        <div class="mb-4">
+          <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-rose-100 text-rose-700 font-semibold">3</span>
+            Autorização & Termos
+          </h3>
+          <p class="text-sm text-gray-600 mt-1">Confirme sua concordância</p>
         </div>
 
-        <!-- Termos Scrolláveis -->
-        <div class="bg-gray-50 border border-gray-300 rounded-lg p-3 h-40 overflow-y-scroll text-xs text-gray-700 leading-relaxed">
-          <pre class="font-sans whitespace-pre-wrap">{{ TERMOS_LEGAIS }}</pre>
-        </div>
+        <fieldset class="border-2 border-gray-200 rounded-xl p-8 bg-white shadow-sm" [disabled]="submitted()">
+          <!-- Checkbox 1: Fotos Instagram -->
+          <div class="flex items-start gap-4 mb-6 pb-6 border-b border-gray-200">
+            <input
+              type="checkbox"
+              formControlName="autorizaFotos"
+              id="autorizaFotos"
+              class="mt-1 w-5 h-5 accent-green-600 cursor-pointer rounded"
+            />
+            <label for="autorizaFotos" class="text-sm text-gray-700 cursor-pointer flex-1">
+              <span class="font-semibold text-gray-900">Autorizar uso de fotos</span>
+              <p class="text-xs text-gray-600 mt-1">Autorizo o Guia Noivas a utilizar as fotos públicas do meu Instagram para montagem da vitrine</p>
+            </label>
+          </div>
 
-        <!-- Checkbox 2: Aceita Termos (obrigatório) -->
-        <div class="flex items-start gap-3">
-          <input
-            type="checkbox"
-            formControlName="aceitaTermos"
-            id="aceitaTermos"
-            class="mt-1 w-4 h-4 accent-green-600 cursor-pointer"
-            [class.border-red-500]="adesaoForm.get('aceitaTermos')?.invalid && adesaoForm.get('aceitaTermos')?.touched"
-          />
-          <label for="aceitaTermos" class="text-sm text-gray-700 cursor-pointer flex-1">
-            Li e estou de acordo com os Termos de Uso e Política de Privacidade acima. *
-          </label>
-        </div>
-        <p class="text-xs text-red-600" *ngIf="getFieldError('aceitaTermos')">
-          {{ getFieldError('aceitaTermos') }}
-        </p>
-      </fieldset>
+          <!-- Termos Scrolláveis -->
+          <div class="mb-6">
+            <p class="text-xs font-semibold text-gray-700 mb-3">Termos de Uso e Responsabilidade</p>
+            <div class="bg-gray-50 border border-gray-300 rounded-lg p-4 h-48 overflow-y-auto text-xs text-gray-700 leading-relaxed">
+              <pre class="font-sans whitespace-pre-wrap">{{ TERMOS_LEGAIS }}</pre>
+            </div>
+          </div>
+
+          <!-- Checkbox 2: Aceita Termos -->
+          <div class="flex items-start gap-4">
+            <input
+              type="checkbox"
+              formControlName="aceitaTermos"
+              id="aceitaTermos"
+              class="mt-1 w-5 h-5 accent-rose-600 cursor-pointer rounded"
+              [class.border-red-500]="adesaoForm.get('aceitaTermos')?.invalid && adesaoForm.get('aceitaTermos')?.touched"
+            />
+            <label for="aceitaTermos" class="text-sm text-gray-700 cursor-pointer flex-1">
+              <span class="font-semibold text-gray-900">Li e concordo com os termos</span>
+              <p class="text-xs text-gray-600 mt-1">Confirmo que li e estou de acordo com os Termos de Uso e Política de Privacidade acima <span class="text-rose-600 font-bold">*</span></p>
+            </label>
+          </div>
+          <p class="text-xs text-red-600 mt-2 font-medium" *ngIf="getFieldError('aceitaTermos')">
+            {{ getFieldError('aceitaTermos') }}
+          </p>
+        </fieldset>
+      </div>
 
       <!-- BLOCO D: CTA Button -->
-      <div class="pb-4">
+      <div class="mt-10">
         <button
           type="submit"
           [disabled]="adesaoForm.invalid || loading()"
-          class="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-4 px-6 rounded-lg transition-all duration-200 text-base md:text-lg shadow-lg"
+          class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-400 disabled:to-gray-400 text-white font-bold py-5 px-6 rounded-xl transition-all duration-200 text-lg shadow-lg hover:shadow-xl disabled:shadow-none"
         >
-          <span *ngIf="!loading()">✓ FINALIZAR E PAGAR R$ {{ PRECO_FINAL | number: '1.2-2' }}</span>
+          <span *ngIf="!loading()" class="flex items-center justify-center gap-2">
+            <span class="text-xl">✓</span>
+            FINALIZAR E PAGAR R$ {{ PRECO_FINAL | number: '1.2-2' }}
+          </span>
           <span *ngIf="loading()" class="flex items-center justify-center gap-2">
             <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            Processando...
+            Processando pagamento...
           </span>
         </button>
-        <p class="text-xs text-gray-500 text-center mt-3">
-          Você será redirecionado para pagamento seguro. Nenhum outro débito será realizado.
+        <p class="text-xs text-gray-500 text-center mt-4">
+          🔒 Transação 100% segura. Você será redirecionado para o gateway de pagamento. Nenhum outro débito será realizado.
         </p>
       </div>
     </form>

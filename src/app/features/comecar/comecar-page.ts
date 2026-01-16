@@ -106,13 +106,26 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
 
   ngOnInit(): void {
     // Step 1: Carregar Termo
+    // TODO: Backend precisa adicionar CORS headers para permitir localhost:4200
+    // Enquanto isso, usando mock temporário
+    
     this.termoService.carregarTermo('ADESAO').subscribe({
       next: (response) => {
         this.termo.set(response.termo);
       },
       error: (err) => {
-        console.error('Erro ao carregar termo:', err);
-        this.error.set('Erro ao carregar os termos. Por favor, recarregue a página.');
+        console.error('Erro ao carregar termo (usando mock temporário):', err);
+        
+        // Mock temporário até backend configurar CORS
+        this.termo.set({
+          id: 'termo-adesao-2026-v1',
+          versao: 1,
+          conteudo: this.TERMOS_LEGAIS,
+          dataVigencia: new Date('2026-01-01'),
+          tipoTermo: 'ADESAO',
+          hash: 'mock-hash-temporario-development-only',
+          ativo: true
+        });
       }
     });
   }

@@ -1,27 +1,38 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, ViewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ApiService } from '../../core/api.service';
+import { TermoAdesaoService } from '../../core/services/termo-adesao.service';
+import { TermoScrollTrackerComponent } from './termo-scroll-tracker.component';
+import { ComprovanteAceiteComponent } from './comprovante-aceite.component';
+import { TermoAdesao, AceitacaoTermo, ComprovanteAceite } from '../../core/models/termo-adesao.model';
 
 @Component({
   selector: 'app-comecar-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TermoScrollTrackerComponent, ComprovanteAceiteComponent],
   templateUrl: './comecar-page.html',
   styleUrls: ['./comecar-page.css']
 })
-export class ComecarPage {
+export class ComecarPage implements OnInit {
+  @ViewChild(TermoScrollTrackerComponent) termoScrollTracker?: TermoScrollTrackerComponent;
+
   adesaoForm: FormGroup;
   loading = signal(false);
   error = signal('');
   submitted = signal(false);
+  comprovante = signal<ComprovanteAceite | null>(null);
+  scrollCompletoTermo = signal(false);
+  aceitoTermo = signal(false);
+  termo = signal<TermoAdesao | null>(null);
 
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private http = inject(HttpClient);
   private router = inject(Router);
+  private termoService = inject(TermoAdesaoService);
 
   readonly INFINITEPAY_URL = 'https://link.infinitepay.io/guianoivaspiracicaba/Ri1D-72iRl1Vgzd-397,00';
   readonly PRECO_FINAL = 397.00;
@@ -90,6 +101,19 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
       email: ['', [Validators.required, Validators.email]],
       autorizaFotos: [true], // Pre-marcado
       aceitaTermos: [false, [Validators.requiredTrue]]
+    });
+  }
+
+  ngOnInit(): void {
+    // Step 1: Carregar Termo
+    this.termoService.carregarTermo('ADESAO').subscribe({
+      next: (response) => {
+        this.termo.set(response.termo);
+      },
+      error: (err) => {
+        console.error('Erro ao carregar termo:', err);
+        this.error.set('Erro ao carregar os termos. Por favor, recarregue a página.');
+      }
     });
   }
 
@@ -230,8 +254,9 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
   }
 
   async onSubmit(): Promise<void> {
-    if (this.adesaoForm.invalid) {
+    if (this.adesaoForm.invalid || !this.scrollCompletoTermo() || !this.aceitoTermo()) {
       this.adesaoForm.markAllAsTouched();
+      this.error.set('Por favor, leia e aceite todos os termos para prosseguir.');
       return;
     }
 
@@ -240,8 +265,58 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
 
     try {
       const formData = this.adesaoForm.value;
+      const termo = this.termo();
 
-      // Enviar dados para API (salvar cadastro)
+      if (!termo) {
+        throw new Error('Termo não carregado');
+      }
+
+      // Step 4: Validar hash localmente
+      const hashValido = await this.termoService.validarHash(
+        termo.conteudo,
+        termo.hash || ''
+      );
+
+      if (!hashValido) {
+        this.error.set('Erro na validação do termo. Recarregando página...');
+        this.termoService.tratarErroHashInvalido({
+          codigo: 'HASH_INVALIDO',
+          mensagem: 'Hash do termo não corresponde ao esperado'
+        });
+        return;
+      }
+
+      // Calcular hash para submissão
+      const termoHash = await this.termoService.calcularHashTermo(termo.conteudo);
+
+      // Obter dados de auditoria do scroll tracker
+      const dadosAuditoria = this.termoScrollTracker?.obterDadosAuditoria() || {
+        scrollCompleto: true,
+        tempoLeitura: 0,
+        aceito: true,
+        percentualLido: 100
+      };
+
+      // Step 5: Preparar payload com auditoria completa
+      const aceitacaoTermo: AceitacaoTermo = {
+        termoId: termo.id,
+        versao: termo.versao,
+        termoHash: termoHash,
+        dataAceite: new Date(),
+        scrollCompleto: dadosAuditoria.scrollCompleto,
+        tempoLeitura: dadosAuditoria.tempoLeitura
+      };
+
+      // Submeter aceite do termo (auditoria)
+      const comprovanteResponse = await this.termoService.submeterAceitacaoTermo(
+        aceitacaoTermo
+      ).toPromise();
+
+      if (comprovanteResponse) {
+        this.comprovante.set(comprovanteResponse);
+      }
+
+      // Enviar dados para API (salvar cadastro com referência ao termo)
       const response = await this.api.post('/fornecedores/adesao-express', {
         nomeFantasia: formData.nomeFantasia,
         instagramOficial: formData.instagramOficial,
@@ -251,17 +326,37 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
         email: formData.email,
         autorizaFotos: formData.autorizaFotos,
         aceitaTermos: formData.aceitaTermos,
-        dataAceite: new Date().toISOString()
+        dataAceite: new Date().toISOString(),
+        // Auditoria jurídica
+        protocoloAceite: comprovanteResponse?.protocolo,
+        termoId: termo.id,
+        termoVersao: termo.versao,
+        termoHash: termoHash,
+        tempoLeitura: dadosAuditoria.tempoLeitura
       }).toPromise();
 
       this.submitted.set(true);
 
-      // Redirecionar para InfinitePay após 1.5s
+      // Step 7: Exibir comprovante
+      console.log('Comprovante de aceite:', comprovanteResponse);
+
+      // Redirecionar para InfinitePay após 2s (tempo suficiente para ver comprovante)
       setTimeout(() => {
         window.location.href = this.INFINITEPAY_URL;
-      }, 1500);
+      }, 2000);
     } catch (err: any) {
-      this.error.set(err.error?.message || 'Erro ao processar sua adesão. Tente novamente.');
+      const errorMsg = err.error?.message || err.message || 'Erro ao processar sua adesão. Tente novamente.';
+      
+      // Step 6: Tratamento de erros específicos
+      if (err.error?.codigo === 'TERMO_DUPLICADO') {
+        this.termoService.tratarErroDuplicata(err.error);
+        this.error.set('Você já aceitos este termo anteriormente.');
+      } else if (err.error?.codigo === 'HASH_INVALIDO') {
+        this.termoService.tratarErroHashInvalido(err.error);
+      } else {
+        this.error.set(errorMsg);
+      }
+      
       this.loading.set(false);
     }
   }

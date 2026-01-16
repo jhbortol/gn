@@ -1,0 +1,148 @@
+/* Global Styling */
+:host {
+  display: block;
+  background: #ffffff;
+  min-height: 100vh;
+}
+
+/* Typography & Spacing */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Form Elements */
+fieldset {
+  border: none;
+  padding: 0 !important;
+  margin: 0;
+}
+
+legend {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 0;
+  color: inherit;
+}
+
+fieldset[disabled] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Input Focus States */
+input,
+textarea,
+button {
+  transition: all 0.3s ease;
+}
+
+input:focus,
+textarea:focus {
+  box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.1);
+}
+
+/* Scrollbar Styling */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #cbd5e1 0%, #9ca3af 100%);
+  border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #9ca3af 0%, #6b7280 100%);
+}
+
+/* Loading Spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Focus Accessibility */
+:focus-visible {
+  outline: 2px solid #e91e63;
+  outline-offset: 2px;
+}
+
+/* Decorative Elements */
+.blur-3xl {
+  filter: blur(64px);
+}
+
+/* Responsive Typography */
+@media (max-width: 640px) {
+  h1 {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+
+  h2 {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+
+  p {
+    font-size: 0.875rem;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  h1 {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+}
+
+@media (min-width: 769px) {
+  h1 {
+    font-size: 3rem;
+    line-height: 3.5rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+}
+
+/* Form Section Spacing */
+@media (max-width: 768px) {
+  .form-section {
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .form-section {
+    gap: 2rem;
+  }
+}

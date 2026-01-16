@@ -18,7 +18,7 @@ import { TermoAdesao } from '../../core/models/termo-adesao.model';
         class="bg-gray-50 border-2 border-gray-200 rounded-lg p-4 h-48 overflow-y-auto scroll-tracking"
         (scroll)="onScroll($event)"
       >
-        <pre class="font-sans text-xs text-gray-700 whitespace-pre-wrap leading-relaxed">{{ termo?.conteudo }}</pre>
+        <pre class="font-sans text-xs text-gray-700 whitespace-pre-wrap leading-relaxed">{{ termo.conteudo }}</pre>
       </div>
 
       <!-- Indicador de progresso de leitura -->
@@ -67,9 +67,9 @@ import { TermoAdesao } from '../../core/models/termo-adesao.model';
 
       <!-- Metadados do termo (para auditoria) -->
       <div class="text-xs text-gray-500 bg-gray-50 rounded p-2 mt-4">
-        <p><strong>Termo ID:</strong> {{ termo?.id }}</p>
-        <p><strong>Versão:</strong> {{ termo?.versao }}</p>
-        <p><strong>Hash:</strong> {{ termo?.hash?.substring(0, 16) }}...</p>
+        <p><strong>Termo ID:</strong> {{ termo.id }}</p>
+        <p><strong>Versão:</strong> {{ termo.versao }}</p>
+        <p><strong>Hash:</strong> {{ termo.hash?.substring(0, 16) }}...</p>
       </div>
     </div>
   `,

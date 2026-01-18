@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiService } from '../../../core/api.service';
 import { Observable, map, catchError, of, switchMap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { CompetitorAd, PlanLevel } from '../../../core/models/tier-system.model';
 
 // DTOs alinhados ao backend (simplificados)
 export interface FornecedorListDto {
@@ -73,6 +74,12 @@ export interface Fornecedor {
   categoria?: string; // apenas o nome para compatibilidade prévia
   imagens: Array<{ url: string; orderIndex: number }>; // URLs com ordem
   depoimentos?: Array<{ texto: string; casal: string }>; // adaptado de testemunhos
+
+  // Novos campos tier (OPCIONAIS para backward compatibility)
+  planLevel?: PlanLevel;
+  whatsAppUrl?: string;
+  showContactForm?: boolean;
+  adInjection?: CompetitorAd[];
 }
 
 @Injectable({ providedIn: 'root' })

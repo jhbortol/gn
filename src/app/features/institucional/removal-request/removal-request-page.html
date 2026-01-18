@@ -1,0 +1,314 @@
+<div class="removal-request-page">
+  <!-- ============================================
+       HEADER
+       ============================================ -->
+  <header class="page-header">
+    <div class="container">
+      <h1>
+        <span class="icon">🔒</span>
+        Solicitação de Remoção de Dados
+      </h1>
+      <p class="subtitle">Gerenciar meu Perfil no Guia Noivas Piracicaba</p>
+    </div>
+  </header>
+
+  <!-- ============================================
+       PÁGINA DE SUCESSO (PÓS-SUBMISSÃO)
+       ============================================ -->
+  <div class="success-state" *ngIf="submitted()">
+    <div class="container">
+      <div class="success-card">
+        <div class="success-icon">✅</div>
+        <h2>Solicitação Recebida</h2>
+        <p class="success-message">
+          Nossa equipe de privacidade analisará a titularidade da conta em até
+          <strong>72 horas úteis</strong>.
+        </p>
+        <p class="success-detail">
+          Você receberá um email de confirmação no endereço fornecido assim que a
+          solicitação for processada.
+        </p>
+        <button class="btn-primary" (click)="startNewRequest()">
+          Fazer Nova Solicitação
+        </button>
+        <a routerLink="/" class="btn-secondary">Voltar ao Início</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       FORMULÁRIO (ESTADO INICIAL)
+       ============================================ -->
+  <div class="form-container" *ngIf="!submitted()">
+    <div class="container">
+      <!-- ALERTA DE FRICÇÃO -->
+      <div class="warning-box">
+        <div class="warning-icon">⚠️</div>
+        <div class="warning-content">
+          <h3>Atenção: Esta ação possui consequências irreversíveis</h3>
+          <p>
+            Ao remover seu perfil do <strong>Guia Noivas Piracicaba</strong>, sua
+            empresa perderá:
+          </p>
+          <ul class="warning-list">
+            <li>
+              <strong>Indexação no Google</strong> conquistada através da nossa
+              plataforma
+            </li>
+            <li>
+              <strong>Visibilidade online</strong> para noivas da região de
+              Piracicaba
+            </li>
+            <li>
+              <strong>Histórico de avaliações</strong> e depoimentos de clientes
+            </li>
+            <li>
+              <strong>Contato direto</strong> com potenciais clientes que buscam
+              seus serviços
+            </li>
+          </ul>
+          <p class="warning-footer">
+            ⚠️ <strong>Esta ação é irreversível.</strong> Recomendamos que você
+            apenas solicite a remoção caso tenha encerrado suas atividades ou por
+            questões legais/privacidade.
+          </p>
+        </div>
+      </div>
+
+      <!-- PASSO 1: IDENTIFICAÇÃO (BUSCA) -->
+      <section class="form-section">
+        <div class="section-header">
+          <span class="step-number">1</span>
+          <h2>Identificação da Empresa</h2>
+        </div>
+
+        <div class="search-container">
+          <label for="vendorSearch" class="form-label">
+            Digite o nome da sua empresa
+            <span class="required">*</span>
+          </label>
+          
+          <div class="search-input-wrapper">
+            <input
+              id="vendorSearch"
+              type="text"
+              class="form-input search-input"
+              placeholder="Ex: Confeitaria Sonho de Valsa"
+              [value]="searchQuery()"
+              (input)="onSearchInput($event)"
+              (blur)="closeDropdown()"
+              [disabled]="selectedVendor()"
+            />
+            
+            <!-- Spinner de busca -->
+            <span class="search-spinner" *ngIf="isSearching()">🔄</span>
+            
+            <!-- Botão limpar -->
+            <button
+              class="btn-clear"
+              *ngIf="selectedVendor()"
+              (click)="clearVendor()"
+              type="button">
+              ×
+            </button>
+          </div>
+
+          <p class="form-hint">
+            Digite pelo menos 3 caracteres para buscar
+          </p>
+
+          <!-- Dropdown de resultados -->
+          <div class="search-dropdown" *ngIf="showDropdown() && searchResults().length > 0">
+            <button
+              type="button"
+              class="search-result-item"
+              *ngFor="let vendor of searchResults()"
+              (click)="selectVendor(vendor)">
+              <div class="vendor-info">
+                <span class="vendor-name">{{ vendor.nomeFantasia }}</span>
+                <span class="vendor-detail" *ngIf="vendor.categoria">
+                  {{ vendor.categoria }}
+                </span>
+              </div>
+            </button>
+          </div>
+
+          <!-- Nenhum resultado -->
+          <div class="no-results" *ngIf="showDropdown() && !isSearching() && searchResults().length === 0 && searchQuery().length >= 3">
+            <p>Nenhuma empresa encontrada com este nome.</p>
+            <p class="no-results-hint">
+              Verifique se digitou corretamente ou tente outra variação do nome.
+            </p>
+          </div>
+
+          <!-- Empresa selecionada -->
+          <div class="selected-vendor" *ngIf="selectedVendor()">
+            <div class="vendor-card">
+              <div class="vendor-icon">✅</div>
+              <div class="vendor-details">
+                <h4>{{ selectedVendor()!.nomeFantasia }}</h4>
+                <p *ngIf="selectedVendor()!.categoria">
+                  {{ selectedVendor()!.categoria }}
+                </p>
+              </div>
+              <button class="btn-change" (click)="clearVendor()" type="button">
+                Trocar
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PASSO 2: FORMULÁRIO -->
+      <section class="form-section" [class.disabled]="!selectedVendor()">
+        <div class="section-header">
+          <span class="step-number">2</span>
+          <h2>Dados da Solicitação</h2>
+        </div>
+
+        <form [formGroup]="removalForm" (ngSubmit)="onSubmit()">
+          <!-- Email do Responsável -->
+          <div class="form-group">
+            <label for="requesterEmail" class="form-label">
+              E-mail do Responsável
+              <span class="required">*</span>
+            </label>
+            <input
+              id="requesterEmail"
+              type="email"
+              class="form-input"
+              formControlName="requesterEmail"
+              placeholder="contato@suaempresa.com.br"
+              [class.error]="isFieldInvalid('requesterEmail')"
+            />
+            <p class="form-hint">
+              Insira o e-mail comercial para validarmos sua identidade
+            </p>
+            <p class="error-message" *ngIf="isFieldInvalid('requesterEmail')">
+              {{ getFieldError('requesterEmail') }}
+            </p>
+          </div>
+
+          <!-- Motivo -->
+          <div class="form-group">
+            <label for="reason" class="form-label">
+              Motivo da Solicitação
+              <span class="required">*</span>
+            </label>
+            <select
+              id="reason"
+              class="form-select"
+              formControlName="reason"
+              [class.error]="isFieldInvalid('reason')">
+              <option value="">Selecione um motivo</option>
+              <option *ngFor="let reason of reasons" [value]="reason">
+                {{ getReasonLabel(reason) }}
+              </option>
+            </select>
+            <p class="error-message" *ngIf="isFieldInvalid('reason')">
+              {{ getFieldError('reason') }}
+            </p>
+          </div>
+
+          <!-- Mensagem Adicional -->
+          <div class="form-group">
+            <label for="description" class="form-label">
+              Mensagem Adicional
+              <span class="optional">(Opcional)</span>
+            </label>
+            <textarea
+              id="description"
+              class="form-textarea"
+              formControlName="description"
+              rows="4"
+              placeholder="Descreva brevemente o motivo da solicitação..."
+              maxlength="1000"
+            ></textarea>
+            <p class="form-hint">
+              Máximo de 1000 caracteres
+            </p>
+          </div>
+
+          <!-- Checkbox de Consentimento Legal -->
+          <div class="form-group consent-group">
+            <label class="consent-label">
+              <input
+                type="checkbox"
+                formControlName="legalConsent"
+                class="consent-checkbox"
+              />
+              <span class="consent-text">
+                Declaro ser o <strong>proprietário legal</strong> ou
+                <strong>representante autorizado</strong> desta empresa e compreendo
+                que a remoção implicará na <strong>perda de visibilidade online</strong>.
+              </span>
+            </label>
+            <p class="error-message" *ngIf="isFieldInvalid('legalConsent')">
+              Você deve aceitar esta declaração para prosseguir
+            </p>
+          </div>
+
+          <!-- Mensagem de Erro Global -->
+          <div class="error-alert" *ngIf="errorMessage()">
+            <span class="icon">⚠️</span>
+            <p>{{ errorMessage() }}</p>
+          </div>
+
+          <!-- Botões -->
+          <div class="form-actions">
+            <button
+              type="submit"
+              class="btn-submit"
+              [disabled]="isSubmitting() || !selectedVendor()">
+              <span *ngIf="!isSubmitting()">Enviar Solicitação</span>
+              <span *ngIf="isSubmitting()">
+                <span class="spinner">🔄</span>
+                Enviando...
+              </span>
+            </button>
+            <a routerLink="/" class="btn-cancel">Cancelar</a>
+          </div>
+        </form>
+      </section>
+
+      <!-- INFO ADICIONAL -->
+      <section class="info-section">
+        <div class="info-card">
+          <h3>📋 Como funciona o processo?</h3>
+          <ol class="info-list">
+            <li>
+              <strong>Validação de Identidade:</strong> Nossa equipe verificará se o
+              e-mail fornecido corresponde ao proprietário do perfil.
+            </li>
+            <li>
+              <strong>Análise (até 72h):</strong> Verificamos a legitimidade da
+              solicitação e possíveis pendências.
+            </li>
+            <li>
+              <strong>Confirmação:</strong> Você receberá um e-mail confirmando a
+              remoção ou solicitando documentação adicional.
+            </li>
+            <li>
+              <strong>Remoção:</strong> O perfil será desativado permanentemente da
+              plataforma.
+            </li>
+          </ol>
+        </div>
+
+        <div class="info-card">
+          <h3>🔐 Política de Privacidade</h3>
+          <p>
+            Respeitamos sua privacidade. Todos os dados fornecidos neste formulário
+            são utilizados exclusivamente para validação da titularidade da conta e
+            processamento da solicitação de remoção.
+          </p>
+          <p>
+            <a routerLink="/politica-privacidade" class="link">
+              Leia nossa Política de Privacidade completa
+            </a>
+          </p>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

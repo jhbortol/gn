@@ -62,7 +62,7 @@ export class DestaquesSemanaComponent implements OnInit {
             local: f.cidade,
             descricao: undefined,
             nota: f.rating || 0,
-            imagem: this.resolveImage(f.primaryImage?.url, 'assets/fornecedores/placeholder.jpg')
+            imagem: this.getPreferredImageUrl(f)
           }));
         if (!result.length) {
           console.warn('[DESTAQUES] nenhum resultado após filtragem.');
@@ -94,4 +94,23 @@ export class DestaquesSemanaComponent implements OnInit {
     }
     return `${base}${path}`;
   }
+
+  // Prefer primaryImage; fallback to imagens[isPrimary] or first image.
+  private getPreferredImageUrl(f: FornecedorListDto): string {
+    const fromPrimary = f.primaryImage?.url || undefined;
+    const fromImagesPrimary = (f.imagens || []).find(i => i.isPrimary)?.url || undefined;
+    const fromImagesFirst = (f.imagens && f.imagens.length) ? f.imagens[0].url : undefined;
+    const chosen = fromPrimary || fromImagesPrimary || fromImagesFirst;
+    const resolved = this.resolveImage(chosen, 'assets/fornecedores/placeholder.jpg');
+    // Cache-busting for remote images to avoid stale CDN serving incorrect content
+    if (resolved.startsWith('http')) {
+      const sep = resolved.includes('?') ? '&' : '?';
+      const key = encodeURIComponent(f.primaryImage?.id || f.imagens?.[0]?.id || f.id);
+      return `${resolved}${sep}cb=${key}`;
+    }
+    return resolved;
+  }
+
+  // TrackBy to ensure DOM stability per vendor
+  trackById(_: number, d: DestaqueView): string { return d.id; }
 }

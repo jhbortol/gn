@@ -5,7 +5,7 @@
     </div>
     <div *ngIf="(destaques$ | async) as destaques" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 min-h-[450px]">
       <ng-container *ngIf="destaques.length; else loading">
-        <div *ngFor="let destaque of destaques" 
+        <div *ngFor="let destaque of destaques; trackBy: trackById" 
              class="bg-white rounded-2xl shadow-md hover:shadow-2xl border border-gray-100 flex flex-col transition-all duration-300 hover:-translate-y-2 overflow-hidden group h-full">
           <div class="h-48 overflow-hidden" style="aspect-ratio:300/220;">
             <img [src]="destaque.imagem" loading="lazy" decoding="async" width="300" height="220"

@@ -33,6 +33,11 @@ export class FornecedorPageComponent implements OnInit {
   showLeadForm = signal(false);
   hasCompetitorAds = signal(false);
 
+  // Getter para fornecedorId como número
+  get fornecedorIdNumero(): number {
+    return this.fornecedor?.id ? parseInt(this.fornecedor.id.toString(), 10) : 0;
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -95,13 +100,6 @@ export class FornecedorPageComponent implements OnInit {
 
   closeImage() {
     this.selectedImage = undefined;
-  }
-
-  getWhatsAppLink(): string {
-    const w = this.fornecedor?.telefone || '';
-    const digits = w.replace(/\D/g, '');
-    const message = encodeURIComponent('Olá, Te encontrei no Guia Noivas Piracicaba, preciso de mais informações.');
-    return digits ? `https://wa.me/${digits}?text=${message}` : '#';
   }
 
   onWhatsAppClick() {

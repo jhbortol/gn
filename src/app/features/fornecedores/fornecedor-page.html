@@ -77,7 +77,7 @@
       <!-- NOVO: Lead Form (se Free tier com < 3 leads) -->
       <app-lead-form
         *ngIf="showLeadForm()"
-        [fornecedorId]="fornecedor.id | slice:0"
+        [fornecedorId]="fornecedorIdNumero"
         (submitSuccess)="onLeadSubmitSuccess($event)"
       ></app-lead-form>
 

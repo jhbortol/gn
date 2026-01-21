@@ -228,28 +228,21 @@
                 </label>
               </div>
 
-              <!-- Terms Box -->
-              <div class="bg-gray-50 border-2 border-gray-200 rounded-lg p-4 h-48 overflow-y-auto">
-                <pre class="font-sans text-xs text-gray-700 whitespace-pre-wrap leading-relaxed">{{ TERMOS_LEGAIS }}</pre>
-              </div>
-
-              <!-- Checkbox 2: Terms -->
-              <div class="flex items-start gap-4">
-                <input
-                  type="checkbox"
-                  formControlName="aceitaTermos"
-                  id="aceitaTermos"
-                  class="mt-1 w-5 h-5 accent-amber-600 cursor-pointer rounded"
-                  [class.border-red-500]="adesaoForm.get('aceitaTermos')?.invalid && adesaoForm.get('aceitaTermos')?.touched"
-                />
-                <label for="aceitaTermos" class="cursor-pointer flex-1">
-                  <p class="font-semibold text-gray-900">Confirmar aceite dos termos <span class="text-red-600">*</span></p>
-                  <p class="text-sm text-gray-600 mt-1">Li e concordo com os termos de uso acima</p>
-                </label>
-              </div>
-              <p class="text-xs text-red-600 font-medium" *ngIf="getFieldError('aceitaTermos')">{{ getFieldError('aceitaTermos') }}</p>
+              <!-- Termo com Scroll Tracking e Validação SHA-256 -->
+              <app-termo-scroll-tracker
+                *ngIf="termo()"
+                [termo]="termo()!"
+                (scrollCompletoChange)="scrollCompletoTermo.set($event)"
+                (aceitoChange)="aceitoTermo.set($event)"
+              ></app-termo-scroll-tracker>
             </div>
           </div>
+
+          <!-- Comprovante de Aceite (exibido após submissão bem-sucedida) -->
+          <app-comprovante-aceite
+            *ngIf="comprovante() && submitted()"
+            [comprovante]="comprovante()!"
+          ></app-comprovante-aceite>
         </div>
 
         <!-- CTA Button -->

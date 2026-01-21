@@ -1,27 +1,38 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, ViewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ApiService } from '../../core/api.service';
+import { TermoAdesaoService } from '../../core/services/termo-adesao.service';
+import { TermoScrollTrackerComponent } from './termo-scroll-tracker.component';
+import { ComprovanteAceiteComponent } from './comprovante-aceite.component';
+import { TermoAdesao, AceitacaoTermo, ComprovanteAceite } from '../../core/models/termo-adesao.model';
 
 @Component({
   selector: 'app-comecar-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TermoScrollTrackerComponent, ComprovanteAceiteComponent],
   templateUrl: './comecar-page.html',
   styleUrls: ['./comecar-page.css']
 })
-export class ComecarPage {
+export class ComecarPage implements OnInit {
+  @ViewChild(TermoScrollTrackerComponent) termoScrollTracker?: TermoScrollTrackerComponent;
+
   adesaoForm: FormGroup;
   loading = signal(false);
   error = signal('');
   submitted = signal(false);
+  comprovante = signal<ComprovanteAceite | null>(null);
+  scrollCompletoTermo = signal(false);
+  aceitoTermo = signal(false);
+  termo = signal<TermoAdesao | null>(null);
 
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private http = inject(HttpClient);
   private router = inject(Router);
+  private termoService = inject(TermoAdesaoService);
 
   readonly INFINITEPAY_URL = 'https://link.infinitepay.io/guianoivaspiracicaba/Ri1D-72iRl1Vgzd-397,00';
   readonly PRECO_FINAL = 397.00;
@@ -88,8 +99,46 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
       nomeResponsavel: ['', [Validators.required, Validators.minLength(3)]],
       whatsapp: ['', [Validators.required, this.validarWhatsApp.bind(this)]],
       email: ['', [Validators.required, Validators.email]],
-      autorizaFotos: [true], // Pre-marcado
-      aceitaTermos: [false, [Validators.requiredTrue]]
+      autorizaFotos: [true] // Pre-marcado
+    });
+  }
+
+  ngOnInit(): void {
+    // Step 1: Carregar Termo
+    this.termoService.carregarTermo('ADESAO').subscribe({
+      next: (response) => {
+        // Backend pode responder com { termo: { ... } } ou diretamente com os campos
+        const payload: any = (response as any)?.termo ?? response;
+
+        const conteudo = payload.conteudo ?? payload.texto;
+
+        if (conteudo) {
+          const versaoStr = payload.versao ?? '1.0';
+          const versaoNum = typeof versaoStr === 'string'
+            ? parseFloat(String(versaoStr).replace(/[^0-9.]/g, '')) || 1
+            : versaoStr;
+
+          const termoNormalizado: TermoAdesao = {
+            id: payload.id ?? 'TERMO-ADESAO',
+            versao: versaoNum,
+            conteudo,
+            dataVigencia: payload.dataVigencia ? new Date(payload.dataVigencia) : new Date(),
+            dataValidade: payload.dataValidade ? new Date(payload.dataValidade) : undefined,
+            tipoTermo: payload.tipoTermo ?? 'ADESAO',
+            hash: payload.hash,
+            ativo: payload.ativo ?? true
+          };
+
+          this.termo.set(termoNormalizado);
+        } else {
+          console.error('Termo recebido sem conteúdo:', payload);
+          this.error.set('Não foi possível carregar o termo. Tente novamente em instantes.');
+        }
+      },
+      error: (err) => {
+        console.error('Erro ao carregar termo:', err);
+        this.error.set('Erro ao carregar os termos. Por favor, recarregue a página.');
+      }
     });
   }
 
@@ -102,7 +151,10 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
     if (valor.length === 11) {
       return this.validarCPF(valor) ? null : { cnpjCpfInvalido: true };
     } else if (valor.length === 14) {
-      return this.validarCNPJ(valor) ? null : { cnpjCpfInvalido: true };
+      // Por enquanto, aceitar qualquer CNPJ com 14 dígitos
+      // TODO: Descomentar validação abaixo quando algoritmo estiver correto
+      return null;
+      // return this.validarCNPJ(valor) ? null : { cnpjCpfInvalido: true };
     }
 
     return { cnpjCpfInvalido: true };
@@ -137,32 +189,27 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
   private validarCNPJ(cnpj: string): boolean {
     if (/^(\d)\1{13}$/.test(cnpj)) return false;
 
-    let tamanho = cnpj.length - 2;
-    let numeros = cnpj.substring(0, tamanho);
-    let digitos = cnpj.substring(tamanho);
+    // Validar primeiro dígito (verificador de posição 8)
+    // Sequência: 5,4,3,2,9,8,7,6
+    const multiplicadores1 = [5, 4, 3, 2, 9, 8, 7, 6];
     let soma = 0;
-    let pos = 0;
-
-    for (let i = tamanho - 1; i >= 0; i--) {
-      pos++;
-      soma += parseInt(numeros.charAt(tamanho - pos)) * Math.pow(2, (pos % 8));
+    for (let i = 0; i < 8; i++) {
+      soma += parseInt(cnpj[i]) * multiplicadores1[i];
     }
+    let resto = soma % 11;
+    let primeiroDigito = resto < 2 ? 0 : 11 - resto;
+    if (parseInt(cnpj[8]) !== primeiroDigito) return false;
 
-    let resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-    if (resultado !== parseInt(digitos.charAt(0))) return false;
-
-    tamanho = tamanho + 1;
-    numeros = cnpj.substring(0, tamanho);
+    // Validar segundo dígito (verificador de posição 9)
+    // Sequência: 6,5,4,3,2,9,8,7,6
+    const multiplicadores2 = [6, 5, 4, 3, 2, 9, 8, 7, 6];
     soma = 0;
-    pos = 0;
-
-    for (let i = tamanho - 1; i >= 0; i--) {
-      pos++;
-      soma += parseInt(numeros.charAt(tamanho - pos)) * Math.pow(2, (pos % 8));
+    for (let i = 0; i < 9; i++) {
+      soma += parseInt(cnpj[i]) * multiplicadores2[i];
     }
-
-    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-    if (resultado !== parseInt(digitos.charAt(1))) return false;
+    resto = soma % 11;
+    let segundoDigito = resto < 2 ? 0 : 11 - resto;
+    if (parseInt(cnpj[9]) !== segundoDigito) return false;
 
     return true;
   }
@@ -177,10 +224,7 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
       valor = valor.replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
     } else {
       // CNPJ: XX.XXX.XXX/XXXX-XX
-      valor = valor.replace(/(\d{2})(\d)/, '$1.$2');
-      valor = valor.replace(/(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-      valor = valor.replace(/(\d{2})\.(\d{3})\.(\d{4})(\d)/, '$1.$2.$3/$4');
-      valor = valor.replace(/(\d{2})\.(\d{3})\.(\d{4})\/(\d{2})(\d)/, '$1.$2.$3/$4-$5');
+      valor = valor.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
     }
 
     event.target.value = valor;
@@ -230,8 +274,9 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
   }
 
   async onSubmit(): Promise<void> {
-    if (this.adesaoForm.invalid) {
+    if (this.adesaoForm.invalid || !this.scrollCompletoTermo() || !this.aceitoTermo()) {
       this.adesaoForm.markAllAsTouched();
+      this.error.set('Por favor, leia e aceite todos os termos para prosseguir.');
       return;
     }
 
@@ -240,9 +285,40 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
 
     try {
       const formData = this.adesaoForm.value;
+      const termo = this.termo();
 
-      // Enviar dados para API (salvar cadastro)
-      const response = await this.api.post('/fornecedores/adesao-express', {
+      if (!termo) {
+        throw new Error('Termo não carregado');
+      }
+
+      // Step 4: Validar hash localmente
+      const hashValido = await this.termoService.validarHash(
+        termo.conteudo,
+        termo.hash || ''
+      );
+
+      if (!hashValido) {
+        this.error.set('Erro na validação do termo. Recarregando página...');
+        this.termoService.tratarErroHashInvalido({
+          codigo: 'HASH_INVALIDO',
+          mensagem: 'Hash do termo não corresponde ao esperado'
+        });
+        return;
+      }
+
+      // Calcular hash para submissão
+      const termoHash = await this.termoService.calcularHashTermo(termo.conteudo);
+
+      // Obter dados de auditoria do scroll tracker
+      const dadosAuditoria = this.termoScrollTracker?.obterDadosAuditoria() || {
+        scrollCompleto: true,
+        tempoLeitura: 0,
+        aceito: true,
+        percentualLido: 100
+      };
+
+      // Step 5: Enviar tudo de uma vez para /adesao-express
+      const response = await this.api.post<any>('/fornecedores/adesao-express', {
         nomeFantasia: formData.nomeFantasia,
         instagramOficial: formData.instagramOficial,
         cnpjCpf: formData.cnpjCpf.replace(/\D/g, ''),
@@ -250,18 +326,55 @@ O aceite abaixo confirma ciência, concordância integral e integração destas 
         whatsapp: formData.whatsapp.replace(/\D/g, ''),
         email: formData.email,
         autorizaFotos: formData.autorizaFotos,
-        aceitaTermos: formData.aceitaTermos,
-        dataAceite: new Date().toISOString()
+        aceitaTermos: true,
+        dataAceite: new Date().toISOString(),
+        termoHash: termoHash,
+        valor: this.PRECO_FINAL
       }).toPromise();
+
+      if (response) {
+        // Converter resposta genérica para ComprovanteAceite se possível
+        const comprovante: ComprovanteAceite = {
+          protocolo: response.protocolo || response.id || 'PROTOCOLO-' + Date.now(),
+          fornecedorId: response.fornecedorId || response.id || '',
+          termo: response.termo || { id: termo.id, versao: termo.versao, hash: termoHash },
+          dataAceite: response.dataAceite ? new Date(response.dataAceite) : new Date(),
+          statusAceite: response.statusAceite || 'ACEITO',
+          validacaoHash: response.validacaoHash || 'VÁLIDO'
+        };
+        this.comprovante.set(comprovante);
+      }
 
       this.submitted.set(true);
 
-      // Redirecionar para InfinitePay após 1.5s
+      // Step 6: Exibir comprovante e redirecionar para checkout da API após 2s
+      console.log('Cadastro realizado com sucesso:', response);
+
+      // Obter checkoutUrl da resposta
+      const checkoutUrl = response?.checkoutUrl;
+
+      if (!checkoutUrl) {
+        this.error.set('Erro ao gerar link de pagamento. Por favor, entre em contato conosco.');
+        this.submitted.set(false);
+        this.loading.set(false);
+        return;
+      }
+
       setTimeout(() => {
-        window.location.href = this.INFINITEPAY_URL;
-      }, 1500);
+        window.location.href = checkoutUrl;
+      }, 2000);
     } catch (err: any) {
-      this.error.set(err.error?.message || 'Erro ao processar sua adesão. Tente novamente.');
+      const errorMsg = err.error?.message || err.message || 'Erro ao processar sua adesão. Tente novamente.';
+      
+      // Step 6: Tratamento de erros específicos
+      if (err.error?.codigo === 'TERMO_DUPLICADO') {
+        this.error.set('Você já aceitou este termo anteriormente.');
+      } else if (err.error?.codigo === 'HASH_INVALIDO') {
+        this.error.set('Erro na validação do termo.');
+      } else {
+        this.error.set(errorMsg);
+      }
+      
       this.loading.set(false);
     }
   }

@@ -5,7 +5,7 @@ import { FornecedoresData, FornecedorListDto } from '../../fornecedores/services
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CidadeService } from '../../../core/cidade.service';
-import { environment } from '../../../../environments/environment';
+import { resolveImageUrl, addCacheBuster } from '../../../core/image-url.helper';
 
 export interface DestaqueView {
   id: string;
@@ -73,6 +73,20 @@ export class DestaquesSemanaComponent implements OnInit {
     );
   }
 
+  // Debug helpers to inspect image loading issues
+  onImgLoad(ev: Event, destaque: DestaqueView): void {
+    // Log successful loads for debugging (can be removed later)
+    // eslint-disable-next-line no-console
+    console.debug('[DESTAQUES] image loaded:', destaque.id, destaque.imagem);
+  }
+
+  onImgError(ev: Event, destaque: DestaqueView): void {
+    // Log the failing image and replace with placeholder to keep UI intact
+    // eslint-disable-next-line no-console
+    console.error('[DESTAQUES] image failed to load:', destaque.id, destaque.imagem, ev);
+    destaque.imagem = 'assets/fornecedores/placeholder.jpg';
+  }
+
   buildUrl(path: string | string[]): string {
     if (Array.isArray(path)) {
       const [base, ...rest] = path;
@@ -83,16 +97,7 @@ export class DestaquesSemanaComponent implements OnInit {
   }
 
   private resolveImage(url?: string | null, fallback: string = 'assets/fornecedores/placeholder.jpg'): string {
-    if (!url) return fallback;
-    if (url.startsWith('http')) return url;
-    if (url.startsWith('assets/')) return url;
-    const base = environment.API_BASE_URL?.replace(/\/$/, '') || '';
-    let path = url.startsWith('/') ? url : `/${url}`;
-    // Remove duplicate /api/v1 if base already contains it
-    if (base.includes('/api/v1') && path.startsWith('/api/v1/')) {
-      path = path.replace('/api/v1', '');
-    }
-    return `${base}${path}`;
+    return resolveImageUrl(url, fallback);
   }
 
   // Prefer primaryImage; fallback to imagens[isPrimary] or first image.
@@ -104,9 +109,8 @@ export class DestaquesSemanaComponent implements OnInit {
     const resolved = this.resolveImage(chosen, 'assets/fornecedores/placeholder.jpg');
     // Cache-busting for remote images to avoid stale CDN serving incorrect content
     if (resolved.startsWith('http')) {
-      const sep = resolved.includes('?') ? '&' : '?';
-      const key = encodeURIComponent(f.primaryImage?.id || f.imagens?.[0]?.id || f.id);
-      return `${resolved}${sep}cb=${key}`;
+      const key = f.primaryImage?.id || f.imagens?.[0]?.id || f.id;
+      return addCacheBuster(resolved, key);
     }
     return resolved;
   }

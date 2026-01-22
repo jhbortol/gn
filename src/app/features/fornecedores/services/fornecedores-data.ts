@@ -3,6 +3,7 @@ import { ApiService } from '../../../core/api.service';
 import { Observable, map, catchError, of, switchMap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { CompetitorAd, PlanLevel } from '../../../core/models/tier-system.model';
+import { resolveImageUrl } from '../../../core/image-url.helper';
 
 // DTOs alinhados ao backend (simplificados)
 export interface FornecedorListDto {
@@ -181,7 +182,7 @@ export class FornecedoresData {
         categoria: detail.categoria?.nome,
         imagens: (detail.imagens || [])
           .filter((m: MediaDto) => m.url) // Filtrar imagens sem URL
-          .map((m: MediaDto) => ({ url: m.url, orderIndex: m.orderIndex || 0 }))
+          .map((m: MediaDto) => ({ url: resolveImageUrl(m.url), orderIndex: m.orderIndex || 0 }))
           .sort((a, b) => a.orderIndex - b.orderIndex),
         depoimentos: detail.testemunhos?.map((t: any) => ({ texto: t.descricao, casal: t.nome })) || []
       })),

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ClickwrapAgreementComponent } from '../../shared/clickwrap-agreement/clickwrap-agreement';
@@ -6,13 +6,21 @@ import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
 import { TrackingService } from '../../core/tracking.service';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { LeadFormComponent } from './lead-form.component';
+import { CompetitorAdsComponent } from './competitor-ads.component';
 
 @Component({
   selector: 'app-fornecedor-page',
   standalone: true,
   templateUrl: './fornecedor-page.html',
   styleUrls: ['./fornecedor-page.css'],
-  imports: [CommonModule, RouterModule, ClickwrapAgreementComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ClickwrapAgreementComponent,
+    LeadFormComponent,
+    CompetitorAdsComponent
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FornecedorPageComponent implements OnInit {
@@ -20,6 +28,15 @@ export class FornecedorPageComponent implements OnInit {
   selectedImage?: string;
   isPreviewMode = false;
   notFound = false;
+
+  // Novos signals para tier logic
+  showLeadForm = signal(false);
+  hasCompetitorAds = signal(false);
+
+  // Getter para fornecedorId como número
+  get fornecedorIdNumero(): number {
+    return this.fornecedor?.id ? parseInt(this.fornecedor.id.toString(), 10) : 0;
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -46,6 +63,10 @@ export class FornecedorPageComponent implements OnInit {
           }
           
           this.fornecedor = f;
+
+          // 🔴 NOVO: Aplicar lógica tier
+          this.applyTierLogic(f);
+
           this.tracking.trackVendorView({
             vendorId: f.id,
             vendorName: f.nome,
@@ -79,13 +100,6 @@ export class FornecedorPageComponent implements OnInit {
 
   closeImage() {
     this.selectedImage = undefined;
-  }
-
-  getWhatsAppLink(): string {
-    const w = this.fornecedor?.telefone || '';
-    const digits = w.replace(/\D/g, '');
-    const message = encodeURIComponent('Olá, Te encontrei no Guia Noivas Piracicaba, preciso de mais informações.');
-    return digits ? `https://wa.me/${digits}?text=${message}` : '#';
   }
 
   onWhatsAppClick() {
@@ -166,4 +180,51 @@ export class FornecedorPageComponent implements OnInit {
       vendorCategory: this.fornecedor?.categoria
     });
   }
+
+  /**
+   * Aplica lógica de tier ao fornecedor
+   * Determina se deve mostrar formulário de lead e anúncios de concorrentes
+   */
+  private applyTierLogic(fornecedor: Fornecedor): void {
+    // Se o backend enviou showContactForm, usar esse valor
+    // Caso contrário, manter comportamento antigo (always show)
+    if (fornecedor.showContactForm !== undefined) {
+      this.showLeadForm.set(fornecedor.showContactForm);
+    } else {
+      this.showLeadForm.set(true); // backward compat
+    }
+
+    // Se tem anúncios, mostrar
+    if (fornecedor.adInjection && fornecedor.adInjection.length > 0) {
+      this.hasCompetitorAds.set(true);
+    }
+  }
+
+  /**
+   * Determinar se deve mostrar botão WhatsApp
+   * Se backend enviou whatsAppUrl e é Vitrine, usar esse
+   * Caso contrário, gerar localmente (backward compat)
+   */
+  getWhatsAppLink(): string {
+    // Priorizar URL do backend (Vitrine)
+    if (this.fornecedor?.whatsAppUrl) {
+      return this.fornecedor.whatsAppUrl;
+    }
+
+    // Fallback: gerar localmente (Free tier ou dados antigos)
+    const w = this.fornecedor?.telefone || '';
+    const digits = w.replace(/\D/g, '');
+    const message = encodeURIComponent('Olá, Te encontrei no Guia Noivas Piracicaba, preciso de mais informações.');
+    return digits ? `https://wa.me/${digits}?text=${message}` : '#';
+  }
+
+  /**
+   * Callback quando lead é submetido com sucesso
+   */
+  onLeadSubmitSuccess(leadId: number): void {
+    // Exemplo: mostrar toast ou redirecionar
+    console.log('Lead enviado com sucesso:', leadId);
+    // Opcionalmente: scrollar para seção de depoimentos
+  }
+
 }

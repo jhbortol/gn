@@ -73,6 +73,19 @@
           </div>
         </div>
       </section>
+
+      <!-- NOVO: Lead Form (se Free tier com < 3 leads) -->
+      <app-lead-form
+        *ngIf="showLeadForm()"
+        [fornecedorId]="fornecedorIdNumero"
+        (submitSuccess)="onLeadSubmitSuccess($event)"
+      ></app-lead-form>
+
+      <!-- NOVO: Competitor Ads (se Free em zumbi state) -->
+      <app-competitor-ads
+        *ngIf="hasCompetitorAds()"
+        [ads]="fornecedor.adInjection!"
+      ></app-competitor-ads>
     </div>
 
     <aside>

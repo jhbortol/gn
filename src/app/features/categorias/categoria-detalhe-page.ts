@@ -35,6 +35,8 @@ export class CategoriaDetalhePageComponent {
     this.categoriaId$ = this.route.paramMap.pipe(
       map((params: any) => params.get('id') || '')
     );
+    // debug: log incoming category id/slug
+    this.categoriaId$.subscribe(id => console.debug('[CATEGORIA PAGE] route id param:', id));
     this.fornecedores$ = this.categoriaId$.pipe(
       switchMap((id: string) => this.fornecedores.getByCategoria(id))
     );

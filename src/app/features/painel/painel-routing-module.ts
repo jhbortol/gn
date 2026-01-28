@@ -48,6 +48,10 @@ const routes: Routes = [
       {
         path: 'alterar-senha',
         loadComponent: () => import('./alterar-senha/alterar-senha-page').then(m => m.AlterarSenhaPage)
+      },
+      {
+        path: 'leads',
+        loadComponent: () => import('./leads/leads-dashboard.component').then(m => m.LeadsDashboardComponent)
       }
     ]
   }

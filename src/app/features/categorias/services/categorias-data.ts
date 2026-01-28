@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { resolveImageUrl } from '../../../core/image-url.helper';
 
 export interface Categoria {
   id: string;
@@ -70,15 +71,53 @@ export class CategoriasData {
   ];
 
   getAll(): Observable<Categoria[]> {
-    return this.http.get<{ data: Categoria[] }>(`${environment.API_BASE_URL}/categorias`).pipe(
-      map(response => response.data),
+    return this.http.get<any>(`${environment.API_BASE_URL}/categorias`).pipe(
+      map(response => {
+        // backend may return array directly or { data: [...] }
+        const rawList = Array.isArray(response) ? response : (response?.data || []);
+
+        return (rawList || []).map((src: any) => {
+          const id = src.id || src.Id;
+          const nome = src.nome || src.Nome || '';
+          // slugs may come with spaces or uppercase; normalize to lowercase hyphenated
+          const rawSlug = src.slug || src.Slug || id || nome;
+          const slug = String(rawSlug)
+            .toString()
+            .normalize('NFD')
+            .replace(/\p{Diacritic}/gu, '')
+            .replace(/[^\w\s-]/g, '')
+            .trim()
+            .replace(/\s+/g, '-')
+            .toLowerCase();
+          const descricao = src.descricao ?? src.Descricao ?? null;
+          const imageId = src.imageId || src.ImageId || null;
+          const imageUrl = src.imageUrl || src.ImageUrl || null;
+
+          return {
+            id,
+            nome,
+            slug,
+            descricao,
+            imageId,
+            imageUrl: imageUrl ? resolveImageUrl(imageUrl) : null
+          } as Categoria;
+        });
+      }),
       catchError(() => of(this.fallback))
     );
   }
 
   getBySlug(slug: string): Observable<Categoria | undefined> {
+    const wanted = String(slug)
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .replace(/[^\w\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .toLowerCase();
+
     return this.getAll().pipe(
-      map(categorias => categorias.find(c => c.slug === slug || c.id === slug))
+      map(categorias => categorias.find(c => c.slug === wanted || c.id === slug))
     );
   }
 

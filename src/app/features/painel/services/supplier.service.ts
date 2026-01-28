@@ -94,7 +94,7 @@ export interface PaginatedResponse<T> {
 
 @Injectable({ providedIn: 'root' })
 export class SupplierService {
-  private readonly apiUrl = `${environment.API_BASE_URL}/supplier`;
+  private readonly apiUrl = `${environment.API_BASE_URL}/fornecedores`;
   private readonly authUrl = `${environment.API_BASE_URL}/auth`;
 
   constructor(
@@ -136,23 +136,35 @@ export class SupplierService {
   // ===== FORNECEDOR =====
   getMe(): Observable<FornecedorDto> {
     return this.http.get<any>(`${this.apiUrl}/me`).pipe(
-      tap(response => console.log('getMe RAW response:', response, 'type:', typeof response)),
       map((response: any) => {
-        console.log('getMe response structure - has data?:', !!response?.data);
-        
-        // Handle wrapped response: { data: FornecedorDto }
-        if (response && typeof response === 'object' && response.data) {
-          console.log('Extracting data from wrapper');
-          const extracted = response.data;
-          console.log('Extracted data:', extracted);
-          return extracted;
-        }
-        
-        // Handle direct response: FornecedorDto
-        console.log('Using response as-is (not wrapped)');
-        return response;
-      }),
-      tap(result => console.log('Final mapped result:', result))
+        const src = response?.data || response || {};
+        return {
+          id: src.id || src.Id,
+          nome: src.nome || src.Nome,
+          slug: src.slug || src.Slug,
+          descricao: src.descricao || src.Descricao,
+          cidade: src.cidade || src.Cidade,
+          telefone: src.telefone || src.Telefone,
+          email: src.email || src.Email,
+          website: src.website || src.Website,
+          whatsApp: src.whatsApp || src.WhatsApp,
+          endereco: src.endereco || src.Endereco,
+          horarioFuncionamento: src.horarioFuncionamento || src.HorarioFuncionamento,
+          instagram: src.instagram || src.Instagram,
+          facebook: src.facebook || src.Facebook,
+          logoUrl: src.logoUrl || src.LogoUrl,
+          destaque: src.destaque ?? src.Destaque ?? false,
+          seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
+          rating: src.rating ?? src.Rating ?? null,
+          visitas: src.visitas ?? src.Visitas ?? 0,
+          publicado: src.publicado ?? src.Publicado ?? false,
+          categorias: (src.categorias || src.Categorias || []).map((cat: any) => ({
+            id: cat.id || cat.Id,
+            nome: cat.nome || cat.Nome,
+            slug: cat.slug || cat.Slug
+          }))
+        };
+      })
     );
   }
 
@@ -162,20 +174,42 @@ export class SupplierService {
 
   getStats(): Observable<FornecedorStatsDto> {
     return this.http.get<any>(`${this.apiUrl}/me/stats`).pipe(
-      tap(response => console.log('getStats RAW response:', response)),
       map((response: any) => {
-        if (response && response.data) {
-          return response.data;
-        }
-        return response;
+        const src = response?.data || response || {};
+        return {
+          totalVisualizacoes: src.totalVisualizacoes ?? src.TotalVisualizacoes ?? 0,
+          testemunhos: src.testemunhos ?? src.Testemunhos ?? 0,
+          rating: src.rating ?? src.Rating ?? 0,
+          imagens: src.imagens ?? src.Imagens ?? 0,
+          ultimasVisualizacoes: (src.ultimasVisualizacoes || src.UltimasVisualizacoes || []).map((v: any) => ({
+            data: v.data || v.Data,
+            quantidade: v.quantidade ?? v.Quantidade ?? 0
+          }))
+        };
       })
     );
   }
 
   // ===== IMAGENS =====
   getImages(): Observable<{ data: MediaDto[] }> {
-    return this.http.get<{ data: MediaDto[] }>(`${this.apiUrl}/me/images`).pipe(
-      tap(response => console.log('Images response:', response))
+    return this.http.get<any>(`${this.apiUrl}/me/images`).pipe(
+      map((response: any) => {
+        const arr = response?.data || response || [];
+        return {
+          data: (arr || []).map((img: any) => ({
+            id: img.id || img.Id,
+            url: img.url || img.Url,
+            filename: img.filename || img.Filename,
+            contentType: img.contentType || img.ContentType,
+            width: img.width ?? img.Width ?? null,
+            height: img.height ?? img.Height ?? null,
+            isPrimary: img.isPrimary ?? img.IsPrimary ?? false,
+            orderIndex: img.orderIndex ?? img.OrderIndex ?? 0,
+            imageType: img.imageType || img.ImageType || null,
+            createdAt: img.createdAt || img.CreatedAt
+          }))
+        };
+      })
     );
   }
 

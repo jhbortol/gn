@@ -26,17 +26,33 @@ export class CategoriasPageComponent {
     private fornecedoresData: FornecedoresData
   ) {
     this.categoriasComFornecedores$ = this.categoriasData.getAll().pipe(
-      map(cats => this.shuffleArray(cats)),
-      switchMap(cats => forkJoin(
-        cats.map(cat =>
-          this.fornecedoresData.getDestaquesByCategoria(cat.slug).pipe(
-            map(destaques => ({
-              categoria: cat,
-              fornecedores: this.shuffleArray(destaques).slice(0, 6)
-            }))
+      map(cats => {
+        console.debug('[CATEGORIAS PAGE] categorias recebidas:', cats);
+        return this.shuffleArray(cats);
+      }),
+      switchMap(cats => {
+        cats.forEach(cat => {
+          console.debug(`[CATEGORIAS PAGE] categoria: nome=${cat.nome}, id=${cat.id}, slug=${cat.slug}`);
+        });
+        return forkJoin(
+          cats.map(cat =>
+            (cat.id ? this.fornecedoresData.getDestaquesByCategoriaId(cat.id) : this.fornecedoresData.getDestaquesByCategoria(cat.slug)).pipe(
+              map(destaques => ({
+                categoria: cat,
+                fornecedores: this.shuffleArray(destaques).slice(0, 6)
+              }))
+            )
           )
-        )
-      ))
+        );
+      })
+    );
+
+    // Debug: log resultado final do pipeline
+    this.categoriasComFornecedores$ = this.categoriasComFornecedores$.pipe(
+      map(items => {
+        console.debug('[CATEGORIAS PAGE] categoriasComFornecedores$ resolved:', items);
+        return items;
+      })
     );
   }
 

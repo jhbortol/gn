@@ -6,8 +6,8 @@ export const supplierAuthInterceptor: HttpInterceptorFn = (req: HttpRequest<unkn
   const authService = inject(SupplierAuthService);
   const token = authService.getToken();
 
-  // Only add token if it exists and request is to our API
-  if (token && req.url.includes('/api/v1/supplier')) {
+  // Add token if request is to /api/v1/supplier or /api/v1/fornecedores
+  if (token && (req.url.includes('/api/v1/supplier') || req.url.includes('/api/v1/fornecedores'))) {
     const authReq = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`

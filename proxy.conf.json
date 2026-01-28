@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://guia-noivas.somee.com",
+    "target": "https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {

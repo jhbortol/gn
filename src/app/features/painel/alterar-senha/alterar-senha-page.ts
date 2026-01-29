@@ -1,8 +1,25 @@
 import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SupplierService } from '../services/supplier.service';
+
+/** Validador personalizado para comparar senhas */
+export const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const newPassword = control.get('newPassword');
+  const confirmPassword = control.get('confirmPassword');
+
+  if (!newPassword || !confirmPassword) {
+    return null;
+  }
+
+  // Se o campo de confirmação estiver vazio, não valida ainda (já tem o required)
+  if (!confirmPassword.value) {
+    return null;
+  }
+
+  return newPassword.value === confirmPassword.value ? null : { passwordMismatch: true };
+};
 
 @Component({
   selector: 'app-alterar-senha',
@@ -30,7 +47,7 @@ export class AlterarSenhaPage {
       currentPassword: ['', [Validators.required]],
       newPassword: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
-    });
+    }, { validators: passwordMatchValidator });
   }
 
   onSubmit(): void {
@@ -41,13 +58,6 @@ export class AlterarSenhaPage {
 
     const currentPassword = this.changePasswordForm.get('currentPassword')?.value;
     const newPassword = this.changePasswordForm.get('newPassword')?.value;
-    const confirmPassword = this.changePasswordForm.get('confirmPassword')?.value;
-
-    // Validar senhas iguais
-    if (newPassword !== confirmPassword) {
-      this.error.set('A nova senha e a confirmação não coincidem.');
-      return;
-    }
 
     this.isSubmitting.set(true);
     this.error.set(null);
@@ -58,7 +68,7 @@ export class AlterarSenhaPage {
         this.successMessage.set('Senha alterada com sucesso!');
         this.changePasswordForm.reset();
         this.isSubmitting.set(false);
-        
+
         // Limpar mensagem de sucesso após 3 segundos
         setTimeout(() => this.successMessage.set(null), 3000);
       },
@@ -83,10 +93,10 @@ export class AlterarSenhaPage {
 
   getPasswordStrength(): string {
     const password = this.changePasswordForm.get('newPassword')?.value || '';
-    
+
     if (password.length === 0) return '';
     if (password.length < 6) return 'fraca';
-    
+
     let strength = 0;
     if (password.length >= 8) strength++;
     if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
@@ -100,11 +110,23 @@ export class AlterarSenhaPage {
 
   isFieldInvalid(fieldName: string): boolean {
     const field = this.changePasswordForm.get(fieldName);
+
+    // Caso especial para confirmPassword: verificar também o erro do grupo
+    if (fieldName === 'confirmPassword') {
+      const hasGroupError = this.changePasswordForm.hasError('passwordMismatch');
+      return !!((field && field.invalid && (field.dirty || field.touched)) || (hasGroupError && field?.touched));
+    }
+
     return !!(field && field.invalid && (field.dirty || field.touched));
   }
 
   getFieldError(fieldName: string): string {
     const field = this.changePasswordForm.get(fieldName);
+
+    if (fieldName === 'confirmPassword' && this.changePasswordForm.hasError('passwordMismatch')) {
+      return 'As senhas não conferem';
+    }
+
     if (!field || !field.errors) return '';
 
     if (field.errors['required']) return 'Campo obrigatório';

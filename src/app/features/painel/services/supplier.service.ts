@@ -100,7 +100,7 @@ export class SupplierService {
   constructor(
     private http: HttpClient,
     private authService: SupplierAuthService
-  ) {}
+  ) { }
 
   // ===== AUTENTICAÇÃO =====
   login(email: string, password: string): Observable<LoginResponse> {

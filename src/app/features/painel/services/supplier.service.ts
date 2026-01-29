@@ -127,7 +127,7 @@ export class SupplierService {
   }
 
   changePassword(currentPassword: string, newPassword: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${environment.API_BASE_URL}/account/change-password`, {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/me/change-password`, {
       currentPassword,
       newPassword
     });

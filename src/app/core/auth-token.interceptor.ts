@@ -11,14 +11,20 @@ export const authTokenInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, n
     '/files/download',
     '/leads/guia-precos',
     '/leads/contact',
-    '/contato'
+    '/contato',
+    // Rotas de fornecedor/painel usam seu próprio interceptor/token
+    '/api/v1/supplier',
+    '/api/v1/fornecedores',
+    '/me/',
+    '/painel',
+    '/api/v1/account'
   ];
-  
+
   // Não anexar token em chamadas públicas
   if (publicRoutes.some(route => req.url.includes(route))) {
     return next(req);
   }
-  
+
   const auth = inject(AuthTokenService);
   return auth.getToken().pipe(
     switchMap(token => {

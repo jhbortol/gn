@@ -100,7 +100,7 @@ export class SupplierService {
   constructor(
     private http: HttpClient,
     private authService: SupplierAuthService
-  ) {}
+  ) { }
 
   // ===== AUTENTICAÇÃO =====
   login(email: string, password: string): Observable<LoginResponse> {
@@ -127,7 +127,7 @@ export class SupplierService {
   }
 
   changePassword(currentPassword: string, newPassword: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.apiUrl}/me/change-password`, {
+    return this.http.post<{ message: string }>(`${environment.API_BASE_URL}/account/change-password`, {
       currentPassword,
       newPassword
     });

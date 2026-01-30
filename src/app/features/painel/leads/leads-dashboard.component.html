@@ -64,7 +64,7 @@
           <div class="quota-container">
             <div class="quota-bar-wrapper">
               <div [ngClass]="getQuotaProgressClass()"
-                   [style.width.%]="(leadsData()!.leadCountThisMonth / leadsData()!.leadLimit) * 100">
+                [style.width.%]="(leadsData()!.leadCountThisMonth / leadsData()!.leadLimit) * 100">
               </div>
             </div>
             <p class="stat-detail">
@@ -87,30 +87,56 @@
   </section>
 
   <!-- ============================================
+       UPGRADE CTA BANNER (Free Tier Over Limit)
+       ============================================ -->
+  <section class="upgrade-banner" *ngIf="isPlanFree() && isOverLimit()">
+    <div class="upgrade-content">
+      <div class="upgrade-icon">🔒</div>
+      <div class="upgrade-text">
+        <h3>Período de degustação encerrado</h3>
+        <p>
+          Você tem <strong>{{ (leadsData()!.totalLeadsAllTime || leadsData()!.totalLeads) - leadsData()!.leadLimit
+            }}</strong>
+          {{ ((leadsData()!.totalLeadsAllTime || leadsData()!.totalLeads) - leadsData()!.leadLimit) === 1 ? 'cliente
+          esperando' : 'clientes esperando' }}.
+          Os dados de contato estão bloqueados.
+        </p>
+      </div>
+      <button class="btn-upgrade" (click)="upgradeToVitrine()">
+        🚀 Desbloquear Agora
+      </button>
+    </div>
+  </section>
+
+  <!-- Free Tier Lead Count -->
+  <div class="free-tier-notice" *ngIf="isPlanFree() && !isOverLimit()">
+    <p class="text-sm text-gray-600">
+      Leads recebidos: <strong>{{ (leadsData()!.totalLeadsAllTime || leadsData()!.totalLeads) }}</strong> de <strong>{{
+        leadsData()!.leadLimit }}</strong>
+      <span class="text-orange-600 font-semibold ml-2">
+        (Restam {{ leadsData()!.leadLimit - (leadsData()!.totalLeadsAllTime || leadsData()!.totalLeads) }} leads
+        gratuitos)
+      </span>
+    </p>
+  </div>
+
+  <!-- ============================================
        FILTROS
        ============================================ -->
   <section class="filters-section">
     <div class="filter-group">
       <label>Filtrar por:</label>
       <div class="filter-buttons">
-        <button
-          class="filter-btn"
-          [class.active]="statusFilter() === 'todos'"
-          (click)="setStatusFilter('todos')">
+        <button class="filter-btn" [class.active]="statusFilter() === 'todos'" (click)="setStatusFilter('todos')">
           <span class="icon">📂</span>
           Todos ({{ leadsData()?.leads?.length || 0 }})
         </button>
-        <button
-          class="filter-btn"
-          [class.active]="statusFilter() === 'nao_lidos'"
+        <button class="filter-btn" [class.active]="statusFilter() === 'nao_lidos'"
           (click)="setStatusFilter('nao_lidos')">
           <span class="icon">🔴</span>
           Não Lidos ({{ leadsData()?.unreadLeads ?? 0 }})
         </button>
-        <button
-          class="filter-btn"
-          [class.active]="statusFilter() === 'lidos'"
-          (click)="setStatusFilter('lidos')">
+        <button class="filter-btn" [class.active]="statusFilter() === 'lidos'" (click)="setStatusFilter('lidos')">
           <span class="icon">✅</span>
           Lidos ({{ (leadsData()?.totalLeads ?? 0) - (leadsData()?.unreadLeads ?? 0) }})
         </button>
@@ -154,24 +180,24 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            *ngFor="let lead of paginatedLeads()"
-            class="lead-row"
-            [class.unread]="!lead.isRead"
-            (click)="selectLead(lead)">
+          <tr *ngFor="let lead of paginatedLeads(); let i = index" class="lead-row" [class.unread]="!lead.isRead"
+            [class.blurred-row]="shouldBlurLead(lead, i)" (click)="selectLead(lead)">
             <td class="col-status">
               <span [ngClass]="getReadBadgeClass(lead.isRead)">
                 {{ getReadStatusText(lead.isRead) }}
               </span>
             </td>
             <td class="col-nome">
-              <strong>{{ lead.clienteName }}</strong>
+              <strong *ngIf="!shouldBlurLead(lead, i)">{{ lead.clienteName }}</strong>
+              <span *ngIf="shouldBlurLead(lead, i)" class="blurred-text">{{ getBlurredData('name') }}</span>
             </td>
             <td class="col-email">
-              <span class="email-text">{{ lead.clienteEmail }}</span>
+              <span *ngIf="!shouldBlurLead(lead, i)" class="email-text">{{ lead.clienteEmail }}</span>
+              <span *ngIf="shouldBlurLead(lead, i)" class="blurred-text">{{ getBlurredData('email') }}</span>
             </td>
             <td class="col-telefone">
-              <span class="phone-text">{{ lead.clientePhone }}</span>
+              <span *ngIf="!shouldBlurLead(lead, i)" class="phone-text">{{ lead.clientePhone }}</span>
+              <span *ngIf="shouldBlurLead(lead, i)" class="blurred-text">{{ getBlurredData('phone') }}</span>
             </td>
             <td class="col-data">
               <span class="date-relative" [title]="formatDate(lead.createdAt)">
@@ -179,26 +205,24 @@
               </span>
             </td>
             <td class="col-acoes">
-              <div class="action-buttons">
-                <button
-                  class="btn-action btn-email"
-                  title="Enviar email"
+              <div class="action-buttons" *ngIf="!shouldBlurLead(lead, i)">
+                <button class="btn-action btn-email" title="Enviar email"
                   (click)="openEmailClient(lead.clienteEmail); $event.stopPropagation()">
                   <span>✉️</span>
                 </button>
-                <button
-                  class="btn-action btn-whatsapp"
-                  title="Enviar WhatsApp"
+                <button class="btn-action btn-whatsapp" title="Enviar WhatsApp"
                   (click)="openWhatsApp(lead.clientePhone); $event.stopPropagation()">
                   <span>💬</span>
                 </button>
-                <button
-                  class="btn-action btn-copy"
-                  title="Copiar email"
+                <button class="btn-action btn-copy" title="Copiar email"
                   (click)="copyToClipboard(lead.clienteEmail); $event.stopPropagation()">
                   <span>📋</span>
                 </button>
               </div>
+              <button *ngIf="shouldBlurLead(lead, i)" class="btn-unlock"
+                (click)="upgradeToVitrine(); $event.stopPropagation()">
+                🔓 Desbloquear
+              </button>
             </td>
           </tr>
         </tbody>
@@ -209,10 +233,7 @@
          PAGINAÇÃO
          ============================================ -->
     <div class="pagination-section" *ngIf="totalPages() > 1">
-      <button
-        class="btn-pagination"
-        (click)="previousPage()"
-        [disabled]="currentPage() === 1">
+      <button class="btn-pagination" (click)="previousPage()" [disabled]="currentPage() === 1">
         ← Anterior
       </button>
 
@@ -220,10 +241,7 @@
         Página <strong>{{ currentPage() }}</strong> de <strong>{{ totalPages() }}</strong>
       </div>
 
-      <button
-        class="btn-pagination"
-        (click)="nextPage()"
-        [disabled]="currentPage() === totalPages()">
+      <button class="btn-pagination" (click)="nextPage()" [disabled]="currentPage() === totalPages()">
         Próxima →
       </button>
     </div>
@@ -267,9 +285,7 @@
           <p class="detail-label">Email</p>
           <div class="detail-copy">
             <p class="detail-value">{{ selectedLead()!.clienteEmail }}</p>
-            <button
-              class="btn-copy-small"
-              (click)="copyToClipboard(selectedLead()!.clienteEmail)">
+            <button class="btn-copy-small" (click)="copyToClipboard(selectedLead()!.clienteEmail)">
               📋
             </button>
           </div>
@@ -280,9 +296,7 @@
           <p class="detail-label">Telefone</p>
           <div class="detail-copy">
             <p class="detail-value">{{ selectedLead()!.clientePhone }}</p>
-            <button
-              class="btn-copy-small"
-              (click)="copyToClipboard(selectedLead()!.clientePhone)">
+            <button class="btn-copy-small" (click)="copyToClipboard(selectedLead()!.clientePhone)">
               📋
             </button>
           </div>
@@ -302,14 +316,10 @@
       </div>
 
       <div class="modal-footer">
-        <button
-          class="btn btn-secondary"
-          (click)="openEmailClient(selectedLead()!.clienteEmail)">
+        <button class="btn btn-secondary" (click)="openEmailClient(selectedLead()!.clienteEmail)">
           ✉️ Enviar Email
         </button>
-        <button
-          class="btn btn-primary"
-          (click)="openWhatsApp(selectedLead()!.clientePhone)">
+        <button class="btn btn-primary" (click)="openWhatsApp(selectedLead()!.clientePhone)">
           💬 Enviar WhatsApp
         </button>
         <button class="btn btn-secondary" (click)="closeLeadDetails()">

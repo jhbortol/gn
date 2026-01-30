@@ -9,23 +9,15 @@ import { LeadData, LeadSubmitResponse, FornecedorLeadsResponse } from '../models
  */
 @Injectable({ providedIn: 'root' })
 export class LeadService {
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService) { }
 
-  /**
-   * Submete um lead para um fornecedor
-   * POST /fornecedores/{fornecedorId}/contact
-   *
-   * @param fornecedorId ID do fornecedor
-   * @param lead Dados do lead (nome, email, telefone, mensagem, consentimento LGPD)
-   * @returns Observable com resposta da API
-   */
-  submitLead(fornecedorId: number, lead: LeadData): Observable<LeadSubmitResponse> {
-    return this.api.post(`/fornecedores/${fornecedorId}/contact`, lead);
+  submitLead(fornecedorId: string | number, lead: LeadData): Observable<LeadSubmitResponse> {
+    return this.api.post(`/public/fornecedores/${fornecedorId}/contact`, lead);
   }
 
   /**
    * Obtém lista de leads recebidos pelo fornecedor autenticado
-   * GET /fornecedores/me/leads
+   * GET /supplier/leads
    *
    * Requer autenticação via JWT token
    *
@@ -34,6 +26,6 @@ export class LeadService {
    * @returns Observable com resposta contendo leads, contadores e limite
    */
   getMyLeads(skip: number = 0, take: number = 50): Observable<FornecedorLeadsResponse> {
-    return this.api.get('/fornecedores/me/leads', { skip, take });
+    return this.api.get('/supplier/leads', { skip, take });
   }
 }

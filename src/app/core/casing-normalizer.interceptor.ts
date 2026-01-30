@@ -26,10 +26,12 @@ function normalizeDeep(data: any): any {
     Object.keys(data).forEach((k) => {
       const v = normalizeDeep(data[k]);
       const ck = toCamelCase(k);
-      // Do not override existing camelCase keys if already present
+
+      // Ensure we keep the original key (even if it's PascalCase)
+      out[k] = v;
+
+      // Also provide the camelCase version for frontend convenience
       if (out[ck] === undefined) {
-        out[ck] = v;
-      } else if (out[ck] === null && v !== null && v !== undefined) {
         out[ck] = v;
       }
     });

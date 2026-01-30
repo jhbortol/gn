@@ -97,9 +97,22 @@ export class LeadsDashboardComponent implements OnInit {
   });
 
   /** Status do plano (Free ou Vitrine) */
+  isPlanFree = computed(() => {
+    const data = this.leadsData();
+    return data ? data.planLevel === PlanLevel.Free : false;
+  });
+
+  /** Status do plano (Vitrine) */
   isPlanVitrine = computed(() => {
     const data = this.leadsData();
-    return data ? data.leadLimit > 3 : false;
+    return data ? data.planLevel === PlanLevel.Vitrine : false;
+  });
+
+  /** Está acima do limite (Free tier) */
+  isOverLimit = computed(() => {
+    const data = this.leadsData();
+    if (!data || !this.isPlanFree()) return false;
+    return (data.totalLeadsAllTime || data.totalLeads) > data.leadLimit;
   });
 
   /** Espaço disponível de leads */
@@ -124,7 +137,7 @@ export class LeadsDashboardComponent implements OnInit {
   // CONSTRUCTOR & LIFECYCLE
   // ============================================
 
-  constructor(private leadService: LeadService) {}
+  constructor(private leadService: LeadService) { }
 
   ngOnInit(): void {
     this.loadLeads();
@@ -290,5 +303,39 @@ export class LeadsDashboardComponent implements OnInit {
   getQuotaProgressClass(): string {
     const status = this.quotaStatus();
     return `quota-bar quota-${status}`;
+  }
+
+  /**
+   * Verifica se um lead deve ter dados borrados (Free tier acima do limite)
+   */
+  shouldBlurLead(lead: LeadDto, index: number): boolean {
+    // Priorizar o flag do backend se disponível
+    if (lead.isBlurred !== undefined) {
+      return lead.isBlurred;
+    }
+
+    // Fallback: Borrar leads além do limite para Free tier
+    if (!this.isPlanFree()) return false;
+    const data = this.leadsData();
+    if (!data) return false;
+
+    return lead.orderIndex > data.leadLimit || index >= data.leadLimit;
+  }
+
+  /**
+   * Retorna dados borrados para exibição
+   */
+  getBlurredData(type: 'email' | 'phone' | 'name'): string {
+    if (type === 'email') return '****@****.com';
+    if (type === 'phone') return '(XX) XXXXX-XXXX';
+    return '****';
+  }
+
+  /**
+   * Navega para página de upgrade
+   */
+  upgradeToVitrine(): void {
+    // TODO: Implementar navegação para página de upgrade/pagamento
+    alert('Funcionalidade de upgrade em desenvolvimento. Entre em contato com o suporte.');
   }
 }

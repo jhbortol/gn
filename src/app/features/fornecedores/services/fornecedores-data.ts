@@ -80,6 +80,9 @@ export interface Fornecedor {
 
   // Novos campos tier (OPCIONAIS para backward compatibility)
   planLevel?: PlanLevel;
+  isClaimed?: boolean; // true se o fornecedor reivindicou o perfil
+  totalLeadsAllTime?: number; // total de leads recebidos (para Free tier)
+  leadLimit?: number; // 3 para Free, ilimitado para Vitrine
   whatsAppUrl?: string;
   showContactForm?: boolean;
   adInjection?: CompetitorAd[];
@@ -87,67 +90,83 @@ export interface Fornecedor {
 
 @Injectable({ providedIn: 'root' })
 export class FornecedoresData {
-    search(term: string, page = 1, pageSize = 12, destaque?: boolean): Observable<FornecedorListDto[]> {
-      const trimmed = (term || '').trim();
-      const params: any = { page, pageSize };
+  search(term: string, page = 1, pageSize = 12, destaque?: boolean): Observable<FornecedorListDto[]> {
+    const trimmed = (term || '').trim();
+    const params: any = { page, pageSize };
 
-      // Enviar q/nome/descricao para permitir busca por nome e descrição (compatibilidade com backend)
-      if (trimmed.length) {
-        params.q = trimmed;
-        params.nome = trimmed;
-        params.descricao = trimmed;
-      }
-
-      if (destaque !== undefined) params.destaque = destaque;
-      if (environment.FORNECEDOR_PUBLICADO !== null) {
-        params.publicado = environment.FORNECEDOR_PUBLICADO;
-      }
-
-      // Novo endpoint v1/search/fornecedores
-      return this.api.get<{ data: any[] }>(`/search/fornecedores`, params).pipe(
-        map(r => (r.data || []).map((src: any) => ({
-          id: src.id || src.Id,
-          nome: src.nome || src.Nome,
-          slug: src.slug || src.Slug,
-          descricao: src.descricao || src.Descricao,
-          cidade: src.cidade || src.Cidade,
-          telefone: src.telefone || src.Telefone,
-          email: src.email || src.Email,
-          website: src.website || src.Website,
-          whatsApp: src.whatsApp || src.WhatsApp,
-          endereco: src.endereco || src.Endereco,
-          horarioFuncionamento: src.horarioFuncionamento || src.HorarioFuncionamento,
-          instagram: src.instagram || src.Instagram,
-          facebook: src.facebook || src.Facebook,
-          logoUrl: src.logoUrl || src.LogoUrl,
-          rating: src.rating ?? src.Rating ?? null,
-          destaque: src.destaque ?? src.Destaque ?? false,
-          seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
-          ativo: src.ativo ?? src.Ativo ?? false,
-          publicado: src.publicado ?? src.Publicado ?? false,
-          visitas: src.visitas ?? src.Visitas ?? 0,
-          categoriaId: src.categoriaId || src.CategoriaId,
-          categoria: src.categoria?.nome || src.Categoria?.Nome || src.categoria || src.Categoria || null,
-          primaryImage: src.primaryImage || src.PrimaryImage ? {
-            id: (src.primaryImage?.id || src.PrimaryImage?.Id),
-            url: (src.primaryImage?.url || src.PrimaryImage?.Url),
-            filename: (src.primaryImage?.filename || src.PrimaryImage?.Filename),
-            contentType: (src.primaryImage?.contentType || src.PrimaryImage?.ContentType),
-            isPrimary: (src.primaryImage?.isPrimary ?? src.PrimaryImage?.IsPrimary ?? true),
-            orderIndex: (src.primaryImage?.orderIndex ?? src.PrimaryImage?.OrderIndex ?? 0)
-          } : undefined,
-          imagens: (src.imagens || src.Imagens || []).map((m: any) => ({
-            id: m.id || m.Id,
-            url: m.url || m.Url,
-            filename: m.filename || m.Filename,
-            contentType: m.contentType || m.ContentType,
-            isPrimary: m.isPrimary ?? m.IsPrimary ?? false,
-            orderIndex: m.orderIndex ?? m.OrderIndex ?? 0
-          }))
-        }))
-      ));
+    // Enviar q/nome/descricao para permitir busca por nome e descrição (compatibilidade com backend)
+    if (trimmed.length) {
+      params.q = trimmed;
+      params.nome = trimmed;
+      params.descricao = trimmed;
     }
-  constructor(private api: ApiService, private categoriasData: CategoriasData) {}
+
+    if (destaque !== undefined) params.destaque = destaque;
+    if (environment.FORNECEDOR_PUBLICADO !== null) {
+      params.publicado = environment.FORNECEDOR_PUBLICADO;
+    }
+
+    // Novo endpoint v1/search/fornecedores
+    return this.api.get<any>(`/search/fornecedores`, params).pipe(
+      map(r => {
+        const list = Array.isArray(r) ? r : (r.data || r.Data || []);
+        return list.map((src: any) => this._mapToFornecedorListDto(src));
+      })
+    );
+  }
+
+  /**
+   * Helper to map any backend object to FornecedorListDto
+   */
+  private _mapToFornecedorListDto(src: any): FornecedorListDto {
+    if (!src) return {} as FornecedorListDto;
+
+    // Normalize category: can be string or object
+    let catObj: any = undefined;
+    const cat = src.categoria || src.Categoria;
+    if (typeof cat === 'string') {
+      catObj = { id: '', nome: cat, slug: '' };
+    } else if (cat && typeof cat === 'object') {
+      catObj = {
+        id: cat.id || cat.Id || '',
+        nome: cat.nome || cat.Nome || '',
+        slug: cat.slug || cat.Slug || ''
+      };
+    }
+
+    // Normalize image
+    const primary = src.primaryImage || src.PrimaryImage || {};
+    const imgUrl = src.fotoUrl || src.FotoUrl || src.imageUrl || src.ImageUrl || primary.url || primary.Url;
+
+    return {
+      id: src.id || src.Id,
+      nome: src.nomeFantasia || src.NomeFantasia || src.nome || src.Nome,
+      slug: src.slug || src.Slug,
+      descricao: src.descricao || src.Descricao,
+      cidade: src.cidade || src.Cidade,
+      rating: src.rating ?? src.Rating ?? null,
+      destaque: src.destaque ?? src.Destaque ?? false,
+      seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
+      ativo: src.ativo ?? src.Ativo ?? true,
+      instagram: src.instagram || src.Instagram || src.socialMedia?.instagram || src.SocialMedia?.Instagram,
+      categoria: catObj,
+      primaryImage: imgUrl ? {
+        id: primary.id || primary.Id || 'primary',
+        url: resolveImageUrl(imgUrl),
+        filename: primary.filename || primary.Filename || '',
+        contentType: primary.contentType || primary.ContentType || '',
+        isPrimary: true
+      } : undefined,
+      imagens: (src.imagens || src.Imagens || src.gallery || src.Gallery || []).map((m: any) => ({
+        id: m.id || m.Id,
+        url: resolveImageUrl(m.url || m.Url),
+        isPrimary: m.isPrimary ?? m.IsPrimary ?? false,
+        orderIndex: m.orderIndex ?? m.OrderIndex ?? 0
+      }))
+    };
+  }
+
+  constructor(private api: ApiService, private categoriasData: CategoriasData) { }
 
   getAll(page = 1, pageSize = 12): Observable<FornecedorListDto[]> {
     // Usar /fornecedores/ativos para exibir apenas fornecedores ativos (público)
@@ -155,11 +174,12 @@ export class FornecedoresData {
     if (environment.FORNECEDOR_PUBLICADO !== null) {
       params.publicado = environment.FORNECEDOR_PUBLICADO;
     }
-    return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/ativos`, params).pipe(map(r => r.data));
+    return this.api.get<{ data: any[] }>(`/fornecedores/ativos`, params).pipe(
+      map(r => (r.data || []).map((src: any) => this._mapToFornecedorListDto(src)))
+    );
   }
 
   getDestaques(page = 1, pageSize = 24): Observable<FornecedorListDto[]> {
-    // Destaques: alguns ambientes podem retornar { data: [...] } (wrapper) ou array direto
     const params: any = { page, pageSize, destaque: true };
     if (environment.FORNECEDOR_PUBLICADO !== null) {
       params.publicado = environment.FORNECEDOR_PUBLICADO;
@@ -167,63 +187,19 @@ export class FornecedoresData {
     return this.api.get<any>(`/fornecedores/ativos`, params).pipe(
       map(r => {
         let list: any[] = [];
-        if (Array.isArray(r)) list = r as any[];
-        else if (r && Array.isArray(r.data)) list = r.data as any[];
-        else {
-          console.warn('[DESTAQUES] formato inesperado da resposta:', r);
-        }
+        if (Array.isArray(r)) list = r;
+        else if (r && Array.isArray(r.data)) list = r.data;
+        else console.warn('[DESTAQUES] formato inesperado da resposta:', r);
 
-        // Normalizar keys PascalCase -> camelCase e garantir URLs resolvidas
-        const normalized: FornecedorListDto[] = list.map((raw: any) => {
-          const src = raw || {};
-          const primary = src.primaryImage || src.PrimaryImage || {};
-          const imagensArr = src.imagens || src.Imagens || [];
-          const topImage = src.imageUrl || src.ImageUrl || undefined;
-
-          return {
-            id: src.id || src.Id,
-            nome: src.nome || src.Nome,
-            slug: src.slug || src.Slug,
-            descricao: src.descricao || src.Descricao,
-            cidade: src.cidade || src.Cidade,
-            rating: src.rating ?? src.Rating,
-            destaque: (src.destaque ?? src.Destaque) === true,
-            seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor,
-            ativo: src.ativo ?? src.Ativo,
-            instagram: src.instagram || src.Instagram,
-            categoria: src.categoria || src.Categoria,
-            primaryImage: {
-              id: primary.id || primary.Id || undefined,
-              url: topImage ? resolveImageUrl(topImage) : (primary.url ? resolveImageUrl(primary.url) : (primary.Url ? resolveImageUrl(primary.Url) : undefined)),
-              filename: primary.filename || primary.Filename,
-              contentType: primary.contentType || primary.ContentType,
-              isPrimary: true
-            },
-            imagens: (imagensArr || []).filter((m: any) => m && (m.url || m.Url)).map((m: any) => ({
-              id: m.id || m.Id,
-              url: resolveImageUrl(m.url || m.Url),
-              filename: m.filename || m.Filename,
-              contentType: m.contentType || m.ContentType,
-              isPrimary: m.isPrimary ?? m.IsPrimary ?? false,
-              orderIndex: m.orderIndex ?? m.OrderIndex ?? 0
-            })),
-            descricaoCurta: src.descricaoCurta || src.DescricaoCurta
-          } as FornecedorListDto;
-        });
-
-        // Se a API ignorou o parâmetro destaque e retornou tudo, filtrar localmente
-        if (normalized.length && normalized.some(f => f.destaque !== true)) {
-          const filtered = normalized.filter(f => f.destaque);
-          if (filtered.length) return filtered;
-        }
-        return normalized.filter(f => f.destaque); // garante só destaque
+        return list.map(src => this._mapToFornecedorListDto(src));
       }),
       map(list => {
-        // Se não houver destaques, retornar lista vazia (não mostrar nada)
-        if (list.length === 0) {
-          console.warn('[DESTAQUES] nenhum fornecedor com destaque=true encontrado');
+        // Garantir que filtramos apenas os que têm destaque=true se a API retornou tudo
+        const highlights = list.filter(f => f.destaque);
+        if (list.length > 0 && highlights.length === 0) {
+          console.warn('[DESTAQUES] nenhum fornecedor com destaque=true encontrado na lista');
         }
-        return list;
+        return highlights.length > 0 ? highlights : list;
       }),
       catchError(err => {
         console.error('[DESTAQUES] API error:', err);
@@ -234,7 +210,7 @@ export class FornecedoresData {
 
   getById(identifier: string, preview = false): Observable<Fornecedor> {
     const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(identifier);
-    const endpoint = isGuid ? `/fornecedores/${identifier}` : `/fornecedores/slug/${identifier.toLowerCase()}`;
+    const endpoint = isGuid ? `/public/fornecedores/${identifier}` : `/public/fornecedores/slug/${identifier.toLowerCase()}`;
 
     // If preview mode, add query param to bypass publicado filter
     const params: any = {};
@@ -243,282 +219,154 @@ export class FornecedoresData {
     }
 
     return this.api.get<any>(endpoint, params).pipe(
-      map(detail => {
-        const src = detail || {};
-        return {
-          id: src.id || src.Id,
-          nome: src.nome || src.Nome,
-          slug: src.slug || src.Slug,
-          descricao: src.descricao || src.Descricao,
-          publicado: src.publicado ?? src.Publicado ?? false,
-          cidade: src.cidade || src.Cidade,
-          endereco: src.endereco || src.Endereco,
-          horarioFuncionamento: src.horarioFuncionamento || src.HorarioFuncionamento,
-          telefone: src.telefone || src.Telefone,
-          email: src.email || src.Email,
-          website: src.website || src.Website,
-          instagram: src.instagram || src.Instagram,
-          facebook: src.facebook || src.Facebook,
-          destaque: src.destaque ?? src.Destaque ?? false,
-          seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
-          ativo: src.ativo ?? src.Ativo ?? false,
-          rating: src.rating ?? src.Rating ?? null,
-          visitas: src.visitas ?? src.Visitas ?? 0,
-          categoria: src.categoria?.nome || src.Categoria?.Nome || src.categoria || src.Categoria || null,
-          imagens: (src.imagens || src.Imagens || []).filter((m: any) => (m.url || m.Url)).map((m: any) => ({
-            id: m.id || m.Id,
-            url: resolveImageUrl(m.url || m.Url),
-            filename: m.filename || m.Filename,
-            contentType: m.contentType || m.ContentType,
-            isPrimary: m.isPrimary ?? m.IsPrimary ?? false,
-            orderIndex: m.orderIndex ?? m.OrderIndex ?? 0
-          })).sort((a: { orderIndex: number }, b: { orderIndex: number }) => a.orderIndex - b.orderIndex),
-          depoimentos: (src.testemunhos || src.Testemunhos || []).map((t: any) => ({ texto: t.descricao || t.Descricao, casal: t.nome || t.Nome })),
-        };
-      }),
+      map(detail => this._mapDetailToFornecedor(detail)),
       catchError(err => { throw err; })
     );
   }
 
-  getByCategoria(categoriaSlugOrId: string): Observable<FornecedorListDto[]> {
-    // Usar endpoint correto: /fornecedores/ativos/categoria/{categoriaId}
-    console.debug('[FORNECEDORES] getByCategoria called with:', categoriaSlugOrId);
-    const params: any = { page: 1, pageSize: 100 };
-    if (environment.FORNECEDOR_PUBLICADO !== null) {
-      params.publicado = environment.FORNECEDOR_PUBLICADO;
+  /**
+   * Centralized mapping from backend detail to frontend Fornecedor model
+   */
+  private _mapDetailToFornecedor(src: any): Fornecedor {
+    if (!src) return {} as Fornecedor;
+
+    // Normalize images: can be in Gallery, gallery, imagens, Imagens or single FotoUrl
+    let rawImgs = src.imagens || src.Imagens || src.gallery || src.Gallery || [];
+    if (!Array.isArray(rawImgs) && typeof rawImgs === 'object') rawImgs = [rawImgs];
+
+    const mappedImgs = rawImgs.filter((m: any) => m && (m.url || m.Url)).map((m: any) => ({
+      id: m.id || m.Id,
+      url: resolveImageUrl(m.url || m.Url),
+      filename: m.filename || m.Filename,
+      contentType: m.contentType || m.ContentType,
+      isPrimary: m.isPrimary ?? m.IsPrimary ?? false,
+      orderIndex: m.orderIndex ?? m.OrderIndex ?? 0
+    }));
+
+    // If FotoUrl present but not in gallery, add it as primary
+    const fotoUrl = src.fotoUrl || src.FotoUrl;
+    if (fotoUrl && !mappedImgs.some((m: any) => m.url === fotoUrl)) {
+      mappedImgs.unshift({
+        id: 'primary',
+        url: resolveImageUrl(fotoUrl),
+        isPrimary: true,
+        orderIndex: -1
+      } as any);
     }
 
-    const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(categoriaSlugOrId);
-    if (isGuid) {
-      console.debug('[FORNECEDORES] calling fornecedores by GUID category id:', categoriaSlugOrId);
-      return this.api.get<{ data: any[] }>(`/fornecedores/ativos/categoria/${categoriaSlugOrId}`, params).pipe(
-        map(r => (r.data || []).map((src: any) => ({
-          id: src.id || src.Id,
-          nome: src.nome || src.Nome,
-          slug: src.slug || src.Slug,
-          descricao: src.descricao || src.Descricao,
-          cidade: src.cidade || src.Cidade,
-          telefone: src.telefone || src.Telefone,
-          email: src.email || src.Email,
-          website: src.website || src.Website,
-          whatsApp: src.whatsApp || src.WhatsApp,
-          endereco: src.endereco || src.Endereco,
-          horarioFuncionamento: src.horarioFuncionamento || src.HorarioFuncionamento,
-          logoUrl: src.logoUrl || src.LogoUrl,
-          rating: src.rating ?? src.Rating ?? null,
-          destaque: src.destaque ?? src.Destaque ?? false,
-          seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
-          ativo: src.ativo ?? src.Ativo ?? false,
-          publicado: src.publicado ?? src.Publicado ?? false,
-          visitas: src.visitas ?? src.Visitas ?? 0,
-          categoriaId: src.categoriaId || src.CategoriaId,
-          categoria: src.categoria ? {
-            id: src.categoria.id || src.categoria.Id,
-            nome: src.categoria.nome || src.categoria.Nome,
-            slug: src.categoria.slug || src.categoria.Slug
-          } : src.Categoria ? {
-            id: src.Categoria.id || src.Categoria.Id,
-            nome: src.Categoria.nome || src.Categoria.Nome,
-            slug: src.Categoria.slug || src.Categoria.Slug
-          } : undefined,
-          primaryImage: src.primaryImage ? {
-            id: src.primaryImage.id || src.primaryImage.Id,
-            url: src.primaryImage.url || src.primaryImage.Url,
-            filename: src.primaryImage.filename || src.primaryImage.Filename,
-            contentType: src.primaryImage.contentType || src.primaryImage.ContentType,
-            isPrimary: src.primaryImage.isPrimary ?? src.primaryImage.IsPrimary ?? true,
-            orderIndex: src.primaryImage.orderIndex ?? src.primaryImage.OrderIndex ?? 0
-          } : src.PrimaryImage ? {
-            id: src.PrimaryImage.id || src.PrimaryImage.Id,
-            url: src.PrimaryImage.url || src.PrimaryImage.Url,
-            filename: src.PrimaryImage.filename || src.PrimaryImage.Filename,
-            contentType: src.PrimaryImage.contentType || src.PrimaryImage.ContentType,
-            isPrimary: src.PrimaryImage.isPrimary ?? src.PrimaryImage.IsPrimary ?? true,
-            orderIndex: src.PrimaryImage.orderIndex ?? src.PrimaryImage.OrderIndex ?? 0
-          } : undefined,
-          imagens: (src.imagens || src.Imagens || []).map((m: any) => ({
-            id: m.id || m.Id,
-            url: m.url || m.Url,
-            filename: m.filename || m.Filename,
-            contentType: m.contentType || m.ContentType,
-            isPrimary: m.isPrimary ?? m.IsPrimary ?? false,
-            orderIndex: m.orderIndex ?? m.OrderIndex ?? 0
-          })),
-          instagram: src.instagram || src.Instagram,
-        })))
-      );
-    }
+    const cat = src.categoria || src.Categoria;
+    const mappedCategoria = (typeof cat === 'object' && cat !== null) ? (cat.nome || cat.Nome) : cat;
 
-    // If caller passed a slug (or human-readable string), resolve to category id first
-    return this.categoriasData.getBySlug(categoriaSlugOrId).pipe(
-      switchMap(cat => {
-        const id = cat?.id || categoriaSlugOrId;
-        console.debug('[FORNECEDORES] resolved category slug -> id:', { slug: categoriaSlugOrId, id });
-        return this.api.get<{ data: any[] }>(`/fornecedores/ativos/categoria/${id}`, params).pipe(
-          map(r => (r.data || []).map((src: any) => ({
-            id: src.id || src.Id,
-            nome: src.nome || src.Nome,
-            slug: src.slug || src.Slug,
-            descricao: src.descricao || src.Descricao,
-            cidade: src.cidade || src.Cidade,
-            telefone: src.telefone || src.Telefone,
-            email: src.email || src.Email,
-            website: src.website || src.Website,
-            whatsApp: src.whatsApp || src.WhatsApp,
-            endereco: src.endereco || src.Endereco,
-            horarioFuncionamento: src.horarioFuncionamento || src.HorarioFuncionamento,
-            logoUrl: src.logoUrl || src.LogoUrl,
-            rating: src.rating ?? src.Rating ?? null,
-            destaque: src.destaque ?? src.Destaque ?? false,
-            seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
-            ativo: src.ativo ?? src.Ativo ?? false,
-            publicado: src.publicado ?? src.Publicado ?? false,
-            visitas: src.visitas ?? src.Visitas ?? 0,
-            categoriaId: src.categoriaId || src.CategoriaId,
-            categoria: src.categoria ? {
-              id: src.categoria.id || src.categoria.Id,
-              nome: src.categoria.nome || src.categoria.Nome,
-              slug: src.categoria.slug || src.categoria.Slug
-            } : src.Categoria ? {
-              id: src.Categoria.id || src.Categoria.Id,
-              nome: src.Categoria.nome || src.Categoria.Nome,
-              slug: src.Categoria.slug || src.Categoria.Slug
-            } : undefined,
-            primaryImage: src.primaryImage ? {
-              id: src.primaryImage.id || src.primaryImage.Id,
-              url: src.primaryImage.url || src.primaryImage.Url,
-              filename: src.primaryImage.filename || src.primaryImage.Filename,
-              contentType: src.primaryImage.contentType || src.primaryImage.ContentType,
-              isPrimary: src.primaryImage.isPrimary ?? src.primaryImage.IsPrimary ?? true,
-              orderIndex: src.primaryImage.orderIndex ?? src.primaryImage.OrderIndex ?? 0
-            } : src.PrimaryImage ? {
-              id: src.PrimaryImage.id || src.PrimaryImage.Id,
-              url: src.PrimaryImage.url || src.PrimaryImage.Url,
-              filename: src.PrimaryImage.filename || src.PrimaryImage.Filename,
-              contentType: src.PrimaryImage.contentType || src.PrimaryImage.ContentType,
-              isPrimary: src.PrimaryImage.isPrimary ?? src.PrimaryImage.IsPrimary ?? true,
-              orderIndex: src.PrimaryImage.orderIndex ?? src.PrimaryImage.OrderIndex ?? 0
-            } : undefined,
-            imagens: (src.imagens || src.Imagens || []).map((m: any) => ({
-              id: m.id || m.Id,
-              url: m.url || m.Url,
-              filename: m.filename || m.Filename,
-              contentType: m.contentType || m.ContentType,
-              isPrimary: m.isPrimary ?? m.IsPrimary ?? false,
-              orderIndex: m.orderIndex ?? m.OrderIndex ?? 0
-            })),
-            instagram: src.instagram || src.Instagram,
-          })))
-        );
-      })
-    );
+    return {
+      id: src.id || src.Id,
+      nome: src.nomeFantasia || src.NomeFantasia || src.nome || src.Nome,
+      slug: src.slug || src.Slug,
+      descricao: src.descricao || src.Descricao,
+      publicado: src.publicado ?? src.Publicado ?? true, // Default to true if missing in detail
+      cidade: src.cidade || src.Cidade,
+      endereco: src.endereco || src.Endereco,
+      horarioFuncionamento: src.horarioFuncionamento || src.HorarioFuncionamento,
+      telefone: src.phoneDisplay || src.PhoneDisplay || src.telefone || src.Telefone,
+      email: src.email || src.Email,
+      website: src.website || src.Website,
+      instagram: src.instagram || src.Instagram || src.socialMedia?.instagram || src.SocialMedia?.Instagram,
+      facebook: src.facebook || src.Facebook || src.socialMedia?.facebook || src.SocialMedia?.Facebook,
+      destaque: src.destaque ?? src.Destaque ?? false,
+      seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
+      ativo: src.ativo ?? src.Ativo ?? true,
+      rating: src.rating ?? src.Rating ?? null,
+      visitas: src.visitas ?? src.Visitas ?? 0,
+      categoria: mappedCategoria || null,
+      imagens: mappedImgs.sort((a: any, b: any) => a.orderIndex - b.orderIndex),
+      depoimentos: (src.testemunhos || src.Testemunhos || src.testimonials || src.Testimonials || []).map((t: any) => ({
+        texto: t.descricao || t.Descricao || t.texto || t.Texto,
+        casal: t.nome || t.Nome || t.casal || t.Casal
+      })),
+
+      // Novos campos tier
+      planLevel: src.planLevel ?? src.PlanLevel ?? PlanLevel.Zombie,
+      isClaimed: src.isClaimed ?? src.IsClaimed ?? false,
+      totalLeadsAllTime: src.totalLeadsAllTime ?? src.TotalLeadsAllTime ?? 0,
+      leadLimit: src.leadLimit ?? src.LeadLimit ?? 3,
+      whatsAppUrl: src.whatsAppUrl || src.WhatsAppUrl,
+      showContactForm: src.showContactForm ?? src.ShowContactForm ?? true,
+      adInjection: (src.adInjection || src.AdInjection || []).map((ad: any) => ({
+        id: ad.id || ad.Id,
+        nome: ad.nomeFantasia || ad.NomeFantasia || ad.nome || ad.Nome,
+        slug: ad.slug || ad.Slug,
+        categoria: ad.categoria || ad.Categoria,
+        imagemPrincipal: resolveImageUrl(ad.imagemPrincipal || ad.ImagemPrincipal || ad.fotoUrl || ad.FotoUrl),
+        descricao: ad.descricao || ad.Descricao,
+        cidade: ad.cidade || ad.Cidade
+      }))
+    };
   }
 
-  getDestaquesByCategoria(categoriaSlugOrId: string): Observable<FornecedorListDto[]> {
-    // Tenta obter somente fornecedores destaque na categoria; se API não suportar param, filtra localmente
-    const params: any = { page: 1, pageSize: 100, destaque: true };
+  getByCategoria(categoriaSlugOrId: string): Observable<FornecedorListDto[]> {
+    const params: any = { page: 1, pageSize: 12 }; // Default page size for category view
     if (environment.FORNECEDOR_PUBLICADO !== null) {
       params.publicado = environment.FORNECEDOR_PUBLICADO;
     }
 
     const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(categoriaSlugOrId);
     if (isGuid) {
-      return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/ativos/categoria/${categoriaSlugOrId}`, params).pipe(
-        map(r => (r.data || []).filter(f => f.destaque)),
-        catchError(err => {
-          console.warn('[DESTAQUES BY CATEGORIA] falling back filtering local:', err);
-          return this.getByCategoria(categoriaSlugOrId).pipe(map(list => list.filter(f => f.destaque)));
+      return this.api.get<any>(`/fornecedores/ativos/categoria/${categoriaSlugOrId}`, params).pipe(
+        map(r => {
+          const list = Array.isArray(r) ? r : (r.data || r.Data || []);
+          return list.map((src: any) => this._mapToFornecedorListDto(src));
         })
       );
     }
 
     return this.categoriasData.getBySlug(categoriaSlugOrId).pipe(
       switchMap(cat => {
-        const id = cat?.id || categoriaSlugOrId;
-        return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/ativos/categoria/${id}`, params).pipe(
-          map(r => (r.data || []).filter(f => f.destaque)),
-          catchError(err => {
-            console.warn('[DESTAQUES BY CATEGORIA] falling back filtering local:', err);
-            return this.getByCategoria(id).pipe(map(list => list.filter(f => f.destaque)));
+        if (!cat) return of([]);
+        return this.api.get<any>(`/fornecedores/ativos/categoria/${cat.id}`, params).pipe(
+          map(r => {
+            const list = Array.isArray(r) ? r : (r.data || r.Data || []);
+            return list.map((src: any) => this._mapToFornecedorListDto(src));
           })
         );
       })
     );
   }
 
-  /**
-   * Direct call using a category ID (no slug resolution) to avoid extra categorias lookups
-   */
-  getDestaquesByCategoriaId(categoriaId: string): Observable<FornecedorListDto[]> {
-    console.debug('[FORNECEDORES] getDestaquesByCategoriaId called with:', categoriaId);
-    const params: any = { page: 1, pageSize: 100, destaque: true };
+  getDestaquesByCategoria(categoriaSlugOrId: string): Observable<FornecedorListDto[]> {
+    const params: any = { page: 1, pageSize: 24, destaque: true };
     if (environment.FORNECEDOR_PUBLICADO !== null) {
       params.publicado = environment.FORNECEDOR_PUBLICADO;
     }
 
-    return this.api.get<{ data: any[] }>(`/fornecedores/ativos/categoria/${categoriaId}`, params).pipe(
+    const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(categoriaSlugOrId);
+
+    const fetch = (id: string) => this.api.get<any>(`/fornecedores/ativos/categoria/${id}`, params).pipe(
       map(r => {
-        console.debug('[FORNECEDORES] API response for categoriaId', categoriaId, r);
-        // Normaliza PascalCase -> camelCase, inclusive objetos/arrays aninhados
-        const list = (r.data || []).map((src: any) => ({
-          id: src.id || src.Id,
-          nome: src.nome || src.Nome,
-          slug: src.slug || src.Slug,
-          descricao: src.descricao || src.Descricao,
-          cidade: src.cidade || src.Cidade,
-          telefone: src.telefone || src.Telefone,
-          email: src.email || src.Email,
-          website: src.website || src.Website,
-          whatsApp: src.whatsApp || src.WhatsApp,
-          endereco: src.endereco || src.Endereco,
-          horarioFuncionamento: src.horarioFuncionamento || src.HorarioFuncionamento,
-          logoUrl: src.logoUrl || src.LogoUrl,
-          rating: src.rating ?? src.Rating ?? null,
-          destaque: src.destaque ?? src.Destaque ?? false,
-          seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
-          ativo: src.ativo ?? src.Ativo ?? false,
-          publicado: src.publicado ?? src.Publicado ?? false,
-          visitas: src.visitas ?? src.Visitas ?? 0,
-          categoriaId: src.categoriaId || src.CategoriaId,
-          categoria: src.categoria ? {
-            id: src.categoria.id || src.categoria.Id,
-            nome: src.categoria.nome || src.categoria.Nome,
-            slug: src.categoria.slug || src.categoria.Slug
-          } : src.Categoria ? {
-            id: src.Categoria.id || src.Categoria.Id,
-            nome: src.Categoria.nome || src.Categoria.Nome,
-            slug: src.Categoria.slug || src.Categoria.Slug
-          } : undefined,
-          primaryImage: src.primaryImage ? {
-            id: src.primaryImage.id || src.primaryImage.Id,
-            url: src.primaryImage.url || src.primaryImage.Url,
-            filename: src.primaryImage.filename || src.primaryImage.Filename,
-            contentType: src.primaryImage.contentType || src.primaryImage.ContentType,
-            isPrimary: src.primaryImage.isPrimary ?? src.primaryImage.IsPrimary ?? true,
-            orderIndex: src.primaryImage.orderIndex ?? src.primaryImage.OrderIndex ?? 0
-          } : src.PrimaryImage ? {
-            id: src.PrimaryImage.id || src.PrimaryImage.Id,
-            url: src.PrimaryImage.url || src.PrimaryImage.Url,
-            filename: src.PrimaryImage.filename || src.PrimaryImage.Filename,
-            contentType: src.PrimaryImage.contentType || src.PrimaryImage.ContentType,
-            isPrimary: src.PrimaryImage.isPrimary ?? src.PrimaryImage.IsPrimary ?? true,
-            orderIndex: src.PrimaryImage.orderIndex ?? src.PrimaryImage.OrderIndex ?? 0
-          } : undefined,
-          imagens: (src.imagens || src.Imagens || []).map((m: any) => ({
-            id: m.id || m.Id,
-            url: m.url || m.Url,
-            filename: m.filename || m.Filename,
-            contentType: m.contentType || m.ContentType,
-            isPrimary: m.isPrimary ?? m.IsPrimary ?? false,
-            orderIndex: m.orderIndex ?? m.OrderIndex ?? 0
-          })),
-          instagram: src.instagram || src.Instagram,
-        }));
-        // Filtra apenas destaques
-        return list.filter(f => f.destaque);
+        const list = Array.isArray(r) ? r : (r.data || r.Data || []);
+        return list.map((src: any) => this._mapToFornecedorListDto(src));
+      }),
+      catchError(() => this.getByCategoria(id).pipe(map(list => list.filter((f: any) => f.destaque))))
+    );
+
+    if (isGuid) return fetch(categoriaSlugOrId);
+
+    return this.categoriasData.getBySlug(categoriaSlugOrId).pipe(
+      switchMap(cat => cat ? fetch(cat.id) : of([]))
+    );
+  }
+
+  getDestaquesByCategoriaId(categoriaId: string): Observable<FornecedorListDto[]> {
+    const params: any = { page: 1, pageSize: 24, destaque: true };
+    if (environment.FORNECEDOR_PUBLICADO !== null) {
+      params.publicado = environment.FORNECEDOR_PUBLICADO;
+    }
+
+    return this.api.get<any>(`/fornecedores/ativos/categoria/${categoriaId}`, params).pipe(
+      map(r => {
+        const list = Array.isArray(r) ? r : (r.data || r.Data || []);
+        return list.map((src: any) => this._mapToFornecedorListDto(src)).filter((f: any) => f.destaque);
       }),
       catchError(err => {
-        console.warn('[DESTAQUES BY CATEGORIA ID] API error, falling back to empty list:', err);
+        console.warn('[DESTAQUES BY CATEGORIA ID] error:', err);
         return of([]);
       })
     );

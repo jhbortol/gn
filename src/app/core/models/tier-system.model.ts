@@ -5,8 +5,13 @@
 
 /**
  * Níveis de plano disponíveis
+ * Zombie = Perfil não reivindicado (criado pelo admin)
+ * Free = Perfil reivindicado com limite de 3 leads vitalícios
+ * Vitrine = Plano pago com leads ilimitados
  */
 export enum PlanLevel {
+  Zombie = -2,
+  Low = -1,
   Free = 0,
   Vitrine = 1
 }
@@ -34,9 +39,9 @@ export interface VendorPublicDto {
 
   // Campos com lógica tier
   phoneDisplay: string;
-  whatsAppUrl?: string; // null para Free
-  showContactForm: boolean; // true para Free < 3 leads
-  adInjection: CompetitorAd[]; // populado apenas em zumbi state
+  whatsAppUrl?: string; // null para Zombie e Free, apenas Vitrine
+  showContactForm: boolean; // true para Zombie e Free
+  adInjection: CompetitorAd[]; // populado apenas para Free tier
 
   socialMedia?: Record<string, string>;
   position: number;
@@ -74,15 +79,19 @@ export interface LeadDto {
   message: string;
   createdAt: string;
   isRead: boolean;
+  orderIndex: number;
+  isBlurred: boolean;
 }
 
 /**
  * Resposta da listagem de leads do painel
  */
 export interface FornecedorLeadsResponse {
-  totalLeads: number;
+  totalLeads: number;         // Total para paginação atual / total geral
+  totalLeadsAllTime: number;  // Total vitalício para controle de tier
   unreadLeads: number;
   leadCountThisMonth: number;
   leadLimit: number; // 3 para Free, 999999 para Vitrine
+  planLevel: PlanLevel;
   leads: LeadDto[];
 }

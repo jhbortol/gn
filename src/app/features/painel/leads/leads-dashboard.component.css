@@ -81,6 +81,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -581,6 +582,7 @@
     transform: translateY(20px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -868,11 +870,153 @@
     margin-bottom: 0.25rem;
   }
 
+
   .pagination-section {
     flex-direction: column;
   }
 
   .btn-pagination {
     width: 100%;
+  }
+}
+
+/* ============================================
+   UPGRADE BANNER (Free Tier)
+   ============================================ */
+.upgrade-banner {
+  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3);
+  animation: slideDown 0.3s ease-out;
+}
+
+.upgrade-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.upgrade-icon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+}
+
+.upgrade-text {
+  flex: 1;
+  min-width: 250px;
+}
+
+.upgrade-text h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.upgrade-text p {
+  margin: 0;
+  font-size: 0.95rem;
+  opacity: 0.95;
+}
+
+.btn-upgrade {
+  padding: 0.875rem 2rem;
+  background: white;
+  color: #e53e3e;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-upgrade:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Free Tier Notice */
+.free-tier-notice {
+  background: #fffaf0;
+  border-left: 4px solid #ed8936;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.free-tier-notice p {
+  margin: 0;
+  color: #744210;
+}
+
+/* ============================================
+   BLURRED LEADS (Free Tier Over Limit)
+   ============================================ */
+.blurred-row {
+  background: #fef5e7 !important;
+  position: relative;
+}
+
+.blurred-row:hover {
+  background: #fdebd0 !important;
+}
+
+.blurred-text {
+  color: #cbd5e0;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  user-select: none;
+}
+
+.btn-unlock {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-unlock:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(246, 173, 85, 0.4);
+}
+
+/* Responsive adjustments for upgrade banner */
+@media (max-width: 768px) {
+  .upgrade-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .btn-upgrade {
+    width: 100%;
+  }
+
+  .free-tier-notice {
+    text-align: center;
   }
 }

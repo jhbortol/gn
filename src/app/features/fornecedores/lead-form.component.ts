@@ -128,8 +128,8 @@ import { LeadService } from '../../core/services/lead.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LeadFormComponent {
-  @Input() fornecedorId!: number;
-  @Output() submitSuccess = new EventEmitter<number>();
+  @Input() fornecedorId!: string | number;
+  @Output() submitSuccess = new EventEmitter<any>();
 
   form = new FormGroup({
     clienteName: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -143,7 +143,7 @@ export class LeadFormComponent {
   successMessage = signal('');
   errorMessage = signal('');
 
-  constructor(private leadService: LeadService) {}
+  constructor(private leadService: LeadService) { }
 
   isFieldInvalid(fieldName: string): boolean {
     const field = this.form.get(fieldName);

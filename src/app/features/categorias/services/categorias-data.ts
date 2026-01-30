@@ -79,16 +79,17 @@ export class CategoriasData {
         return (rawList || []).map((src: any) => {
           const id = src.id || src.Id;
           const nome = src.nome || src.Nome || '';
+
           // slugs may come with spaces or uppercase; normalize to lowercase hyphenated
-          const rawSlug = src.slug || src.Slug || id || nome;
-          const slug = String(rawSlug)
-            .toString()
+          const slugSource = src.slug || src.Slug || id || nome;
+          const slug = String(slugSource)
             .normalize('NFD')
             .replace(/\p{Diacritic}/gu, '')
             .replace(/[^\w\s-]/g, '')
             .trim()
             .replace(/\s+/g, '-')
             .toLowerCase();
+
           const descricao = src.descricao ?? src.Descricao ?? null;
           const imageId = src.imageId || src.ImageId || null;
           const imageUrl = src.imageUrl || src.ImageUrl || null;
@@ -121,5 +122,5 @@ export class CategoriasData {
     );
   }
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 }

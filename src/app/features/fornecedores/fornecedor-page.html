@@ -2,14 +2,32 @@
 <div *ngIf="isPreviewMode" class="preview-banner">
   <div class="container mx-auto px-4">
     <div class="preview-content">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
         <circle cx="12" cy="12" r="3"></circle>
       </svg>
       <div class="preview-text">
         <strong>Modo Preview</strong>
-        <span>Esta é uma visualização do seu perfil. Esta página não está visível publicamente ainda. Assim que estiver pronto, solicite a liberação.</span>
+        <span>Esta é uma visualização do seu perfil. Esta página não está visível publicamente ainda. Assim que estiver
+          pronto, solicite a liberação.</span>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Claim Profile Sticky Bar (Zombie Tier) -->
+<div *ngIf="showClaimBar()" class="claim-bar-sticky">
+  <div class="container mx-auto px-4 py-3">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="claim-text text-center sm:text-left">
+        <strong class="text-white">Você é o dono da {{fornecedor?.nome}}?</strong>
+        <span class="ml-2 text-green-50">Assuma este perfil grátis e atualize suas fotos.</span>
+      </div>
+      <button (click)="openClaimModal()"
+        class="btn-claim bg-white hover:bg-green-50 text-green-700 px-6 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
+        Reivindicar Perfil
+      </button>
     </div>
   </div>
 </div>
@@ -22,15 +40,21 @@
         <div class="flex items-start gap-6">
           <div class="flex-1">
             <div class="flex items-center gap-3 mb-3">
-              <span class="text-xs bg-rose-500 text-white px-3 py-1 rounded-full font-semibold shadow-sm">{{fornecedor.categoria}}</span>
+              <span
+                class="text-xs bg-rose-500 text-white px-3 py-1 rounded-full font-semibold shadow-sm">{{fornecedor.categoria}}</span>
             </div>
             <h2 class="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-4">{{fornecedor.nome}}</h2>
             <div class="text-base text-gray-600 flex items-center gap-4 mb-4">
               <span *ngIf="fornecedor.cidade" class="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 12.414a4 4 0 10-5.657 5.657l4.243 4.243a8 8 0 1111.314-11.314l-4.243 4.243z" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17.657 16.657L13.414 12.414a4 4 0 10-5.657 5.657l4.243 4.243a8 8 0 1111.314-11.314l-4.243 4.243z" />
+                </svg>
                 {{fornecedor.cidade}}
               </span>
-              <span *ngIf="fornecedor.rating" class="flex items-center gap-1 text-yellow-500 font-semibold">★ {{fornecedor.rating}}</span>
+              <span *ngIf="fornecedor.rating" class="flex items-center gap-1 text-yellow-500 font-semibold">★
+                {{fornecedor.rating}}</span>
             </div>
             <div class="text-gray-700 leading-relaxed">
               <p>{{fornecedor.descricao}}</p>
@@ -43,13 +67,9 @@
         <h3 class="font-serif font-bold text-2xl text-gray-900 mb-6">Galeria de Fotos</h3>
         <div class="grid grid-cols-2 gap-4">
           <ng-container *ngFor="let img of fornecedor.imagens; let i = index">
-              <img (click)="openImage(img.url)" 
-                [src]="img.url" 
-                alt="imagem" 
-                 loading="lazy"
-                 decoding="async"
-                 fetchpriority="low"
-                 class="w-full h-40 object-cover rounded-xl cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105" />
+            <img (click)="openImage(img.url)" [src]="img.url" alt="imagem" loading="lazy" decoding="async"
+              fetchpriority="low"
+              class="w-full h-40 object-cover rounded-xl cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105" />
           </ng-container>
         </div>
       </div>
@@ -58,15 +78,19 @@
       <div *ngIf="selectedImage" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black bg-opacity-70" (click)="closeImage()"></div>
         <div class="relative max-w-4xl max-h-[90vh] w-full">
-          <button (click)="closeImage()" aria-label="Fechar" class="absolute right-2 top-2 z-60 bg-white rounded-full p-2 shadow">✕</button>
-          <img [src]="selectedImage" alt="imagem ampliada" decoding="async" class="w-full h-auto max-h-[90vh] object-contain rounded" />
+          <button (click)="closeImage()" aria-label="Fechar"
+            class="absolute right-2 top-2 z-60 bg-white rounded-full p-2 shadow">✕</button>
+          <img [src]="selectedImage" alt="imagem ampliada" decoding="async"
+            class="w-full h-auto max-h-[90vh] object-contain rounded" />
         </div>
       </div>
 
       <section class="py-12 px-2 mb-6 rounded-2xl bg-depoimentos">
         <h3 class="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-8 text-center">O que os noivos dizem</h3>
         <div class="flex flex-wrap gap-6">
-          <div *ngFor="let dep of fornecedor.depoimentos" class="bg-white rounded-xl shadow p-6 border border-rose-100 flex-1 min-w-[280px] max-w-[340px]" style="box-shadow:0 2px 8px #0001;">
+          <div *ngFor="let dep of fornecedor.depoimentos"
+            class="bg-white rounded-xl shadow p-6 border border-rose-100 flex-1 min-w-[280px] max-w-[340px]"
+            style="box-shadow:0 2px 8px #0001;">
             <div class="text-rose-400 text-3xl mb-2">&ldquo;</div>
             <blockquote class="italic text-gray-700 mb-4">{{dep.texto}}</blockquote>
             <div class="font-serif font-bold text-rose-700 text-right">&ndash; {{dep.casal}}</div>
@@ -75,68 +99,44 @@
       </section>
 
       <!-- NOVO: Lead Form (se Free tier com < 3 leads) -->
-      <app-lead-form
-        *ngIf="showLeadForm()"
-        [fornecedorId]="fornecedorIdNumero"
-        (submitSuccess)="onLeadSubmitSuccess($event)"
-      ></app-lead-form>
+      <app-lead-form *ngIf="showLeadForm()" [fornecedorId]="fornecedorId"
+        (submitSuccess)="onLeadSubmitSuccess($event)"></app-lead-form>
 
       <!-- NOVO: Competitor Ads (se Free em zumbi state) -->
-      <app-competitor-ads
-        *ngIf="hasCompetitorAds()"
-        [ads]="fornecedor.adInjection!"
-      ></app-competitor-ads>
+      <app-competitor-ads *ngIf="hasCompetitorAds()" [ads]="fornecedor.adInjection!"></app-competitor-ads>
     </div>
 
     <aside>
       <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 sticky top-4">
         <h4 class="font-serif font-bold text-xl text-gray-900 mb-6">Solicitar Orçamento</h4>
         <div class="flex flex-col gap-3 mb-6">
-          <a *ngIf="fornecedor.telefone" 
-             [href]="getWhatsAppLink()" 
-             target="_blank" 
-             (click)="onWhatsAppClick()"
-             [attr.data-event-category]="'Contato'"
-             [attr.data-event-action]="'Clique WhatsApp'"
-             [attr.data-vendor-id]="fornecedor.id"
-             [attr.data-vendor-name]="fornecedor.nome"
-             [attr.data-vendor-category]="fornecedor.categoria"
-             class="inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
+          <!-- WhatsApp - Apenas para Vitrine -->
+          <a *ngIf="fornecedor.telefone && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getWhatsAppLink()"
+            target="_blank" (click)="onWhatsAppClick()" [attr.data-event-category]="'Contato'"
+            [attr.data-event-action]="'Clique WhatsApp'" [attr.data-vendor-id]="fornecedor.id"
+            [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria"
+            class="inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
             WhatsApp
           </a>
-          <a *ngIf="fornecedor.instagram" 
-             [href]="getInstagramLink()" 
-             target="_blank" 
-             (click)="onInstagramClick()"
-             [attr.data-event-category]="'Contato'"
-             [attr.data-event-action]="'Clique Instagram'"
-             [attr.data-vendor-id]="fornecedor.id"
-             [attr.data-vendor-name]="fornecedor.nome"
-             [attr.data-vendor-category]="fornecedor.categoria"
-             class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
+          <a *ngIf="fornecedor.instagram" [href]="getInstagramLink()" target="_blank" (click)="onInstagramClick()"
+            [attr.data-event-category]="'Contato'" [attr.data-event-action]="'Clique Instagram'"
+            [attr.data-vendor-id]="fornecedor.id" [attr.data-vendor-name]="fornecedor.nome"
+            [attr.data-vendor-category]="fornecedor.categoria"
+            class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
             Instagram
           </a>
-          <a *ngIf="fornecedor.facebook" 
-             [href]="getFacebookLink()" 
-             target="_blank" 
-             (click)="onFacebookClick()"
-             [attr.data-event-category]="'Contato'"
-             [attr.data-event-action]="'Clique Facebook'"
-             [attr.data-vendor-id]="fornecedor.id"
-             [attr.data-vendor-name]="fornecedor.nome"
-             [attr.data-vendor-category]="fornecedor.categoria"
-             class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
+          <a *ngIf="fornecedor.facebook" [href]="getFacebookLink()" target="_blank" (click)="onFacebookClick()"
+            [attr.data-event-category]="'Contato'" [attr.data-event-action]="'Clique Facebook'"
+            [attr.data-vendor-id]="fornecedor.id" [attr.data-vendor-name]="fornecedor.nome"
+            [attr.data-vendor-category]="fornecedor.categoria"
+            class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
             Facebook
           </a>
-          <a *ngIf="fornecedor.website" 
-             [href]="getSiteLink()" 
-             target="_blank" 
-             (click)="onSiteClick()"[attr.data-event-category]="'Contato'"
-             [attr.data-event-action]="'Clique Site'"
-             [attr.data-vendor-id]="fornecedor.id"
-             [attr.data-vendor-name]="fornecedor.nome"
-             [attr.data-vendor-category]="fornecedor.categoria"
-             class="inline-flex items-center justify-center gap-2 border border-gray-400 text-gray-700 bg-white hover:bg-gray-50 rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
+          <a *ngIf="fornecedor.website" [href]="getSiteLink()" target="_blank" (click)="onSiteClick()"
+            [attr.data-event-category]="'Contato'" [attr.data-event-action]="'Clique Site'"
+            [attr.data-vendor-id]="fornecedor.id" [attr.data-vendor-name]="fornecedor.nome"
+            [attr.data-vendor-category]="fornecedor.categoria"
+            class="inline-flex items-center justify-center gap-2 border border-gray-400 text-gray-700 bg-white hover:bg-gray-50 rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
             Visitar Site
           </a>
         </div>
@@ -144,29 +144,43 @@
         <div class="text-sm text-gray-600">
           <div class="mb-2 font-semibold">Dados de Contato</div>
           <div *ngIf="fornecedor.telefone" class="flex items-center gap-2 mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
             {{fornecedor.telefone}}
           </div>
           <div *ngIf="fornecedor.email" class="flex items-center gap-2 mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
             {{fornecedor.email}}
           </div>
           <div *ngIf="fornecedor.endereco" class="flex items-center gap-2 mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
             <span>{{fornecedor.endereco}}</span>
-            <a [href]="getMapsLink()" 
-               target="_blank"
-               (click)="onMapsClick()"
-               [attr.data-event-category]="'Contato'"
-               [attr.data-event-action]="'Clique Mapa'"
-               [attr.data-vendor-id]="fornecedor.id"
-               [attr.data-vendor-name]="fornecedor.nome"
-               class="text-rose-600 hover:text-rose-700 text-xs font-semibold ml-2 whitespace-nowrap">
+            <a [href]="getMapsLink()" target="_blank" (click)="onMapsClick()" [attr.data-event-category]="'Contato'"
+              [attr.data-event-action]="'Clique Mapa'" [attr.data-vendor-id]="fornecedor.id"
+              [attr.data-vendor-name]="fornecedor.nome"
+              class="text-rose-600 hover:text-rose-700 text-xs font-semibold ml-2 whitespace-nowrap">
               Ver no mapa ↗
             </a>
           </div>
           <div *ngIf="fornecedor.horarioFuncionamento" class="flex items-center gap-2 mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
             {{fornecedor.horarioFuncionamento}}
           </div>
           <!-- whatsapp/instagram removidos pois não estão presentes no DTO atual -->
@@ -178,7 +192,8 @@
   <ng-template #notfound>
     <div class="not-found-container">
       <div class="not-found-card">
-        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="not-found-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="not-found-icon">
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           <line x1="8" y1="11" x2="14" y2="11"></line>
@@ -189,4 +204,11 @@
       </div>
     </div>
   </ng-template>
+
+  <!-- LGPD Removal Button (Discrete) -->
+  <div *ngIf="fornecedor && !notFound" class="text-center py-6 border-t border-gray-100 mt-8">
+    <button (click)="requestRemoval()" class="text-xs text-gray-400 hover:text-gray-600 underline transition-colors">
+      Solicitar remoção deste perfil (LGPD)
+    </button>
+  </div>
 </section>

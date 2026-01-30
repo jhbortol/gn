@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
-import { Observable, of } from 'rxjs';
+import { Observable, of, shareReplay, tap } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { resolveImageUrl } from '../../../core/image-url.helper';
 
@@ -18,6 +18,7 @@ export interface Categoria {
   providedIn: 'root',
 })
 export class CategoriasData {
+  private cache$?: Observable<Categoria[]>;
   // Fallback local (estrutura antiga - remover após backend estável)
   private fallback: Categoria[] = [
     {
@@ -71,7 +72,9 @@ export class CategoriasData {
   ];
 
   getAll(): Observable<Categoria[]> {
-    return this.http.get<any>(`${environment.API_BASE_URL}/categorias`).pipe(
+    if (this.cache$) return this.cache$;
+
+    this.cache$ = this.http.get<any>(`${environment.API_BASE_URL}/categorias`).pipe(
       map(response => {
         // backend may return array directly or { data: [...] }
         const rawList = Array.isArray(response) ? response : (response?.data || []);
@@ -104,8 +107,18 @@ export class CategoriasData {
           } as Categoria;
         });
       }),
-      catchError(() => of(this.fallback))
+      catchError(() => of(this.fallback)),
+      shareReplay(1) // Keep the result for subsequent calls
     );
+
+    return this.cache$;
+  }
+
+  /**
+   * Clears the internal cache, forcing the next getAll() to fetch from network.
+   */
+  clearCache(): void {
+    this.cache$ = undefined;
   }
 
   getBySlug(slug: string): Observable<Categoria | undefined> {

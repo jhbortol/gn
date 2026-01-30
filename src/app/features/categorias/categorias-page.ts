@@ -2,11 +2,15 @@ import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CategoriasData, Categoria } from './services/categorias-data';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin, map, switchMap, merge, scan, startWith, shareReplay, of } from 'rxjs';
 import { FornecedoresData, FornecedorListDto } from '../fornecedores/services/fornecedores-data';
-import { forkJoin, map, switchMap } from 'rxjs';
 import { CidadeService } from '../../core/cidade.service';
 import { environment } from '../../../environments/environment';
+
+export interface CategoriaComDestaques {
+  categoria: Categoria;
+  fornecedores: FornecedorListDto[];
+}
 
 @Component({
   selector: 'app-categorias-page',
@@ -17,7 +21,7 @@ import { environment } from '../../../environments/environment';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CategoriasPageComponent {
-  categoriasComFornecedores$!: Observable<Array<{ categoria: Categoria; fornecedores: FornecedorListDto[] }>>;
+  categoriasComFornecedores$!: Observable<CategoriaComDestaques[]>;
 
   private cidadeService = inject(CidadeService);
 
@@ -26,32 +30,40 @@ export class CategoriasPageComponent {
     private fornecedoresData: FornecedoresData
   ) {
     this.categoriasComFornecedores$ = this.categoriasData.getAll().pipe(
-      map(cats => {
-        console.debug('[CATEGORIAS PAGE] categorias recebidas:', cats);
-        return this.shuffleArray(cats);
-      }),
+      map(cats => this.shuffleArray(cats)),
       switchMap(cats => {
-        cats.forEach(cat => {
-          console.debug(`[CATEGORIAS PAGE] categoria: nome=${cat.nome}, id=${cat.id}, slug=${cat.slug}`);
-        });
-        return forkJoin(
-          cats.map(cat =>
-            (cat.id ? this.fornecedoresData.getDestaquesByCategoriaId(cat.id) : this.fornecedoresData.getDestaquesByCategoria(cat.slug)).pipe(
-              map(destaques => ({
-                categoria: cat,
-                fornecedores: this.shuffleArray(destaques).slice(0, 6)
-              }))
-            )
+        // Prepare initial list with empty highlights
+        const initialItems: CategoriaComDestaques[] = cats.map(cat => ({
+          categoria: cat,
+          fornecedores: []
+        }));
+
+        // Create individual streams for each category's highlights
+        const updateStreams = cats.map(cat =>
+          (cat.id
+            ? this.fornecedoresData.getDestaquesByCategoriaId(cat.id)
+            : this.fornecedoresData.getDestaquesByCategoria(cat.slug)
+          ).pipe(
+            map(destaques => ({
+              catId: cat.id,
+              catSlug: cat.slug,
+              destaques: this.shuffleArray(destaques).slice(0, 6)
+            }))
           )
         );
-      })
-    );
 
-    // Debug: log resultado final do pipeline
-    this.categoriasComFornecedores$ = this.categoriasComFornecedores$.pipe(
-      map(items => {
-        console.debug('[CATEGORIAS PAGE] categoriasComFornecedores$ resolved:', items);
-        return items;
+        // Merge updates into the list progressively
+        return merge(...updateStreams).pipe(
+          scan((acc: CategoriaComDestaques[], update) => {
+            return acc.map(item =>
+              (item.categoria.id === update.catId || item.categoria.slug === update.catSlug)
+                ? { ...item, fornecedores: update.destaques }
+                : item
+            );
+          }, initialItems),
+          startWith(initialItems),
+          shareReplay(1)
+        );
       })
     );
   }

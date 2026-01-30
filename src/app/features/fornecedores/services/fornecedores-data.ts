@@ -1,7 +1,7 @@
 // Removido: definição solta de getDestaquesByCategoriaId fora da classe. Método correto está dentro da classe FornecedoresData.
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../../core/api.service';
-import { Observable, map, catchError, of, switchMap } from 'rxjs';
+import { Observable, map, catchError, of, switchMap, shareReplay } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { CompetitorAd, PlanLevel } from '../../../core/models/tier-system.model';
 import { resolveImageUrl } from '../../../core/image-url.helper';
@@ -90,6 +90,7 @@ export interface Fornecedor {
 
 @Injectable({ providedIn: 'root' })
 export class FornecedoresData {
+  private highlightsCache = new Map<string, Observable<FornecedorListDto[]>>();
   search(term: string, page = 1, pageSize = 12, destaque?: boolean): Observable<FornecedorListDto[]> {
     const trimmed = (term || '').trim();
     const params: any = { page, pageSize };
@@ -355,12 +356,15 @@ export class FornecedoresData {
   }
 
   getDestaquesByCategoriaId(categoriaId: string): Observable<FornecedorListDto[]> {
+    const cacheKey = `destaques-cat-id-${categoriaId}`;
+    if (this.highlightsCache.has(cacheKey)) return this.highlightsCache.get(cacheKey)!;
+
     const params: any = { page: 1, pageSize: 24, destaque: true };
     if (environment.FORNECEDOR_PUBLICADO !== null) {
       params.publicado = environment.FORNECEDOR_PUBLICADO;
     }
 
-    return this.api.get<any>(`/fornecedores/ativos/categoria/${categoriaId}`, params).pipe(
+    const obs = this.api.get<any>(`/fornecedores/ativos/categoria/${categoriaId}`, params).pipe(
       map(r => {
         const list = Array.isArray(r) ? r : (r.data || r.Data || []);
         return list.map((src: any) => this._mapToFornecedorListDto(src)).filter((f: any) => f.destaque);
@@ -368,8 +372,12 @@ export class FornecedoresData {
       catchError(err => {
         console.warn('[DESTAQUES BY CATEGORIA ID] error:', err);
         return of([]);
-      })
+      }),
+      shareReplay(1)
     );
+
+    this.highlightsCache.set(cacheKey, obs);
+    return obs;
   }
 }
 

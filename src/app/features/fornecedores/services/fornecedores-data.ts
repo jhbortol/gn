@@ -22,6 +22,7 @@ export interface FornecedorListDto {
   categoria?: { id: string; nome: string; slug: string };
   primaryImage?: { id: string; url: string; filename: string; contentType: string; isPrimary: boolean };
   imagens?: MediaDto[];
+  planLevel?: number; // 0 = Free, 1 = Vitrine, -2 = Zombie, -1 = Low
 }
 
 export interface MediaDto {

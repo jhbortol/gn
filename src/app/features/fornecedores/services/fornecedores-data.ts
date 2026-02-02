@@ -78,6 +78,8 @@ export interface Fornecedor {
   categoria?: string; // apenas o nome para compatibilidade prévia
   imagens: Array<{ url: string; orderIndex: number }>; // URLs com ordem
   depoimentos?: Array<{ texto: string; casal: string }>; // adaptado de testemunhos
+  coverPictureUrl?: string; // URL da imagem de capa para SEO
+  primaryImage?: { id: string; url: string; filename: string; contentType: string; isPrimary: boolean }; // Primeira imagem da galeria
 
   // Novos campos tier (OPCIONAIS para backward compatibility)
   planLevel?: PlanLevel;

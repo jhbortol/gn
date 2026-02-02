@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Meta, Title } from '@angular/platform-browser';
 import { ClickwrapAgreementComponent } from '../../shared/clickwrap-agreement/clickwrap-agreement';
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
 import { TrackingService } from '../../core/tracking.service';
@@ -48,7 +49,9 @@ export class FornecedorPageComponent implements OnInit {
     private router: Router,
     private fornecedores: FornecedoresData,
     private cdr: ChangeDetectorRef,
-    private tracking: TrackingService
+    private tracking: TrackingService,
+    private title: Title,
+    private meta: Meta
   ) { }
 
   ngOnInit(): void {
@@ -71,6 +74,9 @@ export class FornecedorPageComponent implements OnInit {
 
           // 🔴 NOVO: Aplicar lógica tier
           this.applyTierLogic(f);
+
+          // 🔴 NOVO: Atualizar meta tags SEO
+          this.updateSeoMetaTags(f);
 
           this.tracking.trackVendorView({
             vendorId: f.id,
@@ -97,6 +103,17 @@ export class FornecedorPageComponent implements OnInit {
         vendor_category: this.fornecedor.categoria
       });
     }
+  }
+
+  /**
+   * Retorna imagens da galeria limitadas por tier
+   * Free: 2 imagens, Vitrine: 20 imagens
+   */
+  getGalleryImages() {
+    if (!this.fornecedor?.imagens) return [];
+    
+    const limit = this.fornecedor.planLevel === PlanLevel.Free ? 2 : 20;
+    return this.fornecedor.imagens.slice(0, limit);
   }
 
   openImage(img: string) {
@@ -217,6 +234,31 @@ export class FornecedorPageComponent implements OnInit {
     if (planLevel === PlanLevel.Zombie && !fornecedor.isClaimed) {
       this.showClaimBar.set(true);
     }
+  }
+
+  /**
+   * Atualiza meta tags dinâmicas para SEO
+   */
+  private updateSeoMetaTags(fornecedor: Fornecedor): void {
+    // Título da página: "Nome - Categoria em Cidade"
+    const pageTitle = `${fornecedor.nome} - ${fornecedor.categoria || 'Fornecedor'} em ${fornecedor.cidade || 'São Paulo'}`;
+    this.title.setTitle(pageTitle);
+
+    // Meta description: primeiros 155 caracteres da bio/descrição
+    const description = (fornecedor.descricao || fornecedor.nome || '').substring(0, 155);
+    this.meta.updateTag({ name: 'description', content: description });
+
+    // Open Graph image para compartilhamento social
+    const ogImage = fornecedor.coverPictureUrl || fornecedor.primaryImage?.url || fornecedor.imagens?.[0]?.url || '';
+    if (ogImage) {
+      this.meta.updateTag({ property: 'og:image', content: ogImage });
+      this.meta.updateTag({ property: 'og:image:alt', content: `${fornecedor.nome} - Foto de capa` });
+    }
+
+    // Open Graph adicionais
+    this.meta.updateTag({ property: 'og:title', content: pageTitle });
+    this.meta.updateTag({ property: 'og:description', content: description });
+    this.meta.updateTag({ property: 'og:type', content: 'business.business' });
   }
 
   /**

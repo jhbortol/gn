@@ -48,7 +48,11 @@ export class CategoriaDetalhePageComponent {
       map(list => (list || []).filter(f => f.destaque))
     );
     this.sortedFornecedores$ = combineLatest([this.fornecedores$, this.sortOrder$]).pipe(
-      map(([list, order]) => this.sortFornecedores(list, order))
+      map(([list, order]) => {
+        // Filtrar apenas Free (planLevel === 0) e Vitrine (planLevel === 1)
+        const publicFornecedores = (list || []).filter(f => f.planLevel !== undefined && f.planLevel >= 0);
+        return this.sortFornecedores(publicFornecedores, order);
+      })
     );
   }
 

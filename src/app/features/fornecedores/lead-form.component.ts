@@ -60,6 +60,20 @@ import { LeadService } from '../../core/services/lead.service';
           </p>
         </div>
 
+        <!-- Data do Evento -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Data do Evento <span class="text-red-600">*</span></label>
+          <input
+            type="date"
+            formControlName="eventDate"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+            [class.border-red-500]="isFieldInvalid('eventDate')"
+          />
+          <p *ngIf="isFieldInvalid('eventDate')" class="text-red-500 text-xs mt-1">
+            Data do evento é obrigatória
+          </p>
+        </div>
+
         <!-- Mensagem -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Sua Mensagem <span class="text-red-600">*</span></label>
@@ -136,6 +150,7 @@ export class LeadFormComponent {
     clienteEmail: new FormControl('', [Validators.required, Validators.email]),
     clientePhone: new FormControl('', [Validators.required, Validators.minLength(10)]),
     message: new FormControl('', [Validators.required, Validators.minLength(10)]),
+    eventDate: new FormControl('', [Validators.required]),
     lgpdConsent: new FormControl(false, [Validators.requiredTrue])
   });
 

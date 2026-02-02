@@ -255,13 +255,11 @@ export class FornecedorPageComponent implements OnInit {
    * Abre modal para reivindicar perfil (Zombie tier)
    */
   openClaimModal(): void {
-    // TODO: Implementar modal de claim
-    // Por enquanto, redirecionar para página de cadastro com query param
-    this.router.navigate(['/painel/cadastro'], {
-      queryParams: {
-        claimId: this.fornecedor?.id,
-        claimSlug: this.fornecedor?.slug
-      }
+    // TODO: Redirecionar para painel externo quando implementado
+    // Por enquanto, apenas log
+    console.log('Claim functionality will redirect to external painel:', {
+      claimId: this.fornecedor?.id,
+      claimSlug: this.fornecedor?.slug
     });
   }
 

@@ -37,6 +37,6 @@ export class NavbarComponent {
   }
 
   openPainel(): void {
-    window.location.href = environment.PAINEL_URL;
+    window.open(environment.PAINEL_URL, '_blank');
   }
 }

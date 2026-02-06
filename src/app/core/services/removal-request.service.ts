@@ -4,6 +4,7 @@ import { ApiService } from '../api.service';
 import {
   RemovalRequestPayload,
   RemovalRequestResponse,
+  RemovalRequestStatus,
   VendorSearchResult
 } from '../models/removal-request.model';
 
@@ -12,7 +13,7 @@ import {
  */
 @Injectable({ providedIn: 'root' })
 export class RemovalRequestService {
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService) { }
 
   /**
    * Busca fornecedores por nome (para autocomplete)
@@ -27,12 +28,17 @@ export class RemovalRequestService {
 
   /**
    * Submete solicitação de remoção de perfil
-   * POST /api/privacy/request-removal
-   *
-   * @param payload Dados da solicitação
-   * @returns Observable com resposta da API
+   * POST /api/v1/privacy/request-removal
    */
   submitRemovalRequest(payload: RemovalRequestPayload): Observable<RemovalRequestResponse> {
     return this.api.post('/privacy/request-removal', payload);
+  }
+
+  /**
+   * Consulta status da solicitação
+   * GET /api/v1/privacy/request-removal/status
+   */
+  getRemovalRequestStatus(requestId: string, email: string): Observable<RemovalRequestStatus> {
+    return this.api.get('/privacy/request-removal/status', { id: requestId, email });
   }
 }

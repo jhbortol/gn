@@ -59,13 +59,12 @@ export const routes: Routes = [
 			{
 				path: 'indicado',
 				loadComponent: () => import('./features/comecar/comecar-page').then(m => m.ComecarPage)
+			},
+			{
+				path: 'privacy',
+				loadChildren: () => import('./features/privacy/privacy-module').then(m => m.PrivacyModule)
 			}
 		]
-	},
-	// Painel de fornecedor - não dependente de cidade (admin global)
-	{
-		path: 'painel',
-		loadChildren: () => import('./features/painel/painel-module').then(m => m.PainelModule)
 	},
 	// Rotas legadas sem cidade - redirecionar para /piracicaba (compatibilidade)
 	{
@@ -98,10 +97,10 @@ export const routes: Routes = [
 		redirectTo: '/piracicaba/contato',
 		pathMatch: 'full'
 	},
-	// Catch-all - redireciona para painel/login
+	// Catch-all - redireciona para home
 	{
 		path: '**',
-		redirectTo: '/painel/login',
+		redirectTo: '/piracicaba',
 		pathMatch: 'full'
 	}
 ];

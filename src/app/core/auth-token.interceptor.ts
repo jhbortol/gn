@@ -12,11 +12,12 @@ export const authTokenInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, n
     '/leads/guia-precos',
     '/leads/contact',
     '/contato',
-    // Rotas de fornecedor/painel usam seu próprio interceptor/token
     '/api/v1/supplier',
     '/api/v1/fornecedores',
+    '/public/categorias',
+    '/public/fornecedores',
+    '/public/leads',
     '/me/',
-    '/painel',
     '/api/v1/account'
   ];
 

@@ -23,7 +23,7 @@ export class App implements AfterViewInit {
     this.router.events.subscribe(ev => {
       if (ev instanceof NavigationEnd) {
         const hideNavbar = ev.url.includes('/midia-kit');
-        const hideFooter = ev.url.includes('/painel') || ev.url.includes('/midia-kit');
+        const hideFooter = ev.url.includes('/midia-kit');
 
         this.showNavbar.set(!hideNavbar);
         this.showFooter.set(!hideFooter);

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon/icon';
 import { RouterModule } from '@angular/router';
 import { CidadeService } from '../../core/cidade.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-navbar',
@@ -29,5 +30,13 @@ export class NavbarComponent {
 
   buildUrl(path: string): string {
     return this.cidadeService.buildUrl(path);
+  }
+
+  getPainelUrl(): string {
+    return environment.PAINEL_URL;
+  }
+
+  openPainel(): void {
+    window.open(environment.PAINEL_URL, '_blank');
   }
 }

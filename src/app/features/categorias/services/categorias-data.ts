@@ -5,6 +5,15 @@ import { Observable, of, shareReplay, tap } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { resolveImageUrl } from '../../../core/image-url.helper';
 
+export interface VitrineSupplier {
+  id: string;
+  nome: string;
+  slug: string;
+  cidade?: string;
+  rating?: number;
+  primaryImageUrl?: string;
+}
+
 export interface Categoria {
   id: string;
   nome: string;
@@ -12,6 +21,10 @@ export interface Categoria {
   descricao: string | null;
   imageId: string | null;
   imageUrl: string | null;
+  icon?: string;
+  thumbnailUrl?: string;
+  totalSuppliers?: number;
+  vitrineSuppliers?: VitrineSupplier[];
 }
 
 @Injectable({
@@ -74,7 +87,7 @@ export class CategoriasData {
   getAll(): Observable<Categoria[]> {
     if (this.cache$) return this.cache$;
 
-    this.cache$ = this.http.get<any>(`${environment.API_BASE_URL}/categorias`).pipe(
+    this.cache$ = this.http.get<any>(`${environment.API_BASE_URL}/public/categorias/vitrine`).pipe(
       map(response => {
         // backend may return array directly or { data: [...] }
         const rawList = Array.isArray(response) ? response : (response?.data || []);
@@ -96,6 +109,19 @@ export class CategoriasData {
           const descricao = src.descricao ?? src.Descricao ?? null;
           const imageId = src.imageId || src.ImageId || null;
           const imageUrl = src.imageUrl || src.ImageUrl || null;
+          const thumbnailUrl = src.thumbnailUrl || src.ThumbnailUrl || null;
+          const icon = src.icon || src.Icon || null;
+          const totalSuppliers = src.totalSuppliers ?? src.TotalSuppliers ?? null;
+          
+          // Map vitrineSuppliers
+          const vitrineSuppliers = (src.vitrineSuppliers || src.VitrineSuppliers || []).map((s: any) => ({
+            id: s.id || s.Id,
+            nome: s.nome || s.Nome || '',
+            slug: s.slug || s.Slug || '',
+            cidade: s.cidade || s.Cidade || null,
+            rating: s.rating ?? s.Rating ?? null,
+            primaryImageUrl: s.primaryImageUrl || s.PrimaryImageUrl ? resolveImageUrl(s.primaryImageUrl || s.PrimaryImageUrl) : null
+          }));
 
           return {
             id,
@@ -103,7 +129,11 @@ export class CategoriasData {
             slug,
             descricao,
             imageId,
-            imageUrl: imageUrl ? resolveImageUrl(imageUrl) : null
+            imageUrl: thumbnailUrl ? resolveImageUrl(thumbnailUrl) : (imageUrl ? resolveImageUrl(imageUrl) : null),
+            icon,
+            thumbnailUrl: thumbnailUrl ? resolveImageUrl(thumbnailUrl) : null,
+            totalSuppliers,
+            vitrineSuppliers
           } as Categoria;
         });
       }),

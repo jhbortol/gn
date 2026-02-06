@@ -5,49 +5,62 @@
 /**
  * Motivos disponíveis para solicitação de remoção
  */
+// Motivos de remoção atualizados conforme docs/lgpd.md v3
 export enum RemovalReason {
-  FECHOU_EMPRESA = 'FECHOU_EMPRESA',
-  DADOS_INCORRETOS = 'DADOS_INCORRETOS',
-  PRIVACIDADE = 'PRIVACIDADE',
-  NAO_QUER_ORCAMENTOS = 'NAO_QUER_ORCAMENTOS',
-  OUTRO = 'OUTRO'
+  FechouEmpresa = 'FechouEmpresa',
+  DadosIncorretos = 'DadosIncorretos',
+  PrivacidadeDados = 'PrivacidadeDados',
+  Outro = 'Outro'
 }
 
-/**
- * Labels amigáveis para os motivos
- */
 export const RemovalReasonLabels: Record<RemovalReason, string> = {
-  [RemovalReason.FECHOU_EMPRESA]: 'Empresa encerrou atividades',
-  [RemovalReason.DADOS_INCORRETOS]: 'Informações desatualizadas',
-  [RemovalReason.NAO_QUER_ORCAMENTOS]: 'Não quero receber orçamentos',
-  [RemovalReason.PRIVACIDADE]: 'Questões de Privacidade',
-  [RemovalReason.OUTRO]: 'Outro motivo'
+  [RemovalReason.FechouEmpresa]: 'A empresa encerrou atividades',
+  [RemovalReason.DadosIncorretos]: 'Informações estão desatualizadas',
+  [RemovalReason.PrivacidadeDados]: 'Não quer receber orçamentos/contatos',
+  [RemovalReason.Outro]: 'Outro motivo'
 };
 
-/**
- * Payload enviado ao backend para solicitar remoção
- */
 export interface RemovalRequestPayload {
-  vendorId: number;
+  fornecedorId: string;
+  requesterName?: string; // Opcional
   requesterEmail: string;
   reason: RemovalReason;
-  description?: string;
+  confirmsOwnership: boolean;
+  description?: string; // Renomeado de additionalInfo
 }
 
-/**
- * Resposta da API após submissão
- */
+export interface RemovalRequestTimeline {
+  date: string;
+  description: string;
+  details?: string;
+}
+
+export interface RemovalRequestStatus {
+  requestId: string;
+  protocolNumber: string;
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Cancelled';
+  fornecedorId: string;
+  createdAt: string;
+  updatedAt?: string;
+  reason: string;
+  estimatedAnalysisDate?: string;
+  rejectionReason?: string;
+  rejectionDetails?: string;
+  approvedAt?: string;
+  timeline: RemovalRequestTimeline[];
+}
+
 export interface RemovalRequestResponse {
   success: boolean;
   message: string;
-  requestId?: string;
+  requestId: string;
+  protocolNumber: string;
+  status: string;
+  estimatedAnalysisDate: string;
 }
 
-/**
- * Fornecedor simplificado (para busca/autocomplete)
- */
 export interface VendorSearchResult {
-  id: number;
+  id: string;
   nomeFantasia: string;
   categoria?: string;
   cidade?: string;

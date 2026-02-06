@@ -142,6 +142,12 @@ export class FornecedoresData {
     const primary = src.primaryImage || src.PrimaryImage || {};
     const imgUrl = src.fotoUrl || src.FotoUrl || src.imageUrl || src.ImageUrl || primary.url || primary.Url;
 
+    // Deducing planLevel if missing from API
+    let planLevel = src.planLevel ?? src.PlanLevel;
+    if (planLevel === undefined) {
+      planLevel = (src.destaque ?? src.Destaque) ? PlanLevel.Vitrine : PlanLevel.Free;
+    }
+
     return {
       id: src.id || src.Id,
       nome: src.nomeFantasia || src.NomeFantasia || src.nome || src.Nome,
@@ -154,6 +160,7 @@ export class FornecedoresData {
       ativo: src.ativo ?? src.Ativo ?? true,
       instagram: src.instagram || src.Instagram || src.socialMedia?.instagram || src.SocialMedia?.Instagram,
       categoria: catObj,
+      planLevel: planLevel,
       primaryImage: imgUrl ? {
         id: primary.id || primary.Id || 'primary',
         url: resolveImageUrl(imgUrl),
@@ -382,5 +389,48 @@ export class FornecedoresData {
     this.highlightsCache.set(cacheKey, obs);
     return obs;
   }
+
+  // ==============================================================================================
+  // PROFILE CLAIM METHODS
+  // ==============================================================================================
+
+  getTermoAdesao(): Observable<TermoAdesao> {
+    return this.api.get<TermoAdesao>(`/contratos/termo-adesao`);
+  }
+
+  claimProfile(fornecedorId: string, payload: ClaimPayload): Observable<ClaimResponse> {
+    return this.api.post<ClaimResponse>(`/fornecedores/${fornecedorId}/claim`, payload);
+  }
+}
+
+export interface TermoAdesao {
+  id: string;
+  versao: string;
+  conteudoHtml: string;
+  conteudoTexto: string;
+  dataVigencia: string;
+}
+
+export interface ClaimPayload {
+  email: string;
+  password?: string;
+  fullName: string;
+  phone: string;
+  termoHash: string;
+  aceitaTermos: boolean;
+  dataAceite: string;
+}
+
+export interface ClaimResponse {
+  message: string;
+  userId: string;
+  fornecedorId: string;
+  email: string;
+  accessToken: string;
+  refreshToken: string;
+  termoVersao: string;
+  claimedAt: string;
+  planLevel: number;
+  leadLimit: number;
 }
 

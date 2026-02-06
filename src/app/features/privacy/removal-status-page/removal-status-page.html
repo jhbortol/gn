@@ -1,0 +1,173 @@
+<div class="container mx-auto px-4 py-8 max-w-3xl">
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-serif font-bold text-gray-900 mb-2">Consultar Status da Solicitação</h1>
+        <p class="text-gray-600">Verifique o andamento de sua solicitação de remoção de dados</p>
+    </div>
+
+    <!-- Search Form -->
+    <div *ngIf="!status" class="bg-white rounded-lg shadow-lg border border-gray-100 p-8">
+        <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="space-y-6">
+
+            <!-- Request ID -->
+            <div>
+                <label for="requestId" class="block text-sm font-medium text-gray-700 mb-1">Protocolo ou ID *</label>
+                <input type="text" id="requestId" formControlName="requestId"
+                    class="w-full px-4 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    [class.border-red-300]="searchForm.get('requestId')?.invalid && searchForm.get('requestId')?.touched"
+                    placeholder="Ex: LGP-2026-001234">
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email da Solicitação *</label>
+                <input type="email" id="email" formControlName="email"
+                    class="w-full px-4 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    [class.border-red-300]="searchForm.get('email')?.invalid && searchForm.get('email')?.touched"
+                    placeholder="seu.email@exemplo.com">
+                <p class="mt-1 text-xs text-gray-500">Deve ser o mesmo email usado na solicitação.</p>
+            </div>
+
+            <!-- Error Message -->
+            <div *ngIf="error"
+                class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded flex items-start gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{error}}</span>
+            </div>
+
+            <!-- Action Button -->
+            <div>
+                <button type="submit" [disabled]="searchForm.invalid || loading"
+                    class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-lg shadow-sm">
+                    <span *ngIf="loading"
+                        class="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
+                    <span *ngIf="!loading">🔍 Consultar Status</span>
+                </button>
+            </div>
+
+            <!-- Helper Tip -->
+            <div class="bg-blue-50 p-4 rounded border border-blue-100 mt-6">
+                <h4 class="text-blue-800 font-bold mb-1 text-sm flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Dica
+                </h4>
+                <p class="text-sm text-blue-700">
+                    O número do protocolo foi enviado para seu email após você fazer a solicitação.
+                    Procure por um email com assunto "Solicitação de Remoção de Dados Recebida".
+                </p>
+            </div>
+        </form>
+    </div>
+
+    <!-- Status Result -->
+    <div *ngIf="status" class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden animate-fade-in">
+        <!-- Header Badge -->
+        <div class="px-8 py-6 border-l-8 flex items-center gap-4" [ngClass]="{
+        'border-amber-400 bg-amber-50': status.status === 'Pending',
+        'border-green-500 bg-green-50': status.status === 'Approved',
+        'border-red-500 bg-red-50': status.status === 'Rejected',
+        'border-gray-500 bg-gray-50': status.status === 'Cancelled'
+      }">
+            <div class="text-4xl">{{statusIcon}}</div>
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">{{statusLabel}}</h2>
+                <p class="text-sm text-gray-600 font-mono mt-1">Protocolo: {{status.protocolNumber}}</p>
+            </div>
+        </div>
+
+        <div class="p-8">
+            <!-- Grid Details -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div>
+                    <strong class="block text-sm text-gray-500 mb-1">ID da Solicitação</strong>
+                    <code class="bg-gray-100 px-2 py-1 rounded text-sm block truncate"
+                        [title]="status.requestId">{{status.requestId}}</code>
+                </div>
+                <div>
+                    <strong class="block text-sm text-gray-500 mb-1">Data de Criação</strong>
+                    <span class="text-gray-900">{{status.createdAt | date:'longDate'}}</span>
+                </div>
+                <div *ngIf="status.updatedAt">
+                    <strong class="block text-sm text-gray-500 mb-1">Última Atualização</strong>
+                    <span class="text-gray-900">{{status.updatedAt | date:'short'}}</span>
+                </div>
+                <div>
+                    <strong class="block text-sm text-gray-500 mb-1">Motivo</strong>
+                    <span class="text-gray-900">{{getReasonLabel(status.reason)}}</span>
+                </div>
+            </div>
+
+            <!-- Rejection Info -->
+            <div *ngIf="status.rejectionReason" class="bg-red-50 border border-red-200 p-4 rounded-lg mb-8">
+                <h4 class="text-red-800 font-bold mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Motivo da Rejeição: {{status.rejectionReason}}
+                </h4>
+                <p class="text-red-700 text-sm" *ngIf="status.rejectionDetails">{{status.rejectionDetails}}</p>
+            </div>
+
+            <!-- Approval Info -->
+            <div *ngIf="status.status === 'Approved'" class="bg-green-50 border border-green-200 p-4 rounded-lg mb-8">
+                <h4 class="text-green-800 font-bold mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Dados Removidos com Sucesso
+                </h4>
+                <p class="text-green-700 text-sm mb-2">Seus dados pessoais foram anonimizados conforme LGPD.</p>
+                <p class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded inline-block">
+                    Nota: Registros fiscais (CNPJ/CPF) anonimizados serão mantidos por 7 anos.
+                </p>
+            </div>
+
+            <!-- Timeline -->
+            <div class="mb-8">
+                <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Linha do Tempo
+                </h3>
+                <div class="space-y-4 border-l-2 border-gray-100 pl-4 ml-2">
+                    <div *ngFor="let event of status.timeline" class="relative">
+                        <div
+                            class="absolute -left-[21px] top-1.5 h-3 w-3 rounded-full border-2 border-white bg-blue-500 shadow-sm">
+                        </div>
+                        <div class="text-xs text-gray-500 mb-1">{{event.date | date:'short'}}</div>
+                        <div class="text-gray-900 font-medium">{{event.description}}</div>
+                        <div *ngIf="event.details" class="text-sm text-gray-600 mt-1 bg-gray-50 p-2 rounded">
+                            {{event.details}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center border-t border-gray-100 pt-6">
+                <button (click)="resetSearch()"
+                    class="px-6 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors">
+                    Nova Consulta
+                </button>
+                <a routerLink="/privacy/request-removal"
+                    class="px-6 py-2 border-2 border-rose-600 text-rose-600 rounded hover:bg-rose-50 transition-colors">
+                    Fazer Nova Solicitação
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

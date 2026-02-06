@@ -16,26 +16,13 @@
   </div>
 </div>
 
-<!-- Claim Profile Sticky Bar (Zombie Tier) -->
-<div *ngIf="showClaimBar()" class="claim-bar-sticky">
-  <div class="container mx-auto px-4 py-3">
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-      <div class="claim-text text-center sm:text-left">
-        <strong class="text-white">Você é o dono da {{fornecedor?.nome}}?</strong>
-        <span class="ml-2 text-green-50">Assuma este perfil grátis e atualize suas fotos.</span>
-      </div>
-      <button (click)="openClaimModal()"
-        class="btn-claim bg-white hover:bg-green-50 text-green-700 px-6 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
-        Reivindicar Perfil
-      </button>
-    </div>
-  </div>
-</div>
+
 
 <section class="container mx-auto px-4 py-10">
   <app-clickwrap-agreement></app-clickwrap-agreement>
   <div *ngIf="fornecedor && !notFound; else notfound" class="grid lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2">
+
       <div class="bg-white rounded-2xl shadow-lg p-8 mb-6 border border-gray-100">
         <div class="flex items-start gap-6">
           <div class="flex-1">
@@ -45,8 +32,13 @@
             </div>
             <div class="flex items-center gap-3 mb-4">
               <h2 class="text-3xl md:text-4xl font-serif font-bold text-gray-900">{{fornecedor.nome}}</h2>
-              <span *ngIf="fornecedor.planLevel === PlanLevel.Vitrine" class="inline-flex items-center gap-1 text-xs bg-blue-500 text-white px-3 py-1 rounded-full font-bold shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+              <span *ngIf="fornecedor.planLevel === PlanLevel.Vitrine"
+                class="inline-flex items-center gap-1 text-xs bg-blue-500 text-white px-3 py-1 rounded-full font-bold shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd"
+                    d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd" />
+                </svg>
                 VERIFICADO
               </span>
             </div>
@@ -70,28 +62,75 @@
       </div>
 
       <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 mb-6">
-        <h3 class="font-serif font-bold text-2xl text-gray-900 mb-6">Galeria de Fotos</h3>
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="font-serif font-bold text-2xl text-gray-900">Galeria de Fotos</h3>
+          <!-- Image counter for Free/Low tiers -->
+          <span
+            *ngIf="fornecedor.planLevel !== PlanLevel.Vitrine && fornecedor.imagens && fornecedor.imagens.length > 2"
+            class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+            Exibindo {{ getGalleryImages().length }} de {{ fornecedor.imagens.length }} fotos
+          </span>
+        </div>
         <div class="grid grid-cols-2 gap-4">
           <ng-container *ngFor="let img of getGalleryImages(); let i = index">
-            <img (click)="openImage(img.url)" [src]="img.url" alt="imagem" loading="lazy" decoding="async"
-              fetchpriority="low"
+            <img (click)="openImage(img.url)" [src]="img.url" [alt]="fornecedor.nome + ' - Foto ' + (i + 1)"
+              loading="lazy" decoding="async" fetchpriority="low"
               class="w-full h-40 object-cover rounded-xl cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105" />
           </ng-container>
         </div>
       </div>
 
-      <!-- Image modal/overlay -->
-      <div *ngIf="selectedImage" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black bg-opacity-70" (click)="closeImage()"></div>
+      <!-- Image Carousel Modal -->
+      <div *ngIf="selectedImage" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        (keydown.escape)="closeImage()" (keydown.arrowLeft)="prevImage()" (keydown.arrowRight)="nextImage()"
+        role="dialog" aria-modal="true" aria-label="Galeria de imagens">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black bg-opacity-80" (click)="closeImage()"></div>
+
+        <!-- Carousel Container -->
         <div class="relative max-w-4xl max-h-[90vh] w-full">
-          <button (click)="closeImage()" aria-label="Fechar"
-            class="absolute right-2 top-2 z-60 bg-white rounded-full p-2 shadow">✕</button>
-          <img [src]="selectedImage" alt="imagem ampliada" decoding="async"
-            class="w-full h-auto max-h-[90vh] object-contain rounded" />
+          <!-- Close Button (44x44 touch target) -->
+          <button (click)="closeImage()" aria-label="Fechar galeria"
+            class="absolute -right-2 -top-12 z-60 bg-white hover:bg-gray-100 rounded-full w-11 h-11 flex items-center justify-center shadow-lg transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-700" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          <!-- Previous Button (44x44 touch target) -->
+          <button *ngIf="getGalleryImages().length > 1" (click)="prevImage()" aria-label="Imagem anterior"
+            class="absolute left-2 top-1/2 -translate-y-1/2 z-60 bg-white/90 hover:bg-white rounded-full w-11 h-11 flex items-center justify-center shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-rose-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-700" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <!-- Image -->
+          <img [src]="selectedImage" [alt]="fornecedor.nome + ' - Foto ' + (selectedImageIndex + 1)" decoding="async"
+            class="w-full h-auto max-h-[80vh] object-contain rounded-lg" />
+
+          <!-- Next Button (44x44 touch target) -->
+          <button *ngIf="getGalleryImages().length > 1" (click)="nextImage()" aria-label="Próxima imagem"
+            class="absolute right-2 top-1/2 -translate-y-1/2 z-60 bg-white/90 hover:bg-white rounded-full w-11 h-11 flex items-center justify-center shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-rose-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-700" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          <!-- Position Indicator -->
+          <div *ngIf="getGalleryImages().length > 1"
+            class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white text-sm px-4 py-2 rounded-full font-medium">
+            {{ selectedImageIndex + 1 }} / {{ getGalleryImages().length }}
+          </div>
         </div>
       </div>
 
-      <section *ngIf="fornecedor.planLevel === PlanLevel.Vitrine && fornecedor.depoimentos && fornecedor.depoimentos.length > 0" class="py-12 px-2 mb-6 rounded-2xl bg-depoimentos">
+      <section
+        *ngIf="fornecedor.planLevel === PlanLevel.Vitrine && fornecedor.depoimentos && fornecedor.depoimentos.length > 0"
+        class="py-12 px-2 mb-6 rounded-2xl bg-depoimentos">
         <h3 class="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-8 text-center">O que os noivos dizem</h3>
         <div class="flex flex-wrap gap-6">
           <div *ngFor="let dep of fornecedor.depoimentos"
@@ -125,38 +164,41 @@
             WhatsApp
           </a>
           <!-- Instagram: Button for Vitrine, Text for Free -->
-          <a *ngIf="fornecedor.instagram && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getInstagramLink()" target="_blank" (click)="onInstagramClick()"
-            [attr.data-event-category]="'Contato'" [attr.data-event-action]="'Clique Instagram'"
-            [attr.data-vendor-id]="fornecedor.id" [attr.data-vendor-name]="fornecedor.nome"
-            [attr.data-vendor-category]="fornecedor.categoria"
+          <a *ngIf="fornecedor.instagram && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getInstagramLink()"
+            target="_blank" (click)="onInstagramClick()" [attr.data-event-category]="'Contato'"
+            [attr.data-event-action]="'Clique Instagram'" [attr.data-vendor-id]="fornecedor.id"
+            [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria"
             class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
             Instagram
           </a>
-          <div *ngIf="fornecedor.instagram && fornecedor.planLevel !== PlanLevel.Vitrine" class="text-sm text-gray-600 py-2">
+          <div *ngIf="fornecedor.instagram && fornecedor.planLevel !== PlanLevel.Vitrine"
+            class="text-sm text-gray-600 py-2">
             <span class="font-semibold">Instagram:</span> {{fornecedor.instagram}}
           </div>
-          
+
           <!-- Facebook: Button for Vitrine, Text for Free -->
-          <a *ngIf="fornecedor.facebook && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getFacebookLink()" target="_blank" (click)="onFacebookClick()"
-            [attr.data-event-category]="'Contato'" [attr.data-event-action]="'Clique Facebook'"
-            [attr.data-vendor-id]="fornecedor.id" [attr.data-vendor-name]="fornecedor.nome"
-            [attr.data-vendor-category]="fornecedor.categoria"
+          <a *ngIf="fornecedor.facebook && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getFacebookLink()"
+            target="_blank" (click)="onFacebookClick()" [attr.data-event-category]="'Contato'"
+            [attr.data-event-action]="'Clique Facebook'" [attr.data-vendor-id]="fornecedor.id"
+            [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria"
             class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
             Facebook
           </a>
-          <div *ngIf="fornecedor.facebook && fornecedor.planLevel !== PlanLevel.Vitrine" class="text-sm text-gray-600 py-2">
+          <div *ngIf="fornecedor.facebook && fornecedor.planLevel !== PlanLevel.Vitrine"
+            class="text-sm text-gray-600 py-2">
             <span class="font-semibold">Facebook:</span> {{fornecedor.facebook}}
           </div>
-          
+
           <!-- Website: Button for Vitrine, Text for Free -->
-          <a *ngIf="fornecedor.website && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getSiteLink()" target="_blank" (click)="onSiteClick()"
-            [attr.data-event-category]="'Contato'" [attr.data-event-action]="'Clique Site'"
-            [attr.data-vendor-id]="fornecedor.id" [attr.data-vendor-name]="fornecedor.nome"
-            [attr.data-vendor-category]="fornecedor.categoria"
+          <a *ngIf="fornecedor.website && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getSiteLink()"
+            target="_blank" (click)="onSiteClick()" [attr.data-event-category]="'Contato'"
+            [attr.data-event-action]="'Clique Site'" [attr.data-vendor-id]="fornecedor.id"
+            [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria"
             class="inline-flex items-center justify-center gap-2 border border-gray-400 text-gray-700 bg-white hover:bg-gray-50 rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
             Visitar Site
           </a>
-          <div *ngIf="fornecedor.website && fornecedor.planLevel !== PlanLevel.Vitrine" class="text-sm text-gray-600 py-2">
+          <div *ngIf="fornecedor.website && fornecedor.planLevel !== PlanLevel.Vitrine"
+            class="text-sm text-gray-600 py-2">
             <span class="font-semibold">Website:</span> {{fornecedor.website}}
           </div>
         </div>
@@ -179,7 +221,8 @@
             </svg>
             {{fornecedor.email}}
           </div>
-          <div *ngIf="fornecedor.endereco" class="flex items-center gap-2 mb-2">
+          <div *ngIf="fornecedor.endereco && fornecedor.planLevel === PlanLevel.Vitrine"
+            class="flex items-center gap-2 mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -191,11 +234,13 @@
             <a [href]="getMapsLink()" target="_blank" (click)="onMapsClick()" [attr.data-event-category]="'Contato'"
               [attr.data-event-action]="'Clique Mapa'" [attr.data-vendor-id]="fornecedor.id"
               [attr.data-vendor-name]="fornecedor.nome"
-              class="text-rose-600 hover:text-rose-700 text-xs font-semibold ml-2 whitespace-nowrap">
+              class="text-rose-600 hover:text-rose-700 text-xs font-semibold ml-2 whitespace-nowrap"
+              aria-label="Ver localização no Google Maps">
               Ver no mapa ↗
             </a>
           </div>
-          <div *ngIf="fornecedor.horarioFuncionamento" class="flex items-center gap-2 mb-2">
+          <div *ngIf="fornecedor.horarioFuncionamento && fornecedor.planLevel === PlanLevel.Vitrine"
+            class="flex items-center gap-2 mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -225,10 +270,26 @@
     </div>
   </ng-template>
 
-  <!-- LGPD Removal Button (Discrete) -->
-  <div *ngIf="fornecedor && !notFound" class="text-center py-6 border-t border-gray-100 mt-8">
+  <!-- Footer Discrete Actions (Claim / LGPD) -->
+  <div *ngIf="fornecedor && !notFound && fornecedor.planLevel !== PlanLevel.Vitrine"
+    class="text-center py-6 border-t border-gray-100 mt-8 flex flex-col items-center gap-4">
+
+    <button *ngIf="showClaimBar()" (click)="openClaimModal()"
+      class="text-sm font-medium text-gray-500 hover:text-rose-600 transition-colors flex items-center gap-2">
+      <span>Proprietário deste negócio? Reivindique este perfil gratuitamente</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14M12 5l7 7-7 7" />
+      </svg>
+    </button>
+
     <button (click)="requestRemoval()" class="text-xs text-gray-400 hover:text-gray-600 underline transition-colors">
       Solicitar remoção deste perfil (LGPD)
     </button>
   </div>
+
+  <!-- Claim Modal -->
+  <app-claim-modal *ngIf="isClaimModalOpen()" [fornecedorId]="fornecedor?.id || ''" (close)="closeClaimModal()"
+    (success)="onClaimSuccess()">
+  </app-claim-modal>
 </section>

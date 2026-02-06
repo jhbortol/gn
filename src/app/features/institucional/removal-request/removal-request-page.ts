@@ -6,6 +6,7 @@ import { RemovalRequestService } from '../../../core/services/removal-request.se
 import {
   RemovalReason,
   RemovalReasonLabels,
+  RemovalRequestPayload,
   VendorSearchResult
 } from '../../../core/models/removal-request.model';
 import { debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
@@ -85,7 +86,7 @@ export class RemovalRequestPageComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private removalService: RemovalRequestService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -236,10 +237,12 @@ export class RemovalRequestPageComponent implements OnInit {
     const vendor = this.selectedVendor()!;
     const formValue = this.removalForm.value;
 
-    const payload = {
-      vendorId: vendor.id,
+    const payload: RemovalRequestPayload = {
+      fornecedorId: String(vendor.id),
+      requesterName: 'Solicitante Legado', // Fallback for old form
       requesterEmail: formValue.requesterEmail,
       reason: formValue.reason as RemovalReason,
+      confirmsOwnership: formValue.legalConsent === true,
       description: formValue.description || undefined
     };
 
@@ -260,7 +263,8 @@ export class RemovalRequestPageComponent implements OnInit {
         console.error('Erro ao submeter solicitação:', err);
         this.isSubmitting.set(false);
         this.errorMessage.set(
-          err.error?.message || 
+          err.error?.error ||
+          err.error?.message ||
           'Erro ao processar solicitação. Tente novamente mais tarde.'
         );
       }

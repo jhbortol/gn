@@ -10,6 +10,7 @@ import { environment } from '../../../environments/environment';
 import { LeadFormComponent } from './lead-form.component';
 import { CompetitorAdsComponent } from './competitor-ads.component';
 import { PlanLevel } from '../../core/models/tier-system.model';
+import { ClaimModalComponent } from './claim-modal/claim-modal.component';
 
 @Component({
   selector: 'app-fornecedor-page',
@@ -21,13 +22,15 @@ import { PlanLevel } from '../../core/models/tier-system.model';
     RouterModule,
     ClickwrapAgreementComponent,
     LeadFormComponent,
-    CompetitorAdsComponent
+    CompetitorAdsComponent,
+    ClaimModalComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FornecedorPageComponent implements OnInit {
   fornecedor?: Fornecedor;
   selectedImage?: string;
+  selectedImageIndex = 0;
   isPreviewMode = false;
   notFound = false;
 
@@ -35,6 +38,7 @@ export class FornecedorPageComponent implements OnInit {
   showLeadForm = signal(false);
   hasCompetitorAds = signal(false);
   showClaimBar = signal(false);
+  isClaimModalOpen = signal(false);
 
   // Expor enum para o template
   PlanLevel = PlanLevel;
@@ -111,17 +115,36 @@ export class FornecedorPageComponent implements OnInit {
    */
   getGalleryImages() {
     if (!this.fornecedor?.imagens) return [];
-    
+
     const limit = this.fornecedor.planLevel === PlanLevel.Free ? 2 : 20;
     return this.fornecedor.imagens.slice(0, limit);
   }
 
   openImage(img: string) {
     this.selectedImage = img;
+    // Find index of the image in the gallery
+    const images = this.getGalleryImages();
+    this.selectedImageIndex = images.findIndex(i => i.url === img);
+    if (this.selectedImageIndex < 0) this.selectedImageIndex = 0;
   }
 
   closeImage() {
     this.selectedImage = undefined;
+    this.selectedImageIndex = 0;
+  }
+
+  prevImage() {
+    const images = this.getGalleryImages();
+    if (images.length <= 1) return;
+    this.selectedImageIndex = (this.selectedImageIndex - 1 + images.length) % images.length;
+    this.selectedImage = images[this.selectedImageIndex].url;
+  }
+
+  nextImage() {
+    const images = this.getGalleryImages();
+    if (images.length <= 1) return;
+    this.selectedImageIndex = (this.selectedImageIndex + 1) % images.length;
+    this.selectedImage = images[this.selectedImageIndex].url;
   }
 
   onWhatsAppClick() {
@@ -230,8 +253,9 @@ export class FornecedorPageComponent implements OnInit {
       this.hasCompetitorAds.set(true);
     }
 
-    // Claim Bar: Apenas para Zombie (não reivindicado)
-    if (planLevel === PlanLevel.Zombie && !fornecedor.isClaimed) {
+    // Claim Bar: Mostrar se o perifl ainda NÃO foi reivindicado, independente do tier atual
+    // (Ex: Perfil criado pelo admin como Free/Low mas ainda sem dono)
+    if (!fornecedor.isClaimed) {
       this.showClaimBar.set(true);
     }
   }
@@ -272,16 +296,24 @@ export class FornecedorPageComponent implements OnInit {
       return '#';
     }
 
-    // Priorizar URL do backend
+    const message = 'Te achei no Guia Noivas Piracicaba, e quero mais informações';
+    const encodedMessage = encodeURIComponent(message);
+
+    // Priorizar URL do backend, mas garantir a mensagem se for link do WhatsApp
     if (this.fornecedor?.whatsAppUrl) {
-      return this.fornecedor.whatsAppUrl;
+      let url = this.fornecedor.whatsAppUrl;
+      // Se for link do WhatsApp e não tiver o parâmetro text, adicionamos
+      if ((url.includes('wa.me') || url.includes('whatsapp.com/send')) && !url.includes('text=')) {
+        const separator = url.includes('?') ? '&' : '?';
+        return `${url}${separator}text=${encodedMessage}`;
+      }
+      return url;
     }
 
     // Gerar localmente a partir do telefone
     const w = this.fornecedor?.telefone || '';
     const digits = w.replace(/\D/g, '');
-    const message = encodeURIComponent('Olá, Te encontrei no Guia Noivas Piracicaba, preciso de mais informações.');
-    return digits ? `https://wa.me/${digits}?text=${message}` : '#';
+    return digits ? `https://wa.me/${digits}?text=${encodedMessage}` : '#';
   }
 
   /**
@@ -297,30 +329,46 @@ export class FornecedorPageComponent implements OnInit {
    * Abre modal para reivindicar perfil (Zombie tier)
    */
   openClaimModal(): void {
-    // TODO: Redirecionar para painel externo quando implementado
-    // Por enquanto, apenas log
-    console.log('Claim functionality will redirect to external painel:', {
-      claimId: this.fornecedor?.id,
-      claimSlug: this.fornecedor?.slug
-    });
+    this.isClaimModalOpen.set(true);
+  }
+
+  /**
+   * Callback quando claim é realizado com sucesso
+   */
+  closeClaimModal(): void {
+    this.isClaimModalOpen.set(false);
+  }
+
+  /**
+   * Callback quando claim é realizado com sucesso
+   * Redireciona para o painel do fornecedor
+   */
+  onClaimSuccess(): void {
+    // Fecha modal
+    this.isClaimModalOpen.set(false);
+
+    // Mostra toast de sucesso se tivesse um service para isso
+    // alert('Perfil reivindicado com sucesso! Redirecionando...');
+
+    // Redireciona
+    setTimeout(() => {
+      window.location.href = '/supplier-panel';
+    }, 1500);
   }
 
   /**
    * Solicita remoção do perfil (LGPD)
+   * Redireciona para página dedicada de remoção
    */
   requestRemoval(): void {
     if (!this.fornecedor) return;
 
-    const confirmed = confirm(
-      'Tem certeza que deseja solicitar a remoção deste perfil? ' +
-      'Esta ação é irreversível e será processada de acordo com a LGPD.'
-    );
-
-    if (confirmed) {
-      // TODO: Implementar chamada ao backend para LGPD removal
-      console.log('LGPD removal requested for:', this.fornecedor.id);
-      alert('Solicitação de remoção enviada. Você receberá um email de confirmação.');
-    }
+    // A rota é relativa à cidade (ex: /piracicaba/privacy/request-removal)
+    // Com a estrutura /:cidade/fornecedores/:id, precisamos subir dois níveis
+    this.router.navigate(['../../privacy/request-removal'], {
+      relativeTo: this.route,
+      queryParams: { fornecedorId: this.fornecedor.id }
+    });
   }
 
 }

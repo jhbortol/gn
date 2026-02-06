@@ -59,6 +59,10 @@ export const routes: Routes = [
 			{
 				path: 'indicado',
 				loadComponent: () => import('./features/comecar/comecar-page').then(m => m.ComecarPage)
+			},
+			{
+				path: 'privacy',
+				loadChildren: () => import('./features/privacy/privacy-module').then(m => m.PrivacyModule)
 			}
 		]
 	},

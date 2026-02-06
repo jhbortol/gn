@@ -148,7 +148,11 @@ export class LeadFormComponent {
   form = new FormGroup({
     clienteName: new FormControl('', [Validators.required, Validators.minLength(3)]),
     clienteEmail: new FormControl('', [Validators.required, Validators.email]),
-    clientePhone: new FormControl('', [Validators.required, Validators.minLength(10)]),
+    clientePhone: new FormControl('', [
+      Validators.required,
+      Validators.minLength(10),
+      Validators.pattern(/^(\(\d{2}\)\s?)?\d{4,5}-?\d{4}$/)
+    ]),
     message: new FormControl('', [Validators.required, Validators.minLength(10)]),
     eventDate: new FormControl('', [Validators.required]),
     lgpdConsent: new FormControl(false, [Validators.requiredTrue])

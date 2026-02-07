@@ -406,9 +406,9 @@ export class FornecedoresData {
 export interface TermoAdesao {
   id: string;
   versao: string;
-  conteudoHtml: string;
-  conteudoTexto: string;
-  dataVigencia: string;
+  hash: string;
+  texto: string;
+  dataConsulta: string;
 }
 
 export interface ClaimPayload {

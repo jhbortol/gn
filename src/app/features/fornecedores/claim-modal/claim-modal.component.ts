@@ -50,9 +50,11 @@ export class ClaimModalComponent implements OnInit {
         this.loadingTermo = true;
         this.fornecedoresService.getTermoAdesao().subscribe({
             next: async (termo) => {
-                this.termoHtml = termo.conteudoHtml;
+                // O backend retorna o texto formatado, vamos usar como HTML
+                this.termoHtml = termo.texto.replace(/\n/g, '<br>');
                 this.termoVersao = termo.versao;
-                this.termoHash = await this.computeSha256(termo.conteudoTexto);
+                // Usar o hash que vem do backend
+                this.termoHash = termo.hash;
                 this.loadingTermo = false;
             },
             error: (err) => {
@@ -63,13 +65,13 @@ export class ClaimModalComponent implements OnInit {
         });
     }
 
-    // Helper simples para hash SHA-256 no browser
-    async computeSha256(message: string): Promise<string> {
-        const msgBuffer = new TextEncoder().encode(message);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
+    // Helper simples para hash SHA-256 no browser (removido - hash vem do backend)
+    // async computeSha256(message: string): Promise<string> {
+    //     const msgBuffer = new TextEncoder().encode(message);
+    //     const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    //     const hashArray = Array.from(new Uint8Array(hashBuffer));
+    //     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    // }
 
     onPhoneInput(event: any) {
         let value = event.target.value.replace(/\D/g, '');

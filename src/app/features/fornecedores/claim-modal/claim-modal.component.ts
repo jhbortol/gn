@@ -47,9 +47,25 @@ export class ClaimModalComponent implements OnInit {
     }
 
     loadTermos() {
+        // Verificar se já temos o termo em cache
+        if (this.termoHtml && this.termoHash) {
+            this.loadingTermo = false;
+            return;
+        }
+
         this.loadingTermo = true;
+
+        // Timeout para evitar carregamento infinito
+        const timeout = setTimeout(() => {
+            if (this.loadingTermo) {
+                this.loadingTermo = false;
+                this.errorMessage = 'Timeout ao carregar os termos. Tente novamente.';
+            }
+        }, 10000); // 10 segundos timeout
+
         this.fornecedoresService.getTermoAdesao().subscribe({
-            next: async (termo) => {
+            next: (termo) => {
+                clearTimeout(timeout);
                 // O backend retorna o texto formatado, vamos usar como HTML
                 this.termoHtml = termo.texto.replace(/\n/g, '<br>');
                 this.termoVersao = termo.versao;
@@ -58,6 +74,7 @@ export class ClaimModalComponent implements OnInit {
                 this.loadingTermo = false;
             },
             error: (err) => {
+                clearTimeout(timeout);
                 console.error('Erro ao carregar termos:', err);
                 this.errorMessage = 'Não foi possível carregar os termos de adesão. Tente novamente.';
                 this.loadingTermo = false;

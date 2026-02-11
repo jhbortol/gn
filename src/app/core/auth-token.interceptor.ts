@@ -17,6 +17,7 @@ export const authTokenInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, n
     '/public/categorias',
     '/public/fornecedores',
     '/public/leads',
+    '/me/',
     '/api/v1/account'
   ];
 

@@ -63,21 +63,7 @@ In GitHub:
 
 ### Notes
 
-
 - If your repository name or owner changes, update the base href accordingly.
-
-### Deploy to External Repositories
-
-This project uses `peaceiris/actions-gh-pages` to deploy build artifacts from this repository to other repositories (`jhbortol/gn` and `jhbortol/guianoivas`). Because they are external repos, you must supply a Personal Access Token secret:
-
-1. Create a fine-grained PAT with access (Contents: Read and Write) to target repos.
-2. Add it as a secret named `GH_PAT` in this repository.
-3. Workflows:
-	- `deploy-devhb-gn.yml` builds branch `dev-hb` (`--base-href /gn/`) and publishes to `jhbortol/gn` branch `gh-pages`.
-	- `deploy-main-guianoivas.yml` builds branch `main` (`--base-href /guianoivas/`) and publishes to `jhbortol/guianoivas` branch `gh-pages`.
-4. Enable GitHub Pages in each target repo: Settings → Pages → Branch: `gh-pages`.
-
-Without the `GH_PAT` secret, deployments will fail with an error stating the generated GITHUB_TOKEN cannot push to an external repository.
 
 ## Running unit tests
 

@@ -1,0 +1,143 @@
+<div class="modal-overlay" (click)="close.emit()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <!-- Header -->
+        <div class="modal-header">
+            <h2>🎉 Reivindicar Perfil</h2>
+            <button class="modal-close" (click)="close.emit()" aria-label="Fechar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body">
+            <form [formGroup]="claimForm" (ngSubmit)="onSubmit()">
+
+                <!-- SEÇÃO 1: Informações Pessoais -->
+                <fieldset class="form-section">
+                    <legend>Seus Dados Pessoais</legend>
+
+                    <!-- Nome Completo -->
+                    <div class="form-group">
+                        <label for="fullName" class="required">Nome Completo</label>
+                        <input type="text" id="fullName" formControlName="fullName" placeholder="João Silva"
+                            [class.error]="isFieldInvalid('fullName')" />
+                        <div class="error-message" *ngIf="isFieldInvalid('fullName')">
+                            <span *ngIf="claimForm.get('fullName')?.errors?.['required']">Nome é obrigatório</span>
+                            <span *ngIf="claimForm.get('fullName')?.errors?.['minlength']">Mínimo de 3 caracteres</span>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email" class="required">Email Profissional</label>
+                        <input type="email" id="email" formControlName="email" placeholder="seu@email.com"
+                            [class.error]="isFieldInvalid('email')" />
+                        <small>Este email será usado para login no painel</small>
+                        <div class="error-message" *ngIf="isFieldInvalid('email')">
+                            <span *ngIf="claimForm.get('email')?.errors?.['required']">Email é obrigatório</span>
+                            <span *ngIf="claimForm.get('email')?.errors?.['email']">Email inválido</span>
+                        </div>
+                    </div>
+
+                    <!-- Telefone -->
+                    <div class="form-group">
+                        <label for="phone" class="required">Telefone / WhatsApp</label>
+                        <input type="tel" id="phone" formControlName="phone" placeholder="(11) 99999-9999"
+                            [class.error]="isFieldInvalid('phone')" (input)="onPhoneInput($event)" maxlength="15" />
+                        <div class="error-message" *ngIf="isFieldInvalid('phone')">
+                            <span *ngIf="claimForm.get('phone')?.errors?.['required']">Telefone é obrigatório</span>
+                            <span *ngIf="claimForm.get('phone')?.errors?.['pattern']">Telefone inválido (use DDD)</span>
+                        </div>
+                    </div>
+
+                    <!-- Senha -->
+                    <div class="form-group">
+                        <label for="password" class="required">Senha de Acesso</label>
+                        <div class="relative">
+                            <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password"
+                                placeholder="Mínimo 8 caracteres" [class.error]="isFieldInvalid('password')"
+                                (input)="updatePasswordStrength($event)" />
+                            <button type="button"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                (click)="showPassword = !showPassword">
+                                <span *ngIf="!showPassword">👁️</span>
+                                <span *ngIf="showPassword">🙈</span>
+                            </button>
+                        </div>
+
+                        <div class="password-strength" *ngIf="claimForm.get('password')?.value">
+                            <div class="strength-bar" [style.width.%]="passwordStrength.score * 25"
+                                [style.background-color]="passwordStrength.color">
+                            </div>
+                        </div>
+                        <span class="strength-text" *ngIf="claimForm.get('password')?.value">
+                            Força: {{ passwordStrength.label }}
+                        </span>
+
+                        <div class="error-message" *ngIf="isFieldInvalid('password')">
+                            <span *ngIf="claimForm.get('password')?.errors?.['required']">Senha é obrigatória</span>
+                            <span *ngIf="claimForm.get('password')?.errors?.['minlength']">Mínimo de 8 caracteres</span>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- SEÇÃO 2: Termos de Adesão -->
+                <fieldset class="form-section terms-section">
+                    <legend>Termos de Uso</legend>
+
+                    <div *ngIf="loadingTermo" class="text-center py-8">
+                        <div class="inline-flex items-center gap-2 text-gray-500">
+                            <div class="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600"></div>
+                            Carregando termos...
+                        </div>
+                    </div>
+
+                    <div *ngIf="!loadingTermo && termoHtml" class="term-preview" [innerHTML]="termoHtml"></div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="acceptTerms" formControlName="aceitaTermos" />
+                        <label for="acceptTerms" class="required">
+                            Li e concordo com os <strong>Termos de Adesão</strong> e Compromisso
+                        </label>
+                    </div>
+                    <div class="error-message pl-8" *ngIf="isFieldInvalid('aceitaTermos')">
+                        Você deve aceitar os termos para continuar
+                    </div>
+                </fieldset>
+
+                <!-- Erro Geral de API -->
+                <div *ngIf="errorMessage" class="bg-red-50 text-red-600 p-4 rounded-lg mb-4 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    {{ errorMessage }}
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer">
+            <div class="lgpd-notice">
+                🔒 Seus dados estão protegidos conforme a <a href="/privacy-policy" target="_blank">LGPD</a>.
+            </div>
+            <div class="actions">
+                <button type="button" class="btn-secondary" (click)="close.emit()" [disabled]="isSubmitting">
+                    Cancelar
+                </button>
+                <button type="button" class="btn-primary" (click)="onSubmit()"
+                    [disabled]="claimForm.invalid || isSubmitting">
+                    <span *ngIf="isSubmitting" class="spinner"></span>
+                    <span *ngIf="!isSubmitting">Confirmar e Reivindicar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

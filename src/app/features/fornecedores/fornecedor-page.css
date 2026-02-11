@@ -113,3 +113,62 @@
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
 }
+
+/* Claim Profile Sticky Bar */
+.claim-bar-sticky {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  animation: slideDown 0.3s ease-out;
+}
+
+.claim-text {
+  font-size: 0.95rem;
+}
+
+.claim-text strong {
+  font-weight: 700;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .claim-bar-sticky {
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  .claim-text {
+    font-size: 0.85rem;
+  }
+  
+  .claim-text span {
+    display: block;
+    margin-left: 0 !important;
+    margin-top: 4px;
+  }
+  
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}

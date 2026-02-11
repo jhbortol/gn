@@ -2,9 +2,7 @@ import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CategoriasData, Categoria } from './services/categorias-data';
-import { Observable } from 'rxjs';
-import { FornecedoresData, FornecedorListDto } from '../fornecedores/services/fornecedores-data';
-import { forkJoin, map, switchMap } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { CidadeService } from '../../core/cidade.service';
 import { environment } from '../../../environments/environment';
 
@@ -17,26 +15,16 @@ import { environment } from '../../../environments/environment';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CategoriasPageComponent {
-  categoriasComFornecedores$!: Observable<Array<{ categoria: Categoria; fornecedores: FornecedorListDto[] }>>;
+  categorias$: Observable<Categoria[]>;
 
   private cidadeService = inject(CidadeService);
 
   constructor(
-    private categoriasData: CategoriasData,
-    private fornecedoresData: FornecedoresData
+    private categoriasData: CategoriasData
   ) {
-    this.categoriasComFornecedores$ = this.categoriasData.getAll().pipe(
-      map(cats => this.shuffleArray(cats)),
-      switchMap(cats => forkJoin(
-        cats.map(cat =>
-          this.fornecedoresData.getDestaquesByCategoria(cat.slug).pipe(
-            map(destaques => ({
-              categoria: cat,
-              fornecedores: this.shuffleArray(destaques).slice(0, 6)
-            }))
-          )
-        )
-      ))
+    // Categorias já vêm com os fornecedores vitrine incluídos do endpoint /public/categorias/vitrine
+    this.categorias$ = this.categoriasData.getAll().pipe(
+      map(cats => this.shuffleArray(cats))
     );
   }
 

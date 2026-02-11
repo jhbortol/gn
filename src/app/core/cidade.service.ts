@@ -73,6 +73,9 @@ export class CidadeService {
   buildUrl(path: string): string {
     const cidade = this.getCidade();
     const caminhoLimpo = path.startsWith('/') ? path.slice(1) : path;
-    return `/${cidade}/${caminhoLimpo}`;
+    // Normalizar segmentos para lowercase (slugs são case-sensitive no backend Linux)
+    const segmentos = caminhoLimpo.split('/').filter(s => s).map(s => s.toString().toLowerCase());
+    const joined = segmentos.join('/');
+    return `/${cidade}/${joined}`;
   }
 }

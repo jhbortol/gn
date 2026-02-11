@@ -1,7 +1,11 @@
+// Removido: definição solta de getDestaquesByCategoriaId fora da classe. Método correto está dentro da classe FornecedoresData.
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../../core/api.service';
-import { Observable, map, catchError, of, switchMap } from 'rxjs';
+import { Observable, map, catchError, of, switchMap, shareReplay } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { CompetitorAd, PlanLevel } from '../../../core/models/tier-system.model';
+import { resolveImageUrl } from '../../../core/image-url.helper';
+import { CategoriasData } from '../../categorias/services/categorias-data';
 
 // DTOs alinhados ao backend (simplificados)
 export interface FornecedorListDto {
@@ -18,6 +22,7 @@ export interface FornecedorListDto {
   categoria?: { id: string; nome: string; slug: string };
   primaryImage?: { id: string; url: string; filename: string; contentType: string; isPrimary: boolean };
   imagens?: MediaDto[];
+  planLevel?: number; // 0 = Free, 1 = Vitrine, -2 = Zombie, -1 = Low
 }
 
 export interface MediaDto {
@@ -73,29 +78,106 @@ export interface Fornecedor {
   categoria?: string; // apenas o nome para compatibilidade prévia
   imagens: Array<{ url: string; orderIndex: number }>; // URLs com ordem
   depoimentos?: Array<{ texto: string; casal: string }>; // adaptado de testemunhos
+  coverPictureUrl?: string; // URL da imagem de capa para SEO
+  primaryImage?: { id: string; url: string; filename: string; contentType: string; isPrimary: boolean }; // Primeira imagem da galeria
+
+  // Novos campos tier (OPCIONAIS para backward compatibility)
+  planLevel?: PlanLevel;
+  isClaimed?: boolean; // true se o fornecedor reivindicou o perfil
+  totalLeadsAllTime?: number; // total de leads recebidos (para Free tier)
+  leadLimit?: number; // 3 para Free, ilimitado para Vitrine
+  whatsAppUrl?: string;
+  showContactForm?: boolean;
+  adInjection?: CompetitorAd[];
 }
 
 @Injectable({ providedIn: 'root' })
 export class FornecedoresData {
-    search(term: string, page = 1, pageSize = 12, destaque?: boolean): Observable<FornecedorListDto[]> {
-      const trimmed = (term || '').trim();
-      const params: any = { page, pageSize };
+  private highlightsCache = new Map<string, Observable<FornecedorListDto[]>>();
+  search(term: string, page = 1, pageSize = 12, destaque?: boolean): Observable<FornecedorListDto[]> {
+    const trimmed = (term || '').trim();
+    const params: any = { page, pageSize };
 
-      // Enviar q/nome/descricao para permitir busca por nome e descrição (compatibilidade com backend)
-      if (trimmed.length) {
-        params.q = trimmed;
-        params.nome = trimmed;
-        params.descricao = trimmed;
-      }
-
-      if (destaque !== undefined) params.destaque = destaque;
-      if (environment.FORNECEDOR_PUBLICADO !== null) {
-        params.publicado = environment.FORNECEDOR_PUBLICADO;
-      }
-
-      return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/search`, params).pipe(map(r => r.data));
+    // Enviar q/nome/descricao para permitir busca por nome e descrição (compatibilidade com backend)
+    if (trimmed.length) {
+      params.q = trimmed;
+      params.nome = trimmed;
+      params.descricao = trimmed;
     }
-  constructor(private api: ApiService) {}
+
+    if (destaque !== undefined) params.destaque = destaque;
+    if (environment.FORNECEDOR_PUBLICADO !== null) {
+      params.publicado = environment.FORNECEDOR_PUBLICADO;
+    }
+
+    // Novo endpoint v1/search/fornecedores
+    return this.api.get<any>(`/search/fornecedores`, params).pipe(
+      map(r => {
+        const list = Array.isArray(r) ? r : (r.data || r.Data || []);
+        return list.map((src: any) => this._mapToFornecedorListDto(src));
+      })
+    );
+  }
+
+  /**
+   * Helper to map any backend object to FornecedorListDto
+   */
+  private _mapToFornecedorListDto(src: any): FornecedorListDto {
+    if (!src) return {} as FornecedorListDto;
+
+    // Normalize category: can be string or object
+    let catObj: any = undefined;
+    const cat = src.categoria || src.Categoria;
+    if (typeof cat === 'string') {
+      catObj = { id: '', nome: cat, slug: '' };
+    } else if (cat && typeof cat === 'object') {
+      catObj = {
+        id: cat.id || cat.Id || '',
+        nome: cat.nome || cat.Nome || '',
+        slug: cat.slug || cat.Slug || ''
+      };
+    }
+
+    // Normalize image
+    const primary = src.primaryImage || src.PrimaryImage || {};
+    const imgUrl = src.fotoUrl || src.FotoUrl || src.imageUrl || src.ImageUrl || primary.url || primary.Url;
+
+    // Deducing planLevel if missing from API
+    let planLevel = src.planLevel ?? src.PlanLevel;
+    if (planLevel === undefined) {
+      planLevel = (src.destaque ?? src.Destaque) ? PlanLevel.Vitrine : PlanLevel.Free;
+    }
+
+    return {
+      id: src.id || src.Id,
+      nome: src.nomeFantasia || src.NomeFantasia || src.nome || src.Nome,
+      slug: src.slug || src.Slug,
+      descricao: src.descricao || src.Descricao,
+      cidade: src.cidade || src.Cidade,
+      rating: src.rating ?? src.Rating ?? null,
+      destaque: src.destaque ?? src.Destaque ?? false,
+      seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
+      ativo: src.ativo ?? src.Ativo ?? true,
+      instagram: src.instagram || src.Instagram || src.socialMedia?.instagram || src.SocialMedia?.Instagram,
+      categoria: catObj,
+      planLevel: planLevel,
+      primaryImage: imgUrl ? {
+        id: primary.id || primary.Id || 'primary',
+        url: resolveImageUrl(imgUrl),
+        filename: primary.filename || primary.Filename || '',
+        contentType: primary.contentType || primary.ContentType || '',
+        isPrimary: true
+      } : undefined,
+      imagens: (src.imagens || src.Imagens || src.gallery || src.Gallery || []).map((m: any) => ({
+        id: m.id || m.Id,
+        url: resolveImageUrl(m.url || m.Url),
+        isPrimary: m.isPrimary ?? m.IsPrimary ?? false,
+        orderIndex: m.orderIndex ?? m.OrderIndex ?? 0
+      }))
+    };
+  }
+
+  constructor(private api: ApiService, private categoriasData: CategoriasData) { }
 
   getAll(page = 1, pageSize = 12): Observable<FornecedorListDto[]> {
     // Usar /fornecedores/ativos para exibir apenas fornecedores ativos (público)
@@ -103,36 +185,32 @@ export class FornecedoresData {
     if (environment.FORNECEDOR_PUBLICADO !== null) {
       params.publicado = environment.FORNECEDOR_PUBLICADO;
     }
-    return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/ativos`, params).pipe(map(r => r.data));
+    return this.api.get<{ data: any[] }>(`/fornecedores/ativos`, params).pipe(
+      map(r => (r.data || []).map((src: any) => this._mapToFornecedorListDto(src)))
+    );
   }
 
   getDestaques(page = 1, pageSize = 24): Observable<FornecedorListDto[]> {
-    // Destaques: alguns ambientes podem retornar { data: [...] } (wrapper) ou array direto
     const params: any = { page, pageSize, destaque: true };
     if (environment.FORNECEDOR_PUBLICADO !== null) {
       params.publicado = environment.FORNECEDOR_PUBLICADO;
     }
     return this.api.get<any>(`/fornecedores/ativos`, params).pipe(
       map(r => {
-        let list: FornecedorListDto[] = [];
-        if (Array.isArray(r)) list = r as FornecedorListDto[];
-        else if (r && Array.isArray(r.data)) list = r.data as FornecedorListDto[];
-        else {
-          console.warn('[DESTAQUES] formato inesperado da resposta:', r);
-        }
-        // Se a API ignorou o parâmetro destaque e retornou tudo, filtrar localmente
-        if (list.length && list.some(f => f.destaque !== true)) {
-          const filtered = list.filter(f => f.destaque);
-          if (filtered.length) return filtered;
-        }
-        return list.filter(f => f.destaque); // garante só destaque
+        let list: any[] = [];
+        if (Array.isArray(r)) list = r;
+        else if (r && Array.isArray(r.data)) list = r.data;
+        else console.warn('[DESTAQUES] formato inesperado da resposta:', r);
+
+        return list.map(src => this._mapToFornecedorListDto(src));
       }),
       map(list => {
-        // Se não houver destaques, retornar lista vazia (não mostrar nada)
-        if (list.length === 0) {
-          console.warn('[DESTAQUES] nenhum fornecedor com destaque=true encontrado');
+        // Garantir que filtramos apenas os que têm destaque=true se a API retornou tudo
+        const highlights = list.filter(f => f.destaque);
+        if (list.length > 0 && highlights.length === 0) {
+          console.warn('[DESTAQUES] nenhum fornecedor com destaque=true encontrado na lista');
         }
-        return list;
+        return highlights.length > 0 ? highlights : list;
       }),
       catchError(err => {
         console.error('[DESTAQUES] API error:', err);
@@ -143,69 +221,229 @@ export class FornecedoresData {
 
   getById(identifier: string, preview = false): Observable<Fornecedor> {
     const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(identifier);
-    const endpoint = isGuid ? `/fornecedores/${identifier}` : `/fornecedores/slug/${identifier}`;
-    
+    const endpoint = isGuid ? `/public/fornecedores/${identifier}` : `/public/fornecedores/slug/${identifier.toLowerCase()}`;
+
     // If preview mode, add query param to bypass publicado filter
     const params: any = {};
     if (preview) {
       params.preview = 'true';
     }
-    
-    return this.api.get<FornecedorDetailDto>(endpoint, params).pipe(
-      map(detail => ({
-        id: detail.id,
-        nome: detail.nome,
-        slug: detail.slug,
-        descricao: detail.descricao,
-        publicado: detail.publicado,
-        cidade: detail.cidade,
-        endereco: detail.endereco,
-        horarioFuncionamento: detail.horarioFuncionamento,
-        telefone: detail.telefone,
-        email: detail.email,
-        website: detail.website,
-        instagram: detail.instagram,
-        facebook: detail.facebook,
-        destaque: detail.destaque,
-        seloFornecedor: detail.seloFornecedor,
-        ativo: detail.ativo,
-        rating: detail.rating,
-        visitas: detail.visitas,
-        categoria: detail.categoria?.nome,
-        imagens: (detail.imagens || [])
-          .filter((m: MediaDto) => m.url) // Filtrar imagens sem URL
-          .map((m: MediaDto) => ({ url: m.url, orderIndex: m.orderIndex || 0 }))
-          .sort((a, b) => a.orderIndex - b.orderIndex),
-        depoimentos: detail.testemunhos?.map((t: any) => ({ texto: t.descricao, casal: t.nome })) || []
-      })),
+
+    return this.api.get<any>(endpoint, params).pipe(
+      map(detail => this._mapDetailToFornecedor(detail)),
       catchError(err => { throw err; })
     );
   }
 
+  /**
+   * Centralized mapping from backend detail to frontend Fornecedor model
+   */
+  private _mapDetailToFornecedor(src: any): Fornecedor {
+    if (!src) return {} as Fornecedor;
+
+    // Normalize images: can be in Gallery, gallery, imagens, Imagens or single FotoUrl
+    let rawImgs = src.imagens || src.Imagens || src.gallery || src.Gallery || [];
+    if (!Array.isArray(rawImgs) && typeof rawImgs === 'object') rawImgs = [rawImgs];
+
+    const mappedImgs = rawImgs.filter((m: any) => m && (m.url || m.Url)).map((m: any) => ({
+      id: m.id || m.Id,
+      url: resolveImageUrl(m.url || m.Url),
+      filename: m.filename || m.Filename,
+      contentType: m.contentType || m.ContentType,
+      isPrimary: m.isPrimary ?? m.IsPrimary ?? false,
+      orderIndex: m.orderIndex ?? m.OrderIndex ?? 0
+    }));
+
+    // If FotoUrl present but not in gallery, add it as primary
+    const fotoUrl = src.fotoUrl || src.FotoUrl;
+    if (fotoUrl && !mappedImgs.some((m: any) => m.url === fotoUrl)) {
+      mappedImgs.unshift({
+        id: 'primary',
+        url: resolveImageUrl(fotoUrl),
+        isPrimary: true,
+        orderIndex: -1
+      } as any);
+    }
+
+    const cat = src.categoria || src.Categoria;
+    const mappedCategoria = (typeof cat === 'object' && cat !== null) ? (cat.nome || cat.Nome) : cat;
+
+    return {
+      id: src.id || src.Id,
+      nome: src.nomeFantasia || src.NomeFantasia || src.nome || src.Nome,
+      slug: src.slug || src.Slug,
+      descricao: src.descricao || src.Descricao,
+      publicado: src.publicado ?? src.Publicado ?? true, // Default to true if missing in detail
+      cidade: src.cidade || src.Cidade,
+      endereco: src.endereco || src.Endereco,
+      horarioFuncionamento: src.horarioFuncionamento || src.HorarioFuncionamento,
+      telefone: src.phoneDisplay || src.PhoneDisplay || src.telefone || src.Telefone,
+      email: src.email || src.Email,
+      website: src.website || src.Website,
+      instagram: src.instagram || src.Instagram || src.socialMedia?.instagram || src.SocialMedia?.Instagram,
+      facebook: src.facebook || src.Facebook || src.socialMedia?.facebook || src.SocialMedia?.Facebook,
+      destaque: src.destaque ?? src.Destaque ?? false,
+      seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
+      ativo: src.ativo ?? src.Ativo ?? true,
+      rating: src.rating ?? src.Rating ?? null,
+      visitas: src.visitas ?? src.Visitas ?? 0,
+      categoria: mappedCategoria || null,
+      imagens: mappedImgs.sort((a: any, b: any) => a.orderIndex - b.orderIndex),
+      depoimentos: (src.testemunhos || src.Testemunhos || src.testimonials || src.Testimonials || []).map((t: any) => ({
+        texto: t.descricao || t.Descricao || t.texto || t.Texto,
+        casal: t.nome || t.Nome || t.casal || t.Casal
+      })),
+
+      // Novos campos tier
+      planLevel: src.planLevel ?? src.PlanLevel ?? PlanLevel.Zombie,
+      isClaimed: src.isClaimed ?? src.IsClaimed ?? false,
+      totalLeadsAllTime: src.totalLeadsAllTime ?? src.TotalLeadsAllTime ?? 0,
+      leadLimit: src.leadLimit ?? src.LeadLimit ?? 3,
+      whatsAppUrl: src.whatsAppUrl || src.WhatsAppUrl,
+      showContactForm: src.showContactForm ?? src.ShowContactForm ?? true,
+      adInjection: (src.adInjection || src.AdInjection || []).map((ad: any) => ({
+        id: ad.id || ad.Id,
+        nome: ad.nomeFantasia || ad.NomeFantasia || ad.nome || ad.Nome,
+        slug: ad.slug || ad.Slug,
+        categoria: ad.categoria || ad.Categoria,
+        imagemPrincipal: resolveImageUrl(ad.imagemPrincipal || ad.ImagemPrincipal || ad.fotoUrl || ad.FotoUrl),
+        descricao: ad.descricao || ad.Descricao,
+        cidade: ad.cidade || ad.Cidade
+      }))
+    };
+  }
+
   getByCategoria(categoriaSlugOrId: string): Observable<FornecedorListDto[]> {
-    // Usar endpoint correto: /fornecedores/ativos/categoria/{categoriaSlugOrId}
-    const params: any = { page: 1, pageSize: 100 };
+    const params: any = { page: 1, pageSize: 12 }; // Default page size for category view
     if (environment.FORNECEDOR_PUBLICADO !== null) {
       params.publicado = environment.FORNECEDOR_PUBLICADO;
     }
-    return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/ativos/categoria/${categoriaSlugOrId}`, params).pipe(
-      map(r => r.data)
+
+    const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(categoriaSlugOrId);
+    if (isGuid) {
+      return this.api.get<any>(`/fornecedores/ativos/categoria/${categoriaSlugOrId}`, params).pipe(
+        map(r => {
+          const list = Array.isArray(r) ? r : (r.data || r.Data || []);
+          return list.map((src: any) => this._mapToFornecedorListDto(src));
+        })
+      );
+    }
+
+    return this.categoriasData.getBySlug(categoriaSlugOrId).pipe(
+      switchMap(cat => {
+        if (!cat) return of([]);
+        return this.api.get<any>(`/fornecedores/ativos/categoria/${cat.id}`, params).pipe(
+          map(r => {
+            const list = Array.isArray(r) ? r : (r.data || r.Data || []);
+            return list.map((src: any) => this._mapToFornecedorListDto(src));
+          })
+        );
+      })
     );
   }
 
   getDestaquesByCategoria(categoriaSlugOrId: string): Observable<FornecedorListDto[]> {
-    // Tenta obter somente fornecedores destaque na categoria; se API não suportar param, filtra localmente
-    const params: any = { page: 1, pageSize: 100, destaque: true };
+    const params: any = { page: 1, pageSize: 24, destaque: true };
     if (environment.FORNECEDOR_PUBLICADO !== null) {
       params.publicado = environment.FORNECEDOR_PUBLICADO;
     }
-    return this.api.get<{ data: FornecedorListDto[] }>(`/fornecedores/ativos/categoria/${categoriaSlugOrId}`, params).pipe(
-      map(r => (r.data || []).filter(f => f.destaque)),
-      catchError(err => {
-        console.warn('[DESTAQUES BY CATEGORIA] falling back filtering local:', err);
-        return this.getByCategoria(categoriaSlugOrId).pipe(map(list => list.filter(f => f.destaque)));
-      })
+
+    const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(categoriaSlugOrId);
+
+    const fetch = (id: string) => this.api.get<any>(`/fornecedores/ativos/categoria/${id}`, params).pipe(
+      map(r => {
+        const list = Array.isArray(r) ? r : (r.data || r.Data || []);
+        return list.map((src: any) => this._mapToFornecedorListDto(src));
+      }),
+      catchError(() => this.getByCategoria(id).pipe(map(list => list.filter((f: any) => f.destaque))))
+    );
+
+    if (isGuid) return fetch(categoriaSlugOrId);
+
+    return this.categoriasData.getBySlug(categoriaSlugOrId).pipe(
+      switchMap(cat => cat ? fetch(cat.id) : of([]))
     );
   }
+
+  getDestaquesByCategoriaId(categoriaId: string): Observable<FornecedorListDto[]> {
+    const cacheKey = `destaques-cat-id-${categoriaId}`;
+    if (this.highlightsCache.has(cacheKey)) return this.highlightsCache.get(cacheKey)!;
+
+    const params: any = { page: 1, pageSize: 24, destaque: true };
+    if (environment.FORNECEDOR_PUBLICADO !== null) {
+      params.publicado = environment.FORNECEDOR_PUBLICADO;
+    }
+
+    const obs = this.api.get<any>(`/fornecedores/ativos/categoria/${categoriaId}`, params).pipe(
+      map(r => {
+        const list = Array.isArray(r) ? r : (r.data || r.Data || []);
+        return list.map((src: any) => this._mapToFornecedorListDto(src)).filter((f: any) => f.destaque);
+      }),
+      catchError(err => {
+        console.warn('[DESTAQUES BY CATEGORIA ID] error:', err);
+        return of([]);
+      }),
+      shareReplay(1)
+    );
+
+    this.highlightsCache.set(cacheKey, obs);
+    return obs;
+  }
+
+  // ==============================================================================================
+  // PROFILE CLAIM METHODS
+  // ==============================================================================================
+
+  // Cache para termo de adesão (evita múltiplas chamadas)
+  private termoCache$?: Observable<TermoAdesao>;
+
+  getTermoAdesao(): Observable<TermoAdesao> {
+    if (!this.termoCache$) {
+      this.termoCache$ = this.api.get<TermoAdesao>(`/contratos/termo-adesao`).pipe(
+        shareReplay(1) // Cache o resultado para múltiplas chamadas
+      );
+    }
+    return this.termoCache$;
+  }
+
+  // Método para limpar cache do termo (útil para testes ou quando o termo muda)
+  clearTermoCache(): void {
+    this.termoCache$ = undefined;
+  }
+
+  claimProfile(fornecedorId: string, payload: ClaimPayload): Observable<ClaimResponse> {
+    return this.api.post<ClaimResponse>(`/fornecedores/${fornecedorId}/claim`, payload);
+  }
+}
+
+export interface TermoAdesao {
+  id: string;
+  versao: string;
+  hash: string;
+  texto: string;
+  dataConsulta: string;
+}
+
+export interface ClaimPayload {
+  email: string;
+  password?: string;
+  fullName: string;
+  phone: string;
+  termoHash: string;
+  aceitaTermos: boolean;
+  dataAceite: string;
+}
+
+export interface ClaimResponse {
+  message: string;
+  userId: string;
+  fornecedorId: string;
+  email: string;
+  accessToken: string;
+  refreshToken: string;
+  termoVersao: string;
+  claimedAt: string;
+  planLevel: number;
+  leadLimit: number;
 }
 

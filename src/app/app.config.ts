@@ -2,7 +2,7 @@ import { ApplicationConfig } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authTokenInterceptor } from './core/auth-token.interceptor';
-import { supplierAuthInterceptor } from './features/painel/interceptors/supplier-auth.interceptor';
+import { casingNormalizerInterceptor } from './core/casing-normalizer.interceptor';
 // import { credentialsSanitizerInterceptor } from './core/credentials-sanitizer.interceptor';
 
 import { routes } from './app.routes';
@@ -18,7 +18,7 @@ export const appConfig: ApplicationConfig = {
       })
     ),
     provideClientHydration(withEventReplay()),
-    provideHttpClient(withInterceptors([authTokenInterceptor, supplierAuthInterceptor]))
+    provideHttpClient(withInterceptors([authTokenInterceptor, casingNormalizerInterceptor]))
   ]
 };
 

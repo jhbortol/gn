@@ -11,6 +11,15 @@ const routes: Routes = [
     loadComponent: () => import('./termos').then(m => m.TermosPageComponent)
   },
   {
+    path: 'gerenciar-perfil',
+    loadComponent: () => import('./removal-request/removal-request-page').then(m => m.RemovalRequestPageComponent)
+  },
+  {
+    path: 'privacidade/remocao',
+    redirectTo: 'gerenciar-perfil',
+    pathMatch: 'full'
+  },
+  {
     path: '',
     redirectTo: 'sobre',
     pathMatch: 'full'

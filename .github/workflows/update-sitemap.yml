@@ -1,0 +1,41 @@
+name: Update sitemap from backend
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # daily at 00:00 UTC
+  workflow_dispatch:
+
+jobs:
+  update-sitemap:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Fetch sitemap from backend
+        run: |
+          SITEMAP_URL="https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/sitemap.xml"
+          echo "Fetching $SITEMAP_URL"
+          if curl -fsSL "$SITEMAP_URL" -o sitemap.xml; then
+            echo "Downloaded sitemap"
+          else
+            echo "Failed to download sitemap, creating empty placeholder"
+            echo '<?xml version="1.0" encoding="UTF-8"?>'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset> > sitemap.xml
+          fi
+
+      - name: Commit & push only if changed
+        run: |
+          git add sitemap.xml
+          if git diff --cached --quiet; then
+            echo "No changes in sitemap.xml"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "ci: update sitemap from backend"
+          git push origin gh-pages

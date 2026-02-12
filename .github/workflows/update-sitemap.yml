@@ -19,7 +19,7 @@ jobs:
 
       - name: Fetch sitemap from backend
         run: |
-          SITEMAP_URL="https://funcguianoivasdev-deczg2affxb9f7.brazilsouth-01.azurewebsites.net/api/v1/sitemap.xml"
+          SITEMAP_URL="https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/sitemap.xml"
           echo "Fetching $SITEMAP_URL"
           if curl -fsSL "$SITEMAP_URL" -o sitemap.xml; then
             echo "Downloaded sitemap"

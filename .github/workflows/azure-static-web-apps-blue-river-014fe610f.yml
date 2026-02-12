@@ -21,20 +21,20 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
+      - name: Fetch sitemap for static serving
+        run: |
+          SITEMAP_URL="https://func-guianoivas-dev-deczg2affxb9f7.brazilsouth-01.azurewebsites.net/api/v1/sitemap.xml"
+          echo "Fetching $SITEMAP_URL"
+          if curl -fsSL "$SITEMAP_URL" -o public/sitemap.xml; then
+            echo "Downloaded sitemap to public/"
+          else
+            echo "Failed to download sitemap, creating empty placeholder"
+            echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>' > public/sitemap.xml
+          fi
       - name: Build for Development
         run: npm run build -- --configuration=development
       - name: Build Server for SSR
         run: npx ng run guia-noivas:server:development
-      - name: Download sitemap
-        run: |
-          SITEMAP_URL="https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/sitemap.xml"
-          echo "Fetching $SITEMAP_URL"
-          if curl -fsSL "$SITEMAP_URL" -o dist/guia-noivas/browser/sitemap.xml; then
-            echo "Downloaded sitemap"
-          else
-            echo "Failed to download sitemap, creating empty placeholder"
-            echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>' > dist/guia-noivas/browser/sitemap.xml
-          fi
       - name: Debug - List build output
         run: ls -la dist/guia-noivas/browser/ && ls -la dist/guia-noivas/server/ || echo "Build output not found"
       - name: Deploy to Azure Static Web Apps

@@ -1,0 +1,37 @@
+name: Azure Static Web Apps CI/CD - Dev Guia Noivas (blue-river)
+
+on:
+  push:
+    branches:
+      - dev-hb
+
+jobs:
+  build_and_deploy_job:
+    runs-on: ubuntu-latest
+    name: Build and Deploy to Dev Guia Noivas (blue-river)
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          lfs: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build for Development
+        run: npm run build -- --configuration=development
+      - name: Debug - List build output
+        run: ls -la dist/guia-noivas/browser/ || echo "Build output not found"
+      - name: Deploy to Azure Static Web Apps
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_BLUE_RIVER_014FE610F }}
+          action: "upload"
+          app_location: "dist/guia-noivas/browser"
+          api_location: ""
+          skip_app_build: true
+          skip_deploy_on_missing_secrets: true

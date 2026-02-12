@@ -14,7 +14,7 @@ app.use(express.static(distFolder, { maxAge: '1y' }));
 
 // Route for sitemap.xml
 app.get('/sitemap.xml', (req, res) => {
-  const apiUrl = process.env['API_BASE_URL'] || 'https://func-guianoivas-dev-deczg2affxb9f7.brazilsouth-01.azurewebsites.net/api/v1';
+  const apiUrl = process.env['API_BASE_URL'] || 'https://func-guianoivas-dev-deczg2affxb9f7.brazilsouth-01.azurewebsites.net';
   const url = `${apiUrl}/sitemap.xml`;
   https.get(url, (apiRes) => {
     let data = '';

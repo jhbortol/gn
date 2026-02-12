@@ -23,12 +23,14 @@ jobs:
         run: npm ci
       - name: Fetch sitemap for static serving
         run: |
-          SITEMAP_URL="https://func-guianoivas-dev-deczg2affxb9f7.brazilsouth-01.azurewebsites.net/api/v1/sitemap.xml"
+          SITEMAP_URL="https://func-guianoivas-dev-deczg2affxb9f7.brazilsouth-01.azurewebsites.net/sitemap.xml"
           echo "Fetching $SITEMAP_URL"
           if curl -fsSL "$SITEMAP_URL" -o public/sitemap.xml; then
             echo "Downloaded sitemap to public/"
           else
-            echo "Failed to download sitemap, creating empty placeholder"
+            echo "Failed to download sitemap, checking response..."
+            curl -I "$SITEMAP_URL"
+            echo "Creating empty placeholder"
             echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>' > public/sitemap.xml
           fi
       - name: Build for Development

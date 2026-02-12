@@ -25,7 +25,7 @@ jobs:
             echo "Downloaded sitemap"
           else
             echo "Failed to download sitemap, creating empty placeholder"
-            echo '<?xml version="1.0" encoding="UTF-8"?>'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset> > sitemap.xml
+            echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>' > sitemap.xml
           fi
 
       - name: Commit & push only if changed

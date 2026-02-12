@@ -2,6 +2,7 @@ import 'zone.js/node';
 import { enableProdMode } from '@angular/core';
 import express from 'express';
 import { join } from 'path';
+import https from 'https';
 
 enableProdMode();
 
@@ -10,6 +11,25 @@ const distFolder = join(process.cwd(), 'dist/guia-noivas/browser');
 
 // Serve static files (prerendered HTML, assets, etc.)
 app.use(express.static(distFolder, { maxAge: '1y' }));
+
+// Route for sitemap.xml
+app.get('/sitemap.xml', (req, res) => {
+  const apiUrl = process.env['API_BASE_URL'] || 'https://func-guianoivas-dev-deczg2affxb9f7.brazilsouth-01.azurewebsites.net/api/v1';
+  const url = `${apiUrl}/sitemap.xml`;
+  https.get(url, (apiRes) => {
+    let data = '';
+    apiRes.on('data', (chunk) => {
+      data += chunk;
+    });
+    apiRes.on('end', () => {
+      res.set('Content-Type', 'application/xml');
+      res.send(data);
+    });
+  }).on('error', (err) => {
+    console.error('Error fetching sitemap:', err);
+    res.status(500).send('Server error');
+  });
+});
 
 // Catch-all: serve index.html for client-side routing (CSR fallback)
 app.get('*', (req, res) => {

@@ -1,6 +1,7 @@
 {
     "navigationFallback": {
-        "rewrite": "/index.html"
+        "rewrite": "/index.html",
+        "exclude": ["/sitemap.xml"]
     },
     "responseOverrides": {
         "404": {
@@ -11,6 +12,10 @@
         "Cache-Control": "public, max-age=3600, s-maxage=86400"
     },
     "routes": [
+        {
+            "route": "/sitemap.xml",
+            "allowedRoles": ["anonymous"]
+        },
         {
             "route": "/*.js",
             "headers": {

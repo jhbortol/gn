@@ -24,8 +24,22 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
+      - name: Fetch sitemap for static serving
+        run: |
+          SITEMAP_URL="https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1/sitemap.xml"
+          echo "Fetching $SITEMAP_URL"
+          if curl -fsSL "$SITEMAP_URL" -o public/sitemap.xml; then
+            echo "Downloaded sitemap to public/"
+          else
+            echo "Failed to download sitemap, checking response..."
+            curl -I "$SITEMAP_URL"
+            echo "Creating empty placeholder"
+            echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>' > public/sitemap.xml
+          fi
       - name: Build for Production
         run: npm run build -- --configuration=production
+      - name: Build Server for SSR
+        run: npx ng run guia-noivas:server:production
       - name: Debug - List build output
         run: ls -la dist/guia-noivas/browser/ || echo "Build output not found"
       - name: Deploy to Azure Static Web Apps
@@ -34,9 +48,8 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_HAPPY_CLIFF_03E2BA41E }}
           action: "upload"
-          app_location: "/"
-          api_location: ""
+          app_location: "dist/guia-noivas/browser"
+          api_location: "dist/guia-noivas/server"
           output_location: "dist/guia-noivas/browser"
           skip_app_build: true
           skip_deploy_on_missing_secrets: true
-          skip_app_build: true

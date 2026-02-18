@@ -12,7 +12,14 @@ export const serverRoutes: ServerRoute[] = [
   {
     path: ':cidade/fornecedores/:id',
     renderMode: RenderMode.Prerender,
-    getPrerenderParams: getFornecedoresPrerenderParams
+    getPrerenderParams: async () => {
+      const fornecedoresParams = await getFornecedoresPrerenderParams();
+      // Map to include cidade parameter (piracicaba)
+      return fornecedoresParams.map(param => ({
+        cidade: 'piracicaba',
+        id: param.id
+      }));
+    }
   },
   {
     path: ':cidade/blog/:slug',

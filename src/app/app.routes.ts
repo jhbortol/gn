@@ -13,7 +13,7 @@ export const routes: Routes = [
 		children: [
 			{
 				path: '',
-				loadChildren: () => import('./features/home/home-module').then(m => m.HomeModule)
+				loadComponent: () => import('./features/home/home-page/home-page').then(m => m.HomePageComponent)
 			},
 			{
 				path: 'termos',

@@ -4,6 +4,3 @@ Allow: /
 
 # Sitemap
 Sitemap: https://guianoivas.com/sitemap.xml
-
-# Disallow admin/private areas (if any exist)
-# Add specific paths here if needed

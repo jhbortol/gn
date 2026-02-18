@@ -222,4 +222,58 @@ describe('FornecedorPageComponent', () => {
             expect(link).toBe('#');
         });
     });
+
+    describe('Preview Mode', () => {
+        it('should set isPreviewMode to true when preview=true in query params', () => {
+            // Mock ActivatedRoute with preview=true
+            TestBed.overrideProvider(ActivatedRoute, {
+                useValue: {
+                    snapshot: {
+                        params: { id: 'fotografo-premium' },
+                        queryParams: { preview: 'true' }
+                    }
+                }
+            });
+
+            // Re-create component with new provider
+            const newFixture = TestBed.createComponent(FornecedorPageComponent);
+            const newComponent = newFixture.componentInstance;
+
+            expect(newComponent.isPreviewMode).toBeTrue();
+        });
+
+        it('should call getById with preview=true when in preview mode', () => {
+            TestBed.overrideProvider(ActivatedRoute, {
+                useValue: {
+                    snapshot: {
+                        params: { id: 'fotografo-premium' },
+                        queryParams: { preview: 'true' }
+                    }
+                }
+            });
+
+            const newFixture = TestBed.createComponent(FornecedorPageComponent);
+            const newComponent = newFixture.componentInstance;
+
+            newComponent.ngOnInit();
+
+            expect(mockFornecedoresData.getById).toHaveBeenCalledWith('fotografo-premium', true);
+        });
+
+        it('should show preview banner when isPreviewMode is true', () => {
+            component.isPreviewMode = true;
+            fixture.detectChanges();
+
+            const bannerElement = fixture.nativeElement.querySelector('.preview-banner');
+            expect(bannerElement).toBeTruthy();
+        });
+
+        it('should NOT show preview banner when isPreviewMode is false', () => {
+            component.isPreviewMode = false;
+            fixture.detectChanges();
+
+            const bannerElement = fixture.nativeElement.querySelector('.preview-banner');
+            expect(bannerElement).toBeFalsy();
+        });
+    });
 });

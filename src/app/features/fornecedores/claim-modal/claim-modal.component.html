@@ -89,8 +89,11 @@
                 <fieldset class="form-section terms-section">
                     <legend>Termos de Uso</legend>
 
-                    <div *ngIf="loadingTermo" class="text-center py-4 text-gray-500">
-                        Carregando termos...
+                    <div *ngIf="loadingTermo" class="text-center py-8">
+                        <div class="inline-flex items-center gap-2 text-gray-500">
+                            <div class="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600"></div>
+                            Carregando termos...
+                        </div>
                     </div>
 
                     <div *ngIf="!loadingTermo && termoHtml" class="term-preview" [innerHTML]="termoHtml"></div>

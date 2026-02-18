@@ -394,8 +394,21 @@ export class FornecedoresData {
   // PROFILE CLAIM METHODS
   // ==============================================================================================
 
+  // Cache para termo de adesão (evita múltiplas chamadas)
+  private termoCache$?: Observable<TermoAdesao>;
+
   getTermoAdesao(): Observable<TermoAdesao> {
-    return this.api.get<TermoAdesao>(`/contratos/termo-adesao`);
+    if (!this.termoCache$) {
+      this.termoCache$ = this.api.get<TermoAdesao>(`/contratos/termo-adesao`).pipe(
+        shareReplay(1) // Cache o resultado para múltiplas chamadas
+      );
+    }
+    return this.termoCache$;
+  }
+
+  // Método para limpar cache do termo (útil para testes ou quando o termo muda)
+  clearTermoCache(): void {
+    this.termoCache$ = undefined;
   }
 
   claimProfile(fornecedorId: string, payload: ClaimPayload): Observable<ClaimResponse> {
@@ -406,9 +419,9 @@ export class FornecedoresData {
 export interface TermoAdesao {
   id: string;
   versao: string;
-  conteudoHtml: string;
-  conteudoTexto: string;
-  dataVigencia: string;
+  hash: string;
+  texto: string;
+  dataConsulta: string;
 }
 
 export interface ClaimPayload {

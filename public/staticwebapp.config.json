@@ -1,20 +1,45 @@
 {
     "navigationFallback": {
-        "rewrite": "/index.html",
-        "exclude": ["/assets/*", "/images/*", "/*.{css,scss,js,json,txt,xml,ico,svg,png,jpg,jpeg,gif,woff,woff2,ttf,eot}"]
+        "rewrite": "/index.html"
+    },
+    "responseOverrides": {
+        "404": {
+            "rewrite": "/index.html"
+        }
+    },
+    "globalHeaders": {
+        "Cache-Control": "public, max-age=3600, s-maxage=86400"
     },
     "routes": [
         {
             "route": "/sitemap.xml",
-            "rewrite": "https://guia-noivas.somee.com/api/v1/sitemap.xml"
+            "headers": {
+                "Cache-Control": "public, max-age=3600, s-maxage=86400"
+            }
+        },
+        {
+            "route": "/*.js",
+            "headers": {
+                "Cache-Control": "public, max-age=31536000, s-maxage=31536000, immutable"
+            }
+        },
+        {
+            "route": "/*.css",
+            "headers": {
+                "Cache-Control": "public, max-age=31536000, s-maxage=31536000, immutable"
+            }
+        },
+        {
+            "route": "/index.html",
+            "headers": {
+                "Cache-Control": "public, max-age=0, s-maxage=3600, must-revalidate"
+            }
+        },
+        {
+            "route": "/main.*.js",
+            "headers": {
+                "Cache-Control": "public, max-age=31536000, s-maxage=31536000, immutable"
+            }
         }
-    ],
-    "mimeTypes": {
-        ".json": "application/json",
-        ".xml": "application/xml"
-    },
-    "globalHeaders": {
-        "X-Content-Type-Options": "nosniff",
-        "X-Frame-Options": "DENY"
-    }
+    ]
 }

@@ -54,15 +54,32 @@ export function app(): express.Express {
 
     // Sanitize the URL to prevent path traversal attacks
     const sanitizedUrl = originalUrl.split('?')[0]; // Remove query params
-    const normalizedPath = sanitizedUrl.replace(/\\/g, '/').replace(/\/\.\./g, '').replace(/\.\./g, '');
+    
+    // Remove all occurrences of .. and backslashes, normalize slashes
+    let normalizedPath = sanitizedUrl;
+    while (normalizedPath.includes('..') || normalizedPath.includes('\\')) {
+      normalizedPath = normalizedPath.replace(/\.\./g, '').replace(/\\/g, '/');
+    }
+    
+    // Remove double slashes
+    normalizedPath = normalizedPath.replace(/\/+/g, '/');
     
     // Ensure path starts with /
     const safePath = normalizedPath.startsWith('/') ? normalizedPath : `/${normalizedPath}`;
 
     // Check if the prerendered file exists (with path validation)
     if (safePath.includes('..') || safePath.includes('\\')) {
-      // Invalid path, skip prerendered check
-      next();
+      // Invalid path, skip prerendered check and use SSR
+      commonEngine
+        .render({
+          bootstrap,
+          documentFilePath: indexHtml,
+          url: `${protocol}://${headers.host}${originalUrl}`,
+          publicPath: browserDistFolder,
+          providers: [{ provide: APP_BASE_HREF, useValue: baseUrl }],
+        })
+        .then((html: string) => res.send(html))
+        .catch((err: Error) => next(err));
       return;
     }
 

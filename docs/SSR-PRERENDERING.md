@@ -72,6 +72,24 @@ dist/guia-noivas/
 
 ### Deployment
 
+### Security Considerations
+⚠️ **Rate Limiting:** The Express server does not include built-in rate limiting. For production:
+- Use Azure Front Door, CloudFlare, or similar CDN with DDoS protection
+- Configure Nginx/Apache reverse proxy with rate limiting
+- Or add Express rate limiting middleware: `npm install express-rate-limit`
+
+Example with express-rate-limit:
+```typescript
+import rateLimit from 'express-rate-limit';
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+
+server.use(limiter);
+```
+
 #### Opção 1: Apenas Arquivos Estáticos (Recomendado para Performance)
 Se você não precisa de SSR em runtime, pode servir apenas a pasta `browser`:
 

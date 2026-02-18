@@ -1,5 +1,20 @@
 {
     "navigationFallback": {
-        "rewrite": "/index.html"
+        "rewrite": "/index.html",
+        "exclude": ["/assets/*", "/images/*", "/*.{css,scss,js,json,txt,xml,ico,svg,png,jpg,jpeg,gif,woff,woff2,ttf,eot}"]
+    },
+    "routes": [
+        {
+            "route": "/sitemap.xml",
+            "rewrite": "https://guia-noivas.somee.com/api/v1/sitemap.xml"
+        }
+    ],
+    "mimeTypes": {
+        ".json": "application/json",
+        ".xml": "application/xml"
+    },
+    "globalHeaders": {
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY"
     }
 }

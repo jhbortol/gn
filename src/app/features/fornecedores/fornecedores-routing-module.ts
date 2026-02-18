@@ -13,7 +13,7 @@ export async function getPrerenderParams(): Promise<{ id: string }[]> {
   try {
     const apiUrl = process.env['API_BASE_URL'] || 'https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1';
     // Fetch all active suppliers - using a large page size to get most suppliers
-    const response = await fetch(`${apiUrl}/fornecedores/ativos?page=1&pageSize=200&publicado=true`);
+    const response = await fetch(`${apiUrl}/fornecedores/ativos?page=1&pageSize=100&publicado=true`);
     
     if (!response.ok) {
       console.warn('Failed to fetch suppliers for prerendering');

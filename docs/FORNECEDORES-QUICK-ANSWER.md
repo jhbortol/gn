@@ -32,7 +32,7 @@ Fornecedores AGORA são pré-renderizados:
 // src/app/features/fornecedores/fornecedores-routing-module.ts
 export async function getPrerenderParams(): Promise<{ id: string }[]> {
   // Busca fornecedores da API durante o build
-  const response = await fetch(`${apiUrl}/fornecedores/ativos?pageSize=200&publicado=true`);
+  const response = await fetch(`${apiUrl}/fornecedores/ativos?pageSize=100&publicado=true`);
   const fornecedores = await response.json();
   return fornecedores.data.map(f => ({ id: f.slug }));
 }
@@ -111,8 +111,8 @@ find dist/guia-noivas/browser/piracicaba/fornecedores -name "index.html" | wc -l
 
 ## Limitações
 
-1. **Máximo de 200 fornecedores**
-   - Configurado para `pageSize=200`
+1. **Máximo de 100 fornecedores**
+   - Configurado para `pageSize=100`
    - Para mais, aumentar pageSize ou implementar paginação
 
 2. **Build Time**

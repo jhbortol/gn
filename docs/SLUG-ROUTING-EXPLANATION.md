@@ -31,7 +31,7 @@ const routes: Routes = [
 ```typescript
 // getPrerenderParams() - Busca fornecedores para pré-renderizar
 export async function getPrerenderParams(): Promise<{ id: string }[]> {
-  const response = await fetch(`${apiUrl}/fornecedores/ativos?pageSize=200`);
+  const response = await fetch(`${apiUrl}/fornecedores/ativos?pageSize=100`);
   const result = await response.json();
   
   return result.data.map((fornecedor) => ({
@@ -116,7 +116,7 @@ https://guianoivas.com/piracicaba/fornecedores/adriana-vitti-cerimonialista
    
 2. Busca Fornecedores
    ↓
-   GET /api/v1/fornecedores/ativos?pageSize=200&publicado=true
+   GET /api/v1/fornecedores/ativos?pageSize=100&publicado=true
    Retorna: [
      { id: 'guid-1', slug: 'adriana-vitti-cerimonialista', nome: 'Adriana Vitti' },
      { id: 'guid-2', slug: 'buffet-elegance', nome: 'Buffet Elegance' },

@@ -1,5 +1,6 @@
 // Removido: definição solta de getDestaquesByCategoriaId fora da classe. Método correto está dentro da classe FornecedoresData.
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID, TransferState, makeStateKey } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
 import { ApiService } from '../../../core/api.service';
 import { Observable, map, catchError, of, switchMap, shareReplay } from 'rxjs';
 import { environment } from '../../../../environments/environment';
@@ -177,7 +178,12 @@ export class FornecedoresData {
     };
   }
 
-  constructor(private api: ApiService, private categoriasData: CategoriasData) { }
+  constructor(
+    private api: ApiService,
+    private categoriasData: CategoriasData,
+    private transferState: TransferState,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
 
   getAll(page = 1, pageSize = 12): Observable<FornecedorListDto[]> {
     // Usar /fornecedores/ativos para exibir apenas fornecedores ativos (público)
@@ -220,7 +226,16 @@ export class FornecedoresData {
   }
 
   getById(identifier: string, preview = false): Observable<Fornecedor> {
-    const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(identifier);
+    const stateKey = makeStateKey<Fornecedor>(`fornecedor-${identifier}-${preview}`);
+
+    // Check if data is already available in TransferState (from server-side rendering)
+    if (this.transferState.hasKey(stateKey)) {
+      const fornecedor = this.transferState.get(stateKey, {} as Fornecedor);
+      this.transferState.remove(stateKey); // Clean up after use
+      return of(fornecedor);
+    }
+
+    const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(identifier);
     const endpoint = isGuid ? `/public/fornecedores/${identifier}` : `/public/fornecedores/slug/${identifier.toLowerCase()}`;
 
     // If preview mode, add query param to bypass publicado filter
@@ -230,7 +245,14 @@ export class FornecedoresData {
     }
 
     return this.api.get<any>(endpoint, params).pipe(
-      map(detail => this._mapDetailToFornecedor(detail)),
+      map(detail => {
+        const fornecedor = this._mapDetailToFornecedor(detail);
+        // Store in TransferState if running on server
+        if (isPlatformServer(this.platformId)) {
+          this.transferState.set(stateKey, fornecedor);
+        }
+        return fornecedor;
+      }),
       catchError(err => { throw err; })
     );
   }

@@ -111,7 +111,7 @@ export class TrackingService {
       (window as any).dataLayer.push({
         event: 'page_view',
         page_path: pagePath,
-        page_title: pageTitle || document.title,
+        page_title: pageTitle || (typeof document !== 'undefined' ? document.title : ''),
         page_location: typeof window !== 'undefined' ? window.location.href : undefined
       });
     }

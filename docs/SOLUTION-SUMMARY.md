@@ -105,7 +105,9 @@ dist/guia-noivas/browser/
 
 ### 🔄 Dinâmico (busca da API no build)
 - `/piracicaba/blog/:slug` - Posts do blog ✅ **IMPLEMENTADO**
-- `/piracicaba/fornecedores/:id` - Fornecedores (até 200 perfis) ✅ **IMPLEMENTADO AGORA**
+- `/piracicaba/fornecedores/:id` - Fornecedores (até 200 perfis) ✅ **IMPLEMENTADO** 
+  - **Nota:** `:id` aceita tanto GUID quanto **slug** (slug tem prioridade)
+  - Exemplo: `/piracicaba/fornecedores/adriana-vitti-cerimonialista`
 - `/piracicaba/categorias/:id` - Detalhes de categoria (pronto p/ implementar)
 
 ## Impacto SEO

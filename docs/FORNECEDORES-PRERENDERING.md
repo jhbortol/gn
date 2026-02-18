@@ -26,6 +26,13 @@
 **Arquivo:** `src/app/features/fornecedores/fornecedores-routing-module.ts`
 
 ```typescript
+const routes: Routes = [
+  {
+    path: ':id',  // Aceita GUID ou slug (slug tem prioridade)
+    loadComponent: () => import('./fornecedor-page')
+  }
+];
+
 export async function getPrerenderParams(): Promise<{ id: string }[]> {
   try {
     const apiUrl = process.env['API_BASE_URL'] || 'https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1';
@@ -41,10 +48,11 @@ export async function getPrerenderParams(): Promise<{ id: string }[]> {
     const result = await response.json();
     const fornecedores = result.data || [];
     
-    // Retorna slugs ou IDs
+    // Retorna slugs (PRIORIDADE) ou IDs como fallback
     return fornecedores
       .map((fornecedor) => ({
         id: fornecedor.slug || fornecedor.Slug || fornecedor.id || fornecedor.Id
+        //  ^^^^^^^^^^^^^ SLUG TEM PRIORIDADE
       }))
       .filter((p) => typeof p.id === 'string' && p.id.length > 0);
   } catch (error) {
@@ -57,8 +65,14 @@ export async function getPrerenderParams(): Promise<{ id: string }[]> {
 **O que faz:**
 1. Conecta na API durante o build (`npm run prerender`)
 2. Busca todos fornecedores ativos e publicados
-3. Extrai slug (preferencial) ou ID de cada fornecedor
+3. Extrai **slug** (preferencial) ou ID de cada fornecedor
 4. Retorna array de identificadores para pré-renderização
+
+**Importante:** O parâmetro da rota é `:id` mas aceita ambos:
+- ✅ Slugs (prioridade): `adriana-vitti-cerimonialista`
+- ✅ GUIDs (fallback): `550e8400-e29b-41d4-a716-446655440000`
+
+O serviço detecta automaticamente qual tipo foi passado.
 
 ### 2. Server Routes Configuration
 **Arquivo:** `src/app/app.routes.server.ts`

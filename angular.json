@@ -48,15 +48,13 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
-                ,
+                "input": "public",
                 "output": "."
               }
             ],
             "styles": [
               "src/styles.css"
             ]
-            
           },
           "configurations": {
             "production": {
@@ -116,8 +114,7 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
-                ,
+                "input": "public",
                 "output": "."
               }
             ],
@@ -125,8 +122,7 @@
               "src/styles.css"
             ]
           }
-        }
-        ,
+        },
         "server": {
           "builder": "@angular-devkit/build-angular:server",
           "options": {
@@ -136,13 +132,81 @@
           },
           "configurations": {
             "production": {
-              "outputHashing": "all"
+              "outputHashing": "none"
             },
             "development": {
               "optimization": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "outputHashing": "none"
             }
-          }
+          },
+          "defaultConfiguration": "production"
+        },
+        "prerender": {
+          "builder": "@angular-devkit/build-angular:prerender",
+          "options": {
+            "routes": [
+              "piracicaba",
+              "piracicaba/categorias",
+              "piracicaba/anuncie",
+              "piracicaba/contato",
+              "piracicaba/blog",
+              "piracicaba/guia-precos",
+              "piracicaba/institucional/termos",
+              "piracicaba/institucional/privacidade",
+              "piracicaba/institucional/sobre",
+              "piracicaba/blog/como-escolher-espaco-casamento",
+              "piracicaba/blog/melhores-meses-casar",
+              "piracicaba/blog/decoracao-rustico-chic-tendencia",
+              "piracicaba/blog/documentacao-casamento-civil",
+              "piracicaba/blog/buffet-casamento-jantar-finger-food",
+              "piracicaba/blog/cores-vestidos-madrinhas-2026",
+              "piracicaba/blog/como-economizar-casamento",
+              "piracicaba/blog/cronograma-dia-casamento",
+              "piracicaba/blog/bolos-casamento-classico-moderno",
+              "piracicaba/blog/musica-cerimonia-dicas",
+              "piracicaba/fornecedores/colorindo-o-altar",
+              "piracicaba/fornecedores/espaco-pompeia",
+              "piracicaba/fornecedores/lais-furlan-cerimonialista",
+              "piracicaba/fornecedores/bordado-zen",
+              "piracicaba/fornecedores/box-foto-cabine",
+              "piracicaba/fornecedores/fotografo-perez",
+              "piracicaba/fornecedores/atelier-karina",
+              "piracicaba/fornecedores/marcia-delabio-buffet",
+              "piracicaba/fornecedores/soraiamartins-cerimonialista",
+              "piracicaba/fornecedores/manu-gois-doces-finos",
+              "piracicaba/fornecedores/eternize-plantas",
+              "piracicaba/fornecedores/atelier-carla-melo",
+              "piracicaba/fornecedores/verascar-limousines",
+              "piracicaba/fornecedores/angela-oliveira-assessoria-e-cerimonial",
+              "piracicaba/fornecedores/mundo-a-bordo-br",
+              "piracicaba/fornecedores/mari-custorio-spa-pes",
+              "piracicaba/fornecedores/toccare-musica-para-eventos",
+              "piracicaba/fornecedores/revelare-totem",
+              "piracicaba/fornecedores/lilian-campos",
+              "piracicaba/fornecedores/sandro-cardoso-fotografia",
+              "piracicaba/fornecedores/ana-picoli-fotografa",
+              "piracicaba/fornecedores/giravideo360",
+              "piracicaba/fornecedores/viajandocomyara",
+              "piracicaba/fornecedores/tenda-picoli",
+              "piracicaba/fornecedores/lilas-convites-co",
+              "piracicaba/fornecedores/floricultura-cravo-e-canela",
+              "piracicaba/fornecedores/rosa-salles-cerimonial",
+              "piracicaba/fornecedores/adriana-vitti-cerimonialista",
+              "piracicaba/fornecedores/galatas-eventos"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "guia-noivas:build:production",
+              "serverTarget": "guia-noivas:server:production"
+            },
+            "development": {
+              "browserTarget": "guia-noivas:build:development",
+              "serverTarget": "guia-noivas:server:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }

@@ -1,10 +1,11 @@
 import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { Meta, Title, DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BlogData, BlogPost, BlogPostListDto } from '../services/blog-data';
 import { CidadeService } from '../../../core/cidade.service';
 import { TrackingService } from '../../../core/tracking.service';
+import { MetaTagService } from '../../../core/meta-tag.service';
 
 @Component({
   selector: 'app-blog-detail',
@@ -28,12 +29,18 @@ export class BlogDetailPage implements OnInit {
   private meta = inject(Meta);
   private title = inject(Title);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private blogData = inject(BlogData);
   private cidadeService = inject(CidadeService);
   private tracking = inject(TrackingService);
+  private metaTagService = inject(MetaTagService);
   private sanitizer = inject(DomSanitizer);
 
   ngOnInit(): void {
+    // Try to apply prerendered metadata first
+    const currentRoute = this.router.url.split('?')[0];
+    this.metaTagService.applyMetadata(currentRoute);
+
     // Subscribe to route params to reload when navigating between articles
     this.route.params.subscribe(params => {
       const slug = params['slug'];

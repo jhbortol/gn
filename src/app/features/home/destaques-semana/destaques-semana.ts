@@ -2,8 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FornecedoresData, FornecedorListDto } from '../../fornecedores/services/fornecedores-data';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { CidadeService } from '../../../core/cidade.service';
 import { resolveImageUrl, addCacheBuster } from '../../../core/image-url.helper';
 
@@ -69,6 +69,10 @@ export class DestaquesSemanaComponent implements OnInit {
         }
         this.displayed.emit(result.map(x => x.id));
         return result;
+      }),
+      catchError(error => {
+        console.warn('[DESTAQUES] Error loading destaques:', error);
+        return of([]);
       })
     );
   }

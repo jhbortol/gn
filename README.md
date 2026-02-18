@@ -2,6 +2,16 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.10.
 
+## Getting Started
+
+Before running the application, you need to install the dependencies:
+
+```bash
+npm install
+```
+
+This will install all required Angular and project dependencies. Without this step, the `<app-root>` element will remain empty and the application won't work.
+
 ## Development server
 
 To start a local development server, run:

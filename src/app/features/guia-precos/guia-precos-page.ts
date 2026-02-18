@@ -106,6 +106,8 @@ export class GuiaPrecosPage {
   }
 
   downloadPDF(): void {
+    if (typeof window === 'undefined') return; // Guard for SSR
+    
     const url = this.downloadUrl();
     if (url) {
       // Construir URL completa respeitando API_BASE_URL quando for caminho relativo

@@ -5,6 +5,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { ClickwrapAgreementComponent } from '../../shared/clickwrap-agreement/clickwrap-agreement';
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
 import { TrackingService } from '../../core/tracking.service';
+import { MetaTagService } from '../../core/meta-tag.service';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { LeadFormComponent } from './lead-form.component';
@@ -55,12 +56,20 @@ export class FornecedorPageComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private tracking: TrackingService,
     private title: Title,
-    private meta: Meta
+    private meta: Meta,
+    private metaTagService: MetaTagService
   ) { }
 
   ngOnInit(): void {
     const identifier = this.route.snapshot.params['id']; // pode ser GUID ou slug
     this.isPreviewMode = this.route.snapshot.queryParams['preview'] === 'true';
+
+    // Try to apply prerendered metadata first
+    const currentRoute = this.router.routerState.root.firstChild?.component ? 
+      `${this.router.url.split('?')[0]}` : null;
+    if (currentRoute) {
+      this.metaTagService.applyMetadata(currentRoute);
+    }
 
     if (identifier) {
       this.fornecedores.getById(identifier, this.isPreviewMode).subscribe({
@@ -70,6 +79,7 @@ export class FornecedorPageComponent implements OnInit {
           if (environment.FORNECEDOR_PUBLICADO === true && !this.isPreviewMode && !f.publicado) {
             console.warn('Fornecedor não publicado acessado diretamente:', f.id);
             this.notFound = true;
+            this.updateNotFoundMetaTags();
             this.cdr.markForCheck();
             return;
           }
@@ -92,6 +102,7 @@ export class FornecedorPageComponent implements OnInit {
         error: (err) => {
           console.error('Error loading fornecedor:', err);
           this.notFound = true;
+          this.updateNotFoundMetaTags();
           this.cdr.markForCheck();
         }
       });
@@ -283,6 +294,19 @@ export class FornecedorPageComponent implements OnInit {
     this.meta.updateTag({ property: 'og:title', content: pageTitle });
     this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:type', content: 'business.business' });
+  }
+
+  private updateNotFoundMetaTags(): void {
+    const pageTitle = 'Fornecedor não encontrado - Guia Noivas Piracicaba';
+    this.title.setTitle(pageTitle);
+
+    const description = 'O perfil que você está procurando não está disponível ou ainda não foi publicado no Guia Noivas Piracicaba.';
+    this.meta.updateTag({ name: 'description', content: description });
+
+    // Open Graph para página 404
+    this.meta.updateTag({ property: 'og:title', content: pageTitle });
+    this.meta.updateTag({ property: 'og:description', content: description });
+    this.meta.updateTag({ property: 'og:type', content: 'website' });
   }
 
   /**

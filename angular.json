@@ -136,13 +136,15 @@
           },
           "configurations": {
             "production": {
-              "outputHashing": "all"
+              "outputHashing": "none"
             },
             "development": {
               "optimization": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "outputHashing": "none"
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "prerender": {
           "builder": "@angular-devkit/build-angular:prerender",

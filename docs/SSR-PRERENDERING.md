@@ -147,8 +147,8 @@ O servidor:
 
 ### Rotas Dinâmicas (fetch da API durante build):
 - `/piracicaba/blog/[slug]` - Posts do blog (busca slugs da API)
+- `/piracicaba/fornecedores/[id]` - Fornecedores/Suppliers (busca até 200 ativos da API) ✅ **NOVO**
 - `/piracicaba/categorias/[id]` - Categorias (quando implementado)
-- `/piracicaba/fornecedores/[id]` - Fornecedores (quando implementado)
 
 ## Adicionando Novas Rotas
 

@@ -88,6 +88,12 @@ dist/guia-noivas/browser/
 │   │   └── index.html          ✅ Lista de categorias
 │   ├── blog/
 │   │   └── index.html          ✅ Lista de posts
+│   ├── fornecedores/           ✅ **NOVO - Até 200 perfis**
+│   │   ├── buffet-elegance/
+│   │   │   └── index.html      ✅ Fornecedor completo
+│   │   ├── foto-studio/
+│   │   │   └── index.html      ✅ Fornecedor completo
+│   │   └── ... (até 200)
 │   ├── anuncie/index.html      ✅ Página anuncie
 │   ├── contato/index.html      ✅ Contato
 │   ├── guia-precos/index.html  ✅ Guia de preços
@@ -98,9 +104,9 @@ dist/guia-noivas/browser/
 ```
 
 ### 🔄 Dinâmico (busca da API no build)
-- `/piracicaba/blog/:slug` - Posts do blog
+- `/piracicaba/blog/:slug` - Posts do blog ✅ **IMPLEMENTADO**
+- `/piracicaba/fornecedores/:id` - Fornecedores (até 200 perfis) ✅ **IMPLEMENTADO AGORA**
 - `/piracicaba/categorias/:id` - Detalhes de categoria (pronto p/ implementar)
-- `/piracicaba/fornecedores/:id` - Fornecedores (pronto p/ implementar)
 
 ## Impacto SEO
 

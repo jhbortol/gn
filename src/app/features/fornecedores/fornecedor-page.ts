@@ -70,6 +70,7 @@ export class FornecedorPageComponent implements OnInit {
           if (environment.FORNECEDOR_PUBLICADO === true && !this.isPreviewMode && !f.publicado) {
             console.warn('Fornecedor não publicado acessado diretamente:', f.id);
             this.notFound = true;
+            this.updateNotFoundMetaTags();
             this.cdr.markForCheck();
             return;
           }
@@ -92,6 +93,7 @@ export class FornecedorPageComponent implements OnInit {
         error: (err) => {
           console.error('Error loading fornecedor:', err);
           this.notFound = true;
+          this.updateNotFoundMetaTags();
           this.cdr.markForCheck();
         }
       });
@@ -283,6 +285,19 @@ export class FornecedorPageComponent implements OnInit {
     this.meta.updateTag({ property: 'og:title', content: pageTitle });
     this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:type', content: 'business.business' });
+  }
+
+  private updateNotFoundMetaTags(): void {
+    const pageTitle = 'Fornecedor não encontrado - Guia Noivas Piracicaba';
+    this.title.setTitle(pageTitle);
+
+    const description = 'O perfil que você está procurando não está disponível ou ainda não foi publicado no Guia Noivas Piracicaba.';
+    this.meta.updateTag({ name: 'description', content: description });
+
+    // Open Graph para página 404
+    this.meta.updateTag({ property: 'og:title', content: pageTitle });
+    this.meta.updateTag({ property: 'og:description', content: description });
+    this.meta.updateTag({ property: 'og:type', content: 'website' });
   }
 
   /**

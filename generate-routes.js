@@ -25,11 +25,11 @@ async function getBlogPrerenderParams() {
     return [];
   }
 }
-
+//melhorar isso aqui para mais de 100 por pagina
 async function getFornecedoresPrerenderParams() {
   try {
     const apiUrl = process.env['API_BASE_URL'] || 'https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1';
-    const response = await fetch(`${apiUrl}/fornecedores/ativos?page=1&pageSize=200&publicado=true`);
+    const response = await fetch(`${apiUrl}/fornecedores/ativos?page=1&pageSize=100&publicado=true`);
     
     if (!response.ok) {
       console.warn('Failed to fetch suppliers for prerendering');

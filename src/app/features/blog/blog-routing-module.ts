@@ -23,12 +23,23 @@ export async function getPrerenderParams(): Promise<{ slug: string }[]> {
       return [];
     }
 
-    const data = await response.json();
+    interface BlogPostDto {
+      slug?: string;
+      Slug?: string;
+    }
+
+    interface ApiResponse {
+      data?: BlogPostDto[];
+    }
+
+    const data: ApiResponse = await response.json();
     const posts = data.data || [];
     
-    return posts.map((post: any) => ({
-      slug: post.slug || post.Slug
-    })).filter((p: any) => p.slug);
+    return posts
+      .map((post: BlogPostDto) => ({
+        slug: post.slug || post.Slug
+      }))
+      .filter((p): p is { slug: string } => typeof p.slug === 'string' && p.slug.length > 0);
   } catch (error) {
     console.warn('Error fetching blog posts for prerendering:', error);
     return [];

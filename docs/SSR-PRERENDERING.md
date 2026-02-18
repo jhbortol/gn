@@ -213,6 +213,13 @@ Você deve ver o conteúdo completo no HTML, não apenas `<app-root></app-root>`
 
 ## Troubleshooting
 
+### Output Hashing on Server Build
+The server build has `outputHashing: "none"` configured. This is **intentional and safe** because:
+- The browser build still has full hashing enabled (cache-busting works)
+- The prerender builder requires a predictable filename (`main.js`)
+- Server-side code is not cached by browsers
+- Only affects internal build tooling, not production assets
+
 ### Erro: "document is not defined"
 - Adicione guard: `if (typeof document !== 'undefined')`
 - Ou use `isPlatformBrowser(platformId)`

@@ -52,12 +52,29 @@ export function app(): express.Express {
   server.get('**', (req, res, next) => {
     const { protocol, originalUrl, baseUrl, headers } = req;
 
-    // Check if the prerendered file exists
-    const prerenderPath = join(browserDistFolder, originalUrl, 'index.html');
-    if (existsSync(prerenderPath)) {
-      // Serve the prerendered file
-      res.sendFile(prerenderPath);
+    // Sanitize the URL to prevent path traversal attacks
+    const sanitizedUrl = originalUrl.split('?')[0]; // Remove query params
+    const normalizedPath = sanitizedUrl.replace(/\\/g, '/').replace(/\/\.\./g, '').replace(/\.\./g, '');
+    
+    // Ensure path starts with /
+    const safePath = normalizedPath.startsWith('/') ? normalizedPath : `/${normalizedPath}`;
+
+    // Check if the prerendered file exists (with path validation)
+    if (safePath.includes('..') || safePath.includes('\\')) {
+      // Invalid path, skip prerendered check
+      next();
       return;
+    }
+
+    const prerenderPath = join(browserDistFolder, safePath, 'index.html');
+    if (existsSync(prerenderPath)) {
+      // Verify the resolved path is still within browserDistFolder (security check)
+      const resolvedPath = resolve(prerenderPath);
+      const resolvedBase = resolve(browserDistFolder);
+      if (resolvedPath.startsWith(resolvedBase)) {
+        res.sendFile(resolvedPath);
+        return;
+      }
     }
 
     // Otherwise, use SSR

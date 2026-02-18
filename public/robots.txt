@@ -1,0 +1,6 @@
+# robots.txt for Guia Noivas
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://guianoivas.com/sitemap.xml

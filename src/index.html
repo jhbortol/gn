@@ -13,16 +13,6 @@
     form-action 'self' https://formspree.io;
   ">
   
-  <!-- GitHub Pages SPA redirect handler -->
-  <script>
-    (function() {
-      var redirect = sessionStorage.redirect;
-      delete sessionStorage.redirect;
-      if (redirect && redirect !== location.href) {
-        history.replaceState(null, null, redirect);
-      }
-    })();
-  </script>
   <!-- Performance resource hints -->
   <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
   <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>

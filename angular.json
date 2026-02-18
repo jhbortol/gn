@@ -136,13 +136,42 @@
           },
           "configurations": {
             "production": {
-              "outputHashing": "all"
+              "outputHashing": "none"
             },
             "development": {
               "optimization": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "outputHashing": "none"
             }
-          }
+          },
+          "defaultConfiguration": "production"
+        },
+        "prerender": {
+          "builder": "@angular-devkit/build-angular:prerender",
+          "options": {
+            "routes": [
+              "/piracicaba",
+              "/piracicaba/categorias",
+              "/piracicaba/anuncie",
+              "/piracicaba/contato",
+              "/piracicaba/blog",
+              "/piracicaba/guia-precos",
+              "/piracicaba/institucional/termos",
+              "/piracicaba/institucional/privacidade",
+              "/piracicaba/institucional/sobre"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "guia-noivas:build:production",
+              "serverTarget": "guia-noivas:server:production"
+            },
+            "development": {
+              "browserTarget": "guia-noivas:build:development",
+              "serverTarget": "guia-noivas:server:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }

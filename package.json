@@ -4,9 +4,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "node replace-env.js && ng build",
-    "build:ssr": "node replace-env.js && ng build && ng run guia-noivas:server:production",
-    "prerender": "node replace-env.js && ng run guia-noivas:prerender:production",
+    "build": "ng build",
+    "build:ssr": "ng build && ng run guia-noivas:server:production",
+    "prerender": "ng run guia-noivas:prerender:production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:guia-noivas": "node dist/guia-noivas/server/main.js"

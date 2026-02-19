@@ -83,7 +83,7 @@ async function getFornecedoresPrerenderParams() {
 async function getCategoriasData() {
   try {
     const apiUrl = process.env['API_BASE_URL'] || 'https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1';
-    const response = await fetch(`${apiUrl}/public/categorias/vitrine`);
+    const response = await fetch(`${apiUrl}/public/categorias`);
     
     if (!response.ok) {
       console.warn('Failed to fetch categories for prerendering');

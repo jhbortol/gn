@@ -1,11 +1,13 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Meta, Title } from '@angular/platform-browser';
 import { FornecedoresData, FornecedorListDto } from '../../features/fornecedores/services/fornecedores-data';
 import { CategoriasData } from './services/categorias-data';
-import { Observable, switchMap } from 'rxjs';
+import { Observable, switchMap, firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CidadeService } from '../../core/cidade.service';
+import { MetaTagService } from '../../core/meta-tag.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -16,7 +18,7 @@ import { environment } from '../../../environments/environment';
   imports: [CommonModule, RouterModule, NgOptimizedImage],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CategoriaDetalhePageComponent {
+export class CategoriaDetalhePageComponent implements OnInit {
   categoriaId$: Observable<string>;
   categoriaNome$: Observable<string>;
   /**
@@ -32,13 +34,14 @@ export class CategoriaDetalhePageComponent {
   constructor(
     private route: ActivatedRoute,
     private fornecedores: FornecedoresData,
-    private categorias: CategoriasData
+    private categorias: CategoriasData,
+    private metaTagService: MetaTagService,
+    private title: Title,
+    private meta: Meta
   ) {
     this.categoriaId$ = this.route.paramMap.pipe(
       map((params: any) => params.get('id') || '')
     );
-    // debug: log incoming category id/slug
-    this.categoriaId$.subscribe(id => console.debug('[CATEGORIA PAGE] route id param:', id));
 
     // Buscar fornecedores da categoria e filtrar apenas públicos (planLevel >= 0)
     // NÃO reordenar - a API já retorna na ordem correta por tier
@@ -55,6 +58,55 @@ export class CategoriaDetalhePageComponent {
     this.destaquesCategoria$ = this.publicFornecedores$.pipe(
       map(list => list.filter(f => f.destaque))
     );
+  }
+
+  async ngOnInit(): Promise<void> {
+    // Wait for the categoria ID to be loaded and apply meta tags
+    try {
+      const categoriaSlug = await firstValueFrom(
+        this.route.paramMap.pipe(
+          map((params: any) => params.get('id') || '')
+        )
+      );
+      
+      if (categoriaSlug) {
+        // Fetch categoria data to get title, description, and image
+        const categoria = await firstValueFrom(
+          this.categorias.getBySlug(categoriaSlug)
+        );
+        
+        if (categoria) {
+          this.updateSeoMetaTags(categoria, categoriaSlug);
+        }
+      }
+    } catch (error) {
+      console.error('Error applying categoria meta tags:', error);
+    }
+  }
+
+  /**
+   * Atualiza meta tags SEO para a categoria
+   */
+  private updateSeoMetaTags(categoria: any, slug: string): void {
+    // Título: "Categoria - Fornecedores em Piracicaba"
+    const pageTitle = `${categoria.nome || 'Categoria'} - Fornecedores em Piracicaba`;
+    this.title.setTitle(pageTitle);
+
+    // Meta description: primeiros 155 caracteres da descrição
+    const description = (categoria.descricao || categoria.nome || '').substring(0, 155);
+    this.meta.updateTag({ name: 'description', content: description });
+
+    // Open Graph tags
+    this.meta.updateTag({ property: 'og:title', content: pageTitle });
+    this.meta.updateTag({ property: 'og:description', content: description });
+    this.meta.updateTag({ property: 'og:type', content: 'website' });
+
+    // Image
+    const ogImage = categoria.imageUrl || categoria.thumbnailUrl || '';
+    if (ogImage) {
+      this.meta.updateTag({ property: 'og:image', content: ogImage });
+      this.meta.updateTag({ property: 'og:image:alt', content: `${categoria.nome} - Fornecedores em Piracicaba` });
+    }
   }
 
   buildUrl(path: string | string[]): string {

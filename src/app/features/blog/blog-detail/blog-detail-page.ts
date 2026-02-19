@@ -6,6 +6,7 @@ import { BlogData, BlogPost, BlogPostListDto } from '../services/blog-data';
 import { CidadeService } from '../../../core/cidade.service';
 import { TrackingService } from '../../../core/tracking.service';
 import { MetaTagService } from '../../../core/meta-tag.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-blog-detail',
@@ -42,10 +43,10 @@ export class BlogDetailPage implements OnInit {
     this.metaTagService.applyMetadata(currentRoute);
 
     // Subscribe to route params to reload when navigating between articles
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe(async params => {
       const slug = params['slug'];
       if (slug) {
-        this.loadPost(slug);
+        await this.loadPostAsync(slug);
         // Scroll to top when navigating to a new article
         if (typeof window !== 'undefined') {
           window.scrollTo(0, 0);
@@ -54,30 +55,36 @@ export class BlogDetailPage implements OnInit {
     });
   }
 
-  loadPost(slug: string): void {
+  async loadPostAsync(slug: string): Promise<void> {
     this.isLoading.set(true);
-    this.blogData.getBySlug(slug).subscribe({
-      next: (post) => {
-        this.post.set(post);
-        this.isLoading.set(false);
-        this.setSEOMeta(post);
-        this.addStructuredData(post);
-        this.blogData.incrementViews(post.id).subscribe();
-        this.loadRelated(post.id);
-        
-        // Track blog view
-        if (typeof window !== 'undefined' && (window as any).fbq) {
-          (window as any).fbq('track', 'ViewContent', {
-            content_type: 'blog_post',
-            content_name: post.title,
-            content_id: post.id
-          });
-        }
-      },
-      error: () => {
-        this.isLoading.set(false);
+    try {
+      // Use firstValueFrom to ensure the Observable completes before continuing
+      // This is critical for SSR to include meta tags in the rendered HTML
+      const post = await firstValueFrom(this.blogData.getBySlug(slug));
+      this.post.set(post);
+      this.isLoading.set(false);
+      this.setSEOMeta(post);
+      this.addStructuredData(post);
+      this.blogData.incrementViews(post.id).subscribe();
+      this.loadRelated(post.id);
+      
+      // Track blog view
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'ViewContent', {
+          content_type: 'blog_post',
+          content_name: post.title,
+          content_id: post.id
+        });
       }
-    });
+    } catch (error) {
+      console.error('Error loading blog post:', error);
+      this.isLoading.set(false);
+    }
+  }
+
+  loadPost(slug: string): void {
+    // Legacy method for backward compatibility - kept for any direct calls
+    this.loadPostAsync(slug).catch(err => console.error('Error in loadPost:', err));
   }
 
   loadRelated(postId: string): void {

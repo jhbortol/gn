@@ -25,11 +25,13 @@ export class IpService {
     return this.http.get<IpInfo>(IpService.IP_API_URL).pipe(
       timeout(5000), // Timeout de 5 segundos
       map(response => {
-        console.log('[IpService] Resposta recebida:', response);
-        return response.ip;
+        const ip = response.ip;
+        console.log('[IpService] IP extraído com sucesso:', ip);
+        return ip;
       }),
       catchError(error => {
         console.warn('[IpService] Erro ao buscar IP:', error);
+        console.log('[IpService] Retornando string vazia');
         return of('');
       })
     );

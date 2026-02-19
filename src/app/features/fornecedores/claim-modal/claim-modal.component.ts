@@ -145,7 +145,7 @@ export class ClaimModalComponent implements OnInit {
         // Buscar o IP do usuário antes de enviar o payload
         this.ipService.getUserIp().subscribe({
             next: (clientIp: string) => {
-                console.log('[ClaimModal] IP recebido:', clientIp);
+                console.log('[ClaimModal] IP recebido (next):', clientIp);
 
                 const payload: ClaimPayload = {
                     fullName: formVal.fullName,
@@ -155,15 +155,15 @@ export class ClaimModalComponent implements OnInit {
                     aceitaTermos: formVal.aceitaTermos,
                     termoHash: this.termoHash,
                     dataAceite: new Date().toISOString(),
-                    clientIp: clientIp || undefined // Incluir IP se capturado com sucesso
+                    clientIp: clientIp // Sempre incluir, mesmo que vazio
                 };
 
                 console.log('[ClaimModal] Payload completo:', payload);
                 this.sendClaimRequest(payload);
             },
             error: (err) => {
-                console.warn('[ClaimModal] Erro ao buscar IP, prosseguindo sem IP:', err);
-                // Prosseguir sem o IP se a requisição falhar
+                console.warn('[ClaimModal] Erro ao buscar IP (error):', err);
+                // Prosseguir com IP vazio se a requisição falhar
                 const payload: ClaimPayload = {
                     fullName: formVal.fullName,
                     email: formVal.email,
@@ -171,9 +171,10 @@ export class ClaimModalComponent implements OnInit {
                     password: formVal.password,
                     aceitaTermos: formVal.aceitaTermos,
                     termoHash: this.termoHash,
-                    dataAceite: new Date().toISOString()
+                    dataAceite: new Date().toISOString(),
+                    clientIp: '' // IP vazio em caso de erro
                 };
-                console.log('[ClaimModal] Payload sem IP:', payload);
+                console.log('[ClaimModal] Payload com IP vazio:', payload);
                 this.sendClaimRequest(payload);
             }
         });

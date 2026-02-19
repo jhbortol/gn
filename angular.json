@@ -225,7 +225,7 @@
               "serverTarget": "guia-noivas:server:development"
             }
           },
-          "defaultConfiguration": "production"
+          "defaultConfiguration": "development"
         }
       }
     }

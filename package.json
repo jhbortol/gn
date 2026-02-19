@@ -5,8 +5,11 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --configuration=production",
     "build:ssr": "ng build && ng run guia-noivas:server:production",
-    "prerender": "ng run guia-noivas:prerender:production",
+    "build:ssr:prod": "ng build --configuration=production && ng run guia-noivas:server:production",
+    "prerender": "ng run guia-noivas:prerender",
+    "prerender:prod": "ng run guia-noivas:prerender:production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:guia-noivas": "node dist/guia-noivas/server/main.js"

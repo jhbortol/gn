@@ -11,7 +11,13 @@ export interface IpInfo {
   providedIn: 'root'
 })
 export class IpService {
-  private static readonly IP_API_URL = 'https://api.ipify.org?format=json';
+  // Using CORS-friendly IP detection APIs
+  // bigdatacloud: Returns JSON, supports CORS
+  // amazonaws: Simple text response, very reliable
+  private static readonly IP_API_URLS = [
+    'https://api.bigdatacloud.net/data/client-ip',
+    'https://checkip.amazonaws.com'
+  ];
 
   constructor(private http: HttpClient) {}
 
@@ -22,17 +28,31 @@ export class IpService {
   getUserIp(): Observable<string> {
     console.log('[IpService] Iniciando busca do IP do usuário...');
     
-    return this.http.get<IpInfo>(IpService.IP_API_URL).pipe(
-      timeout(5000), // Timeout de 5 segundos
+    // Try primary API first (JSON response with CORS support)
+    return this.http.get<any>(IpService.IP_API_URLS[0]).pipe(
+      timeout(5000),
       map(response => {
-        const ip = response.ip;
-        console.log('[IpService] IP extraído com sucesso:', ip);
+        // bigdatacloud returns: { ipString: "1.2.3.4", ... }
+        const ip = response.ipString || response.ip || '';
+        console.log('[IpService] IP extraído com sucesso (primary):', ip);
         return ip;
       }),
       catchError(error => {
-        console.warn('[IpService] Erro ao buscar IP:', error);
-        console.log('[IpService] Retornando string vazia');
-        return of('');
+        console.warn('[IpService] Erro ao buscar IP (primary):', error.message);
+        // Try fallback API (plain text response, very reliable)
+        return this.http.get(IpService.IP_API_URLS[1], { responseType: 'text' }).pipe(
+          timeout(5000),
+          map(ip => {
+            const cleanIp = ip.trim();
+            console.log('[IpService] IP extraído com sucesso (fallback):', cleanIp);
+            return cleanIp;
+          }),
+          catchError(fallbackError => {
+            console.warn('[IpService] Erro ao buscar IP (fallback):', fallbackError.message);
+            console.log('[IpService] Retornando string vazia');
+            return of('');
+          })
+        );
       })
     );
   }

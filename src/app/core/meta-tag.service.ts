@@ -37,6 +37,7 @@ export class MetaTagService {
       if (transferredMetadata) {
         this.metadata = transferredMetadata;
         this.isMetadataLoaded = true;
+        console.log('[MetaTagService] Metadata loaded from TransferState');
         return;
       }
 
@@ -47,23 +48,39 @@ export class MetaTagService {
         if (globalMeta && typeof globalMeta === 'object') {
           this.metadata = globalMeta;
           this.isMetadataLoaded = true;
+          console.log('[MetaTagService] Metadata loaded from global scope');
           return;
         }
 
         // Fallback: try to load from assets (for client-side navigation)
+        // This is optional - if file doesn't exist, just proceed with empty metadata
         fetch('/prerender-metadata.json')
-          .then(res => res.json())
+          .then(res => {
+            if (!res.ok) {
+              console.log('[MetaTagService] prerender-metadata.json not found (expected for client-only routes)');
+              this.isMetadataLoaded = true;
+              return null;
+            }
+            return res.json();
+          })
           .then(data => {
-            this.metadata = data || {};
+            if (data) {
+              this.metadata = data;
+              console.log('[MetaTagService] Metadata loaded from file');
+            }
             this.isMetadataLoaded = true;
           })
           .catch(err => {
-            console.warn('Could not load prerender metadata:', err);
+            // File not found is not an error for client-side navigation
+            console.log('[MetaTagService] Could not load prerender metadata (using empty):', err.message);
             this.isMetadataLoaded = true;
           });
+      } else {
+        // On server side, just mark as loaded
+        this.isMetadataLoaded = true;
       }
     } catch (err) {
-      console.warn('Error loading metadata:', err);
+      console.warn('[MetaTagService] Error loading metadata:', err);
       this.isMetadataLoaded = true;
     }
   }

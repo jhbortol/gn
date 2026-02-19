@@ -80,6 +80,24 @@ async function getFornecedoresPrerenderParams() {
     .map(p => p.id);
 }
 
+async function getCategoriasData() {
+  try {
+    const apiUrl = process.env['API_BASE_URL'] || 'https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1';
+    const response = await fetch(`${apiUrl}/public/categorias`);
+    
+    if (!response.ok) {
+      console.warn('Failed to fetch categories for prerendering');
+      return [];
+    }
+
+    const data = await response.json();
+    return Array.isArray(data) ? data : (data?.data || []);
+  } catch (error) {
+    console.warn('Error fetching categories for prerendering:', error);
+    return [];
+  }
+}
+
 async function generateRoutes() {
   const staticRoutes = [
     "/piracicaba",
@@ -96,6 +114,7 @@ async function generateRoutes() {
   console.log('Fetching dynamic routes and metadata...');
   const blogPosts = await getBlogPosts();
   const fornecedores = await getFornecedoresData();
+  const categorias = await getCategoriasData();
 
   const blogRoutes = blogPosts
     .map(post => ({
@@ -115,10 +134,31 @@ async function generateRoutes() {
     }))
     .filter(f => f.route && f.route.length > 0);
 
+  // Normalize category slugs (same logic as categorias-data.ts)
+  const normalizarSlug = (slug) => {
+    return String(slug)
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .replace(/[^\w\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .toLowerCase();
+  };
+
+  const categoriaRoutes = categorias
+    .map(c => ({
+      route: `/piracicaba/categorias/${normalizarSlug(c.slug || c.Slug || c.id || c.Id)}`,
+      title: `${c.nome || c.Nome || 'Categoria'} - Fornecedores em Piracicaba`,
+      description: (c.descricao || c.Descricao || c.nome || c.Nome || '').substring(0, 160),
+      image: c.imageUrl || c.ImageUrl || c.thumbnailUrl || c.ThumbnailUrl || null
+    }))
+    .filter(c => c.route && c.route.length > 0);
+
   // Build routes array (just paths for angular)
   const dynamicRoutes = [
     ...blogRoutes.map(b => b.route),
-    ...fornecedorRoutes.map(f => f.route)
+    ...fornecedorRoutes.map(f => f.route),
+    ...categoriaRoutes.map(c => c.route)
   ];
 
   const allRoutes = [...staticRoutes, ...dynamicRoutes];
@@ -128,7 +168,7 @@ async function generateRoutes() {
   
   // Write metadata file
   const metadata = {};
-  [...blogRoutes, ...fornecedorRoutes].forEach(item => {
+  [...blogRoutes, ...fornecedorRoutes, ...categoriaRoutes].forEach(item => {
     metadata[item.route] = {
       title: item.title,
       description: item.description,
@@ -140,7 +180,7 @@ async function generateRoutes() {
   
   console.log('Generated prerender-routes.json with', allRoutes.length, 'routes');
   console.log('Generated prerender-metadata.json with', Object.keys(metadata).length, 'metadata entries');
-  console.log('Static:', staticRoutes.length, 'Dynamic:', dynamicRoutes.length);
+  console.log('Static:', staticRoutes.length, 'Dynamic (blog:', blogRoutes.length, '+ fornecedores:', fornecedorRoutes.length, '+ categorias:', categoriaRoutes.length, ')');
 }
 
 generateRoutes().catch(console.error);

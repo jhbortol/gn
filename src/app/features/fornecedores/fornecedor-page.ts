@@ -6,7 +6,7 @@ import { ClickwrapAgreementComponent } from '../../shared/clickwrap-agreement/cl
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
 import { TrackingService } from '../../core/tracking.service';
 import { MetaTagService } from '../../core/meta-tag.service';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { LeadFormComponent } from './lead-form.component';
 import { CompetitorAdsComponent } from './competitor-ads.component';
@@ -60,7 +60,7 @@ export class FornecedorPageComponent implements OnInit {
     private metaTagService: MetaTagService
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     const identifier = this.route.snapshot.params['id']; // pode ser GUID ou slug
     this.isPreviewMode = this.route.snapshot.queryParams['preview'] === 'true';
 
@@ -72,40 +72,42 @@ export class FornecedorPageComponent implements OnInit {
     }
 
     if (identifier) {
-      this.fornecedores.getById(identifier, this.isPreviewMode).subscribe({
-        next: (f) => {
-          // Validate publicado field if environment requires it
-          // Only enforce if FORNECEDOR_PUBLICADO is true (production) and not in preview mode
-          if (environment.FORNECEDOR_PUBLICADO === true && !this.isPreviewMode && !f.publicado) {
-            console.warn('Fornecedor não publicado acessado diretamente:', f.id);
-            this.notFound = true;
-            this.updateNotFoundMetaTags();
-            this.cdr.markForCheck();
-            return;
-          }
-
-          this.fornecedor = f;
-
-          // 🔴 NOVO: Aplicar lógica tier
-          this.applyTierLogic(f);
-
-          // 🔴 NOVO: Atualizar meta tags SEO
-          this.updateSeoMetaTags(f);
-
-          this.tracking.trackVendorView({
-            vendorId: f.id,
-            vendorName: f.nome,
-            vendorCategory: f.categoria
-          });
-          this.cdr.markForCheck();
-        },
-        error: (err) => {
-          console.error('Error loading fornecedor:', err);
+      try {
+        // Use firstValueFrom to ensure the Observable completes before continuing
+        // This is critical for SSR to include meta tags in the rendered HTML
+        const f = await firstValueFrom(this.fornecedores.getById(identifier, this.isPreviewMode));
+        
+        // Validate publicado field if environment requires it
+        // Only enforce if FORNECEDOR_PUBLICADO is true (production) and not in preview mode
+        if (environment.FORNECEDOR_PUBLICADO === true && !this.isPreviewMode && !f.publicado) {
+          console.warn('Fornecedor não publicado acessado diretamente:', f.id);
           this.notFound = true;
           this.updateNotFoundMetaTags();
           this.cdr.markForCheck();
+          return;
         }
-      });
+
+        this.fornecedor = f;
+
+        // 🔴 NOVO: Aplicar lógica tier
+        this.applyTierLogic(f);
+
+        // 🔴 NOVO: Atualizar meta tags SEO
+        // This is now guaranteed to run before SSR renders the page
+        this.updateSeoMetaTags(f);
+
+        this.tracking.trackVendorView({
+          vendorId: f.id,
+          vendorName: f.nome,
+          vendorCategory: f.categoria
+        });
+        this.cdr.markForCheck();
+      } catch (err) {
+        console.error('Error loading fornecedor:', err);
+        this.notFound = true;
+        this.updateNotFoundMetaTags();
+        this.cdr.markForCheck();
+      }
     }
   }
 

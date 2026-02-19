@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FornecedoresData } from '../services/fornecedores-data';
 import { ClaimPayload } from '../services/fornecedores-data';
+import { IpService } from '../../../core/ip.service';
 
 @Component({
     selector: 'app-claim-modal',
@@ -31,7 +32,8 @@ export class ClaimModalComponent implements OnInit {
 
     constructor(
         private fb: FormBuilder,
-        private fornecedoresService: FornecedoresData
+        private fornecedoresService: FornecedoresData,
+        private ipService: IpService
     ) {
         this.claimForm = this.fb.group({
             fullName: ['', [Validators.required, Validators.minLength(3)]],
@@ -137,16 +139,40 @@ export class ClaimModalComponent implements OnInit {
         const formVal = this.claimForm.value;
         const cleanPhone = formVal.phone.replace(/\D/g, '');
 
-        const payload: ClaimPayload = {
-            fullName: formVal.fullName,
-            email: formVal.email,
-            phone: cleanPhone,
-            password: formVal.password,
-            aceitaTermos: formVal.aceitaTermos,
-            termoHash: this.termoHash,
-            dataAceite: new Date().toISOString()
-        };
+        // Buscar o IP do usuário antes de enviar o payload
+        this.ipService.getUserIp().subscribe({
+            next: (clientIp: string) => {
+                const payload: ClaimPayload = {
+                    fullName: formVal.fullName,
+                    email: formVal.email,
+                    phone: cleanPhone,
+                    password: formVal.password,
+                    aceitaTermos: formVal.aceitaTermos,
+                    termoHash: this.termoHash,
+                    dataAceite: new Date().toISOString(),
+                    clientIp: clientIp || undefined // Incluir IP se capturado com sucesso
+                };
 
+                this.sendClaimRequest(payload);
+            },
+            error: (err) => {
+                console.warn('Erro ao buscar IP, prosseguindo sem IP:', err);
+                // Prosseguir sem o IP se a requisição falhar
+                const payload: ClaimPayload = {
+                    fullName: formVal.fullName,
+                    email: formVal.email,
+                    phone: cleanPhone,
+                    password: formVal.password,
+                    aceitaTermos: formVal.aceitaTermos,
+                    termoHash: this.termoHash,
+                    dataAceite: new Date().toISOString()
+                };
+                this.sendClaimRequest(payload);
+            }
+        });
+    }
+
+    private sendClaimRequest(payload: ClaimPayload) {
         this.fornecedoresService.claimProfile(this.fornecedorId, payload).subscribe({
             next: (res) => {
                 // Armazenar tokens
@@ -174,6 +200,5 @@ export class ClaimModalComponent implements OnInit {
                 }
             }
         });
-
     }
 }

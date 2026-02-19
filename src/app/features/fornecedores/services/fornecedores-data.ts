@@ -454,6 +454,7 @@ export interface ClaimPayload {
   termoHash: string;
   aceitaTermos: boolean;
   dataAceite: string;
+  clientIp?: string; // IP do cliente (capturado antes do envio)
 }
 
 export interface ClaimResponse {

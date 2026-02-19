@@ -144,10 +144,7 @@ export class ClaimModalComponent implements OnInit {
 
         // Buscar o IP do usuário antes de enviar o payload
         this.ipService.getUserIp().subscribe({
-            next: (ipOrData: any) => {
-                // ipService pode retornar string ou IpInfo
-                const clientIp = typeof ipOrData === 'string' ? ipOrData : ipOrData.ip;
-                
+            next: (clientIp: string) => {
                 console.log('[ClaimModal] IP recebido:', clientIp);
 
                 const payload: ClaimPayload = {

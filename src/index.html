@@ -1,20 +1,6 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <!-- Environment configuration - loaded from config.json -->
-  <script>
-    (async function loadConfig() {
-      try {
-        const response = await fetch('/config.json');
-        const config = await response.json();
-        window.__env__ = config;
-      } catch (e) {
-        console.warn('Could not load config.json, using defaults', e);
-        window.__env__ = {};
-      }
-    })();
-  </script>
-  
   <!-- Content Security Policy to prevent XSS and data exfiltration -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';

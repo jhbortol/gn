@@ -7,6 +7,12 @@ import { environment } from '../../environments/environment';
 export class ApiService {
   constructor(private http: HttpClient) {}
 
+  private get apiBaseUrl(): string {
+    // Tenta pegar do 'window' (injetado via script do Azure, se necessário)
+    // senão usa o que foi definido no build (environment.ts ou environment.prod.ts)
+    return (window as any).API_BASE_URL || environment.API_BASE_URL;
+  }
+
   get<T>(url: string, params?: Record<string, any>): Observable<T> {
     let httpParams = new HttpParams();
     if (params) {
@@ -14,10 +20,10 @@ export class ApiService {
         if (v !== undefined && v !== null) httpParams = httpParams.set(k, String(v));
       });
     }
-    return this.http.get<T>(`${environment.API_BASE_URL}${url}`, { params: httpParams });
+    return this.http.get<T>(`${this.apiBaseUrl}${url}`, { params: httpParams });
   }
 
   post<T>(url: string, body: any): Observable<T> {
-    return this.http.post<T>(`${environment.API_BASE_URL}${url}`, body);
+    return this.http.post<T>(`${this.apiBaseUrl}${url}`, body);
   }
 }

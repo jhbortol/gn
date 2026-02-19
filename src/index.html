@@ -1,11 +1,18 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <!-- Environment configuration -->
+  <!-- Environment configuration - loaded from config.json -->
   <script>
-    window.__env__ = {
-      API_BASE_URL: '${API_BASE_URL}'
-    };
+    (async function loadConfig() {
+      try {
+        const response = await fetch('/config.json');
+        const config = await response.json();
+        window.__env__ = config;
+      } catch (e) {
+        console.warn('Could not load config.json, using defaults', e);
+        window.__env__ = {};
+      }
+    })();
   </script>
   
   <!-- Content Security Policy to prevent XSS and data exfiltration -->

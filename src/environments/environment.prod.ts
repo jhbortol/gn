@@ -15,3 +15,15 @@ export const environment = {
   FORNECEDOR_PUBLICADO: true as boolean | null,
   PAINEL_URL: 'https://painel.guianoivas.com'
 };
+
+// Load config from server if not already set
+if (typeof window !== 'undefined' && !window.__env__?.API_BASE_URL) {
+  fetch('/config.json')
+    .then(response => response.json())
+    .then(config => {
+      if (window.__env__) {
+        window.__env__.API_BASE_URL = config.API_BASE_URL;
+      }
+    })
+    .catch(e => console.warn('Could not load config.json', e));
+}

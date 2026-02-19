@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FornecedoresData } from '../services/fornecedores-data';
 import { ClaimPayload } from '../services/fornecedores-data';
-import { IpService } from '../../../core/ip.service';
+import { IpService, IpInfo } from '../../../core/ip.service';
 
 @Component({
     selector: 'app-claim-modal',
@@ -139,9 +139,17 @@ export class ClaimModalComponent implements OnInit {
         const formVal = this.claimForm.value;
         const cleanPhone = formVal.phone.replace(/\D/g, '');
 
+        console.log('[ClaimModal] Iniciando processo de claim...');
+        console.log('[ClaimModal] Buscando IP do usuário...');
+
         // Buscar o IP do usuário antes de enviar o payload
         this.ipService.getUserIp().subscribe({
-            next: (clientIp: string) => {
+            next: (ipOrData: any) => {
+                // ipService pode retornar string ou IpInfo
+                const clientIp = typeof ipOrData === 'string' ? ipOrData : ipOrData.ip;
+                
+                console.log('[ClaimModal] IP recebido:', clientIp);
+
                 const payload: ClaimPayload = {
                     fullName: formVal.fullName,
                     email: formVal.email,
@@ -153,10 +161,11 @@ export class ClaimModalComponent implements OnInit {
                     clientIp: clientIp || undefined // Incluir IP se capturado com sucesso
                 };
 
+                console.log('[ClaimModal] Payload completo:', payload);
                 this.sendClaimRequest(payload);
             },
             error: (err) => {
-                console.warn('Erro ao buscar IP, prosseguindo sem IP:', err);
+                console.warn('[ClaimModal] Erro ao buscar IP, prosseguindo sem IP:', err);
                 // Prosseguir sem o IP se a requisição falhar
                 const payload: ClaimPayload = {
                     fullName: formVal.fullName,
@@ -167,6 +176,7 @@ export class ClaimModalComponent implements OnInit {
                     termoHash: this.termoHash,
                     dataAceite: new Date().toISOString()
                 };
+                console.log('[ClaimModal] Payload sem IP:', payload);
                 this.sendClaimRequest(payload);
             }
         });
@@ -175,6 +185,7 @@ export class ClaimModalComponent implements OnInit {
     private sendClaimRequest(payload: ClaimPayload) {
         this.fornecedoresService.claimProfile(this.fornecedorId, payload).subscribe({
             next: (res) => {
+                console.log('[ClaimModal] Claim bem-sucedido:', res);
                 // Armazenar tokens
                 localStorage.setItem('accessToken', res.accessToken);
                 localStorage.setItem('refreshToken', res.refreshToken);
@@ -189,7 +200,7 @@ export class ClaimModalComponent implements OnInit {
                 // podemos redirecionar aqui. Vou deixar o parent lidar com o evento success.
             },
             error: (err) => {
-                console.error('Erro no claim:', err);
+                console.error('[ClaimModal] Erro no claim:', err);
                 this.isSubmitting = false;
                 if (err.error && err.error.message) {
                     this.errorMessage = err.error.message;

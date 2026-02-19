@@ -35,6 +35,8 @@ jobs:
           fi
       - name: Build for Development
         run: npm run prerender
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
       - name: Debug - List build output
         run: ls -la dist/guia-noivas/browser/ && ls -la dist/guia-noivas/server/ || echo "Build output not found"
       - name: Deploy to Azure Static Web Apps

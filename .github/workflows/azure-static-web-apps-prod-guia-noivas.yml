@@ -37,7 +37,7 @@ jobs:
             echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>' > public/sitemap.xml
           fi
       - name: Build for Production
-        run: npm run prerender
+        run: npm run prerender:prod
       - name: Debug - List build output
         run: ls -la dist/guia-noivas/browser/ || echo "Build output not found"
       - name: Deploy to Azure Static Web Apps

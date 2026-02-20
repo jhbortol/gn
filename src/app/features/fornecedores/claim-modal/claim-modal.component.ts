@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FornecedoresData } from '../services/fornecedores-data';
 import { ClaimPayload } from '../services/fornecedores-data';
+import { IpService, IpInfo } from '../../../core/ip.service';
 
 @Component({
     selector: 'app-claim-modal',
@@ -31,7 +32,8 @@ export class ClaimModalComponent implements OnInit {
 
     constructor(
         private fb: FormBuilder,
-        private fornecedoresService: FornecedoresData
+        private fornecedoresService: FornecedoresData,
+        private ipService: IpService
     ) {
         this.claimForm = this.fb.group({
             fullName: ['', [Validators.required, Validators.minLength(3)]],
@@ -137,18 +139,51 @@ export class ClaimModalComponent implements OnInit {
         const formVal = this.claimForm.value;
         const cleanPhone = formVal.phone.replace(/\D/g, '');
 
-        const payload: ClaimPayload = {
-            fullName: formVal.fullName,
-            email: formVal.email,
-            phone: cleanPhone,
-            password: formVal.password,
-            aceitaTermos: formVal.aceitaTermos,
-            termoHash: this.termoHash,
-            dataAceite: new Date().toISOString()
-        };
+        console.log('[ClaimModal] Iniciando processo de claim...');
+        console.log('[ClaimModal] Buscando IP do usuário...');
 
+        // Buscar o IP do usuário antes de enviar o payload
+        this.ipService.getUserIp().subscribe({
+            next: (clientIp: string) => {
+                console.log('[ClaimModal] IP recebido (next):', clientIp);
+
+                const payload: ClaimPayload = {
+                    fullName: formVal.fullName,
+                    email: formVal.email,
+                    phone: cleanPhone,
+                    password: formVal.password,
+                    aceitaTermos: formVal.aceitaTermos,
+                    termoHash: this.termoHash,
+                    dataAceite: new Date().toISOString(),
+                    clientIp: clientIp // Sempre incluir, mesmo que vazio
+                };
+
+                console.log('[ClaimModal] Payload completo:', payload);
+                this.sendClaimRequest(payload);
+            },
+            error: (err) => {
+                console.warn('[ClaimModal] Erro ao buscar IP (error):', err);
+                // Prosseguir com IP vazio se a requisição falhar
+                const payload: ClaimPayload = {
+                    fullName: formVal.fullName,
+                    email: formVal.email,
+                    phone: cleanPhone,
+                    password: formVal.password,
+                    aceitaTermos: formVal.aceitaTermos,
+                    termoHash: this.termoHash,
+                    dataAceite: new Date().toISOString(),
+                    clientIp: '' // IP vazio em caso de erro
+                };
+                console.log('[ClaimModal] Payload com IP vazio:', payload);
+                this.sendClaimRequest(payload);
+            }
+        });
+    }
+
+    private sendClaimRequest(payload: ClaimPayload) {
         this.fornecedoresService.claimProfile(this.fornecedorId, payload).subscribe({
             next: (res) => {
+                console.log('[ClaimModal] Claim bem-sucedido:', res);
                 // Armazenar tokens
                 localStorage.setItem('accessToken', res.accessToken);
                 localStorage.setItem('refreshToken', res.refreshToken);
@@ -163,7 +198,7 @@ export class ClaimModalComponent implements OnInit {
                 // podemos redirecionar aqui. Vou deixar o parent lidar com o evento success.
             },
             error: (err) => {
-                console.error('Erro no claim:', err);
+                console.error('[ClaimModal] Erro no claim:', err);
                 this.isSubmitting = false;
                 if (err.error && err.error.message) {
                     this.errorMessage = err.error.message;
@@ -174,6 +209,5 @@ export class ClaimModalComponent implements OnInit {
                 }
             }
         });
-
     }
 }

@@ -3,13 +3,15 @@ import { Component, signal, inject, AfterViewInit, PLATFORM_ID, Inject } from '@
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { NavbarComponent } from './shared/navbar/navbar';
 import { FooterComponent } from './shared/footer/footer';
+import { UpdateNotificationComponent } from './shared/update-notification.component';
 import { TrackingService } from './core/tracking.service';
+import { VersionCheckService } from './core/version-check.service';
 import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, FooterComponent],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent, UpdateNotificationComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
@@ -19,6 +21,7 @@ export class App implements AfterViewInit {
   showFooter = signal(true);
   private router = inject(Router);
   private tracking = inject(TrackingService);
+  private versionCheck = inject(VersionCheckService);
   private isBrowser: boolean;
 
   constructor(@Inject(PLATFORM_ID) platformId: object) {

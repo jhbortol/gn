@@ -131,6 +131,26 @@
       },50);
       setTimeout(()=>clearInterval(interval),5000);
     })();
+
+    // Version check and cache detection on page load
+    if ('serviceWorker' in navigator || 'caches' in window) {
+      window.addEventListener('load', () => {
+        // Check for new version on load
+        if (window.__BUILD_VERSION__) {
+          const stored = localStorage.getItem('_appVersion');
+          if (stored && stored !== window.__BUILD_VERSION__) {
+            console.log('🔄 Nova versão detectada no carregamento');
+            // Clear caches to ensure fresh load
+            if ('caches' in window) {
+              caches.keys().then(names => {
+                names.forEach(name => caches.delete(name));
+              }).catch(e => console.warn('Erro ao limpar caches:', e));
+            }
+          }
+          localStorage.setItem('_appVersion', window.__BUILD_VERSION__);
+        }
+      });
+    }
   </script>
 </body>
 </html>

@@ -1,15 +1,15 @@
 {
   "name": "guia-noivas",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "build:prod": "ng build --configuration=production",
-    "build:ssr": "ng build && ng run guia-noivas:server:production",
-    "build:ssr:prod": "ng build --configuration=production && ng run guia-noivas:server:production",
-    "prerender": "ng run guia-noivas:prerender",
-    "prerender:prod": "ng run guia-noivas:prerender:production",
+    "build": "ng build && node inject-version.js",
+    "build:prod": "ng build --configuration=production && node inject-version.js",
+    "build:ssr": "ng build && ng run guia-noivas:server:production && node inject-version.js",
+    "build:ssr:prod": "ng build --configuration=production && ng run guia-noivas:server:production && node inject-version.js",
+    "prerender": "ng run guia-noivas:prerender && node inject-version.js",
+    "prerender:prod": "ng run guia-noivas:prerender:production && node inject-version.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:guia-noivas": "node dist/guia-noivas/server/main.js"

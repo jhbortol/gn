@@ -24,6 +24,12 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
+      - name: Generate Build Version
+        run: |
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          BUILD_ID="${COMMIT_HASH}-$(date +%s)"
+          echo "BUILD_ID=$BUILD_ID" >> $GITHUB_ENV
+          echo "::notice::🔨 Build ID: $BUILD_ID"
       - name: Fetch sitemap for static serving
         run: |
           SITEMAP_URL="https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1/sitemap.xml"
@@ -38,8 +44,16 @@ jobs:
           fi
       - name: Build for Production
         run: npm run prerender:prod
+        env:
+          BUILD_VERSION: ${{ env.BUILD_ID }}
       - name: Debug - List build output
         run: ls -la dist/guia-noivas/browser/ || echo "Build output not found"
+      - name: Create deployment annotation
+        run: |
+          echo "::notice::✅ Deployment started"
+          echo "Build version: ${{ env.BUILD_ID }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
       - name: Deploy to Azure Static Web Apps
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1

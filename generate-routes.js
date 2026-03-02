@@ -165,6 +165,13 @@ async function generateRoutes() {
       canonical: 'https://guianoivas.com/piracicaba/blog',
       robots: 'index, follow'
     },
+    '/piracicaba/fornecedores': {
+      title: 'Fornecedores de Casamento em Piracicaba | Guia Noivas',
+      description: 'Explore fornecedores de casamento em Piracicaba e encontre opções por categoria para cada etapa do seu evento.',
+      image: null,
+      canonical: 'https://guianoivas.com/piracicaba/fornecedores',
+      robots: 'index, follow'
+    },
     '/piracicaba/anuncie': {
       title: 'Anuncie - Guia Noivas Piracicaba',
       description: 'Seja um fornecedor parceiro do Guia Noivas Piracicaba. Saiba como anunciar seus serviços.',

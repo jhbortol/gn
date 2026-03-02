@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-03-02T14:57:13.165Z",
+  "coverage": 100,
+  "expectedRoutes": 71,
+  "presentRoutes": 71,
+  "missingRoutes": 0,
+  "missing": [],
+  "validations": {
+    "sitemap": false,
+    "robots": true,
+    "metadata": true
+  }
+}

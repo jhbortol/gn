@@ -12,10 +12,25 @@
     },
     "routes": [
         {
+            "route": "/",
+            "redirect": "/piracicaba",
+            "statusCode": 301
+        },
+        {
+            "route": "/categorias",
+            "redirect": "/piracicaba/categorias",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicaba/termos",
+            "redirect": "/piracicaba/institucional/termos",
+            "statusCode": 301
+        },
+        {
             "route": "/piracicaba/institucional/sobre-nos",
             "redirect": "/piracicaba/institucional/sobre",
             "statusCode": 301
-        },
+        }
         {
             "route": "/piracicaba/guia-precos/bolo",
             "redirect": "/piracicaba/guia-precos",

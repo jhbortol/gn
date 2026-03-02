@@ -7,6 +7,7 @@ import { UpdateNotificationComponent } from './shared/update-notification.compon
 import { TrackingService } from './core/tracking.service';
 import { VersionCheckService } from './core/version-check.service';
 import { SeoBlockerService } from './core/seo-blocker.service';
+import { MetaTagService } from './core/meta-tag.service';
 import { isPlatformBrowser } from '@angular/common';
 
 @Component({
@@ -24,6 +25,7 @@ export class App implements AfterViewInit {
   private tracking = inject(TrackingService);
   private versionCheck = inject(VersionCheckService);
   private seoBlocker = inject(SeoBlockerService);
+  private metaTagService = inject(MetaTagService);
   private isBrowser: boolean;
 
   constructor(@Inject(PLATFORM_ID) platformId: object) {
@@ -35,9 +37,12 @@ export class App implements AfterViewInit {
       if (ev instanceof NavigationEnd) {
         const hideNavbar = ev.url.includes('/midia-kit');
         const hideFooter = ev.url.includes('/midia-kit');
+        const currentRoute = (ev.urlAfterRedirects || ev.url || '/').split('?')[0].split('#')[0];
 
         this.showNavbar.set(!hideNavbar);
         this.showFooter.set(!hideFooter);
+
+        this.metaTagService.applyMetadata(currentRoute);
         
         // Only track and manipulate DOM in browser
         if (this.isBrowser) {

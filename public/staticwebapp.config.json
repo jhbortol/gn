@@ -12,6 +12,41 @@
     },
     "routes": [
         {
+            "route": "/piracicaba/institucional/sobre-nos",
+            "redirect": "/piracicaba/institucional/sobre",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicaba/guia-precos/bolo",
+            "redirect": "/piracicaba/guia-precos",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicaba/guia-precos/buffet",
+            "redirect": "/piracicaba/guia-precos",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicaba/guia-precos/convites",
+            "redirect": "/piracicaba/guia-precos",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicaba/guia-precos/decoracao",
+            "redirect": "/piracicaba/guia-precos",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicaba/guia-precos/fotografia",
+            "redirect": "/piracicaba/guia-precos",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicaba/guia-precos/vestido",
+            "redirect": "/piracicaba/guia-precos",
+            "statusCode": 301
+        },
+        {
             "route": "/index.html",
             "headers": {
                 "Cache-Control": "public, max-age=0, s-maxage=0, must-revalidate, no-store",

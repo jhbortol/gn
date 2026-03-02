@@ -3,6 +3,11 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
+    path: 'sobre-nos',
+    redirectTo: 'sobre',
+    pathMatch: 'full'
+  },
+  {
     path: 'sobre',
     loadComponent: () => import('./sobre-nos').then(m => m.SobreNosPageComponent)
   },

@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -14,7 +14,29 @@ import { environment } from '../../../environments/environment';
   templateUrl: './guia-precos-page.html',
   styleUrls: ['./guia-precos-page.css']
 })
-export class GuiaPrecosPage {
+export class GuiaPrecosPage implements OnInit {
+  private static readonly NOINDEX_PATTERNS = [
+    /^\/[^/]+\/guia-custos$/,
+    /^\/[^/]+\/guia-precos(?:\/[^/]+)?$/
+  ];
+
+    ngOnInit(): void {
+      this.injectNoIndexIfNeeded();
+    }
+
+    private injectNoIndexIfNeeded(): void {
+      if (typeof window === 'undefined') return;
+      const path = window.location.pathname;
+      if (GuiaPrecosPage.NOINDEX_PATTERNS.some(pattern => pattern.test(path))) {
+        let metaRobots = document.querySelector('meta[name="robots"]') as HTMLMetaElement;
+        if (!metaRobots) {
+          metaRobots = document.createElement('meta');
+          metaRobots.name = 'robots';
+          document.head.appendChild(metaRobots);
+        }
+        metaRobots.content = 'noindex, follow';
+      }
+    }
   leadForm: FormGroup;
 
   submitted = signal(false);

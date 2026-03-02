@@ -143,17 +143,94 @@ async function getCategoriasData() {
 }
 
 async function generateRoutes() {
-  const staticRoutes = [
-    "/piracicaba",
-    "/piracicaba/categorias",
-    "/piracicaba/anuncie",
-    "/piracicaba/contato",
-    "/piracicaba/blog",
-    "/piracicaba/guia-precos",
-    "/piracicaba/institucional/termos",
-    "/piracicaba/institucional/privacidade",
-    "/piracicaba/institucional/sobre"
-  ];
+  const staticRouteMetadata = {
+    '/piracicaba': {
+      title: 'Guia Noivas Piracicaba - Fornecedores para Casamentos',
+      description: 'Encontre os melhores fornecedores para seu casamento em Piracicaba. Fotógrafos, buffets, vestidos e muito mais.',
+      image: null,
+      canonical: 'https://guianoivas.com/piracicaba',
+      robots: 'index, follow'
+    },
+    '/piracicaba/categorias': {
+      title: 'Categorias de Fornecedores - Guia Noivas Piracicaba',
+      description: 'Navegue por todas as categorias de fornecedores para casamento em Piracicaba.',
+      image: null,
+      canonical: 'https://guianoivas.com/piracicaba/categorias',
+      robots: 'index, follow'
+    },
+    '/piracicaba/blog': {
+      title: 'Blog - Dicas para seu Casamento | Guia Noivas Piracicaba',
+      description: 'Artigos, dicas e inspirações para planejar o casamento dos seus sonhos em Piracicaba.',
+      image: null,
+      canonical: 'https://guianoivas.com/piracicaba/blog',
+      robots: 'index, follow'
+    },
+    '/piracicaba/anuncie': {
+      title: 'Anuncie - Guia Noivas Piracicaba',
+      description: 'Seja um fornecedor parceiro do Guia Noivas Piracicaba. Saiba como anunciar seus serviços.',
+      image: null,
+      canonical: 'https://guianoivas.com/piracicaba/anuncie',
+      robots: 'index, follow'
+    },
+    '/piracicaba/contato': {
+      title: 'Contato - Guia Noivas Piracicaba',
+      description: 'Fale com o Guia Noivas Piracicaba. Tire dúvidas, envie sugestões ou solicite informações sobre fornecedores.',
+      image: null,
+      canonical: 'https://guianoivas.com/piracicaba/contato',
+      robots: 'index, follow'
+    },
+    '/piracicaba/institucional': {
+      title: 'Institucional - Guia Noivas Piracicaba',
+      description: 'Conheça a história, missão e valores do Guia Noivas Piracicaba.',
+      image: null,
+      canonical: 'https://guianoivas.com/piracicaba/institucional/sobre',
+      robots: 'index, follow'
+    },
+    '/piracicaba/institucional/sobre': {
+      title: 'Sobre - Guia Noivas Piracicaba',
+      description: 'Conheça a história, missão e valores do Guia Noivas Piracicaba.',
+      image: null,
+      canonical: 'https://guianoivas.com/piracicaba/institucional/sobre',
+      robots: 'index, follow'
+    },
+    '/piracicaba/institucional/termos': {
+      title: 'Termos de Uso - Guia Noivas Piracicaba',
+      description: 'Leia os termos de uso e políticas do Guia Noivas Piracicaba.',
+      image: null,
+      canonical: 'https://guianoivas.com/piracicaba/institucional/termos',
+      robots: 'index, follow'
+    },
+    '/piracicaba/guia-precos': {
+      title: 'Guia de Preços Piracicaba - Quanto custa casar? | Guia Noivas Piracicaba',
+      description: 'Descubra os preços dos principais serviços de casamento em Piracicaba. Planeje seu orçamento com o Guia Noivas.',
+      image: null,
+      canonical: 'https://guianoivas.com/piracicaba/guia-precos',
+      robots: 'index, follow'
+    },
+    '/piracicaba/guia-custos': {
+      title: 'Guia de Custos do Casamento em Piracicaba | Guia Noivas',
+      description: 'Entenda os custos médios de casamento em Piracicaba e organize seu orçamento com mais clareza.',
+      image: null,
+      canonical: 'https://guianoivas.com/piracicaba/guia-precos',
+      robots: 'noindex, follow'
+    },
+    '/piracicaba/indicado': {
+      title: 'Começar a Planejar Casamento em Piracicaba | Guia Noivas',
+      description: 'Comece a organizar seu casamento em Piracicaba com orientações práticas e fornecedores verificados.',
+      image: null,
+      canonical: 'https://guianoivas.com/piracicaba/guia-precos',
+      robots: 'noindex, follow'
+    },
+    '/piracicaba/midia-kit': {
+      title: 'Mídia Kit - Guia Noivas Piracicaba',
+      description: 'Acesse o mídia kit oficial do Guia Noivas Piracicaba.',
+      image: null,
+      canonical: 'https://guianoivas.com/piracicaba/midia-kit',
+      robots: 'noindex, follow'
+    }
+  };
+
+  const staticRoutes = Object.keys(staticRouteMetadata);
 
   console.log('🚀 Starting route generation with enriched metadata...\n');
   
@@ -262,23 +339,9 @@ async function generateRoutes() {
     const metadata = {};
     
     // Add static routes metadata
-    metadata['/piracicaba'] = {
-      title: 'Guia Noivas Piracicaba - Fornecedores para Casamentos',
-      description: 'Encontre os melhores fornecedores para seu casamento em Piracicaba. Fotógrafos, buffets, vestidos e muito mais.',
-      image: null
-    };
-    
-    metadata['/piracicaba/categorias'] = {
-      title: 'Categorias de Fornecedores - Guia Noivas Piracicaba',
-      description: 'Navegue por todas as categorias de fornecedores para casamento em Piracicaba.',
-      image: null
-    };
-    
-    metadata['/piracicaba/blog'] = {
-      title: 'Blog - Dicas para seu Casamento | Guia Noivas Piracicaba',
-      description: 'Artigos, dicas e inspirações para planejar o casamento dos seus sonhos em Piracicaba.',
-      image: null
-    };
+    Object.entries(staticRouteMetadata).forEach(([route, data]) => {
+      metadata[route] = data;
+    });
     
     // Add dynamic routes metadata
     [...blogRoutes, ...fornecedorRoutes, ...categoriaRoutes].forEach(item => {
@@ -286,6 +349,8 @@ async function generateRoutes() {
         title: item.title,
         description: item.description,
         image: item.image,
+        canonical: `https://guianoivas.com${item.route}`,
+        robots: 'index, follow',
         ...(item.category && { category: item.category }),
         ...(item.city && { city: item.city }),
         ...(item.keywords && { keywords: item.keywords })

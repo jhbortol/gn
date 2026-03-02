@@ -20,6 +20,17 @@ export function app(): express.Express {
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
 
+  server.use((req, res, next) => {
+    const hostHeader = (req.headers.host || '').toLowerCase();
+    const host = hostHeader.split(':')[0];
+
+    if (host === 'www.guianoivas.com') {
+      return res.redirect(301, `https://guianoivas.com${req.originalUrl}`);
+    }
+
+    return next();
+  });
+
   // Example Express Rest API endpoints
   // server.get('/api/**', (req, res) => { });
   

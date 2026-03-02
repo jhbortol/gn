@@ -4,6 +4,31 @@
     "description": "Encontre os melhores fornecedores para seu casamento em Piracicaba. Fotógrafos, buffets, vestidos e muito mais.",
     "image": null
   },
+  "/piracicaba/contato": {
+    "title": "Contato - Guia Noivas Piracicaba",
+    "description": "Fale com o Guia Noivas Piracicaba. Tire dúvidas, envie sugestões ou solicite informações sobre fornecedores.",
+    "image": null
+  },
+  "/piracicaba/institucional": {
+    "title": "Institucional - Guia Noivas Piracicaba",
+    "description": "Conheça a história, missão e valores do Guia Noivas Piracicaba.",
+    "image": null
+  },
+  "/piracicaba/institucional/termos": {
+    "title": "Termos de Uso - Guia Noivas Piracicaba",
+    "description": "Leia os termos de uso e políticas do Guia Noivas Piracicaba.",
+    "image": null
+  },
+  "/piracicaba/anuncie": {
+    "title": "Anuncie - Guia Noivas Piracicaba",
+    "description": "Seja um fornecedor parceiro do Guia Noivas Piracicaba. Saiba como anunciar seus serviços.",
+    "image": null
+  },
+  "/piracicaba/guia-precos": {
+    "title": "Guia de Preços Piracicaba - Quanto custa casar? | Guia Noivas Piracicaba",
+    "description": "Descubra os preços dos principais serviços de casamento em Piracicaba. Planeje seu orçamento com o Guia Noivas.",
+    "image": null
+  }
   "/piracicaba/categorias": {
     "title": "Categorias de Fornecedores - Guia Noivas Piracicaba",
     "description": "Navegue por todas as categorias de fornecedores para casamento em Piracicaba.",

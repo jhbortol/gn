@@ -60,7 +60,9 @@
       #nav-skeleton .inner{width:100%;max-width:1200px;margin:0 auto;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;}
       #nav-skeleton .logo{font-size:24px;font-weight:700;color:#be123c;display:flex;align-items:center;gap:.5rem;}
       #nav-skeleton .menu{display:flex;gap:2rem;font-size:14px;font-weight:600;color:#6b7280;}
-      #nav-skeleton .login{background:#be123c;color:#fff;padding:.5rem 1rem;border-radius:9999px;font-weight:600;font-size:14px;}
+      #nav-skeleton .menu a{color:#6b7280;text-decoration:none;}
+      #nav-skeleton .menu a:hover{text-decoration:underline;}
+      #nav-skeleton .login{background:#be123c;color:#fff !important;padding:.5rem 1rem;border-radius:9999px;font-weight:600;font-size:14px;text-decoration:none;}
       /* Prevent horizontal shift from scrollbar appearance */
       html{overflow-y:scroll;}
   </style>
@@ -93,10 +95,18 @@
     <!-- Static Navbar Skeleton (will be replaced) -->
     <nav id="nav-skeleton">
       <div class="inner">
-        <div class="logo">Guia Noivas <span style="font-family:ui-sans-serif;font-size:18px;font-weight:400;color:#4b5563;">Piracicaba</span></div>
+        <div class="logo">
+          <a href="/piracicaba" style="color:#be123c;text-decoration:none;">Guia Noivas</a>
+          <span style="font-family:ui-sans-serif;font-size:18px;font-weight:400;color:#4b5563;">Piracicaba</span>
+        </div>
         <div class="menu">
-          <span>INÍCIO</span><span>CATEGORIAS</span><span>ANUNCIE</span><span>CONTATO</span>
-          <span class="login">LOGIN NOIVAS</span>
+          <a href="/piracicaba">INÍCIO</a>
+          <a href="/piracicaba/categorias">CATEGORIAS</a>
+          <a href="/piracicaba/fornecedores">FORNECEDORES</a>
+          <a href="/piracicaba/anuncie">ANUNCIE</a>
+          <a href="/piracicaba/contato">CONTATO</a>
+          <a href="/piracicaba/institucional/sobre">SOBRE</a>
+          <a class="login" href="/piracicaba/indicado">LOGIN NOIVAS</a>
         </div>
       </div>
     </nav>

@@ -55,6 +55,9 @@ jobs:
             exit 1
           fi
 
+      - name: Normalize sitemap URLs (remove known 301s)
+        run: node normalize-sitemap.js public/sitemap.xml
+
       - name: Generate prerender routes
         id: generate-routes
         run: |

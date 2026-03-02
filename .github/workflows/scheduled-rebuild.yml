@@ -1,0 +1,175 @@
+name: Scheduled Rebuild (Daily Prerendering)
+
+on:
+  # Run daily at 3:00 AM UTC (00:00 BRT Brazil time)
+  schedule:
+    - cron: '0 3 * * *'
+  
+  # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual rebuild'
+        required: false
+        default: 'Manual trigger'
+
+jobs:
+  check-and-rebuild:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for accurate commit info
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Build Version
+        run: |
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          BUILD_ID="${COMMIT_HASH}-$(date +%s)"
+          echo "BUILD_ID=$BUILD_ID" >> $GITHUB_ENV
+          echo "📦 Build ID: $BUILD_ID"
+
+      - name: Fetch latest sitemap from API
+        id: fetch-sitemap
+        run: |
+          SITEMAP_URL="https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1/sitemap.xml"
+          echo "📥 Downloading sitemap from API..."
+          
+          if curl -fsSL "$SITEMAP_URL" -o public/sitemap.xml; then
+            echo "✅ Sitemap downloaded successfully"
+            SITEMAP_HASH=$(md5sum public/sitemap.xml | awk '{print $1}')
+            echo "sitemap_hash=$SITEMAP_HASH" >> $GITHUB_OUTPUT
+            echo "Sitemap hash: $SITEMAP_HASH"
+          else
+            echo "❌ Failed to download sitemap"
+            exit 1
+          fi
+
+      - name: Generate prerender routes
+        id: generate-routes
+        run: |
+          echo "🚀 Generating prerender routes from API..."
+          node generate-routes.js
+          
+          # Calculate hash of generated routes
+          ROUTES_HASH=$(md5sum src/prerender-routes.json | awk '{print $1}')
+          echo "routes_hash=$ROUTES_HASH" >> $GITHUB_OUTPUT
+          echo "Routes hash: $ROUTES_HASH"
+          
+          # Count routes
+          ROUTE_COUNT=$(jq '. | length' src/prerender-routes.json)
+          echo "route_count=$ROUTE_COUNT" >> $GITHUB_OUTPUT
+          echo "📊 Total routes: $ROUTE_COUNT"
+
+      - name: Check if rebuild is needed
+        id: check-changes
+        run: |
+          # Check if routes or sitemap changed since last build
+          # For now, always rebuild on schedule to ensure fresh content
+          echo "needs_rebuild=true" >> $GITHUB_OUTPUT
+          echo "✅ Rebuild needed: Scheduled daily refresh"
+
+      - name: Build for Production with Prerendering
+        if: steps.check-changes.outputs.needs_rebuild == 'true'
+        run: npm run prerender:prod
+        env:
+          BUILD_VERSION: ${{ env.BUILD_ID }}
+
+      - name: Validate prerendered output
+        if: steps.check-changes.outputs.needs_rebuild == 'true'
+        run: |
+          echo "🔍 Validating prerendered files..."
+          
+          # Check if dist folder exists
+          if [ ! -d "dist/guia-noivas/browser" ]; then
+            echo "❌ Build output not found!"
+            exit 1
+          fi
+          
+          # Count HTML files
+          HTML_COUNT=$(find dist/guia-noivas/browser -name "index.html" | wc -l)
+          echo "📄 HTML files generated: $HTML_COUNT"
+          
+          # Validate against expected route count
+          EXPECTED_ROUTES=${{ steps.generate-routes.outputs.route_count }}
+          
+          if [ $HTML_COUNT -lt $((EXPECTED_ROUTES * 90 / 100)) ]; then
+            echo "⚠️ WARNING: Only $HTML_COUNT HTML files generated, expected ~$EXPECTED_ROUTES"
+            echo "This might indicate a prerendering failure"
+            exit 1
+          fi
+          
+          echo "✅ Validation passed: $HTML_COUNT HTML files generated"
+
+      - name: Deploy to Azure Static Web Apps
+        if: steps.check-changes.outputs.needs_rebuild == 'true'
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PROD }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "dist/guia-noivas/browser"
+          api_location: ""
+          output_location: ""
+          skip_app_build: true
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 📊 Scheduled Rebuild Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Build ID:** \`${{ env.BUILD_ID }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Routes Generated:** ${{ steps.generate-routes.outputs.route_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Rebuild Triggered:** ${{ steps.check-changes.outputs.needs_rebuild }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Reason:** ${GITHUB_EVENT_NAME}" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ github.event.inputs.reason }}" != "" ]; then
+            echo "**Manual Reason:** ${{ github.event.inputs.reason }}" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Create issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `🚨 Scheduled Rebuild Failed - ${new Date().toISOString().split('T')[0]}`;
+            const body = `
+            ## Scheduled Rebuild Failure Report
+            
+            **Workflow Run:** [${context.runNumber}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+            **Build ID:** \`${{ env.BUILD_ID }}\`
+            **Trigger:** ${context.eventName}
+            **Time:** ${new Date().toISOString()}
+            
+            ### Possible Causes:
+            - API unavailable or returning errors
+            - Network timeout during data fetching
+            - Prerendering failed to generate HTML
+            - Validation detected incomplete build
+            
+            ### Action Required:
+            1. Check API health: https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1/health
+            2. Review workflow logs for errors
+            3. Retry manually if transient failure
+            4. Investigate if persistent
+            
+            cc: @jhbortol
+            `;
+            
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['automated', 'build-failure', 'critical']
+            });

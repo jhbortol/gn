@@ -6,6 +6,7 @@ import { FooterComponent } from './shared/footer/footer';
 import { UpdateNotificationComponent } from './shared/update-notification.component';
 import { TrackingService } from './core/tracking.service';
 import { VersionCheckService } from './core/version-check.service';
+import { SeoBlockerService } from './core/seo-blocker.service';
 import { isPlatformBrowser } from '@angular/common';
 
 @Component({
@@ -22,6 +23,7 @@ export class App implements AfterViewInit {
   private router = inject(Router);
   private tracking = inject(TrackingService);
   private versionCheck = inject(VersionCheckService);
+  private seoBlocker = inject(SeoBlockerService);
   private isBrowser: boolean;
 
   constructor(@Inject(PLATFORM_ID) platformId: object) {

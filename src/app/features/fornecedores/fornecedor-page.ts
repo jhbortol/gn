@@ -1,5 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, signal, inject, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Meta, Title } from '@angular/platform-browser';
 import { ClickwrapAgreementComponent } from '../../shared/clickwrap-agreement/clickwrap-agreement';
@@ -57,7 +57,8 @@ export class FornecedorPageComponent implements OnInit {
     private tracking: TrackingService,
     private title: Title,
     private meta: Meta,
-    private metaTagService: MetaTagService
+    private metaTagService: MetaTagService,
+    @Inject(PLATFORM_ID) private platformId: object
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -309,6 +310,29 @@ export class FornecedorPageComponent implements OnInit {
     this.meta.updateTag({ property: 'og:title', content: pageTitle });
     this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:type', content: 'website' });
+    
+    // 🔴 CRITICAL: Add noindex meta tag to prevent 404 pages from being indexed
+    // This prevents "soft 404" issues where Google indexes error pages as valid content
+    if (isPlatformBrowser(this.platformId)) {
+      this.injectNoIndexMetaTag();
+    }
+  }
+  
+  /**
+   * Inject noindex meta tag dynamically to prevent search engine indexing of 404 pages
+   * This is the client-side alternative to setting HTTP 404 status (which Azure Static Web Apps can't do)
+   */
+  private injectNoIndexMetaTag(): void {
+    let metaRobots = document.querySelector('meta[name="robots"]') as HTMLMetaElement;
+    
+    if (!metaRobots) {
+      metaRobots = document.createElement('meta');
+      metaRobots.name = 'robots';
+      document.head.appendChild(metaRobots);
+    }
+    
+    metaRobots.content = 'noindex, nofollow';
+    console.warn('🚫 SEO: Injected noindex meta tag for 404 page');
   }
 
   /**

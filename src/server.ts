@@ -8,6 +8,19 @@ import bootstrap from './main.server';
 import https from 'https';
 import { existsSync } from 'fs';
 
+function normalizeAppBaseHref(baseUrl: string): string {
+  const trimmed = (baseUrl || '').trim();
+
+  if (!trimmed) {
+    return '/';
+  }
+
+  const withLeadingSlash = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  const normalized = withLeadingSlash.replace(/\/+$/g, '');
+
+  return normalized || '/';
+}
+
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
@@ -62,6 +75,7 @@ export function app(): express.Express {
   // All regular routes use the Angular engine
   server.get('**', (req, res, next) => {
     const { protocol, originalUrl, baseUrl, headers } = req;
+    const appBaseHref = normalizeAppBaseHref(baseUrl);
 
     // Sanitize the URL to prevent path traversal attacks
     const sanitizedUrl = originalUrl.split('?')[0]; // Remove query params
@@ -87,7 +101,7 @@ export function app(): express.Express {
           documentFilePath: indexHtml,
           url: `${protocol}://${headers.host}${originalUrl}`,
           publicPath: browserDistFolder,
-          providers: [{ provide: APP_BASE_HREF, useValue: baseUrl }],
+          providers: [{ provide: APP_BASE_HREF, useValue: appBaseHref }],
         })
         .then((html: string) => res.send(html))
         .catch((err: Error) => next(err));
@@ -112,7 +126,7 @@ export function app(): express.Express {
         documentFilePath: indexHtml,
         url: `${protocol}://${headers.host}${originalUrl}`,
         publicPath: browserDistFolder,
-        providers: [{ provide: APP_BASE_HREF, useValue: baseUrl }],
+        providers: [{ provide: APP_BASE_HREF, useValue: appBaseHref }],
       })
       .then((html: string) => res.send(html))
       .catch((err: Error) => next(err));

@@ -96,14 +96,24 @@ export class ClaimModalComponent implements OnInit {
         let value = event.target.value.replace(/\D/g, '');
         if (value.length > 11) value = value.slice(0, 11);
 
-        // Máscara simples (XX) XXXXX-XXXX
+        // Formatação para celular (11 dígitos) e fixo (10 dígitos)
         if (value.length > 2) {
-            value = `(${value.slice(0, 2)}) ` + value.slice(2);
+            if (value.length > 6) {
+                // (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
+                if (value.length === 11) {
+                    // Celular: (XX) 9XXXX-XXXX
+                    value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 11)}`;
+                } else if (value.length >= 10) {
+                    // Fixo: (XX) XXXX-XXXX
+                    value = `(${value.slice(0, 2)}) ${value.slice(2, 6)}-${value.slice(6, 10)}`;
+                } else {
+                    // Parcial
+                    value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+                }
+            } else {
+                value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+            }
         }
-        if (value.length > 10) {
-            value = value.slice(0, 10) + '-' + value.slice(10);
-        }
-
         this.claimForm.get('phone')?.setValue(value, { emitEvent: false });
     }
 

@@ -54,6 +54,8 @@ import { LeadService } from '../../core/services/lead.service';
             placeholder="(11) 98765-4321"
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
             [class.border-red-500]="isFieldInvalid('clientePhone')"
+            (input)="onPhoneInput($event)"
+            (blur)="onPhoneBlur($event)"
           />
           <p *ngIf="isFieldInvalid('clientePhone')" class="text-red-500 text-xs mt-1">
             Telefone válido é obrigatório
@@ -167,6 +169,35 @@ export class LeadFormComponent {
   isFieldInvalid(fieldName: string): boolean {
     const field = this.form.get(fieldName);
     return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
+  onPhoneInput(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    if (!input) return;
+    const masked = this.formatPhoneValue(input.value);
+    input.value = masked;
+    this.form.get('clientePhone')?.setValue(masked, { emitEvent: false });
+  }
+
+  onPhoneBlur(event: FocusEvent): void {
+    const input = event.target as HTMLInputElement | null;
+    if (!input) return;
+    const masked = this.formatPhoneValue(input.value);
+    input.value = masked;
+    this.form.get('clientePhone')?.setValue(masked, { emitEvent: false });
+  }
+
+  private formatPhoneValue(rawValue: string): string {
+    let digits = rawValue.replace(/\D/g, '');
+    if (digits.length > 11) digits = digits.slice(0, 11);
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 6) {
+      return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    }
+    if (digits.length <= 10) {
+      return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+    }
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
   }
 
   onSubmit(): void {

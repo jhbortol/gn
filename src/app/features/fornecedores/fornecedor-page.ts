@@ -278,12 +278,17 @@ export class FornecedorPageComponent implements OnInit {
    * Atualiza meta tags dinâmicas para SEO
    */
   private updateSeoMetaTags(fornecedor: Fornecedor): void {
+    const currentUrl = `https://guianoivas.com${this.router.url.split('?')[0]}`;
+
     // Título da página: "Nome - Categoria em Cidade"
-    const pageTitle = `${fornecedor.nome} - ${fornecedor.categoria || 'Fornecedor'} em ${fornecedor.cidade || 'São Paulo'}`;
+    const pageTitle = `${fornecedor.nome} - ${fornecedor.categoria || 'Fornecedor'} em ${fornecedor.cidade || 'Piracicaba'}`;
     this.title.setTitle(pageTitle);
 
-    // Meta description: primeiros 155 caracteres da bio/descrição
-    const description = (fornecedor.descricao || fornecedor.nome || '').substring(0, 155);
+    // Meta description: primeiros 155 caracteres da bio/descrição (distinto do H1)
+    const rawDescription = fornecedor.descricao?.trim();
+    const description = rawDescription
+      ? rawDescription.substring(0, 155)
+      : `Veja o perfil de ${fornecedor.nome}, ${fornecedor.categoria || 'fornecedor'} para casamentos em ${fornecedor.cidade || 'Piracicaba'}. Orçamentos e contato no Guia Noivas.`;
     this.meta.updateTag({ name: 'description', content: description });
 
     // Open Graph image para compartilhamento social
@@ -297,6 +302,18 @@ export class FornecedorPageComponent implements OnInit {
     this.meta.updateTag({ property: 'og:title', content: pageTitle });
     this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:type', content: 'business.business' });
+    this.meta.updateTag({ property: 'og:url', content: currentUrl });
+    this.meta.updateTag({ property: 'og:site_name', content: 'Guia Noivas Piracicaba' });
+    this.meta.updateTag({ property: 'og:locale', content: 'pt_BR' });
+
+    // Twitter Card
+    this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+    this.meta.updateTag({ name: 'twitter:site', content: '@guianoivaspiracicaba' });
+    this.meta.updateTag({ name: 'twitter:title', content: pageTitle });
+    this.meta.updateTag({ name: 'twitter:description', content: description });
+    if (ogImage) {
+      this.meta.updateTag({ name: 'twitter:image', content: ogImage });
+    }
   }
 
   private updateNotFoundMetaTags(): void {

@@ -63,7 +63,7 @@
 
       <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 mb-6">
         <div class="flex items-center justify-between mb-6">
-          <h3 class="font-serif font-bold text-2xl text-gray-900">Galeria de Fotos</h3>
+          <h2 class="font-serif font-bold text-2xl text-gray-900">Galeria de Fotos</h2>
           <!-- Image counter for Free/Low tiers -->
           <span
             *ngIf="fornecedor.planLevel !== PlanLevel.Vitrine && fornecedor.imagens && fornecedor.imagens.length > 2"
@@ -74,6 +74,7 @@
         <div class="grid grid-cols-2 gap-4">
           <ng-container *ngFor="let img of getGalleryImages(); let i = index">
             <img (click)="openImage(img.url)" [src]="img.url" [alt]="fornecedor.nome + ' - Foto ' + (i + 1)"
+              width="400" height="300"
               loading="lazy" decoding="async" fetchpriority="low"
               class="w-full h-40 object-cover rounded-xl cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105" />
           </ng-container>
@@ -109,6 +110,7 @@
 
           <!-- Image -->
           <img [src]="selectedImage" [alt]="fornecedor.nome + ' - Foto ' + (selectedImageIndex + 1)" decoding="async"
+            width="1200" height="800"
             class="w-full h-auto max-h-[80vh] object-contain rounded-lg" />
 
           <!-- Next Button (44x44 touch target) -->
@@ -131,7 +133,7 @@
       <section
         *ngIf="fornecedor.planLevel === PlanLevel.Vitrine && fornecedor.depoimentos && fornecedor.depoimentos.length > 0"
         class="py-12 px-2 mb-6 rounded-2xl bg-depoimentos">
-        <h3 class="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-8 text-center">O que os noivos dizem</h3>
+          <h3 class="font-serif font-bold text-3xl text-gray-900 mb-8 text-center">O que os noivos dizem</h3>
         <div class="flex flex-wrap gap-6">
           <div *ngFor="let dep of fornecedor.depoimentos"
             class="bg-white rounded-xl shadow p-6 border border-rose-100 flex-1 min-w-[280px] max-w-[340px]"
@@ -153,7 +155,7 @@
 
     <aside>
       <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 sticky top-4">
-        <h4 class="font-serif font-bold text-xl text-gray-900 mb-6">Solicitar Orçamento</h4>
+        <h2 class="font-serif font-bold text-xl text-gray-900 mb-6">Solicitar Orçamento</h2>
         <div class="flex flex-col gap-3 mb-6">
           <!-- WhatsApp - Apenas para Vitrine -->
           <a *ngIf="fornecedor.telefone && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getWhatsAppLink()"
@@ -255,6 +257,8 @@
   </div>
 
   <ng-template #notfound>
+    <!-- SSR 404 marker: server.ts reads this to set HTTP 404 status -->
+    <meta name="render-status" content="404">
     <div class="not-found-container">
       <div class="not-found-card">
         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"

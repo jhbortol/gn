@@ -103,7 +103,11 @@ export function app(): express.Express {
           publicPath: browserDistFolder,
           providers: [{ provide: APP_BASE_HREF, useValue: appBaseHref }],
         })
-        .then((html: string) => res.send(html))
+        .then((html: string) => {
+          const is404 = html.includes('name="render-status" content="404"') ||
+                        html.includes("name='render-status' content='404'");
+          res.status(is404 ? 404 : 200).send(html);
+        })
         .catch((err: Error) => next(err));
       return;
     }
@@ -128,7 +132,12 @@ export function app(): express.Express {
         publicPath: browserDistFolder,
         providers: [{ provide: APP_BASE_HREF, useValue: appBaseHref }],
       })
-      .then((html: string) => res.send(html))
+      .then((html: string) => {
+        // Check if Angular rendered a 404 page (indicated by the meta render-status marker)
+        const is404 = html.includes('name="render-status" content="404"') ||
+                      html.includes("name='render-status' content='404'");
+        res.status(is404 ? 404 : 200).send(html);
+      })
       .catch((err: Error) => next(err));
   });
 

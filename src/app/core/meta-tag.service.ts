@@ -101,6 +101,12 @@ export class MetaTagService {
     this.setCanonicalTag(canonicalUrl);
     this.setRobotsTag(robots);
 
+    // Always set base OG/Twitter tags for every page
+    this.metaService.updateTag({ property: 'og:url', content: canonicalUrl });
+    this.metaService.updateTag({ property: 'og:site_name', content: 'Guia Noivas Piracicaba' });
+    this.metaService.updateTag({ property: 'og:locale', content: 'pt_BR' });
+    this.metaService.updateTag({ name: 'twitter:site', content: '@guianoivaspiracicaba' });
+
     if (!data) return;
 
     // Set title
@@ -168,6 +174,19 @@ export class MetaTagService {
         content: data.image
       });
     }
+  }
+
+  /**
+   * Apply only og:url, og:site_name, og:locale and twitter:site for pages that manage
+   * their own title/description/image but still need complete OG/Twitter tags.
+   */
+  applyBaseOgTags(canonicalUrl: string): void {
+    this.metaService.updateTag({ property: 'og:url', content: canonicalUrl });
+    this.metaService.updateTag({ property: 'og:site_name', content: 'Guia Noivas Piracicaba' });
+    this.metaService.updateTag({ property: 'og:locale', content: 'pt_BR' });
+    this.metaService.updateTag({ name: 'twitter:site', content: '@guianoivaspiracicaba' });
+    this.metaService.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+    this.setCanonicalTag(canonicalUrl);
   }
 
   /**

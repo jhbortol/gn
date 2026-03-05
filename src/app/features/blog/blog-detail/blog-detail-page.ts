@@ -96,6 +96,8 @@ export class BlogDetailPage implements OnInit {
   }
 
   setSEOMeta(post: BlogPost): void {
+    const currentUrl = `https://guianoivas.com${this.router.url.split('?')[0]}`;
+
     // Set page title
     const pageTitle = post.metaTitle || `${post.title} | Blog Guia Noivas`;
     this.title.setTitle(pageTitle);
@@ -108,12 +110,17 @@ export class BlogDetailPage implements OnInit {
     this.meta.updateTag({ property: 'og:title', content: post.title });
     this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:type', content: 'article' });
+    this.meta.updateTag({ property: 'og:url', content: currentUrl });
+    this.meta.updateTag({ property: 'og:site_name', content: 'Guia Noivas Piracicaba' });
+    this.meta.updateTag({ property: 'og:locale', content: 'pt_BR' });
     if (post.featuredImage) {
       this.meta.updateTag({ property: 'og:image', content: post.featuredImage });
+      this.meta.updateTag({ property: 'og:image:alt', content: post.title });
     }
 
     // Twitter Card
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+    this.meta.updateTag({ name: 'twitter:site', content: '@guianoivaspiracicaba' });
     this.meta.updateTag({ name: 'twitter:title', content: post.title });
     this.meta.updateTag({ name: 'twitter:description', content: description });
     if (post.featuredImage) {

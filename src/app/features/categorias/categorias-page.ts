@@ -1,9 +1,11 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CategoriasData, Categoria } from './services/categorias-data';
 import { Observable, map } from 'rxjs';
 import { CidadeService } from '../../core/cidade.service';
+import { MetaTagService } from '../../core/meta-tag.service';
+import { Title } from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -14,10 +16,13 @@ import { environment } from '../../../environments/environment';
   imports: [CommonModule, RouterModule, NgOptimizedImage],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CategoriasPageComponent {
+export class CategoriasPageComponent implements OnInit {
   categorias$: Observable<Categoria[]>;
 
   private cidadeService = inject(CidadeService);
+  private metaTagService = inject(MetaTagService);
+  private router = inject(Router);
+  private title = inject(Title);
 
   constructor(
     private categoriasData: CategoriasData
@@ -26,6 +31,15 @@ export class CategoriasPageComponent {
     this.categorias$ = this.categoriasData.getAll().pipe(
       map(cats => this.shuffleArray(cats))
     );
+  }
+
+  ngOnInit(): void {
+    const route = this.router.url.split('?')[0];
+    this.title.setTitle('Categorias de Fornecedores para Casamento em Piracicaba | Guia Noivas');
+    this.metaTagService.applyMetadata(route, {
+      title: 'Categorias de Fornecedores para Casamento em Piracicaba | Guia Noivas',
+      description: 'Explore todas as categorias de fornecedores para casamentos em Piracicaba: buffet, fotografia, decoração, vestidos e muito mais. Encontre o profissional ideal no Guia Noivas.'
+    });
   }
 
   buildUrl(path: string | string[]): string {

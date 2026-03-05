@@ -1,12 +1,13 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../../../shared/icon/icon';
 import { DestaquesSemanaComponent } from '../destaques-semana/destaques-semana';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CategoriasData, Categoria } from '../../categorias/services/categorias-data';
 import { FornecedoresData, FornecedorListDto } from '../../fornecedores/services/fornecedores-data';
 import { TrackingService } from '../../../core/tracking.service';
+import { MetaTagService } from '../../../core/meta-tag.service';
 import { forkJoin, map, switchMap, Observable, BehaviorSubject, of, combineLatest, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CidadeService } from '../../../core/cidade.service';
 import { environment } from '../../../../environments/environment';
@@ -19,7 +20,7 @@ import { environment } from '../../../../environments/environment';
   imports: [CommonModule, FormsModule, IconComponent, DestaquesSemanaComponent, RouterModule, NgOptimizedImage],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HomePageComponent {
+export class HomePageComponent implements OnInit {
   categorias$!: Observable<Categoria[]>;
   buscaTerm$ = new BehaviorSubject<string>('');
   fornecedoresBusca$!: Observable<FornecedorListDto[]>;
@@ -30,6 +31,8 @@ export class HomePageComponent {
   showResults = true;
 
   private cidadeService = inject(CidadeService);
+  private metaTagService = inject(MetaTagService);
+  private router = inject(Router);
 
   constructor(private categoriasData: CategoriasData, private fornecedoresData: FornecedoresData, private tracking: TrackingService) {
     this.categorias$ = this.categoriasData.getAll().pipe(
@@ -70,6 +73,11 @@ export class HomePageComponent {
     this.currentPageItems$ = combineLatest([this.resultPages$, this.currentPage$]).pipe(
       map(([pages, idx]) => pages.length > 0 ? pages[Math.min(Math.max(idx, 0), pages.length - 1)] : [])
     );
+  }
+
+  ngOnInit(): void {
+    const route = this.router.url.split('?')[0];
+    this.metaTagService.applyMetadata(route);
   }
 
   buildUrl(path: string | string[]): string {

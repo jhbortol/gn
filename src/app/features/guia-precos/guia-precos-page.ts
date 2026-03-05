@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ApiService } from '../../core/api.service';
 import { CidadeService } from '../../core/cidade.service';
+import { MetaTagService } from '../../core/meta-tag.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -21,6 +22,8 @@ export class GuiaPrecosPage implements OnInit {
   ];
 
     ngOnInit(): void {
+      const route = this.router.url.split('?')[0];
+      this.metaTagService.applyMetadata(route);
       this.injectNoIndexIfNeeded();
     }
 
@@ -45,6 +48,7 @@ export class GuiaPrecosPage implements OnInit {
   downloadUrl = signal('');
 
   private cidadeService = inject(CidadeService);
+  private metaTagService = inject(MetaTagService);
 
   constructor(
     private api: ApiService,

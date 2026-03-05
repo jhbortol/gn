@@ -101,6 +101,12 @@ export class MetaTagService {
     this.setCanonicalTag(canonicalUrl);
     this.setRobotsTag(robots);
 
+    // Always set base OG/Twitter tags for every page
+    this.metaService.updateTag({ property: 'og:url', content: canonicalUrl });
+    this.metaService.updateTag({ property: 'og:site_name', content: 'Guia Noivas Piracicaba' });
+    this.metaService.updateTag({ property: 'og:locale', content: 'pt_BR' });
+    this.metaService.updateTag({ name: 'twitter:site', content: '@guianoivaspiracicaba' });
+
     if (!data) return;
 
     // Set title

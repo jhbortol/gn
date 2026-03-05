@@ -19,6 +19,7 @@
   </div>
 
   <!-- Grid de Fornecedores (ordenado pela API: Vitrine → Free → Low) -->
+  <h2 class="sr-only">Lista de Fornecedores</h2>
   <div *ngIf="publicFornecedores$ | async as fornecedores; else fornecedoresLoading"
     class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
     <div *ngFor="let fornecedor of fornecedores"
@@ -74,7 +75,7 @@
 
         <!-- Nome com ícone de estrela para Vitrine -->
         <div class="flex items-center gap-2 mb-2">
-          <h3 class="font-serif font-bold text-lg text-gray-900">{{fornecedor.nome}}</h3>
+          <h2 class="font-serif font-bold text-lg text-gray-900">{{fornecedor.nome}}</h2>
           <svg *ngIf="fornecedor.planLevel === 1" xmlns="http://www.w3.org/2000/svg"
             class="w-4 h-4 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path

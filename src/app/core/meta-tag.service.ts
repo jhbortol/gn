@@ -177,19 +177,6 @@ export class MetaTagService {
   }
 
   /**
-   * Apply only og:url, og:site_name, og:locale and twitter:site for pages that manage
-   * their own title/description/image but still need complete OG/Twitter tags.
-   */
-  applyBaseOgTags(canonicalUrl: string): void {
-    this.metaService.updateTag({ property: 'og:url', content: canonicalUrl });
-    this.metaService.updateTag({ property: 'og:site_name', content: 'Guia Noivas Piracicaba' });
-    this.metaService.updateTag({ property: 'og:locale', content: 'pt_BR' });
-    this.metaService.updateTag({ name: 'twitter:site', content: '@guianoivaspiracicaba' });
-    this.metaService.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
-    this.setCanonicalTag(canonicalUrl);
-  }
-
-  /**
    * Get metadata for a route without applying it
    */
   getMetadata(route: string): PrerenderMetadata | undefined {

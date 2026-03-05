@@ -1,22 +1,27 @@
-    onPhoneBlur(event: any) {
-        let value = event.target.value.replace(/\D/g, '');
-        if (value.length > 11) value = value.slice(0, 11);
+        // ...existing code...
 
-        // Formatação para celular (11 dígitos) e fixo (10 dígitos)
-        if (value.length > 2) {
-            if (value.length > 6) {
-                if (value.length === 11) {
-                    value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 11)}`;
-                } else if (value.length >= 10) {
-                    value = `(${value.slice(0, 2)}) ${value.slice(2, 6)}-${value.slice(6, 10)}`;
+        onPhoneBlur(event: FocusEvent) {
+            const input = event.target as HTMLInputElement | null;
+            if (!input) return;
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+
+            // Formatação para celular (11 dígitos) e fixo (10 dígitos)
+            if (value.length > 2) {
+                if (value.length > 6) {
+                    if (value.length === 11) {
+                        value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 11)}`;
+                    } else if (value.length >= 10) {
+                        value = `(${value.slice(0, 2)}) ${value.slice(2, 6)}-${value.slice(6, 10)}`;
+                    } else {
+                        value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+                    }
                 } else {
                     value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
                 }
-            } else {
-                value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
             }
+            this.claimForm.get('phone')?.setValue(value, { emitEvent: false });
         }
-        this.claimForm.get('phone')?.setValue(value, { emitEvent: false });
     }
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';

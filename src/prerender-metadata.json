@@ -60,7 +60,7 @@
     "description": "Leia os termos de uso e políticas do Guia Noivas Piracicaba.",
     "image": null,
     "canonical": "https://guianoivas.com/piracicaba/institucional/termos",
-    "robots": "index, follow"
+    "robots": "noindex, follow"
   },
   "/piracicaba/guia-precos": {
     "title": "Guia de Preços Piracicaba - Quanto custa casar? | Guia Noivas Piracicaba",

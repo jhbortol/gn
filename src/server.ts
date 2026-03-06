@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import bootstrap from './main.server';
 import https from 'https';
+import http from 'http';
 import { existsSync } from 'fs';
 
 function normalizeAppBaseHref(baseUrl: string): string {
@@ -47,23 +48,67 @@ export function app(): express.Express {
   // Example Express Rest API endpoints
   // server.get('/api/**', (req, res) => { });
   
-  // Route for sitemap.xml
-  server.get('/sitemap.xml', (req, res) => {
+  // Route for sitemap.xml - proxy from API with redirect support
+  server.get('/sitemap.xml', async (req, res) => {
     const apiUrl = process.env['API_BASE_URL'] || 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1';
-    const url = `${apiUrl}/sitemap.xml`;
-    https.get(url, (apiRes) => {
-      let data = '';
-      apiRes.on('data', (chunk) => {
-        data += chunk;
+    const sitemapUrl = `${apiUrl}/sitemap.xml`;
+    
+    const fetchSitemap = async (url: string, maxRedirects = 5): Promise<string> => {
+      if (maxRedirects === 0) {
+        throw new Error('Maximum redirects exceeded');
+      }
+
+      return new Promise((resolve, reject) => {
+        const protocol = url.startsWith('https') ? https : http;
+        const request = protocol.get(url, { timeout: 10000 }, (apiRes) => {
+          // Handle redirects (301, 302, 303, 307, 308)
+          if (apiRes.statusCode && [301, 302, 303, 307, 308].includes(apiRes.statusCode)) {
+            const redirectUrl = apiRes.headers.location;
+            if (!redirectUrl) {
+              reject(new Error(`Redirect without location header (${apiRes.statusCode})`));
+              return;
+            }
+            apiRes.resume(); // Consume response to free up connection
+            resolve(fetchSitemap(redirectUrl, maxRedirects - 1));
+            return;
+          }
+
+          if (apiRes.statusCode !== 200) {
+            reject(new Error(`API returned status ${apiRes.statusCode}`));
+            return;
+          }
+
+          let data = '';
+          apiRes.on('data', (chunk) => {
+            data += chunk;
+          });
+          apiRes.on('end', () => {
+            // Validate XML structure
+            if (!data.trim().startsWith('<?xml')) {
+              reject(new Error('Invalid XML response from API'));
+              return;
+            }
+            resolve(data);
+          });
+        });
+
+        request.on('error', reject);
+        request.on('timeout', () => {
+          request.destroy();
+          reject(new Error('API request timeout'));
+        });
       });
-      apiRes.on('end', () => {
-        res.set('Content-Type', 'application/xml');
-        res.send(data);
-      });
-    }).on('error', (err) => {
-      console.error('Error fetching sitemap:', err);
-      res.status(500).send('Server error');
-    });
+    };
+
+    try {
+      const sitemapData = await fetchSitemap(sitemapUrl);
+      res.set('Content-Type', 'application/xml');
+      res.set('Cache-Control', 'public, max-age=3600');
+      res.send(sitemapData);
+    } catch (err) {
+      console.error('[sitemap.xml] Error fetching from API:', err);
+      res.status(503).send(`<?xml version="1.0" encoding="UTF-8"?><error>Unable to fetch sitemap from API</error>`);
+    }
   });
 
   // Serve static files from /browser

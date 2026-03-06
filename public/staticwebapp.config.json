@@ -22,6 +22,66 @@
             "statusCode": 301
         },
         {
+            "route": "/termos",
+            "redirect": "/piracicaba/institucional/termos",
+            "statusCode": 301
+        },
+        {
+            "route": "/fornecedores",
+            "redirect": "/piracicaba/fornecedores",
+            "statusCode": 301
+        },
+        {
+            "route": "/institucional",
+            "redirect": "/piracicaba/institucional/sobre",
+            "statusCode": 301
+        },
+        {
+            "route": "/anuncie",
+            "redirect": "/piracicaba/anuncie",
+            "statusCode": 301
+        },
+        {
+            "route": "/contato",
+            "redirect": "/piracicaba/contato",
+            "statusCode": 301
+        },
+        {
+            "route": "/blog",
+            "redirect": "/piracicaba/blog",
+            "statusCode": 301
+        },
+        {
+            "route": "/guia-precos",
+            "redirect": "/piracicaba/guia-precos",
+            "statusCode": 301
+        },
+        {
+            "route": "/guia-custos",
+            "redirect": "/piracicaba/guia-custos",
+            "statusCode": 301
+        },
+        {
+            "route": "/midia-kit",
+            "redirect": "/piracicaba/midia-kit",
+            "statusCode": 301
+        },
+        {
+            "route": "/indicado",
+            "redirect": "/piracicaba/indicado",
+            "statusCode": 301
+        },
+        {
+            "route": "/privacy",
+            "redirect": "/piracicaba/privacy",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicab",
+            "redirect": "/piracicaba",
+            "statusCode": 301
+        },
+        {
             "route": "/piracicaba/termos",
             "redirect": "/piracicaba/institucional/termos",
             "statusCode": 301

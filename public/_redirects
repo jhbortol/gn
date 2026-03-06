@@ -1,6 +1,9 @@
 # Canonical host redirect
 https://www.guianoivas.com/* https://guianoivas.com/:splat 301!
 
+# Canonical path typo fix
+/piracicab /piracicaba 301
+
 # Sitemap dinâmico do backend
 /sitemap.xml https://guia-noivas.somee.com/api/v1/sitemap.xml 200
 

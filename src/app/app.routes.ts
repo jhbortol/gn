@@ -1,4 +1,24 @@
-import { Routes } from '@angular/router';
+import { Routes, UrlMatchResult, UrlSegment } from '@angular/router';
+
+const CIDADES_VALIDAS = new Set(['piracicaba']);
+
+function cidadeMatcher(segments: UrlSegment[]): UrlMatchResult | null {
+	if (!segments.length) {
+		return null;
+	}
+
+	const cidade = segments[0].path.toLowerCase();
+	if (!CIDADES_VALIDAS.has(cidade)) {
+		return null;
+	}
+
+	return {
+		consumed: [segments[0]],
+		posParams: {
+			cidade: segments[0]
+		}
+	};
+}
 
 export const routes: Routes = [
 	// Rota raiz - redireciona para /piracicaba (cidade padrão)
@@ -9,7 +29,7 @@ export const routes: Routes = [
 	},
 	// Rotas por cidade - estrutura escalável para futuras cidades (limeira, americana, etc)
 	{
-		path: ':cidade',
+		matcher: cidadeMatcher,
 		children: [
 			{
 				path: '',
@@ -95,6 +115,36 @@ export const routes: Routes = [
 	{
 		path: 'contato',
 		redirectTo: '/piracicaba/contato',
+		pathMatch: 'full'
+	},
+	{
+		path: 'blog',
+		redirectTo: '/piracicaba/blog',
+		pathMatch: 'full'
+	},
+	{
+		path: 'guia-precos',
+		redirectTo: '/piracicaba/guia-precos',
+		pathMatch: 'full'
+	},
+	{
+		path: 'guia-custos',
+		redirectTo: '/piracicaba/guia-custos',
+		pathMatch: 'full'
+	},
+	{
+		path: 'midia-kit',
+		redirectTo: '/piracicaba/midia-kit',
+		pathMatch: 'full'
+	},
+	{
+		path: 'indicado',
+		redirectTo: '/piracicaba/indicado',
+		pathMatch: 'full'
+	},
+	{
+		path: 'privacy',
+		redirectTo: '/piracicaba/privacy',
 		pathMatch: 'full'
 	},
 	// Catch-all - redireciona para home

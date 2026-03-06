@@ -22,7 +22,8 @@ export class GuiaCustosPage implements OnInit {
     this.title.setTitle('Guia de Custos de Casamento em Piracicaba 2026 | Guia Noivas');
     this.metaTagService.applyMetadata(route, {
       title: 'Guia de Custos de Casamento em Piracicaba 2026 | Guia Noivas',
-      description: 'Descubra quanto custa um casamento em Piracicaba em 2026. Comparativo completo de perfis econômico, clássico e luxo com estimativas reais de buffet, decoração, fotografia e mais.'
+      description: 'Descubra quanto custa um casamento em Piracicaba em 2026. Comparativo completo de perfis econômico, clássico e luxo com estimativas reais de buffet, decoração, fotografia e mais.',
+      robots: 'noindex, follow'
     });
   }
 }

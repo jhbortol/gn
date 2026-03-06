@@ -219,14 +219,14 @@ async function generateRoutes() {
       description: 'Entenda os custos médios de casamento em Piracicaba e organize seu orçamento com mais clareza.',
       image: null,
       canonical: 'https://guianoivas.com/piracicaba/guia-precos',
-      robots: 'index, follow'
+      robots: 'noindex, follow'
     },
     '/piracicaba/indicado': {
       title: 'Começar a Planejar Casamento em Piracicaba | Guia Noivas',
       description: 'Comece a organizar seu casamento em Piracicaba com orientações práticas e fornecedores verificados.',
       image: null,
       canonical: 'https://guianoivas.com/piracicaba/guia-precos',
-      robots: 'index, follow'
+      robots: 'noindex, follow'
     },
     '/piracicaba/midia-kit': {
       title: 'Mídia Kit - Guia Noivas Piracicaba',

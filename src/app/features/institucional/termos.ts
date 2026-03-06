@@ -21,8 +21,7 @@ export class TermosPageComponent implements OnInit {
     this.title.setTitle('Termos de Uso | Guia Noivas Piracicaba');
     this.metaTagService.applyMetadata(route, {
       title: 'Termos de Uso | Guia Noivas Piracicaba',
-      description: 'Termos de uso e política de responsabilidade do Guia Noivas Piracicaba. Saiba como nossa plataforma funciona e quais são seus direitos e deveres.',
-      robots: 'noindex, follow'
+      description: 'Termos de uso e política de responsabilidade do Guia Noivas Piracicaba. Saiba como nossa plataforma funciona e quais são seus direitos e deveres.'
     });
   }
 }

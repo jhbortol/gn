@@ -74,14 +74,14 @@
     "description": "Entenda os custos médios de casamento em Piracicaba e organize seu orçamento com mais clareza.",
     "image": null,
     "canonical": "https://guianoivas.com/piracicaba/guia-precos",
-    "robots": "noindex, follow"
+    "robots": "index, follow"
   },
   "/piracicaba/indicado": {
     "title": "Começar a Planejar Casamento em Piracicaba | Guia Noivas",
     "description": "Comece a organizar seu casamento em Piracicaba com orientações práticas e fornecedores verificados.",
     "image": null,
     "canonical": "https://guianoivas.com/piracicaba/guia-precos",
-    "robots": "noindex, follow"
+    "robots": "index, follow"
   },
   "/piracicaba/midia-kit": {
     "title": "Mídia Kit - Guia Noivas Piracicaba",
@@ -160,65 +160,45 @@
     "canonical": "https://guianoivas.com/piracicaba/blog/musica-cerimonia-dicas",
     "robots": "index, follow"
   },
-  "/piracicaba/fornecedores/bordado-zen": {
-    "title": "Bordado Zen - Alianças e Acessórios em Piracicaba | Guia Noivas",
-    "description": "Bem-vinda à Bordado Zen, onde cada ponto é um passo em direção à beleza serena do seu grande dia. Nossa missão é enriquecer os momentos mais preciosos da v",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/528619eb8ea141a080ee572a46c76831_1.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/bordado-zen",
+  "/piracicaba/fornecedores/giravideo360": {
+    "title": "Giravideo Entretenimento  - Cabines & Totens em Pitacicaba | Guia Noivas",
+    "description": "Se você busca entretenimento de qualidade e que vai impactar seus convidados, aqui é a melhor escolha.\nEmpresa séria com lindos equipamentos de alta tecnol",
+    "image": "https://gnmedias.blob.core.windows.net/media/fornecedores/8b0a2ca4-871a-4439-96d9-1a1791efb7ef/87a6402a22c546d09b97d10804f86180.jpeg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/giravideo360",
     "robots": "index, follow",
-    "category": "Alianças e Acessórios",
-    "city": "Piracicaba",
-    "keywords": "Bordado Zen, Alianças e Acessórios, Piracicaba, casamento, fornecedor"
+    "category": "Cabines & Totens",
+    "city": "Pitacicaba",
+    "keywords": "Giravideo Entretenimento , Cabines & Totens, Pitacicaba, casamento, fornecedor"
   },
-  "/piracicaba/fornecedores/ana-picoli-fotografa": {
-    "title": "Ana Picoli Fotografa - Fotografia em Piracicaba | Guia Noivas",
-    "description": "Analisando o portfólio da Ana, o que nos encanta não é apenas a técnica impecável — evidente no uso magistral da luz natural e nas composições artísticas —",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/0220ce0312f04bf6bc9bb2884dccba3c_1.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/ana-picoli-fotografa",
+  "/piracicaba/fornecedores/colorindo-o-altar": {
+    "title": "Colorindo o Altar - Celebrante em Piracicaba | Guia Noivas",
+    "description": "Cada casal tem uma história única, e sua celebração merece refletir isso. Aline Ferreira, celebrante e criadora do Colorindo o Altar, transforma momentos e",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/11/9f2105bef6f74177a2b8ac9f0c3aee4e_IMG_20251126_101128_973.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/colorindo-o-altar",
     "robots": "index, follow",
-    "category": "Fotografia",
+    "category": "Celebrante",
     "city": "Piracicaba",
-    "keywords": "Ana Picoli Fotografa, Fotografia, Piracicaba, casamento, fornecedor"
+    "keywords": "Colorindo o Altar, Celebrante, Piracicaba, casamento, fornecedor"
   },
-  "/piracicaba/fornecedores/lilian-campos": {
-    "title": "Lilian Campos MakeUp - Maquiagem em Piracicaba | Guia Noivas",
-    "description": "Apaixonada pelo universo feminino, pelo mundo da beleza, por maquiagem e estética e pelo empoderamento que traz a nós mulheres. Renunciei o funcionalismo p",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/11/32ebcca203754a16b0f5b9bb3be17be7_1.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/lilian-campos",
+  "/piracicaba/fornecedores/mundo-a-bordo-br": {
+    "title": "Mundo a Bordo Br - Lua de Mel em Piracicaba | Guia Noivas",
+    "description": "Mais do que emitir passagens, a Mundo a Bordo é especialista em desenhar a recompensa que vocês merecem após meses de planejamento. Seja num café da manhã ",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/0143387d895e4fb39db8677a459a75bd_1.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/mundo-a-bordo-br",
     "robots": "index, follow",
-    "category": "Maquiagem",
+    "category": "Lua de Mel",
     "city": "Piracicaba",
-    "keywords": "Lilian Campos MakeUp, Maquiagem, Piracicaba, casamento, fornecedor"
+    "keywords": "Mundo a Bordo Br, Lua de Mel, Piracicaba, casamento, fornecedor"
   },
-  "/piracicaba/fornecedores/fotografo-perez": {
-    "title": "Fotógrafo Perez - Fotografia em Piracicaba | Guia Noivas",
-    "description": "Com mais de três décadas dedicadas à arte de contar histórias, Antonio Perez não apenas fotografa, ele cria um legado. A sua jornada começou no fotojornali",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/11/bd5d74cd056841cf8e5431c10d19b5aa_1.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/fotografo-perez",
-    "robots": "index, follow",
-    "category": "Fotografia",
-    "city": "Piracicaba",
-    "keywords": "Fotógrafo Perez, Fotografia, Piracicaba, casamento, fornecedor"
-  },
-  "/piracicaba/fornecedores/angela-oliveira-assessoria-e-cerimonial": {
-    "title": "Angela Oliveira Assessoria e Cerimonial - Cerimonial em Piracicaba | Guia Noivas",
-    "description": "Bem-vindo ao Angela Oliveira Cerimonial!\nSou a Angela, atuo como especialista em organização e coordenação de eventos a 14 anos. Minha trajetória nesse uni",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/a6763fabada54e03ac427bb0df5a4023_1.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/angela-oliveira-assessoria-e-cerimonial",
+  "/piracicaba/fornecedores/adriana-vitti-cerimonialista": {
+    "title": "Adriana Vitti Cerimonialista - Cerimonial em Piracicaba | Guia Noivas",
+    "description": "Com mais de 18 anos de atuação no mercado de casamentos, Adriana Vitti é sinônimo de excelência em cerimonial e assessoria, reconhecida por conduzir celebr",
+    "image": "https://gnmedias.blob.core.windows.net/media/fornecedores/f16c4451-9bfb-47b5-945a-00816d470428/8a005a560d7e42c38e81ee3f5619c1b4.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/adriana-vitti-cerimonialista",
     "robots": "index, follow",
     "category": "Cerimonial",
     "city": "Piracicaba",
-    "keywords": "Angela Oliveira Assessoria e Cerimonial, Cerimonial, Piracicaba, casamento, fornecedor"
-  },
-  "/piracicaba/fornecedores/viajandocomyara": {
-    "title": "Viajando com Yara - Lua de Mel em Saltinho e Piracicaba  | Guia Noivas",
-    "description": "Seja bem vindo a agência de viagem Viajando com Yara.\nNossa missão é transformar sua próxima viagem nas melhores recordações e experiências.\n\nCuidamos de t",
-    "image": "https://gnmedias.blob.core.windows.net/media/fornecedores/a6e0103d-f312-4ed4-8f6a-49814ee91178/05d3d35f054f401384292b0d01ae6506.jpeg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/viajandocomyara",
-    "robots": "index, follow",
-    "category": "Lua de Mel",
-    "city": "Saltinho e Piracicaba ",
-    "keywords": "Viajando com Yara, Lua de Mel, Saltinho e Piracicaba , casamento, fornecedor"
+    "keywords": "Adriana Vitti Cerimonialista, Cerimonial, Piracicaba, casamento, fornecedor"
   },
   "/piracicaba/fornecedores/revelare-totem": {
     "title": "Revelare Totem - Cabines & Totens em Piracicaba | Guia Noivas",
@@ -230,45 +210,25 @@
     "city": "Piracicaba",
     "keywords": "Revelare Totem, Cabines & Totens, Piracicaba, casamento, fornecedor"
   },
-  "/piracicaba/fornecedores/atelier-carla-melo": {
-    "title": "Atelier Carla Melo - Vestidos em Piracicaba | Guia Noivas",
-    "description": "No Ateliê Carla Mello, acreditamos que o processo de criação não começa com o tecido, mas sim com a escuta, a conexão e o afeto. Mais do que um modelo, bus",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/fd0835c47c454740b54bb3b8993007e3_588292054_1726902435363536_1313111354077415422_n.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/atelier-carla-melo",
+  "/piracicaba/fornecedores/bordado-zen": {
+    "title": "Bordado Zen - Alianças e Acessórios em Piracicaba | Guia Noivas",
+    "description": "Bem-vinda à Bordado Zen, onde cada ponto é um passo em direção à beleza serena do seu grande dia. Nossa missão é enriquecer os momentos mais preciosos da v",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/528619eb8ea141a080ee572a46c76831_1.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/bordado-zen",
     "robots": "index, follow",
-    "category": "Vestidos",
+    "category": "Alianças e Acessórios",
     "city": "Piracicaba",
-    "keywords": "Atelier Carla Melo, Vestidos, Piracicaba, casamento, fornecedor"
+    "keywords": "Bordado Zen, Alianças e Acessórios, Piracicaba, casamento, fornecedor"
   },
-  "/piracicaba/fornecedores/floricultura-cravo-e-canela": {
-    "title": "Floricultura Cravo e Canela - Decoração em Piracicaba | Guia Noivas",
-    "description": "Meu nome é Diego Araújo, sou decorador de eventos com mais de duas décadas de dedicação e amor pelo que faço. Ao longo dos anos, tive o privilégio de trans",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/11/7a7bb58b839b4b5ab345de77f2922bf4_1.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/floricultura-cravo-e-canela",
-    "robots": "index, follow",
-    "category": "Decoração",
-    "city": "Piracicaba",
-    "keywords": "Floricultura Cravo e Canela, Decoração, Piracicaba, casamento, fornecedor"
-  },
-  "/piracicaba/fornecedores/eternize-plantas": {
-    "title": "Eternize Plantas - Eternizacao em Piracicaba | Guia Noivas",
-    "description": "​A Eternize Plantas chega ao Guia de Noivas Piracicaba como Membro Fundadora, trazendo a magia da Preservação Botânica.\nO trabalho delas é transformar as f",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/bd4cc4b38e1f45f080e8a98939a01f0b_1.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/eternize-plantas",
-    "robots": "index, follow",
-    "category": "Eternizacao",
-    "city": "Piracicaba",
-    "keywords": "Eternize Plantas, Eternizacao, Piracicaba, casamento, fornecedor"
-  },
-  "/piracicaba/fornecedores/lais-furlan-cerimonialista": {
-    "title": "Lais Furlan Assessoria e Cerimonial - Cerimonial em Piracicaba | Guia Noivas",
-    "description": "Lais Furlan Assessoria e Cerimonial Organização, Detalhes e Muito Amor.\n\nUma assessora sonhadora e detalhista, dedicada a tornar o processo do seu casament",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/edfa73f23e3c4c62ac40c0444090416e_1.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/lais-furlan-cerimonialista",
+  "/piracicaba/fornecedores/angela-oliveira-assessoria-e-cerimonial": {
+    "title": "Angela Oliveira Assessoria e Cerimonial - Cerimonial em Piracicaba | Guia Noivas",
+    "description": "Bem-vindo ao Angela Oliveira Cerimonial!\nSou a Angela, atuo como especialista em organização e coordenação de eventos a 14 anos. Minha trajetória nesse uni",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/a6763fabada54e03ac427bb0df5a4023_1.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/angela-oliveira-assessoria-e-cerimonial",
     "robots": "index, follow",
     "category": "Cerimonial",
     "city": "Piracicaba",
-    "keywords": "Lais Furlan Assessoria e Cerimonial, Cerimonial, Piracicaba, casamento, fornecedor"
+    "keywords": "Angela Oliveira Assessoria e Cerimonial, Cerimonial, Piracicaba, casamento, fornecedor"
   },
   "/piracicaba/fornecedores/mari-custorio-spa-pes": {
     "title": "Mari Custodio - SPA dos pés - Experiências em Itatiba | Guia Noivas",
@@ -280,15 +240,15 @@
     "city": "Itatiba",
     "keywords": "Mari Custodio - SPA dos pés, Experiências, Itatiba, casamento, fornecedor"
   },
-  "/piracicaba/fornecedores/marcia-delabio-buffet": {
-    "title": "Marcia Delabio Buffet - Buffet em Piracicaba | Guia Noivas",
-    "description": "Desde 2010 trabalhando com casamentos, aniversários, confraternizações e eventos em geral.",
-    "image": "https://gnmedias.blob.core.windows.net/media/fornecedores/3cef23a1-8903-49ca-97c6-96b688e9fcbe/cdc72be138924f1ea2057f188dbf9ba6.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/marcia-delabio-buffet",
+  "/piracicaba/fornecedores/sandro-cardoso-fotografia": {
+    "title": "Sandro Cardoso Fotografia - Fotografia em Piracicaba | Guia Noivas",
+    "description": "Eu sou um apaixonado pelo que faço, amo fotografar os melhores momentos da vida, registrar o amor e o carinho entre as pessoas. Acredito que a fotografia é",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/11/ada78b1fcb8f46e9a41e6571b693085c_1.png",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/sandro-cardoso-fotografia",
     "robots": "index, follow",
-    "category": "Buffet",
+    "category": "Fotografia",
     "city": "Piracicaba",
-    "keywords": "Marcia Delabio Buffet, Buffet, Piracicaba, casamento, fornecedor"
+    "keywords": "Sandro Cardoso Fotografia, Fotografia, Piracicaba, casamento, fornecedor"
   },
   "/piracicaba/fornecedores/lilas-convites-co": {
     "title": "Lilas Convites & Co.  - Convites e Papelaria em Piracicaba | Guia Noivas",
@@ -300,6 +260,26 @@
     "city": "Piracicaba",
     "keywords": "Lilas Convites & Co. , Convites e Papelaria, Piracicaba, casamento, fornecedor"
   },
+  "/piracicaba/fornecedores/lilian-campos": {
+    "title": "Lilian Campos MakeUp - Maquiagem em Piracicaba | Guia Noivas",
+    "description": "Apaixonada pelo universo feminino, pelo mundo da beleza, por maquiagem e estética e pelo empoderamento que traz a nós mulheres. Renunciei o funcionalismo p",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/11/32ebcca203754a16b0f5b9bb3be17be7_1.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/lilian-campos",
+    "robots": "index, follow",
+    "category": "Maquiagem",
+    "city": "Piracicaba",
+    "keywords": "Lilian Campos MakeUp, Maquiagem, Piracicaba, casamento, fornecedor"
+  },
+  "/piracicaba/fornecedores/marcia-delabio-buffet": {
+    "title": "Marcia Delabio Buffet - Buffet em Piracicaba | Guia Noivas",
+    "description": "Desde 2010 trabalhando com casamentos, aniversários, confraternizações e eventos em geral.",
+    "image": "https://gnmedias.blob.core.windows.net/media/fornecedores/3cef23a1-8903-49ca-97c6-96b688e9fcbe/cdc72be138924f1ea2057f188dbf9ba6.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/marcia-delabio-buffet",
+    "robots": "index, follow",
+    "category": "Buffet",
+    "city": "Piracicaba",
+    "keywords": "Marcia Delabio Buffet, Buffet, Piracicaba, casamento, fornecedor"
+  },
   "/piracicaba/fornecedores/soraiamartins-cerimonialista": {
     "title": "Soraia Martins  Cerimonialista - Cerimonial em Piracicaba | Guia Noivas",
     "description": "Tem profissionais que trabalham com planilhas, e tem profissionais que trabalham com o coração. A Soraia Martins faz os dois com maestria. ❤️✨\nBasta olhar ",
@@ -310,15 +290,65 @@
     "city": "Piracicaba",
     "keywords": "Soraia Martins  Cerimonialista, Cerimonial, Piracicaba, casamento, fornecedor"
   },
-  "/piracicaba/fornecedores/colorindo-o-altar": {
-    "title": "Colorindo o Altar - Celebrante em Piracicaba | Guia Noivas",
-    "description": "Cada casal tem uma história única, e sua celebração merece refletir isso. Aline Ferreira, celebrante e criadora do Colorindo o Altar, transforma momentos e",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/11/9f2105bef6f74177a2b8ac9f0c3aee4e_IMG_20251126_101128_973.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/colorindo-o-altar",
+  "/piracicaba/fornecedores/ana-picoli-fotografa": {
+    "title": "Ana Picoli Fotografa - Fotografia em Piracicaba | Guia Noivas",
+    "description": "Analisando o portfólio da Ana, o que nos encanta não é apenas a técnica impecável — evidente no uso magistral da luz natural e nas composições artísticas —",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/0220ce0312f04bf6bc9bb2884dccba3c_1.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/ana-picoli-fotografa",
     "robots": "index, follow",
-    "category": "Celebrante",
+    "category": "Fotografia",
     "city": "Piracicaba",
-    "keywords": "Colorindo o Altar, Celebrante, Piracicaba, casamento, fornecedor"
+    "keywords": "Ana Picoli Fotografa, Fotografia, Piracicaba, casamento, fornecedor"
+  },
+  "/piracicaba/fornecedores/atelier-karina": {
+    "title": "Atelier Karina - Imagens Sacras em Piracicaba | Guia Noivas",
+    "description": "Karina | Imagens Sacras & Artesanato.Professora de formação, artesã de coração. Levando beleza e fé através da minha arte.Peças únicas que contam a sua e a",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/b2800d7b59a8436c920950b08781ee1d_1.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/atelier-karina",
+    "robots": "index, follow",
+    "category": "Imagens Sacras",
+    "city": "Piracicaba",
+    "keywords": "Atelier Karina, Imagens Sacras, Piracicaba, casamento, fornecedor"
+  },
+  "/piracicaba/fornecedores/atelier-carla-melo": {
+    "title": "Atelier Carla Melo - Vestidos em Piracicaba | Guia Noivas",
+    "description": "No Ateliê Carla Mello, acreditamos que o processo de criação não começa com o tecido, mas sim com a escuta, a conexão e o afeto. Mais do que um modelo, bus",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/fd0835c47c454740b54bb3b8993007e3_588292054_1726902435363536_1313111354077415422_n.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/atelier-carla-melo",
+    "robots": "index, follow",
+    "category": "Vestidos",
+    "city": "Piracicaba",
+    "keywords": "Atelier Carla Melo, Vestidos, Piracicaba, casamento, fornecedor"
+  },
+  "/piracicaba/fornecedores/box-foto-cabine": {
+    "title": "Box Foto Cabine - Cabines & Totens em Piracicaba | Guia Noivas",
+    "description": "Transformamos momentos em lembranças inesquecíveis\n\nA Box Foto Cabine é especialista em criar experiências interativas e emocionantes para casamentos. Mais",
+    "image": "https://stguianoivasprod.blob.core.windows.net/media/fornecedores/ad9aa5f4-2a82-4a43-8a0d-5f07666b16c5/cae602f3b46a4d21bb5daffd9bfd73fb.webp",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/box-foto-cabine",
+    "robots": "index, follow",
+    "category": "Cabines & Totens",
+    "city": "Piracicaba",
+    "keywords": "Box Foto Cabine, Cabines & Totens, Piracicaba, casamento, fornecedor"
+  },
+  "/piracicaba/fornecedores/floricultura-cravo-e-canela": {
+    "title": "Floricultura Cravo e Canela - Decoração em Piracicaba | Guia Noivas",
+    "description": "Meu nome é Diego Araújo, sou decorador de eventos com mais de duas décadas de dedicação e amor pelo que faço. Ao longo dos anos, tive o privilégio de trans",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/11/7a7bb58b839b4b5ab345de77f2922bf4_1.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/floricultura-cravo-e-canela",
+    "robots": "index, follow",
+    "category": "Decoração",
+    "city": "Piracicaba",
+    "keywords": "Floricultura Cravo e Canela, Decoração, Piracicaba, casamento, fornecedor"
+  },
+  "/piracicaba/fornecedores/espaco-pompeia": {
+    "title": "Espaço Pompéia - Espaços em Piracicaba | Guia Noivas",
+    "description": "Uma linda chácara para casamentos, com excelente localização, estacionamento com segurança, salão com mesas e cadeiras e um lindo jardim com pergolado e il",
+    "image": "https://gnmedias.blob.core.windows.net/media/fornecedores/823ab516-3917-40ab-8ead-e2694c94e1fc/581feb1aaa5b4f468d7e2c876f92c5e0.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/espaco-pompeia",
+    "robots": "index, follow",
+    "category": "Espaços",
+    "city": "Piracicaba",
+    "keywords": "Espaço Pompéia, Espaços, Piracicaba, casamento, fornecedor"
   },
   "/piracicaba/fornecedores/manu-gois-doces-finos": {
     "title": "Manu Gois doces finos - Doces Finos em Piracicaba | Guia Noivas",
@@ -340,25 +370,25 @@
     "city": "Piracicaba",
     "keywords": "Rosa Salles Cerimonial, Cerimonial, Piracicaba, casamento, fornecedor"
   },
-  "/piracicaba/fornecedores/toccare-musica-para-eventos": {
-    "title": "Toccare Música para Eventos - Música em Piracicaba | Guia Noivas",
-    "description": "Com 19 anos de história, a Toccare é especialista em criar a trilha sonora perfeita para cada momento.\n\nDesde a entrada impactante com o trompete até a for",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/11/2496e5c7b00c47a0bf76c4709bf3f77e_1.jpeg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/toccare-musica-para-eventos",
+  "/piracicaba/fornecedores/eternize-plantas": {
+    "title": "Eternize Plantas - Eternizacao em Piracicaba | Guia Noivas",
+    "description": "​A Eternize Plantas chega ao Guia de Noivas Piracicaba como Membro Fundadora, trazendo a magia da Preservação Botânica.\nO trabalho delas é transformar as f",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/bd4cc4b38e1f45f080e8a98939a01f0b_1.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/eternize-plantas",
     "robots": "index, follow",
-    "category": "Música",
+    "category": "Eternizacao",
     "city": "Piracicaba",
-    "keywords": "Toccare Música para Eventos, Música, Piracicaba, casamento, fornecedor"
+    "keywords": "Eternize Plantas, Eternizacao, Piracicaba, casamento, fornecedor"
   },
-  "/piracicaba/fornecedores/atelier-karina": {
-    "title": "Atelier Karina - Imagens Sacras em Piracicaba | Guia Noivas",
-    "description": "Karina | Imagens Sacras & Artesanato.Professora de formação, artesã de coração. Levando beleza e fé através da minha arte.Peças únicas que contam a sua e a",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/b2800d7b59a8436c920950b08781ee1d_1.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/atelier-karina",
+  "/piracicaba/fornecedores/lais-furlan-cerimonialista": {
+    "title": "Lais Furlan Assessoria e Cerimonial - Cerimonial em Piracicaba | Guia Noivas",
+    "description": "Lais Furlan Assessoria e Cerimonial Organização, Detalhes e Muito Amor.\n\nUma assessora sonhadora e detalhista, dedicada a tornar o processo do seu casament",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/edfa73f23e3c4c62ac40c0444090416e_1.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/lais-furlan-cerimonialista",
     "robots": "index, follow",
-    "category": "Imagens Sacras",
+    "category": "Cerimonial",
     "city": "Piracicaba",
-    "keywords": "Atelier Karina, Imagens Sacras, Piracicaba, casamento, fornecedor"
+    "keywords": "Lais Furlan Assessoria e Cerimonial, Cerimonial, Piracicaba, casamento, fornecedor"
   },
   "/piracicaba/fornecedores/verascar-limousines": {
     "title": "Verascar Limousines - Veiculos em Piracicaba | Guia Noivas",
@@ -370,6 +400,36 @@
     "city": "Piracicaba",
     "keywords": "Verascar Limousines, Veiculos, Piracicaba, casamento, fornecedor"
   },
+  "/piracicaba/fornecedores/fotografo-perez": {
+    "title": "Fotógrafo Perez - Fotografia em Piracicaba | Guia Noivas",
+    "description": "Com mais de três décadas dedicadas à arte de contar histórias, Antonio Perez não apenas fotografa, ele cria um legado. A sua jornada começou no fotojornali",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/11/bd5d74cd056841cf8e5431c10d19b5aa_1.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/fotografo-perez",
+    "robots": "index, follow",
+    "category": "Fotografia",
+    "city": "Piracicaba",
+    "keywords": "Fotógrafo Perez, Fotografia, Piracicaba, casamento, fornecedor"
+  },
+  "/piracicaba/fornecedores/viajandocomyara": {
+    "title": "Viajando com Yara - Lua de Mel em Saltinho e Piracicaba  | Guia Noivas",
+    "description": "Seja bem vindo a agência de viagem Viajando com Yara.\nNossa missão é transformar sua próxima viagem nas melhores recordações e experiências.\n\nCuidamos de t",
+    "image": "https://gnmedias.blob.core.windows.net/media/fornecedores/a6e0103d-f312-4ed4-8f6a-49814ee91178/05d3d35f054f401384292b0d01ae6506.jpeg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/viajandocomyara",
+    "robots": "index, follow",
+    "category": "Lua de Mel",
+    "city": "Saltinho e Piracicaba ",
+    "keywords": "Viajando com Yara, Lua de Mel, Saltinho e Piracicaba , casamento, fornecedor"
+  },
+  "/piracicaba/fornecedores/toccare-musica-para-eventos": {
+    "title": "Toccare Música para Eventos - Música em Piracicaba | Guia Noivas",
+    "description": "Com 19 anos de história, a Toccare é especialista em criar a trilha sonora perfeita para cada momento.\n\nDesde a entrada impactante com o trompete até a for",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/11/2496e5c7b00c47a0bf76c4709bf3f77e_1.jpeg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/toccare-musica-para-eventos",
+    "robots": "index, follow",
+    "category": "Música",
+    "city": "Piracicaba",
+    "keywords": "Toccare Música para Eventos, Música, Piracicaba, casamento, fornecedor"
+  },
   "/piracicaba/fornecedores/tenda-picoli": {
     "title": "Tenda Picoli - Tenda em Piracicaba | Guia Noivas",
     "description": "A Tendas Pícoli não aluga apenas Tendas; ela fornece a **estrutura que protege a sua magia**. Ela garante que a cerimônia e a festa tenham a tranquilidade ",
@@ -379,66 +439,6 @@
     "category": "Tenda",
     "city": "Piracicaba",
     "keywords": "Tenda Picoli, Tenda, Piracicaba, casamento, fornecedor"
-  },
-  "/piracicaba/fornecedores/adriana-vitti-cerimonialista": {
-    "title": "Adriana Vitti Cerimonialista - Cerimonial em Piracicaba | Guia Noivas",
-    "description": "Com mais de 18 anos de atuação no mercado de casamentos, Adriana Vitti é sinônimo de excelência em cerimonial e assessoria, reconhecida por conduzir celebr",
-    "image": "https://gnmedias.blob.core.windows.net/media/fornecedores/f16c4451-9bfb-47b5-945a-00816d470428/8a005a560d7e42c38e81ee3f5619c1b4.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/adriana-vitti-cerimonialista",
-    "robots": "index, follow",
-    "category": "Cerimonial",
-    "city": "Piracicaba",
-    "keywords": "Adriana Vitti Cerimonialista, Cerimonial, Piracicaba, casamento, fornecedor"
-  },
-  "/piracicaba/fornecedores/espaco-pompeia": {
-    "title": "Espaço Pompéia - Espaços em Piracicaba | Guia Noivas",
-    "description": "Uma linda chácara para casamentos, com excelente localização, estacionamento com segurança, salão com mesas e cadeiras e um lindo jardim com pergolado e il",
-    "image": "https://gnmedias.blob.core.windows.net/media/fornecedores/823ab516-3917-40ab-8ead-e2694c94e1fc/581feb1aaa5b4f468d7e2c876f92c5e0.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/espaco-pompeia",
-    "robots": "index, follow",
-    "category": "Espaços",
-    "city": "Piracicaba",
-    "keywords": "Espaço Pompéia, Espaços, Piracicaba, casamento, fornecedor"
-  },
-  "/piracicaba/fornecedores/mundo-a-bordo-br": {
-    "title": "Mundo a Bordo Br - Lua de Mel em Piracicaba | Guia Noivas",
-    "description": "Mais do que emitir passagens, a Mundo a Bordo é especialista em desenhar a recompensa que vocês merecem após meses de planejamento. Seja num café da manhã ",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/0143387d895e4fb39db8677a459a75bd_1.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/mundo-a-bordo-br",
-    "robots": "index, follow",
-    "category": "Lua de Mel",
-    "city": "Piracicaba",
-    "keywords": "Mundo a Bordo Br, Lua de Mel, Piracicaba, casamento, fornecedor"
-  },
-  "/piracicaba/fornecedores/giravideo360": {
-    "title": "Giravideo Entretenimento  - Cabines & Totens em Pitacicaba | Guia Noivas",
-    "description": "Se você busca entretenimento de qualidade e que vai impactar seus convidados, aqui é a melhor escolha.\nEmpresa séria com lindos equipamentos de alta tecnol",
-    "image": "https://gnmedias.blob.core.windows.net/media/fornecedores/8b0a2ca4-871a-4439-96d9-1a1791efb7ef/87a6402a22c546d09b97d10804f86180.jpeg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/giravideo360",
-    "robots": "index, follow",
-    "category": "Cabines & Totens",
-    "city": "Pitacicaba",
-    "keywords": "Giravideo Entretenimento , Cabines & Totens, Pitacicaba, casamento, fornecedor"
-  },
-  "/piracicaba/fornecedores/box-foto-cabine": {
-    "title": "Box Foto Cabine - Cabines & Totens em Piracicaba | Guia Noivas",
-    "description": "Transformamos momentos em lembranças inesquecíveis\n\nA Box Foto Cabine é especialista em criar experiências interativas e emocionantes para casamentos. Mais",
-    "image": "https://stguianoivasprod.blob.core.windows.net/media/fornecedores/ad9aa5f4-2a82-4a43-8a0d-5f07666b16c5/cae602f3b46a4d21bb5daffd9bfd73fb.webp",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/box-foto-cabine",
-    "robots": "index, follow",
-    "category": "Cabines & Totens",
-    "city": "Piracicaba",
-    "keywords": "Box Foto Cabine, Cabines & Totens, Piracicaba, casamento, fornecedor"
-  },
-  "/piracicaba/fornecedores/sandro-cardoso-fotografia": {
-    "title": "Sandro Cardoso Fotografia - Fotografia em Piracicaba | Guia Noivas",
-    "description": "Eu sou um apaixonado pelo que faço, amo fotografar os melhores momentos da vida, registrar o amor e o carinho entre as pessoas. Acredito que a fotografia é",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/11/ada78b1fcb8f46e9a41e6571b693085c_1.png",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/sandro-cardoso-fotografia",
-    "robots": "index, follow",
-    "category": "Fotografia",
-    "city": "Piracicaba",
-    "keywords": "Sandro Cardoso Fotografia, Fotografia, Piracicaba, casamento, fornecedor"
   },
   "/piracicaba/fornecedores/galatas-eventos": {
     "title": "Gálatas Eventos - Espaços em Piracicaba | Guia Noivas",

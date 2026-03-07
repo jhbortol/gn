@@ -1,11 +1,11 @@
 <footer class="bg-slate-900 text-white py-8 mt-12 footer-stable">
   <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
-    <div>
-      <h3 class="font-bold text-lg mb-2">Guia Noivas</h3>
+    <div aria-label="Guia Noivas">
+      <p class="font-bold text-lg mb-2">Guia Noivas</p>
       <p class="text-sm">Seu portal de fornecedores para casamentos em Piracicaba.</p>
     </div>
-    <div>
-      <h3 class="font-bold text-lg mb-2">Categorias</h3>
+    <div aria-label="Categorias">
+      <p class="font-bold text-lg mb-2">Categorias</p>
       <ul class="text-sm space-y-1">
         <li><a [routerLink]="buildUrl(['categorias', 'fotografia'])" class="hover:underline">Fotografia</a></li>
         <li><a [routerLink]="buildUrl(['categorias', 'buffet'])" class="hover:underline">Buffet</a></li>
@@ -14,16 +14,16 @@
         <li><a [routerLink]="buildUrl(['categorias', 'vestidos'])" class="hover:underline">Vestidos</a></li>
       </ul>
     </div>
-    <div>
-      <h3 class="font-bold text-lg mb-2">Institucional</h3>
+    <div aria-label="Institucional">
+      <p class="font-bold text-lg mb-2">Institucional</p>
       <ul class="text-sm space-y-1">
         <li><a [routerLink]="buildUrl(['institucional', 'sobre'])" class="hover:underline">Sobre Nós</a></li>
         <li><a [routerLink]="buildUrl('contato')" class="hover:underline">Contato</a></li>
         <li><a [routerLink]="buildUrl(['institucional', 'termos'])" class="hover:underline">Termos</a></li>
       </ul>
     </div>
-    <div>
-      <h3 class="font-bold text-lg mb-2">Newsletter</h3>
+    <div aria-label="Newsletter">
+      <p class="font-bold text-lg mb-2">Newsletter</p>
       <form class="flex flex-col gap-3" (ngSubmit)="subscribe()" #newsletterForm="ngForm">
         <div class="flex gap-2">
           <input

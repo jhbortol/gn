@@ -90,6 +90,7 @@ export interface Fornecedor {
   whatsAppUrl?: string;
   showContactForm?: boolean;
   adInjection?: CompetitorAd[];
+  precoAPartirDe?: number; // Âncora de preço para badge "A partir de R$ X"
 }
 
 @Injectable({ providedIn: 'root' })
@@ -331,7 +332,8 @@ export class FornecedoresData {
         imagemPrincipal: resolveImageUrl(ad.imagemPrincipal || ad.ImagemPrincipal || ad.fotoUrl || ad.FotoUrl),
         descricao: ad.descricao || ad.Descricao,
         cidade: ad.cidade || ad.Cidade
-      }))
+      })),
+      precoAPartirDe: src.precoAPartirDe ?? src.PrecoAPartirDe ?? undefined
     };
   }
 

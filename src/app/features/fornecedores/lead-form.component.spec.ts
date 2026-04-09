@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { of, throwError } from 'rxjs';
 
 import { LeadFormComponent } from './lead-form.component';
@@ -19,7 +20,8 @@ describe('LeadFormComponent', () => {
         await TestBed.configureTestingModule({
             imports: [
                 LeadFormComponent,
-                ReactiveFormsModule
+                ReactiveFormsModule,
+                RouterTestingModule
             ],
             providers: [
                 provideHttpClient(),
@@ -48,17 +50,7 @@ describe('LeadFormComponent', () => {
             expect(control?.valid).toBeTrue();
         });
 
-        it('should require valid email format', () => {
-            const control = component.form.get('clienteEmail');
-
-            control?.setValue('invalid');
-            expect(control?.valid).toBeFalse();
-
-            control?.setValue('valid@email.com');
-            expect(control?.valid).toBeTrue();
-        });
-
-        it('should validate Brazilian phone format', () => {
+        it('should validate Brazilian phone format for WhatsApp field', () => {
             const control = component.form.get('clientePhone');
 
             // Invalid formats
@@ -99,25 +91,18 @@ describe('LeadFormComponent', () => {
             expect(control?.valid).toBeTrue();
         });
 
-        it('should require message with min 10 characters', () => {
-            const control = component.form.get('message');
-
-            control?.setValue('short');
-            expect(control?.valid).toBeFalse();
-
-            control?.setValue('This is a valid message');
-            expect(control?.valid).toBeTrue();
+        it('should NOT have email or message fields', () => {
+            expect(component.form.get('clienteEmail')).toBeNull();
+            expect(component.form.get('message')).toBeNull();
         });
     });
 
     describe('Form Submission', () => {
         beforeEach(() => {
-            // Fill form with valid data
+            // Fill form with valid data (3 fields only)
             component.form.patchValue({
                 clienteName: 'Maria Silva',
-                clienteEmail: 'maria@email.com',
                 clientePhone: '(11) 99999-8888',
-                message: 'Gostaria de mais informações sobre o serviço',
                 eventDate: '2024-12-25',
                 lgpdConsent: true
             });

@@ -2,10 +2,10 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, signal, 
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Meta, Title } from '@angular/platform-browser';
-import { ClickwrapAgreementComponent } from '../../shared/clickwrap-agreement/clickwrap-agreement';
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
 import { TrackingService } from '../../core/tracking.service';
 import { MetaTagService } from '../../core/meta-tag.service';
+import { LeadService } from '../../core/services/lead.service';
 import { Observable, firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { LeadFormComponent } from './lead-form.component';
@@ -21,7 +21,6 @@ import { ClaimModalComponent } from './claim-modal/claim-modal.component';
   imports: [
     CommonModule,
     RouterModule,
-    ClickwrapAgreementComponent,
     LeadFormComponent,
     CompetitorAdsComponent,
     ClaimModalComponent
@@ -55,6 +54,7 @@ export class FornecedorPageComponent implements OnInit {
     private fornecedores: FornecedoresData,
     private cdr: ChangeDetectorRef,
     private tracking: TrackingService,
+    private leadService: LeadService,
     private title: Title,
     private meta: Meta,
     private metaTagService: MetaTagService,
@@ -167,6 +167,29 @@ export class FornecedorPageComponent implements OnInit {
       vendorName: this.fornecedor?.nome || '',
       vendorCategory: this.fornecedor?.categoria
     });
+  }
+
+  /**
+   * Registra o clique na API e só então abre o WhatsApp.
+   * Isso garante que a origem do lead seja contabilizada ao Guia.
+   * Em caso de falha na API, o WhatsApp é aberto mesmo assim (best-effort).
+   */
+  registrarLeadEabrirWhatsapp(): void {
+    const whatsappUrl = this.getWhatsAppLink();
+    if (!whatsappUrl || whatsappUrl === '#') return;
+
+    // Rastrear analytics
+    this.onWhatsAppClick();
+
+    // Registrar clique na API (best-effort, não bloqueia o usuário)
+    if (this.fornecedor?.id) {
+      this.leadService.registrarCliqueWhatsapp(this.fornecedor.id).subscribe();
+    }
+
+    // Abrir WhatsApp (disparo imediato para evitar bloqueio de popup no mobile)
+    if (typeof window !== 'undefined') {
+      window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    }
   }
 
   getSiteLink(): string {
@@ -390,6 +413,18 @@ export class FornecedorPageComponent implements OnInit {
     // Exemplo: mostrar toast ou redirecionar
     console.log('Lead enviado com sucesso:', leadId);
     // Opcionalmente: scrollar para seção de depoimentos
+  }
+
+  /**
+   * Scrolls suavemente até o formulário de lead (usado pelo botão sticky no mobile)
+   */
+  scrollToLeadForm(): void {
+    if (typeof document !== 'undefined') {
+      const el = document.getElementById('lead-form-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
   }
 
   /**

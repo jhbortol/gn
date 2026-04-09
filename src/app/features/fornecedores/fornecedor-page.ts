@@ -416,6 +416,18 @@ export class FornecedorPageComponent implements OnInit {
   }
 
   /**
+   * Scrolls suavemente até o formulário de lead (usado pelo botão sticky no mobile)
+   */
+  scrollToLeadForm(): void {
+    if (typeof document !== 'undefined') {
+      const el = document.getElementById('lead-form-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }
+
+  /**
    * Abre modal para reivindicar perfil (Zombie tier)
    */
   openClaimModal(): void {

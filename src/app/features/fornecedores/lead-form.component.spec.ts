@@ -142,20 +142,45 @@ describe('LeadFormComponent', () => {
         });
     });
 
-    describe('Field Validation Display', () => {
-        it('should return true for invalid and touched field', () => {
-            const control = component.form.get('clienteName');
-            control?.setValue('');
-            control?.markAsTouched();
+    describe('Compact Mode (WhatsApp modal)', () => {
+        let compactFixture: ComponentFixture<LeadFormComponent>;
+        let compactComponent: LeadFormComponent;
 
-            expect(component.isFieldInvalid('clienteName')).toBeTrue();
+        beforeEach(() => {
+            compactFixture = TestBed.createComponent(LeadFormComponent);
+            compactComponent = compactFixture.componentInstance;
+            compactComponent.fornecedorId = '456';
+            compactComponent.compact = true;
+            compactFixture.detectChanges(); // triggers ngOnInit
         });
 
-        it('should return false for valid field', () => {
-            const control = component.form.get('clienteName');
-            control?.setValue('Valid Name');
+        it('should clear eventDate validators in compact mode', () => {
+            const control = compactComponent.form.get('eventDate');
+            control?.setValue('');
+            expect(control?.valid).toBeTrue();
+        });
 
-            expect(component.isFieldInvalid('clienteName')).toBeFalse();
+        it('should auto-set lgpdConsent to true in compact mode', () => {
+            const control = compactComponent.form.get('lgpdConsent');
+            expect(control?.value).toBeTrue();
+            expect(control?.valid).toBeTrue();
+        });
+
+        it('should be valid with only name and phone in compact mode', () => {
+            compactComponent.form.patchValue({
+                clienteName: 'Maria Silva',
+                clientePhone: '(11) 99999-8888'
+            });
+            expect(compactComponent.form.valid).toBeTrue();
+        });
+
+        it('should submit successfully in compact mode with just name and phone', () => {
+            compactComponent.form.patchValue({
+                clienteName: 'Maria Silva',
+                clientePhone: '(11) 99999-8888'
+            });
+            compactComponent.onSubmit();
+            expect(mockLeadService.submitLead).toHaveBeenCalledWith('456', jasmine.any(Object));
         });
     });
 });

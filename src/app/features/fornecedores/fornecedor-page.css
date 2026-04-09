@@ -234,3 +234,34 @@
     padding-bottom: 90px;
   }
 }
+
+/* =============================================
+   Mobile Gallery Carousel
+   Full-width horizontal scroll with snap
+   Visible only on screens < md (768px)
+   ============================================= */
+.gallery-mobile-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.gallery-mobile-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.gallery-mobile-carousel__slide {
+  flex: 0 0 100%;
+  height: 288px;
+  scroll-snap-align: start;
+}
+
+.gallery-mobile-carousel__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  display: block;
+}

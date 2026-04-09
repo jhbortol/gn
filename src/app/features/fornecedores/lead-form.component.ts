@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { LeadService } from '../../core/services/lead.service';
@@ -9,10 +9,12 @@ import { LeadService } from '../../core/services/lead.service';
   imports: [CommonModule, ReactiveFormsModule],
   template: `
     <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 mb-6">
-      <h3 class="font-serif font-bold text-2xl text-gray-900 mb-2">Enviar Mensagem Direta</h3>
-      <p class="text-sm text-gray-600 mb-6">
-        Preencha seus dados e o fornecedor entrará em contato com você pelo WhatsApp.
-      </p>
+      <ng-container *ngIf="!compact">
+        <h3 class="font-serif font-bold text-2xl text-gray-900 mb-2">Enviar Mensagem Direta</h3>
+        <p class="text-sm text-gray-600 mb-6">
+          Preencha seus dados e o fornecedor entrará em contato com você pelo WhatsApp.
+        </p>
+      </ng-container>
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
         <!-- Nome -->
@@ -47,8 +49,8 @@ import { LeadService } from '../../core/services/lead.service';
           </p>
         </div>
 
-        <!-- Data do Evento -->
-        <div>
+        <!-- Data do Evento (hidden in compact/WhatsApp mode) -->
+        <div *ngIf="!compact">
           <label class="block text-sm font-medium text-gray-700 mb-2">Data do Evento <span class="text-red-600">*</span></label>
           <input
             type="date"
@@ -61,8 +63,8 @@ import { LeadService } from '../../core/services/lead.service';
           </p>
         </div>
 
-        <!-- LGPD Consent -->
-        <div class="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+        <!-- LGPD Consent (hidden in compact/WhatsApp mode) -->
+        <div *ngIf="!compact" class="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg">
           <input
             type="checkbox"
             formControlName="lgpdConsent"
@@ -80,7 +82,7 @@ import { LeadService } from '../../core/services/lead.service';
             </p>
           </div>
         </div>
-        <p *ngIf="isFieldInvalid('lgpdConsent')" class="text-red-500 text-xs">
+        <p *ngIf="!compact && isFieldInvalid('lgpdConsent')" class="text-red-500 text-xs">
           Você deve consentir para enviar a mensagem
         </p>
 
@@ -90,7 +92,7 @@ import { LeadService } from '../../core/services/lead.service';
           [disabled]="!form.valid || isSubmitting()"
           class="w-full bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
         >
-          {{ isSubmitting() ? 'Enviando...' : 'Enviar Mensagem' }}
+          {{ isSubmitting() ? 'Enviando...' : (compact ? 'Continuar para WhatsApp' : 'Enviar Mensagem') }}
         </button>
 
         <!-- Disclaimer termos -->
@@ -120,8 +122,10 @@ import { LeadService } from '../../core/services/lead.service';
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LeadFormComponent {
+export class LeadFormComponent implements OnInit {
   @Input() fornecedorId!: string | number;
+  /** When true, shows only name + phone fields (used inside WhatsApp modal) */
+  @Input() compact = false;
   @Output() submitSuccess = new EventEmitter<any>();
 
   form = new FormGroup({
@@ -134,6 +138,18 @@ export class LeadFormComponent {
     eventDate: new FormControl('', [Validators.required]),
     lgpdConsent: new FormControl(false, [Validators.requiredTrue])
   });
+
+  ngOnInit(): void {
+    if (this.compact) {
+      // In compact mode, eventDate and lgpdConsent are not shown —
+      // remove their validators so the form can be submitted with just name + phone.
+      this.form.get('eventDate')?.clearValidators();
+      this.form.get('eventDate')?.updateValueAndValidity();
+      this.form.get('lgpdConsent')?.clearValidators();
+      this.form.get('lgpdConsent')?.setValue(true);
+      this.form.get('lgpdConsent')?.updateValueAndValidity();
+    }
+  }
 
   isSubmitting = signal(false);
   successMessage = signal('');

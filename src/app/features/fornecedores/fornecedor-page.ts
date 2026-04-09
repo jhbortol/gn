@@ -183,10 +183,7 @@ export class FornecedorPageComponent implements OnInit {
 
     // Registrar clique na API (best-effort, não bloqueia o usuário)
     if (this.fornecedor?.id) {
-      this.leadService.registrarCliqueWhatsapp(this.fornecedor.id).subscribe({
-        next: () => {},
-        error: () => {}
-      });
+      this.leadService.registrarCliqueWhatsapp(this.fornecedor.id).subscribe();
     }
 
     // Abrir WhatsApp (disparo imediato para evitar bloqueio de popup no mobile)

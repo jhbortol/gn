@@ -56,6 +56,7 @@ export interface LeadData {
   clienteEmail?: string;
   clientePhone: string;
   message?: string;
+  /** Data do evento no formato YYYY-MM-DD (ISO 8601) */
   eventDate?: string;
   lgpdConsent: boolean;
 }

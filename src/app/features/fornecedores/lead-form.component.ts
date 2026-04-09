@@ -1,13 +1,12 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
 import { LeadService } from '../../core/services/lead.service';
 
 @Component({
   selector: 'app-lead-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule],
   template: `
     <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 mb-6">
       <h3 class="font-serif font-bold text-2xl text-gray-900 mb-2">Enviar Mensagem Direta</h3>
@@ -97,9 +96,7 @@ import { LeadService } from '../../core/services/lead.service';
         <!-- Disclaimer termos -->
         <p class="text-center" style="font-size:10px; color:#9ca3af;">
           Ao enviar, você concorda com os
-          <a routerLink="/piracicaba/institucional/termos" class="underline hover:text-gray-600">Termos de Uso</a>
-          e a
-          <a routerLink="/piracicaba/institucional/termos" class="underline hover:text-gray-600">Isenção de Responsabilidade</a>
+          <a href="/piracicaba/institucional/termos" class="underline hover:text-gray-600">Termos de Uso e Isenção de Responsabilidade</a>
           do Guia Noivas.
         </p>
 

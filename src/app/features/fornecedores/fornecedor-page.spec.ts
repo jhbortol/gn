@@ -100,12 +100,12 @@ describe('FornecedorPageComponent', () => {
             expect(component.showLeadForm()).toBeTrue();
         });
 
-        it('should optionally show lead form for Vitrine based on showContactForm flag', () => {
+        it('should NOT show lead form for Vitrine tier regardless of showContactForm', () => {
             const vitrineWithForm = { ...mockFornecedorVitrine, showContactForm: true };
             mockFornecedoresData.getById.and.returnValue(of(vitrineWithForm));
             fixture.detectChanges();
 
-            expect(component.showLeadForm()).toBeTrue();
+            expect(component.showLeadForm()).toBeFalse();
         });
     });
 

@@ -40,6 +40,10 @@ export class FornecedorPageComponent implements OnInit {
   showClaimBar = signal(false);
   isClaimModalOpen = signal(false);
 
+  // Modal de captura de lead antes de abrir WhatsApp
+  showWhatsAppLeadModal = signal(false);
+  private pendingWhatsAppUrl = '';
+
   // Expor enum para o template
   PlanLevel = PlanLevel;
 
@@ -173,6 +177,7 @@ export class FornecedorPageComponent implements OnInit {
    * Registra o clique na API e só então abre o WhatsApp.
    * Isso garante que a origem do lead seja contabilizada ao Guia.
    * Em caso de falha na API, o WhatsApp é aberto mesmo assim (best-effort).
+   * Agora abre um modal de captura de lead antes de redirecionar.
    */
   registrarLeadEabrirWhatsapp(): void {
     const whatsappUrl = this.getWhatsAppLink();
@@ -181,15 +186,40 @@ export class FornecedorPageComponent implements OnInit {
     // Rastrear analytics
     this.onWhatsAppClick();
 
-    // Registrar clique na API (best-effort, não bloqueia o usuário)
+    // Guardar URL e abrir modal de captura de lead
+    this.pendingWhatsAppUrl = whatsappUrl;
+    this.showWhatsAppLeadModal.set(true);
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Fecha o modal de lead WhatsApp sem abrir o aplicativo.
+   */
+  fecharModalLeadWhatsapp(): void {
+    this.showWhatsAppLeadModal.set(false);
+    this.pendingWhatsAppUrl = '';
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Callback quando lead do modal WhatsApp é submetido com sucesso.
+   * Fecha o modal, registra o clique e abre o WhatsApp.
+   */
+  onWhatsAppLeadSubmitSuccess(leadId: number): void {
+    this.showWhatsAppLeadModal.set(false);
+    console.log('Lead WhatsApp enviado com sucesso:', leadId);
+
+    // Registrar clique na API (best-effort)
     if (this.fornecedor?.id) {
       this.leadService.registrarCliqueWhatsapp(this.fornecedor.id).subscribe();
     }
 
-    // Abrir WhatsApp (disparo imediato para evitar bloqueio de popup no mobile)
-    if (typeof window !== 'undefined') {
-      window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    // Abrir WhatsApp após captura do lead
+    if (typeof window !== 'undefined' && this.pendingWhatsAppUrl) {
+      window.open(this.pendingWhatsAppUrl, '_blank', 'noopener,noreferrer');
     }
+    this.pendingWhatsAppUrl = '';
+    this.cdr.markForCheck();
   }
 
   getSiteLink(): string {
@@ -278,8 +308,8 @@ export class FornecedorPageComponent implements OnInit {
       // Free: Sempre mostrar form (backend controla bloqueio)
       this.showLeadForm.set(true);
     } else if (planLevel === PlanLevel.Vitrine) {
-      // Vitrine: Formulário opcional (tem WhatsApp direto)
-      this.showLeadForm.set(!!fornecedor.showContactForm);
+      // Vitrine: Nunca mostrar formulário de contato (tem WhatsApp direto)
+      this.showLeadForm.set(false);
     } else {
       // Fallback para backward compatibility
       this.showLeadForm.set(!!fornecedor.showContactForm);

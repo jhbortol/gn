@@ -1,17 +1,18 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { LeadService } from '../../core/services/lead.service';
 
 @Component({
   selector: 'app-lead-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   template: `
     <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 mb-6">
       <h3 class="font-serif font-bold text-2xl text-gray-900 mb-2">Enviar Mensagem Direta</h3>
       <p class="text-sm text-gray-600 mb-6">
-        Preencha o formulário abaixo e o fornecedor entrará em contato em breve.
+        Preencha seus dados e o fornecedor entrará em contato com você pelo WhatsApp.
       </p>
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
@@ -30,24 +31,9 @@ import { LeadService } from '../../core/services/lead.service';
           </p>
         </div>
 
-        <!-- Email -->
+        <!-- WhatsApp -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Email <span class="text-red-600">*</span></label>
-          <input
-            type="email"
-            formControlName="clienteEmail"
-            placeholder="seu@email.com"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
-            [class.border-red-500]="isFieldInvalid('clienteEmail')"
-          />
-          <p *ngIf="isFieldInvalid('clienteEmail')" class="text-red-500 text-xs mt-1">
-            Email válido é obrigatório
-          </p>
-        </div>
-
-        <!-- Telefone -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Telefone <span class="text-red-600">*</span></label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">WhatsApp <span class="text-red-600">*</span></label>
           <input
             type="tel"
             formControlName="clientePhone"
@@ -58,7 +44,7 @@ import { LeadService } from '../../core/services/lead.service';
             (blur)="onPhoneBlur($event)"
           />
           <p *ngIf="isFieldInvalid('clientePhone')" class="text-red-500 text-xs mt-1">
-            Telefone válido é obrigatório
+            WhatsApp válido é obrigatório
           </p>
         </div>
 
@@ -73,21 +59,6 @@ import { LeadService } from '../../core/services/lead.service';
           />
           <p *ngIf="isFieldInvalid('eventDate')" class="text-red-500 text-xs mt-1">
             Data do evento é obrigatória
-          </p>
-        </div>
-
-        <!-- Mensagem -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Sua Mensagem <span class="text-red-600">*</span></label>
-          <textarea
-            formControlName="message"
-            placeholder="Conte um pouco sobre suas necessidades..."
-            rows="4"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all resize-none"
-            [class.border-red-500]="isFieldInvalid('message')"
-          ></textarea>
-          <p *ngIf="isFieldInvalid('message')" class="text-red-500 text-xs mt-1">
-            Mensagem é obrigatória (mínimo 10 caracteres)
           </p>
         </div>
 
@@ -123,6 +94,15 @@ import { LeadService } from '../../core/services/lead.service';
           {{ isSubmitting() ? 'Enviando...' : 'Enviar Mensagem' }}
         </button>
 
+        <!-- Disclaimer termos -->
+        <p class="text-center" style="font-size:10px; color:#9ca3af;">
+          Ao enviar, você concorda com os
+          <a routerLink="/piracicaba/institucional/termos" class="underline hover:text-gray-600">Termos de Uso</a>
+          e a
+          <a routerLink="/piracicaba/institucional/termos" class="underline hover:text-gray-600">Isenção de Responsabilidade</a>
+          do Guia Noivas.
+        </p>
+
         <!-- Mensagens de Status -->
         <div *ngIf="successMessage()" class="p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm font-medium flex items-center gap-2">
           <span>✓</span>
@@ -149,13 +129,11 @@ export class LeadFormComponent {
 
   form = new FormGroup({
     clienteName: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    clienteEmail: new FormControl('', [Validators.required, Validators.email]),
     clientePhone: new FormControl('', [
       Validators.required,
       Validators.minLength(10),
       Validators.pattern(/^(\(\d{2}\)\s?)?\d{4,5}-?\d{4}$/)
     ]),
-    message: new FormControl('', [Validators.required, Validators.minLength(10)]),
     eventDate: new FormControl('', [Validators.required]),
     lgpdConsent: new FormControl(false, [Validators.requiredTrue])
   });

@@ -207,31 +207,31 @@
             WhatsApp
           </button>
           <!-- Instagram: Button for Vitrine only -->
-          <button *ngIf="fornecedor.instagram && fornecedor.planLevel === PlanLevel.Vitrine"
-            type="button" (click)="registrarLeadEabrirInstagram()" [attr.data-event-category]="'Contato'"
+          <a *ngIf="fornecedor.instagram && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getInstagramLink()"
+            target="_blank" (click)="onInstagramClick()" [attr.data-event-category]="'Contato'"
             [attr.data-event-action]="'Clique Instagram'" [attr.data-vendor-id]="fornecedor.id"
             [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria"
             class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
             Instagram
-          </button>
+          </a>
 
           <!-- Facebook: Button for Vitrine only -->
-          <button *ngIf="fornecedor.facebook && fornecedor.planLevel === PlanLevel.Vitrine"
-            type="button" (click)="registrarLeadEabrirFacebook()" [attr.data-event-category]="'Contato'"
+          <a *ngIf="fornecedor.facebook && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getFacebookLink()"
+            target="_blank" (click)="onFacebookClick()" [attr.data-event-category]="'Contato'"
             [attr.data-event-action]="'Clique Facebook'" [attr.data-vendor-id]="fornecedor.id"
             [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria"
             class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
             Facebook
-          </button>
+          </a>
 
           <!-- Website: Button for Vitrine only -->
-          <button *ngIf="fornecedor.website && fornecedor.planLevel === PlanLevel.Vitrine"
-            type="button" (click)="registrarLeadEabrirSite()" [attr.data-event-category]="'Contato'"
+          <a *ngIf="fornecedor.website && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getSiteLink()"
+            target="_blank" (click)="onSiteClick()" [attr.data-event-category]="'Contato'"
             [attr.data-event-action]="'Clique Site'" [attr.data-vendor-id]="fornecedor.id"
             [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria"
             class="inline-flex items-center justify-center gap-2 border border-gray-400 text-gray-700 bg-white hover:bg-gray-50 rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
             Visitar Site
-          </button>
+          </a>
         </div>
 
         <div class="text-sm text-gray-600">
@@ -330,7 +330,7 @@
     <!-- Sticky header -->
     <div class="sticky top-0 bg-white px-6 py-4 border-b border-gray-100 rounded-t-2xl flex items-start justify-between gap-3 z-10">
       <div>
-        <h3 id="contact-lead-modal-title" class="font-bold text-lg text-gray-900 leading-snug">Um passo antes de ir ao {{ pendingContactChannel }}</h3>
+        <h3 id="contact-lead-modal-title" class="font-bold text-lg text-gray-900 leading-snug">Um passo antes de ir ao WhatsApp</h3>
         <p class="text-sm text-gray-500 mt-0.5">Deixe seus dados para que o fornecedor já saiba sobre seu evento</p>
       </div>
       <button (click)="fecharModalLeadWhatsapp()" aria-label="Fechar" class="shrink-0 text-gray-400 hover:text-gray-600 p-1 transition-colors">
@@ -341,7 +341,7 @@
     </div>
     <!-- Lead form (inside modal, rounded bottom) -->
     <div class="bg-white rounded-b-2xl">
-      <app-lead-form [fornecedorId]="fornecedorId" [compact]="true" [compactActionLabel]="'Continuar para ' + pendingContactChannel"
+      <app-lead-form [fornecedorId]="fornecedorId" [compact]="true" [compactActionLabel]="'Continuar para WhatsApp'"
         (submitSuccess)="onContactLeadSubmitSuccess($event)"></app-lead-form>
     </div>
   </div>

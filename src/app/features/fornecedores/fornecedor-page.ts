@@ -42,7 +42,6 @@ export class FornecedorPageComponent implements OnInit {
   // Modal de captura de lead antes de abrir WhatsApp
   showWhatsAppLeadModal = signal(false);
   private pendingContactUrl = '';
-  pendingContactChannel: 'WhatsApp' | 'Instagram' | 'Facebook' | 'Website' = 'WhatsApp';
 
   // Expor enum para o template
   PlanLevel = PlanLevel;
@@ -182,46 +181,7 @@ export class FornecedorPageComponent implements OnInit {
     // Rastrear analytics
     this.onWhatsAppClick();
 
-    this.openLeadModalForContact(whatsappUrl, 'WhatsApp');
-  }
-
-  /**
-   * Abre o modal de captura de lead antes de redirecionar para o Instagram.
-   */
-  registrarLeadEabrirInstagram(): void {
-    const instagramUrl = this.getInstagramLink();
-    if (!instagramUrl || instagramUrl === '#') return;
-
-    // Rastrear analytics
-    this.onInstagramClick();
-
-    this.openLeadModalForContact(instagramUrl, 'Instagram');
-  }
-
-  /**
-   * Abre o modal de captura de lead antes de redirecionar para o Facebook.
-   */
-  registrarLeadEabrirFacebook(): void {
-    const facebookUrl = this.getFacebookLink();
-    if (!facebookUrl || facebookUrl === '#') return;
-
-    // Rastrear analytics
-    this.onFacebookClick();
-
-    this.openLeadModalForContact(facebookUrl, 'Facebook');
-  }
-
-  /**
-   * Abre o modal de captura de lead antes de redirecionar para o Website.
-   */
-  registrarLeadEabrirSite(): void {
-    const siteUrl = this.getSiteLink();
-    if (!siteUrl || siteUrl === '#') return;
-
-    // Rastrear analytics
-    this.onSiteClick();
-
-    this.openLeadModalForContact(siteUrl, 'Website');
+    this.openLeadModalForContact(whatsappUrl);
   }
 
   /**
@@ -230,7 +190,6 @@ export class FornecedorPageComponent implements OnInit {
   fecharModalLeadWhatsapp(): void {
     this.showWhatsAppLeadModal.set(false);
     this.pendingContactUrl = '';
-    this.pendingContactChannel = 'WhatsApp';
     this.cdr.markForCheck();
   }
 
@@ -240,20 +199,18 @@ export class FornecedorPageComponent implements OnInit {
    */
   onContactLeadSubmitSuccess(leadId: number): void {
     this.showWhatsAppLeadModal.set(false);
-    console.log(`Lead ${this.pendingContactChannel} enviado com sucesso:`, leadId);
+    console.log('Lead WhatsApp enviado com sucesso:', leadId);
 
     // Abrir canal após captura do lead
     if (typeof window !== 'undefined' && this.pendingContactUrl) {
       window.open(this.pendingContactUrl, '_blank', 'noopener,noreferrer');
     }
     this.pendingContactUrl = '';
-    this.pendingContactChannel = 'WhatsApp';
     this.cdr.markForCheck();
   }
 
-  private openLeadModalForContact(url: string, channel: 'WhatsApp' | 'Instagram' | 'Facebook' | 'Website'): void {
+  private openLeadModalForContact(url: string): void {
     this.pendingContactUrl = url;
-    this.pendingContactChannel = channel;
     this.showWhatsAppLeadModal.set(true);
     this.cdr.markForCheck();
   }

@@ -5,7 +5,6 @@ import { Meta, Title } from '@angular/platform-browser';
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
 import { TrackingService } from '../../core/tracking.service';
 import { MetaTagService } from '../../core/meta-tag.service';
-import { LeadService } from '../../core/services/lead.service';
 import { Observable, firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { LeadFormComponent } from './lead-form.component';
@@ -58,7 +57,6 @@ export class FornecedorPageComponent implements OnInit {
     private fornecedores: FornecedoresData,
     private cdr: ChangeDetectorRef,
     private tracking: TrackingService,
-    private leadService: LeadService,
     private title: Title,
     private meta: Meta,
     private metaTagService: MetaTagService,
@@ -174,10 +172,7 @@ export class FornecedorPageComponent implements OnInit {
   }
 
   /**
-   * Registra o clique na API e só então abre o WhatsApp.
-   * Isso garante que a origem do lead seja contabilizada ao Guia.
-   * Em caso de falha na API, o WhatsApp é aberto mesmo assim (best-effort).
-   * Agora abre um modal de captura de lead antes de redirecionar.
+   * Abre o modal de captura de lead antes de redirecionar para o WhatsApp.
    */
   registrarLeadEabrirWhatsapp(): void {
     const whatsappUrl = this.getWhatsAppLink();
@@ -203,16 +198,11 @@ export class FornecedorPageComponent implements OnInit {
 
   /**
    * Callback quando lead do modal WhatsApp é submetido com sucesso.
-   * Fecha o modal, registra o clique e abre o WhatsApp.
+   * Fecha o modal e abre o WhatsApp.
    */
   onWhatsAppLeadSubmitSuccess(leadId: number): void {
     this.showWhatsAppLeadModal.set(false);
     console.log('Lead WhatsApp enviado com sucesso:', leadId);
-
-    // Registrar clique na API (best-effort)
-    if (this.fornecedor?.id) {
-      this.leadService.registrarCliqueWhatsapp(this.fornecedor.id).subscribe();
-    }
 
     // Abrir WhatsApp após captura do lead
     if (typeof window !== 'undefined' && this.pendingWhatsAppUrl) {

@@ -180,8 +180,20 @@
 
     <aside>
       <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 sticky top-4">
-        <h2 class="font-serif font-bold text-xl text-gray-900 mb-6">Solicitar Orçamento</h2>
+        <h2 class="font-serif font-bold text-xl text-gray-900 mb-6">
+          {{ fornecedor.planLevel === PlanLevel.Vitrine ? 'Solicitar Orçamento' : 'Entrar em Contato' }}
+        </h2>
         <div class="flex flex-col gap-3 mb-6">
+          <button *ngIf="fornecedor.planLevel !== PlanLevel.Vitrine && showLeadForm()"
+            type="button" (click)="scrollToLeadForm()"
+            class="inline-flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md w-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            </svg>
+            Ir para formulário de contato
+          </button>
+
           <!-- WhatsApp - Apenas para Vitrine (hidden on mobile, sticky bar handles it) -->
           <button *ngIf="fornecedor.telefone && fornecedor.planLevel === PlanLevel.Vitrine"
             type="button" (click)="registrarLeadEabrirWhatsapp()"
@@ -223,7 +235,6 @@
         </div>
 
         <div class="text-sm text-gray-600">
-          <div class="mb-2 font-semibold">Dados de Contato</div>
           <div *ngIf="fornecedor.email" class="flex items-center gap-2 mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none"
               stroke="currentColor">

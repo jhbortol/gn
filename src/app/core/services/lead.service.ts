@@ -16,14 +16,6 @@ export class LeadService {
   }
 
   /**
-   * Registra o clique no botão de WhatsApp para fins de tracking/billing.
-   * POST /public/fornecedores/{id}/track-whatsapp-click
-   */
-  registrarCliqueWhatsapp(fornecedorId: string | number): Observable<void> {
-    return this.api.post(`/public/fornecedores/${fornecedorId}/track-whatsapp-click`, {});
-  }
-
-  /**
    * Obtém lista de leads recebidos pelo fornecedor autenticado
    * GET /supplier/leads
    *

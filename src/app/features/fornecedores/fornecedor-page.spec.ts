@@ -92,6 +92,30 @@ describe('FornecedorPageComponent', () => {
             expect(component.showLeadForm()).toBeTrue();
         });
 
+        it('should render lead form and hide Vitrine CTAs for Free tier', async () => {
+            const freeWithDirectFields = {
+                ...mockFornecedorFree,
+                instagram: '@decorador',
+                facebook: 'decorador',
+                website: 'https://decorador.com',
+                whatsAppUrl: 'https://wa.me/5511999999999'
+            };
+
+            mockFornecedoresData.getById.and.returnValue(of(freeWithDirectFields));
+            fixture.detectChanges();
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            const leadForm = fixture.nativeElement.querySelector('app-lead-form');
+            const directButtons = fixture.nativeElement.textContent;
+
+            expect(leadForm).toBeTruthy();
+            expect(directButtons).not.toContain('WhatsApp');
+            expect(directButtons).not.toContain('Instagram');
+            expect(directButtons).not.toContain('Facebook');
+            expect(directButtons).not.toContain('Visitar Site');
+        });
+
         it('should show lead form for Zombie tier', () => {
             const zombieFornecedor = { ...mockFornecedorFree, planLevel: PlanLevel.Zombie };
             mockFornecedoresData.getById.and.returnValue(of(zombieFornecedor));

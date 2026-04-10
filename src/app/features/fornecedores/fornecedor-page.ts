@@ -42,7 +42,7 @@ export class FornecedorPageComponent implements OnInit {
   // Modal de captura de lead antes de abrir WhatsApp
   showWhatsAppLeadModal = signal(false);
   private pendingContactUrl = '';
-  pendingContactChannel: 'WhatsApp' | 'Instagram' = 'WhatsApp';
+  pendingContactChannel: 'WhatsApp' | 'Instagram' | 'Facebook' | 'Website' = 'WhatsApp';
 
   // Expor enum para o template
   PlanLevel = PlanLevel;
@@ -199,6 +199,32 @@ export class FornecedorPageComponent implements OnInit {
   }
 
   /**
+   * Abre o modal de captura de lead antes de redirecionar para o Facebook.
+   */
+  registrarLeadEabrirFacebook(): void {
+    const facebookUrl = this.getFacebookLink();
+    if (!facebookUrl || facebookUrl === '#') return;
+
+    // Rastrear analytics
+    this.onFacebookClick();
+
+    this.openLeadModalForContact(facebookUrl, 'Facebook');
+  }
+
+  /**
+   * Abre o modal de captura de lead antes de redirecionar para o Website.
+   */
+  registrarLeadEabrirSite(): void {
+    const siteUrl = this.getSiteLink();
+    if (!siteUrl || siteUrl === '#') return;
+
+    // Rastrear analytics
+    this.onSiteClick();
+
+    this.openLeadModalForContact(siteUrl, 'Website');
+  }
+
+  /**
    * Fecha o modal de lead WhatsApp sem abrir o aplicativo.
    */
   fecharModalLeadWhatsapp(): void {
@@ -225,7 +251,7 @@ export class FornecedorPageComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  private openLeadModalForContact(url: string, channel: 'WhatsApp' | 'Instagram'): void {
+  private openLeadModalForContact(url: string, channel: 'WhatsApp' | 'Instagram' | 'Facebook' | 'Website'): void {
     this.pendingContactUrl = url;
     this.pendingContactChannel = channel;
     this.showWhatsAppLeadModal.set(true);

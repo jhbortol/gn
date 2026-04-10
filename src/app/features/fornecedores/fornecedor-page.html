@@ -216,22 +216,22 @@
           </button>
 
           <!-- Facebook: Button for Vitrine only -->
-          <a *ngIf="fornecedor.facebook && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getFacebookLink()"
-            target="_blank" (click)="onFacebookClick()" [attr.data-event-category]="'Contato'"
+          <button *ngIf="fornecedor.facebook && fornecedor.planLevel === PlanLevel.Vitrine"
+            type="button" (click)="registrarLeadEabrirFacebook()" [attr.data-event-category]="'Contato'"
             [attr.data-event-action]="'Clique Facebook'" [attr.data-vendor-id]="fornecedor.id"
             [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria"
             class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
             Facebook
-          </a>
+          </button>
 
           <!-- Website: Button for Vitrine only -->
-          <a *ngIf="fornecedor.website && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getSiteLink()"
-            target="_blank" (click)="onSiteClick()" [attr.data-event-category]="'Contato'"
+          <button *ngIf="fornecedor.website && fornecedor.planLevel === PlanLevel.Vitrine"
+            type="button" (click)="registrarLeadEabrirSite()" [attr.data-event-category]="'Contato'"
             [attr.data-event-action]="'Clique Site'" [attr.data-vendor-id]="fornecedor.id"
             [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria"
             class="inline-flex items-center justify-center gap-2 border border-gray-400 text-gray-700 bg-white hover:bg-gray-50 rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
             Visitar Site
-          </a>
+          </button>
         </div>
 
         <div class="text-sm text-gray-600">

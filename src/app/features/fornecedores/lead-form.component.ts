@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, signal, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { LeadService } from '../../core/services/lead.service';
@@ -12,7 +12,7 @@ import { LeadService } from '../../core/services/lead.service';
       <ng-container *ngIf="!compact">
         <h3 class="font-serif font-bold text-2xl text-gray-900 mb-2">Enviar Mensagem Direta</h3>
         <p class="text-sm text-gray-600 mb-6">
-          Preencha seus dados e o fornecedor entrará em contato com você pelo WhatsApp.
+          Preencha seus dados e o fornecedor poderá retornar seu contato com mais detalhes sobre o orçamento.
         </p>
       </ng-container>
 
@@ -49,50 +49,13 @@ import { LeadService } from '../../core/services/lead.service';
           </p>
         </div>
 
-        <!-- Data do Evento (hidden in compact/WhatsApp mode) -->
-        <div *ngIf="!compact">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Data do Evento <span class="text-red-600">*</span></label>
-          <input
-            type="date"
-            formControlName="eventDate"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
-            [class.border-red-500]="isFieldInvalid('eventDate')"
-          />
-          <p *ngIf="isFieldInvalid('eventDate')" class="text-red-500 text-xs mt-1">
-            Data do evento é obrigatória
-          </p>
-        </div>
-
-        <!-- LGPD Consent (hidden in compact/WhatsApp mode) -->
-        <div *ngIf="!compact" class="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-          <input
-            type="checkbox"
-            formControlName="lgpdConsent"
-            id="lgpdConsent"
-            class="mt-1 h-4 w-4 text-rose-600 focus:ring-rose-500 border-gray-300 rounded cursor-pointer"
-            [class.border-red-500]="isFieldInvalid('lgpdConsent')"
-          />
-          <div class="flex-1">
-            <label for="lgpdConsent" class="text-sm text-gray-700 cursor-pointer">
-              Autorizo o compartilhamento de meus dados de contato com este fornecedor para que possa responder minha solicitação.
-              <span class="text-red-600">*</span>
-            </label>
-            <p class="text-xs text-gray-600 mt-1">
-              Seus dados serão usados apenas para responder sua mensagem e não serão compartilhados com terceiros.
-            </p>
-          </div>
-        </div>
-        <p *ngIf="!compact && isFieldInvalid('lgpdConsent')" class="text-red-500 text-xs">
-          Você deve consentir para enviar a mensagem
-        </p>
-
         <!-- Botão -->
         <button
           type="submit"
           [disabled]="!form.valid || isSubmitting()"
           class="w-full bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
         >
-          {{ isSubmitting() ? 'Enviando...' : (compact ? 'Continuar para WhatsApp' : 'Enviar Mensagem') }}
+          {{ isSubmitting() ? 'Enviando...' : (compact ? compactActionLabel : 'Enviar Mensagem') }}
         </button>
 
         <!-- Disclaimer termos -->
@@ -122,10 +85,11 @@ import { LeadService } from '../../core/services/lead.service';
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LeadFormComponent implements OnInit {
+export class LeadFormComponent {
   @Input() fornecedorId!: string | number;
-  /** When true, shows only name + phone fields (used inside WhatsApp modal) */
+  /** When true, adjusts CTA text for the WhatsApp modal flow. */
   @Input() compact = false;
+  @Input() compactActionLabel = 'Continuar para WhatsApp';
   @Output() submitSuccess = new EventEmitter<any>();
 
   form = new FormGroup({
@@ -134,22 +98,8 @@ export class LeadFormComponent implements OnInit {
       Validators.required,
       Validators.minLength(10),
       Validators.pattern(/^(\(\d{2}\)\s?)?\d{4,5}-?\d{4}$/)
-    ]),
-    eventDate: new FormControl('', [Validators.required]),
-    lgpdConsent: new FormControl(false, [Validators.requiredTrue])
+    ])
   });
-
-  ngOnInit(): void {
-    if (this.compact) {
-      // In compact mode, eventDate and lgpdConsent are not shown —
-      // remove their validators so the form can be submitted with just name + phone.
-      this.form.get('eventDate')?.clearValidators();
-      this.form.get('eventDate')?.updateValueAndValidity();
-      this.form.get('lgpdConsent')?.clearValidators();
-      this.form.get('lgpdConsent')?.setValue(true);
-      this.form.get('lgpdConsent')?.updateValueAndValidity();
-    }
-  }
 
   isSubmitting = signal(false);
   successMessage = signal('');

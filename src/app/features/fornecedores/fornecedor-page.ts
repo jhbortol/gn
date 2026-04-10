@@ -41,7 +41,8 @@ export class FornecedorPageComponent implements OnInit {
 
   // Modal de captura de lead antes de abrir WhatsApp
   showWhatsAppLeadModal = signal(false);
-  private pendingWhatsAppUrl = '';
+  private pendingContactUrl = '';
+  pendingContactChannel: 'WhatsApp' | 'Instagram' = 'WhatsApp';
 
   // Expor enum para o template
   PlanLevel = PlanLevel;
@@ -181,10 +182,20 @@ export class FornecedorPageComponent implements OnInit {
     // Rastrear analytics
     this.onWhatsAppClick();
 
-    // Guardar URL e abrir modal de captura de lead
-    this.pendingWhatsAppUrl = whatsappUrl;
-    this.showWhatsAppLeadModal.set(true);
-    this.cdr.markForCheck();
+    this.openLeadModalForContact(whatsappUrl, 'WhatsApp');
+  }
+
+  /**
+   * Abre o modal de captura de lead antes de redirecionar para o Instagram.
+   */
+  registrarLeadEabrirInstagram(): void {
+    const instagramUrl = this.getInstagramLink();
+    if (!instagramUrl || instagramUrl === '#') return;
+
+    // Rastrear analytics
+    this.onInstagramClick();
+
+    this.openLeadModalForContact(instagramUrl, 'Instagram');
   }
 
   /**
@@ -192,23 +203,32 @@ export class FornecedorPageComponent implements OnInit {
    */
   fecharModalLeadWhatsapp(): void {
     this.showWhatsAppLeadModal.set(false);
-    this.pendingWhatsAppUrl = '';
+    this.pendingContactUrl = '';
+    this.pendingContactChannel = 'WhatsApp';
     this.cdr.markForCheck();
   }
 
   /**
-   * Callback quando lead do modal WhatsApp é submetido com sucesso.
-   * Fecha o modal e abre o WhatsApp.
+   * Callback quando lead do modal de contato é submetido com sucesso.
+   * Fecha o modal e abre o canal selecionado.
    */
-  onWhatsAppLeadSubmitSuccess(leadId: number): void {
+  onContactLeadSubmitSuccess(leadId: number): void {
     this.showWhatsAppLeadModal.set(false);
-    console.log('Lead WhatsApp enviado com sucesso:', leadId);
+    console.log(`Lead ${this.pendingContactChannel} enviado com sucesso:`, leadId);
 
-    // Abrir WhatsApp após captura do lead
-    if (typeof window !== 'undefined' && this.pendingWhatsAppUrl) {
-      window.open(this.pendingWhatsAppUrl, '_blank', 'noopener,noreferrer');
+    // Abrir canal após captura do lead
+    if (typeof window !== 'undefined' && this.pendingContactUrl) {
+      window.open(this.pendingContactUrl, '_blank', 'noopener,noreferrer');
     }
-    this.pendingWhatsAppUrl = '';
+    this.pendingContactUrl = '';
+    this.pendingContactChannel = 'WhatsApp';
+    this.cdr.markForCheck();
+  }
+
+  private openLeadModalForContact(url: string, channel: 'WhatsApp' | 'Instagram'): void {
+    this.pendingContactUrl = url;
+    this.pendingContactChannel = channel;
+    this.showWhatsAppLeadModal.set(true);
     this.cdr.markForCheck();
   }
 

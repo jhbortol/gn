@@ -71,40 +71,20 @@ describe('LeadFormComponent', () => {
             expect(control?.valid).toBeTrue();
         });
 
-        it('should require eventDate', () => {
-            const control = component.form.get('eventDate');
-
-            control?.setValue('');
-            expect(control?.valid).toBeFalse();
-
-            control?.setValue('2024-12-25');
-            expect(control?.valid).toBeTrue();
-        });
-
-        it('should require lgpdConsent to be true', () => {
-            const control = component.form.get('lgpdConsent');
-
-            control?.setValue(false);
-            expect(control?.valid).toBeFalse();
-
-            control?.setValue(true);
-            expect(control?.valid).toBeTrue();
-        });
-
-        it('should NOT have email or message fields', () => {
+        it('should NOT have email, message, eventDate or lgpd fields', () => {
             expect(component.form.get('clienteEmail')).toBeNull();
             expect(component.form.get('message')).toBeNull();
+            expect(component.form.get('eventDate')).toBeNull();
+            expect(component.form.get('lgpdConsent')).toBeNull();
         });
     });
 
     describe('Form Submission', () => {
         beforeEach(() => {
-            // Fill form with valid data (3 fields only)
+            // Fill form with valid data
             component.form.patchValue({
                 clienteName: 'Maria Silva',
-                clientePhone: '(11) 99999-8888',
-                eventDate: '2024-12-25',
-                lgpdConsent: true
+                clientePhone: '(11) 99999-8888'
             });
         });
 
@@ -154,24 +134,17 @@ describe('LeadFormComponent', () => {
             compactFixture.detectChanges(); // triggers ngOnInit
         });
 
-        it('should clear eventDate validators in compact mode', () => {
-            const control = compactComponent.form.get('eventDate');
-            control?.setValue('');
-            expect(control?.valid).toBeTrue();
-        });
-
-        it('should auto-set lgpdConsent to true in compact mode', () => {
-            const control = compactComponent.form.get('lgpdConsent');
-            expect(control?.value).toBeTrue();
-            expect(control?.valid).toBeTrue();
-        });
-
         it('should be valid with only name and phone in compact mode', () => {
             compactComponent.form.patchValue({
                 clienteName: 'Maria Silva',
                 clientePhone: '(11) 99999-8888'
             });
             expect(compactComponent.form.valid).toBeTrue();
+        });
+
+        it('should use WhatsApp-specific CTA text in compact mode', () => {
+            const buttonText = compactFixture.nativeElement.querySelector('button[type="submit"]')?.textContent;
+            expect(buttonText).toContain('Continuar para WhatsApp');
         });
 
         it('should submit successfully in compact mode with just name and phone', () => {

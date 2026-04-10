@@ -45,14 +45,8 @@ export class TrackingService {
       });
     }
 
-    // Google Ads - track contact click as a lead engagement event
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'generate_lead', {
-        send_to: 'AW-18077793493',
-        contact_type: contactType,
-        vendor_name: vendorData?.vendorName
-      });
-    }
+    // Google Ads - track contact click as a lead conversion
+    this.trackGoogleAdsConversion('AW-18077793493');
   }
 
   /**

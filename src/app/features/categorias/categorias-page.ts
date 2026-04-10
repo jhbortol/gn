@@ -29,7 +29,7 @@ export class CategoriasPageComponent implements OnInit {
   ) {
     // Categorias já vêm com os fornecedores vitrine incluídos do endpoint /public/categorias/vitrine
     this.categorias$ = this.categoriasData.getAll().pipe(
-      map(cats => this.shuffleArray(cats))
+      map(cats => this.sortCategoriesAlphabetically(cats))
     );
   }
 
@@ -62,10 +62,9 @@ export class CategoriasPageComponent implements OnInit {
     return base + path;
   }
 
-  private shuffleArray<T>(array: T[]): T[] {
-    return array
-      .map(value => ({ value, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ value }) => value);
+  private sortCategoriesAlphabetically(categories: Categoria[]): Categoria[] {
+    return [...categories].sort((a, b) =>
+      (a.nome || '').localeCompare((b.nome || ''), 'pt-BR', { sensitivity: 'base' })
+    );
   }
 }

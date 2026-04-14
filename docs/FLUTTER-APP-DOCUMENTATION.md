@@ -51,6 +51,13 @@
 8. [Modelos de Dados](#8-modelos-de-dados)
 9. [Regras de Negócio](#9-regras-de-negócio)
 10. [Considerações Técnicas Flutter](#10-considerações-técnicas-flutter)
+11. [Funcionalidades Exclusivas do App](#11-funcionalidades-exclusivas-do-app)
+    - 11.1 Contagem Regressiva Visual (Hero Widget — Home)
+    - 11.2 Gerador de Briefing Automático (Integração WhatsApp)
+    - 11.3 Gestor de Orçamento (Budget Tracker)
+    - 11.4 Cronograma Regressivo Dinâmico (To-Do List)
+    - 11.5 Pasta de Cotações ("Meus Favoritos")
+    - 11.6 Gerenciador de Lista de Convidados (CRUD)
 
 ---
 
@@ -1838,6 +1845,1052 @@ O app é integralmente em **Português (pt-BR)**:
 
 ---
 
+## 11. Funcionalidades Exclusivas do App
+
+> As funcionalidades desta seção **não existem** no portal web. São diferenciais nativos do aplicativo Flutter, projetados para aumentar o engajamento, a retenção e o Daily Active Users (DAU) da plataforma.
+
+---
+
+### 11.1 Contagem Regressiva Visual (Hero Widget — Home)
+
+#### Objetivo
+Gerar engajamento imediato e potencial de compartilhamento orgânico. O componente funciona como a "capa" emocional do aplicativo para a noiva logada.
+
+#### Posicionamento na UI
+Widget de destaque exibido no **topo da tela Home** (acima das categorias), visível imediatamente após o login. Deve ocupar largura total com padding horizontal de `16px` e height mínimo de `160px`.
+
+#### Dados Necessários (origem: perfil da usuária)
+| Campo | Tipo Dart | Fonte |
+|-------|-----------|-------|
+| `nomeNoiva` | `String` | `UserProfile.brideFirstName` |
+| `nomeNoivo` | `String` | `UserProfile.groomFirstName` |
+| `dataCasamento` | `DateTime` | `UserProfile.weddingDate` |
+
+#### Layout do Componente
+
+```dart
+// lib/features/home/widgets/wedding_countdown_widget.dart
+
+// Estrutura visual (de cima para baixo):
+// 1. Linha de subtítulo: "Faltam para o grande dia de"
+// 2. Linha de nomes: "[NomeNoiva] & [NomeNoivo]" (fonte: Playfair Display, 20sp, rose-600)
+// 3. Data formatada: "dd de MMMM de yyyy" (fonte: Inter, 13sp, slate-500)
+// 4. Linha divisória fina (rose-100)
+// 5. Contadores lado a lado: [Dias] [Horas] [Minutos]
+//    - Cada contador: número em negrito (48sp, rose-600) + label abaixo (12sp, slate-400)
+// 6. Botão "Compartilhar" (full-width, rose-600, ícone share)
+
+Widget _buildCounterBox(String value, String label) {
+  return Column(
+    children: [
+      Text(value, style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: AppColors.primary)),
+      Text(label, style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+    ],
+  );
+}
+```
+
+#### Lógica de Cálculo da Contagem Regressiva
+
+```dart
+// lib/features/home/controllers/countdown_controller.dart
+
+class CountdownController {
+  /// Calcula a diferença entre agora e a data do casamento.
+  /// Retorna null se a data já passou.
+  CountdownData? calculate(DateTime weddingDate) {
+    final now = DateTime.now();
+    final difference = weddingDate.difference(now);
+
+    if (difference.isNegative) return null; // casamento já ocorreu
+
+    final days    = difference.inDays;
+    final hours   = difference.inHours.remainder(24);
+    final minutes = difference.inMinutes.remainder(60);
+
+    return CountdownData(days: days, hours: hours, minutes: minutes);
+  }
+}
+
+class CountdownData {
+  final int days;
+  final int hours;
+  final int minutes;
+  const CountdownData({required this.days, required this.hours, required this.minutes});
+}
+```
+
+- O timer deve ser atualizado a cada **60 segundos** usando `Timer.periodic`.
+- Se a data do casamento ainda **não estiver preenchida** no perfil, exibir um CTA: _"Complete seu perfil para ver a contagem regressiva"_ → botão que navega para `EditProfileScreen`.
+- Se o casamento **já ocorreu**, exibir: _"Parabéns! Que a sua união seja repleta de amor."_
+
+#### Funcionalidade de Compartilhamento
+
+```dart
+// Pacotes obrigatórios:
+// screenshot: ^2.1.0
+// share_plus: ^7.0.0
+
+// lib/features/home/widgets/wedding_countdown_widget.dart
+
+final _screenshotController = ScreenshotController();
+
+// O widget inteiro de contagem regressiva deve ser envolvido em Screenshot():
+Screenshot(
+  controller: _screenshotController,
+  child: Stack(
+    children: [
+      // ... conteúdo do countdown ...
+      // Marca d'água obrigatória (canto inferior direito):
+      Positioned(
+        bottom: 8,
+        right: 8,
+        child: Opacity(
+          opacity: 0.45,
+          child: Image.asset('assets/logos/guianoivas_watermark.png', height: 24),
+        ),
+      ),
+    ],
+  ),
+)
+
+// Ao pressionar "Compartilhar":
+Future<void> _onShareTap() async {
+  final imageBytes = await _screenshotController.capture(
+    pixelRatio: 3.0, // alta resolução para Stories (9:16)
+  );
+  if (imageBytes == null) return;
+
+  final tempDir = await getTemporaryDirectory();
+  final file = await File('${tempDir.path}/contagem_guianoivas.png').writeAsBytes(imageBytes);
+
+  await SharePlus.instance.share(
+    ShareParams(
+      text: 'Faltam ${countdown.days} dias para o meu casamento! 💍\n\nBaixe o app Guia Noivas Piracicaba',
+      files: [XFile(file.path)],
+    ),
+  );
+}
+```
+
+**Atenção:** A imagem capturada deve ter proporção adequada para Instagram Stories (9:16 ou quadrado 1:1). Garantir que o componente tenha altura suficiente antes do `capture()`. O texto de compartilhamento deve **sempre** incluir menção ao app.
+
+#### Assets Necessários
+- `assets/logos/guianoivas_watermark.png` — logotipo com fundo transparente, versão monocromática branca (para sobrepor em fundos escuros e claros). Dimensões mínimas: `200×60px`.
+
+#### Dependências `pubspec.yaml`
+```yaml
+dependencies:
+  screenshot: ^2.1.0
+  share_plus: ^7.2.0
+  path_provider: ^2.1.0  # para getTemporaryDirectory()
+```
+
+---
+
+### 11.2 Gerador de Briefing Automático (Integração WhatsApp)
+
+#### Objetivo
+Qualificar os leads gerados para os fornecedores com contexto completo da noiva, aumentando a taxa de conversão e mantendo a assinatura de marca do Guia Noivas em cada contato.
+
+#### Posicionamento na UI
+Botão **"Pedir Orçamento via WhatsApp"** exibido no rodapé da tela de **Perfil do Fornecedor** (`FornecedorDetailScreen`), ao lado do botão de WhatsApp já existente (ou substituindo-o quando o usuário estiver logado e com perfil preenchido).
+
+#### Dados Necessários (origem: perfil da usuária)
+| Campo | Tipo Dart | Fonte |
+|-------|-----------|-------|
+| `dataCasamento` | `DateTime` | `UserProfile.weddingDate` |
+| `numConvidados` | `int` | `UserProfile.estimatedGuests` |
+| `estiloCasamento` | `String` | `UserProfile.weddingStyle` (ex: "Romântico", "Rústico", "Moderno") |
+| `whatsappFornecedor` | `String` | `Fornecedor.whatsapp` |
+
+#### Lógica de Construção do Payload
+
+```dart
+// lib/features/fornecedores/services/briefing_service.dart
+
+class BriefingService {
+  /// Gera a string pré-formatada do briefing.
+  String generateBriefing({
+    required DateTime weddingDate,
+    required int guests,
+    required String style,
+  }) {
+    final formattedDate = DateFormat("dd/MM/yyyy", 'pt_BR').format(weddingDate);
+    return 'Olá! Vi vocês no App do Guia Noivas Piracicaba. '
+        'Meu casamento será dia $formattedDate, '
+        'para $guests convidados no estilo $style. '
+        'Gostaria de solicitar um orçamento.';
+  }
+
+  /// Abre o WhatsApp com o número do fornecedor e o briefing pré-preenchido.
+  Future<void> openWhatsAppBriefing({
+    required String phone, // formato: apenas dígitos, ex: "5519999999999"
+    required String message,
+  }) async {
+    final encoded = Uri.encodeComponent(message);
+    final url = Uri.parse('https://wa.me/$phone?text=$encoded');
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      throw Exception('WhatsApp não disponível neste dispositivo.');
+    }
+  }
+}
+```
+
+#### Comportamento do Botão na UI
+
+```dart
+// lib/features/fornecedores/widgets/briefing_whatsapp_button.dart
+
+// Regras de exibição:
+// - Se usuário NÃO estiver logado: exibir botão padrão de WhatsApp (sem briefing)
+// - Se usuário logado MAS perfil incompleto (falta data, convidados ou estilo):
+//     → Botão habilitado com tooltip/snackbar: "Complete seu perfil para enviar briefing automático"
+//     → Ao tocar: navegar para EditProfileScreen
+// - Se usuário logado E perfil completo:
+//     → Botão "Pedir Orçamento via WhatsApp" com ícone WhatsApp (verde)
+//     → Ao tocar: chamar BriefingService.openWhatsAppBriefing()
+
+ElevatedButton.icon(
+  onPressed: _onBriefingTap,
+  icon: Icon(FontAwesomeIcons.whatsapp, color: Colors.white),
+  label: Text('Pedir Orçamento via WhatsApp'),
+  style: ElevatedButton.styleFrom(
+    backgroundColor: const Color(0xFF25D366), // WhatsApp green
+    foregroundColor: Colors.white,
+    minimumSize: const Size.fromHeight(48),
+  ),
+)
+```
+
+#### Dependências `pubspec.yaml`
+```yaml
+dependencies:
+  url_launcher: ^6.2.0
+  intl: ^0.18.0  # para DateFormat
+```
+
+#### Permissões Android (`android/app/src/main/AndroidManifest.xml`)
+```xml
+<queries>
+  <intent>
+    <action android:name="android.intent.action.VIEW" />
+    <data android:scheme="https" />
+  </intent>
+</queries>
+```
+
+---
+
+### 11.3 Gestor de Orçamento (Budget Tracker)
+
+#### Objetivo
+Reter a usuária na plataforma por meio do controle financeiro do casamento e gerar cross-sell natural de fornecedores ao identificar categorias sem orçamento alocado.
+
+#### Rota
+`/meu-casamento/orcamento` → `BudgetScreen`
+
+#### Modelo de Dados
+
+```dart
+// lib/features/budget/models/budget_model.dart
+
+/// Categorias padrão do orçamento de casamento
+enum BudgetCategory {
+  buffet,
+  vestido,
+  fotografia,
+  decoracao,
+  musica,
+  local,
+  convites,
+  lembrancas,
+  cerimonial,
+  outros,
+}
+
+extension BudgetCategoryLabel on BudgetCategory {
+  String get label {
+    const labels = {
+      BudgetCategory.buffet:       'Buffet / Gastronomia',
+      BudgetCategory.vestido:      'Vestido & Acessórios',
+      BudgetCategory.fotografia:   'Foto & Vídeo',
+      BudgetCategory.decoracao:    'Decoração & Flores',
+      BudgetCategory.musica:       'Música & Entretenimento',
+      BudgetCategory.local:        'Espaço / Local',
+      BudgetCategory.convites:     'Convites & Papelaria',
+      BudgetCategory.lembrancas:   'Lembranças & Mimos',
+      BudgetCategory.cerimonial:   'Cerimonialista',
+      BudgetCategory.outros:       'Outros',
+    };
+    return labels[this]!;
+  }
+
+  /// Slug de categoria para deep link interno ao marketplace
+  String get marketplaceSlug {
+    const slugs = {
+      BudgetCategory.buffet:     'buffet',
+      BudgetCategory.vestido:    'vestidos',
+      BudgetCategory.fotografia: 'fotografia',
+      BudgetCategory.decoracao:  'decoracao',
+      BudgetCategory.musica:     'musica',
+      BudgetCategory.local:      'espacos-para-eventos',
+      BudgetCategory.convites:   'convites',
+      BudgetCategory.lembrancas: 'lembrancas',
+      BudgetCategory.cerimonial: 'cerimonial',
+      BudgetCategory.outros:     null,
+    };
+    return slugs[this] ?? '';
+  }
+}
+
+/// Distribuição percentual padrão sugerida pelo sistema
+const Map<BudgetCategory, double> kDefaultBudgetPercentages = {
+  BudgetCategory.buffet:      0.35,  // 35%
+  BudgetCategory.vestido:     0.10,  // 10%
+  BudgetCategory.fotografia:  0.10,  // 10%
+  BudgetCategory.decoracao:   0.15,  // 15%
+  BudgetCategory.musica:      0.08,  // 8%
+  BudgetCategory.local:       0.10,  // 10%
+  BudgetCategory.convites:    0.02,  // 2%
+  BudgetCategory.lembrancas:  0.02,  // 2%
+  BudgetCategory.cerimonial:  0.05,  // 5%
+  BudgetCategory.outros:      0.03,  // 3%
+};
+
+class BudgetItem {
+  final String id;          // UUID
+  final BudgetCategory category;
+  double allocatedAmount;   // valor orçado para a categoria
+  double spentAmount;       // valor já pago/contratado
+  String? supplierName;     // nome do fornecedor contratado (opcional)
+  String? notes;            // observações livres
+  BudgetStatus status;
+
+  BudgetItem({
+    required this.id,
+    required this.category,
+    required this.allocatedAmount,
+    this.spentAmount = 0,
+    this.supplierName,
+    this.notes,
+    this.status = BudgetStatus.pending,
+  });
+}
+
+enum BudgetStatus { pending, inProgress, contracted, paid }
+
+class BudgetSummary {
+  final double totalBudget;         // valor total disponível (inserido pela usuária)
+  final List<BudgetItem> items;
+
+  double get totalAllocated => items.fold(0, (s, i) => s + i.allocatedAmount);
+  double get totalSpent     => items.fold(0, (s, i) => s + i.spentAmount);
+  double get remaining      => totalBudget - totalSpent;
+}
+```
+
+#### Tela Principal — `BudgetScreen`
+
+```
++--------------------------------------------------+
+|  ← Gestor de Orçamento               [Editar]   |
++--------------------------------------------------+
+|  Orçamento Total: R$ [___________]  [✓]          |
+|                                                  |
+|  Gasto: R$ 12.500   Disponível: R$ 37.500        |
+|  ████████░░░░░░░░░░░░░░ 25%                       |
++--------------------------------------------------+
+|  CATEGORIAS                                      |
+|                                                  |
+|  🍽 Buffet              R$ 17.500 / R$ 17.500    |
+|  [████████████████████] CONTRATADO               |
+|  "Buffet Sabor & Arte" · R$ 17.500               |
+|                                                  |
+|  📸 Foto & Vídeo        R$ 5.000 / R$ 5.000      |
+|  [████████████░░░░░░░░░] PENDENTE                |
+|  [🔍 Buscar fornecedores nesta categoria →]      |
+|                                                  |
+|  ... (demais categorias)                         |
++--------------------------------------------------+
+|           [+ Adicionar Despesa]                  |
++--------------------------------------------------+
+```
+
+#### Lógica da Barra de Progresso por Categoria
+
+```dart
+// lib/features/budget/widgets/budget_category_row.dart
+
+double get progressValue =>
+    item.allocatedAmount > 0
+        ? (item.spentAmount / item.allocatedAmount).clamp(0.0, 1.0)
+        : 0.0;
+
+Color get progressColor {
+  if (progressValue >= 1.0) return Colors.green;
+  if (progressValue >= 0.5) return AppColors.primary;
+  return AppColors.vitrine; // amarelo = atenção
+}
+```
+
+#### CTA de Deep Link Interno (categoria pendente)
+
+```dart
+// Exibir apenas quando: status == BudgetStatus.pending E allocatedAmount > 0
+// E a categoria possui um marketplaceSlug válido (não vazio)
+
+if (item.status == BudgetStatus.pending && item.category.marketplaceSlug.isNotEmpty)
+  InkWell(
+    onTap: () => context.go('/categorias/${item.category.marketplaceSlug}'),
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.primary50,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.primary100),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.search, size: 16, color: AppColors.primary),
+          const SizedBox(width: 8),
+          Text(
+            'Buscar fornecedores nesta categoria →',
+            style: TextStyle(color: AppColors.primary, fontSize: 13),
+          ),
+        ],
+      ),
+    ),
+  ),
+```
+
+#### CRUD de Despesas — Modal de Edição
+
+Ao tocar em uma categoria ou no botão "+ Adicionar Despesa", abrir `BottomSheet` ou `AlertDialog` com os campos:
+- **Valor Alocado** (double, obrigatório) — com formatação de moeda R$
+- **Valor Gasto** (double, opcional)
+- **Nome do Fornecedor** (String, opcional)
+- **Status** (dropdown: Pendente / Em Negociação / Contratado / Pago)
+- **Observações** (String, opcional, multiline)
+
+#### Persistência
+- Dados persistidos **localmente** via `shared_preferences` ou `sqflite` (chave: `budget_summary_<userId>`).
+- Sincronizar com o back-end via `PATCH /api/v1/users/{id}/budget` sempre que houver alteração (com debounce de 2 segundos).
+
+#### Dependências `pubspec.yaml`
+```yaml
+dependencies:
+  sqflite: ^2.3.0        # ou shared_preferences para MVP simples
+  intl: ^0.18.0
+```
+
+---
+
+### 11.4 Cronograma Regressivo Dinâmico (To-Do List)
+
+#### Objetivo
+Combater a ansiedade do planejamento, educar a jornada de compra da noiva e criar dependência orgânica do app como organizador central.
+
+#### Rota
+`/meu-casamento/cronograma` → `WeddingChecklistScreen`
+
+#### Modelo de Dados
+
+```dart
+// lib/features/checklist/models/checklist_model.dart
+
+class ChecklistTask {
+  final String id;
+  final String title;
+  final String? description;         // detalhe expandível (opcional)
+  final int monthsBeforeWedding;     // ex: 12, 9, 6, 3, 1, 0
+  final String? deepLinkRoute;       // rota interna (ex: '/categorias/vestidos')
+  final String? deepLinkLabel;       // texto do atalho (ex: 'Ver Estilistas')
+  bool isCompleted;
+  DateTime? completedAt;
+
+  ChecklistTask({
+    required this.id,
+    required this.title,
+    this.description,
+    required this.monthsBeforeWedding,
+    this.deepLinkRoute,
+    this.deepLinkLabel,
+    this.isCompleted = false,
+    this.completedAt,
+  });
+}
+```
+
+#### Lista Padrão de Tarefas (seed data)
+
+```dart
+// lib/features/checklist/data/default_tasks.dart
+
+const List<ChecklistTask> kDefaultChecklistTasks = [
+  // === 12 MESES ANTES ===
+  ChecklistTask(id: 'task_001', title: 'Definir orçamento total do casamento',    monthsBeforeWedding: 12),
+  ChecklistTask(id: 'task_002', title: 'Escolher e reservar o espaço/local',       monthsBeforeWedding: 12,
+      deepLinkRoute: '/categorias/espacos-para-eventos', deepLinkLabel: 'Ver Espaços'),
+  ChecklistTask(id: 'task_003', title: 'Contratar cerimonialista',                 monthsBeforeWedding: 12,
+      deepLinkRoute: '/categorias/cerimonial',           deepLinkLabel: 'Ver Cerimonialistas'),
+  ChecklistTask(id: 'task_004', title: 'Definir lista inicial de convidados',      monthsBeforeWedding: 12,
+      deepLinkRoute: '/meu-casamento/convidados',        deepLinkLabel: 'Gerenciar Convidados'),
+
+  // === 9 MESES ANTES ===
+  ChecklistTask(id: 'task_005', title: 'Escolher e contratar fotógrafo/videomaker', monthsBeforeWedding: 9,
+      deepLinkRoute: '/categorias/fotografia',           deepLinkLabel: 'Ver Fotógrafos'),
+  ChecklistTask(id: 'task_006', title: 'Escolher o vestido de noiva',               monthsBeforeWedding: 9,
+      deepLinkRoute: '/categorias/vestidos',             deepLinkLabel: 'Ver Estilistas / Lojas'),
+  ChecklistTask(id: 'task_007', title: 'Escolher decoração e floricultura',          monthsBeforeWedding: 9,
+      deepLinkRoute: '/categorias/decoracao',            deepLinkLabel: 'Ver Decoradores'),
+  ChecklistTask(id: 'task_008', title: 'Escolher e contratar buffet',               monthsBeforeWedding: 9,
+      deepLinkRoute: '/categorias/buffet',               deepLinkLabel: 'Ver Buffets'),
+
+  // === 6 MESES ANTES ===
+  ChecklistTask(id: 'task_009', title: 'Confirmar música / banda / DJ',             monthsBeforeWedding: 6,
+      deepLinkRoute: '/categorias/musica',               deepLinkLabel: 'Ver Músicos e DJs'),
+  ChecklistTask(id: 'task_010', title: 'Escolher e encomendar convites',             monthsBeforeWedding: 6,
+      deepLinkRoute: '/categorias/convites',             deepLinkLabel: 'Ver Papelarias'),
+  ChecklistTask(id: 'task_011', title: 'Agendar prova do vestido (1ª prova)',        monthsBeforeWedding: 6),
+  ChecklistTask(id: 'task_012', title: 'Definir lista de presentes (mesa de noivos)', monthsBeforeWedding: 6),
+
+  // === 3 MESES ANTES ===
+  ChecklistTask(id: 'task_013', title: 'Enviar convites',                            monthsBeforeWedding: 3),
+  ChecklistTask(id: 'task_014', title: 'Confirmar cardápio com o buffet',            monthsBeforeWedding: 3),
+  ChecklistTask(id: 'task_015', title: 'Agendar prova do vestido (2ª prova)',        monthsBeforeWedding: 3),
+  ChecklistTask(id: 'task_016', title: 'Contratar make e cabelo',                   monthsBeforeWedding: 3),
+  ChecklistTask(id: 'task_017', title: 'Planejar lua de mel e reservar passagens',  monthsBeforeWedding: 3),
+
+  // === 1 MÊS ANTES ===
+  ChecklistTask(id: 'task_018', title: 'Confirmar presença dos convidados',         monthsBeforeWedding: 1,
+      deepLinkRoute: '/meu-casamento/convidados',        deepLinkLabel: 'Ver Lista de Convidados'),
+  ChecklistTask(id: 'task_019', title: 'Fazer degustação final com o buffet',       monthsBeforeWedding: 1),
+  ChecklistTask(id: 'task_020', title: 'Confirmar horários com todos os fornecedores', monthsBeforeWedding: 1),
+  ChecklistTask(id: 'task_021', title: 'Retirar vestido e acessórios',              monthsBeforeWedding: 1),
+
+  // === NA SEMANA DO CASAMENTO (0 meses) ===
+  ChecklistTask(id: 'task_022', title: 'Briefing final com cerimonialista',         monthsBeforeWedding: 0),
+  ChecklistTask(id: 'task_023', title: 'Preparar kits para banheiro e bem-casados', monthsBeforeWedding: 0),
+  ChecklistTask(id: 'task_024', title: 'Relaxar e curtir o momento! 💍',            monthsBeforeWedding: 0),
+];
+```
+
+#### Renderização Dinâmica por Marco Temporal
+
+```dart
+// lib/features/checklist/screens/wedding_checklist_screen.dart
+
+/// Agrupa tarefas pelo offset em meses e calcula a data de alvo.
+Map<int, List<ChecklistTask>> groupByMonths(List<ChecklistTask> tasks) {
+  final grouped = <int, List<ChecklistTask>>{};
+  for (final task in tasks) {
+    grouped.putIfAbsent(task.monthsBeforeWedding, () => []).add(task);
+  }
+  return Map.fromEntries(
+    grouped.entries.toList()..sort((a, b) => b.key.compareTo(a.key)), // decrescente
+  );
+}
+
+/// Gera o título do grupo de acordo com a data do casamento e o offset.
+String groupTitle(int monthsOffset, DateTime weddingDate) {
+  if (monthsOffset == 0) return 'Na Semana do Casamento 🎊';
+  final targetDate = DateTime(
+    weddingDate.year,
+    weddingDate.month - monthsOffset,
+    weddingDate.day,
+  );
+  final now = DateTime.now();
+  final remaining = weddingDate.difference(now).inDays ~/ 30;
+
+  if (monthsOffset > remaining) return 'Faltam $monthsOffset meses (já passou — revise!)';
+  return 'Faltam $monthsOffset ${monthsOffset == 1 ? "mês" : "meses"} '
+      '(até ${DateFormat("MMM/yyyy", "pt_BR").format(targetDate)})';
+}
+```
+
+#### Deep Link Interno nas Tarefas
+
+```dart
+// Cada tarefa com deepLinkRoute deve exibir um botão/chip ao final:
+if (task.deepLinkRoute != null)
+  ActionChip(
+    label: Text(task.deepLinkLabel ?? 'Ver no app'),
+    avatar: Icon(Icons.arrow_forward, size: 14),
+    onPressed: () => context.go(task.deepLinkRoute!),
+    backgroundColor: AppColors.primary50,
+    labelStyle: TextStyle(color: AppColors.primary, fontSize: 12),
+  ),
+```
+
+#### Persistência e Sincronização
+- Estado dos checkboxes (`isCompleted`, `completedAt`) persistido localmente via `sqflite`.
+- Sincronizar com `PATCH /api/v1/users/{id}/checklist` ao marcar/desmarcar cada tarefa.
+- A lista padrão é gerada no **front-end** a partir do `kDefaultChecklistTasks` e não precisa de endpoint específico para seed.
+
+#### Dependências `pubspec.yaml`
+```yaml
+dependencies:
+  sqflite: ^2.3.0
+  intl: ^0.18.0
+```
+
+---
+
+### 11.5 Pasta de Cotações ("Meus Favoritos")
+
+#### Objetivo
+Facilitar a comparação de preços entre fornecedores sem sair do ecossistema, aumentando o tempo de sessão no app.
+
+#### Rota
+`/meus-favoritos` → `FavoritesScreen`
+
+#### Modelo de Dados
+
+```dart
+// lib/features/favorites/models/favorite_model.dart
+
+class FavoriteSupplier {
+  final String supplierId;      // ID do fornecedor na API
+  final String supplierName;    // nome (cacheado localmente)
+  final String? supplierCategory; // ex: 'Fotografia'
+  final String? supplierLogoUrl;  // URL do logo (cacheado)
+  String? userNote;             // nota livre da usuária
+  DateTime savedAt;
+
+  FavoriteSupplier({
+    required this.supplierId,
+    required this.supplierName,
+    this.supplierCategory,
+    this.supplierLogoUrl,
+    this.userNote,
+    required this.savedAt,
+  });
+}
+```
+
+#### Comportamento do Ícone de Favoritar
+
+```dart
+// lib/features/fornecedores/widgets/favorite_button.dart
+
+// Exibido em:
+// 1. Cards de fornecedor na listagem (canto superior direito do card)
+// 2. Tela de perfil do fornecedor (no AppBar ou abaixo do cabeçalho)
+
+// Estado visual:
+// - Não favoritado: ícone coração vazio (Icons.favorite_border), cor cinza
+// - Favoritado: ícone coração preenchido (Icons.favorite), cor rose-600
+
+IconButton(
+  icon: Icon(
+    isFavorited ? Icons.favorite : Icons.favorite_border,
+    color: isFavorited ? AppColors.primary : AppColors.textSecondary,
+  ),
+  onPressed: () => _toggleFavorite(fornecedor),
+  tooltip: isFavorited ? 'Remover dos favoritos' : 'Salvar nos favoritos',
+)
+
+// Ao favoritar pela primeira vez: mostrar SnackBar:
+// "Salvo em Meus Favoritos! Adicione uma nota de cotação."
+// com ação: "Adicionar Nota" → abre modal de nota
+```
+
+#### Modal de Nota de Cotação
+
+```dart
+// lib/features/favorites/widgets/favorite_note_dialog.dart
+
+// Acionado ao:
+// 1. Tocar em "Adicionar Nota" no SnackBar pós-favoritamento
+// 2. Tocar no ícone de edição ao lado do favorito na FavoritesScreen
+
+showModalBottomSheet(
+  context: context,
+  isScrollControlled: true,
+  builder: (_) => Padding(
+    padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text('Nota de Cotação', style: AppTextStyles.subtitle),
+        TextField(
+          maxLines: 4,
+          decoration: InputDecoration(
+            hintText: 'Ex: Cobrou R\$ 5.000 e parcela em 10x. Retornar em 15/05.',
+          ),
+          onChanged: (v) => noteText = v,
+        ),
+        ElevatedButton(
+          onPressed: _saveNote,
+          child: Text('Salvar'),
+        ),
+      ],
+    ),
+  ),
+);
+```
+
+#### Tela de Favoritos — `FavoritesScreen`
+
+```
++--------------------------------------------------+
+|  ← Meus Favoritos (12)                          |
++--------------------------------------------------+
+|  [🔍 Buscar nos favoritos]                      |
+|  Filtrar por: [Todos ▼]  [Categoria ▼]          |
++--------------------------------------------------+
+|  📸 Estúdio Luz & Arte      Fotografia           |
+|  ⭐ Vitrine                                      |
+|  "Cobrou R$ 5.000 e parcela em 10x"  [✏]        |
+|  Salvo em 10/04/2026                            |
+|  [Ver Perfil →]                                 |
++--------------------------------------------------+
+|  🎂 Buffet Sabor & Arte     Buffet / Gastronomia |
+|  (sem nota)                              [+ Nota]|
+|  [Ver Perfil →]           [🗑 Remover]           |
++--------------------------------------------------+
+```
+
+#### Persistência
+- **MVP:** Persistência local via `sqflite` (tabela `favorites`).
+- **Produção:** Sincronizar com endpoint `GET/POST/DELETE /api/v1/users/{id}/favorites`.
+- Ao restaurar app (reinstalação), recuperar favoritos do servidor se o usuário estiver logado.
+
+#### Dependências `pubspec.yaml`
+```yaml
+dependencies:
+  sqflite: ^2.3.0
+```
+
+---
+
+### 11.6 Gerenciador de Lista de Convidados (CRUD)
+
+#### Objetivo
+Garantir Daily Active Users (DAU), pois o gerenciamento de convidados é a ferramenta mais acessada diariamente pelas noivas durante o planejamento.
+
+#### Rota
+`/meu-casamento/convidados` → `GuestListScreen`
+
+#### Modelo de Dados
+
+```dart
+// lib/features/guests/models/guest_model.dart
+
+enum GuestGroup { familia, trabalho, amigos, outros }
+
+extension GuestGroupLabel on GuestGroup {
+  String get label {
+    const labels = {
+      GuestGroup.familia:  'Família',
+      GuestGroup.trabalho: 'Trabalho',
+      GuestGroup.amigos:   'Amigos',
+      GuestGroup.outros:   'Outros',
+    };
+    return labels[this]!;
+  }
+}
+
+enum GuestStatus { pending, confirmed, declined }
+
+extension GuestStatusLabel on GuestStatus {
+  String get label {
+    const labels = {
+      GuestStatus.pending:   'Pendente',
+      GuestStatus.confirmed: 'Confirmado',
+      GuestStatus.declined:  'Recusado',
+    };
+    return labels[this]!;
+  }
+
+  Color get color {
+    const colors = {
+      GuestStatus.pending:   Color(0xFFF59E0B), // amber
+      GuestStatus.confirmed: Color(0xFF10B981), // green
+      GuestStatus.declined:  Color(0xFFEF4444), // red
+    };
+    return colors[this]!;
+  }
+}
+
+class Guest {
+  final String id;           // UUID gerado localmente ou retornado pela API
+  String name;               // nome completo
+  GuestGroup group;          // grupo
+  GuestStatus status;        // status da confirmação
+  String? phone;             // telefone (opcional)
+  String? notes;             // observações (ex: "restrição alimentar: sem glúten")
+  int plusOnes;              // acompanhantes (0 = apenas o convidado)
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  Guest({
+    required this.id,
+    required this.name,
+    required this.group,
+    this.status = GuestStatus.pending,
+    this.phone,
+    this.notes,
+    this.plusOnes = 0,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  // Total de pessoas que este registro representa:
+  int get totalPersons => 1 + plusOnes;
+}
+```
+
+#### Tela Principal — `GuestListScreen`
+
+```
++--------------------------------------------------+
+|  ← Lista de Convidados        [+ Adicionar]     |
++--------------------------------------------------+
+|  RESUMO                                         |
+|  Total: 150  ✅ Confirmados: 98  ⏳ Pendentes: 42  ❌ Recusados: 10  |
++--------------------------------------------------+
+|  [🔍 Buscar por nome...]                        |
+|  Filtrar: [Todos ▼]  [Grupo ▼]  [Status ▼]     |
++--------------------------------------------------+
+|  FAMÍLIA (45)                                   |
+|  ┌─────────────────────────────────────────┐   |
+|  │ Ana Costa             [✅ Confirmado]   │   |
+|  │ +1 acompanhante                         │   |
+|  └─────────────────────────────────────────┘   |
+|  ┌─────────────────────────────────────────┐   |
+|  │ João Lima             [⏳ Pendente]     │   |
+|  └─────────────────────────────────────────┘   |
++--------------------------------------------------+
+```
+
+#### Dashboard de Resumo (sempre visível no topo)
+
+```dart
+// lib/features/guests/widgets/guest_summary_card.dart
+
+class GuestSummaryCard extends StatelessWidget {
+  final List<Guest> guests;
+
+  int get total      => guests.fold(0, (s, g) => s + g.totalPersons);
+  int get confirmed  => guests.where((g) => g.status == GuestStatus.confirmed)
+                              .fold(0, (s, g) => s + g.totalPersons);
+  int get pending    => guests.where((g) => g.status == GuestStatus.pending)
+                              .fold(0, (s, g) => s + g.totalPersons);
+  int get declined   => guests.where((g) => g.status == GuestStatus.declined)
+                              .fold(0, (s, g) => s + g.totalPersons);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _SummaryTile(label: 'Total',      value: total,     color: AppColors.primary),
+        _SummaryTile(label: 'Confirmados', value: confirmed, color: Colors.green),
+        _SummaryTile(label: 'Pendentes',  value: pending,   color: AppColors.vitrine),
+        _SummaryTile(label: 'Recusados',  value: declined,  color: Colors.red),
+      ],
+    );
+  }
+}
+```
+
+#### Adição Rápida de Convidado
+
+```dart
+// lib/features/guests/widgets/add_guest_sheet.dart
+
+// Campos do formulário:
+// 1. Nome completo* (TextField, autofocus)
+// 2. Grupo* (SegmentedButton: Família / Amigos / Trabalho / Outros)
+// 3. Status* (SegmentedButton: Pendente / Confirmado / Recusado)
+// 4. Acompanhantes (Stepper numérico: 0–10, default 0)
+// 5. Telefone (TextField, opcional, teclado número)
+// 6. Observações (TextField, opcional, multiline)
+
+// Atalho: ao submeter o formulário (botão "Salvar" ou Enter),
+// limpar o campo de nome e manter foco nele para adição em série rápida.
+```
+
+#### Filtros e Busca
+
+```dart
+// lib/features/guests/controllers/guest_list_controller.dart
+
+List<Guest> get filteredGuests {
+  return _allGuests.where((guest) {
+    final matchesSearch = _searchQuery.isEmpty ||
+        guest.name.toLowerCase().contains(_searchQuery.toLowerCase());
+    final matchesGroup  = _selectedGroup == null  || guest.group  == _selectedGroup;
+    final matchesStatus = _selectedStatus == null || guest.status == _selectedStatus;
+    return matchesSearch && matchesGroup && matchesStatus;
+  }).toList()
+    ..sort((a, b) => a.name.compareTo(b.name)); // ordena por nome
+}
+```
+
+#### Integração com API (.NET)
+
+> **Atenção:** A sincronização via API é **obrigatória** para esta funcionalidade. Os dados de convidados **não podem ser perdidos** em caso de reinstalação do app.
+
+```
+GET    /api/v1/users/{userId}/guests           → lista todos os convidados
+POST   /api/v1/users/{userId}/guests           → cria novo convidado
+PUT    /api/v1/users/{userId}/guests/{id}      → atualiza convidado
+DELETE /api/v1/users/{userId}/guests/{id}      → remove convidado
+PATCH  /api/v1/users/{userId}/guests/{id}/status → atualiza apenas o status
+```
+
+**Estratégia de sincronização:**
+1. Na abertura da tela, fazer `GET` para carregar lista atualizada do servidor.
+2. Cada operação de CRUD dispara imediatamente a chamada de API correspondente.
+3. Em caso de falha de rede: persistir localmente em fila (`sqflite`) e sincronizar quando a conexão retornar (usando `connectivity_plus` para detectar reconexão).
+4. Implementar **otimistic UI**: atualizar a UI imediatamente e reverter em caso de erro de API.
+
+#### Edição e Exclusão por Swipe
+
+```dart
+// lib/features/guests/widgets/guest_list_tile.dart
+
+Dismissible(
+  key: Key(guest.id),
+  background: Container(
+    color: Colors.green,
+    alignment: Alignment.centerLeft,
+    child: Padding(padding: EdgeInsets.only(left: 16), child: Icon(Icons.check, color: Colors.white)),
+  ),
+  secondaryBackground: Container(
+    color: Colors.red,
+    alignment: Alignment.centerRight,
+    child: Padding(padding: EdgeInsets.only(right: 16), child: Icon(Icons.delete, color: Colors.white)),
+  ),
+  confirmDismiss: (direction) async {
+    if (direction == DismissDirection.startToEnd) {
+      // Swipe direita → marcar como Confirmado
+      await _updateStatus(guest, GuestStatus.confirmed);
+      return false; // não remove da lista
+    } else {
+      // Swipe esquerda → confirmação de exclusão
+      return await _showDeleteConfirmDialog(context);
+    }
+  },
+  child: GuestListTile(guest: guest, onTap: () => _openEditSheet(guest)),
+)
+```
+
+#### Dependências `pubspec.yaml`
+```yaml
+dependencies:
+  sqflite: ^2.3.0
+  connectivity_plus: ^5.0.0
+  uuid: ^4.0.0  # para geração de IDs locais
+```
+
+---
+
+### 11.7 Notas de Arquitetura para as Funcionalidades Exclusivas
+
+#### Gerenciamento de Estado
+Livre escolha entre `Provider`, `Bloc` ou `Riverpod`. **Recomendação:** utilizar `Riverpod` (versão 2.x com code generation) para fluidez nas listas dinâmicas e reatividade entre funcionalidades.
+
+Cada funcionalidade exclusiva deve ter seu próprio **provider/notifier isolado:**
+
+| Funcionalidade | Provider/Notifier Sugerido |
+|----------------|---------------------------|
+| Contagem Regressiva | `weddingCountdownProvider` (AsyncNotifier) |
+| Briefing WhatsApp | `briefingServiceProvider` (Provider simples) |
+| Gestor de Orçamento | `budgetNotifierProvider` (StateNotifier/AsyncNotifier) |
+| Cronograma | `checklistNotifierProvider` (StateNotifier) |
+| Favoritos | `favoritesNotifierProvider` (StateNotifier) |
+| Lista de Convidados | `guestListNotifierProvider` (AsyncNotifier) |
+
+#### Estrutura de Pastas Recomendada
+
+```
+lib/
+└── features/
+    ├── countdown/           # 11.1 Contagem Regressiva
+    │   ├── controllers/
+    │   │   └── countdown_controller.dart
+    │   └── widgets/
+    │       └── wedding_countdown_widget.dart
+    ├── briefing/            # 11.2 Gerador de Briefing
+    │   └── services/
+    │       └── briefing_service.dart
+    ├── budget/              # 11.3 Gestor de Orçamento
+    │   ├── data/
+    │   ├── models/
+    │   │   └── budget_model.dart
+    │   ├── screens/
+    │   │   └── budget_screen.dart
+    │   └── widgets/
+    │       └── budget_category_row.dart
+    ├── checklist/           # 11.4 Cronograma
+    │   ├── data/
+    │   │   └── default_tasks.dart
+    │   ├── models/
+    │   │   └── checklist_model.dart
+    │   └── screens/
+    │       └── wedding_checklist_screen.dart
+    ├── favorites/           # 11.5 Favoritos
+    │   ├── models/
+    │   │   └── favorite_model.dart
+    │   ├── screens/
+    │   │   └── favorites_screen.dart
+    │   └── widgets/
+    │       ├── favorite_button.dart
+    │       └── favorite_note_dialog.dart
+    └── guests/              # 11.6 Lista de Convidados
+        ├── models/
+        │   └── guest_model.dart
+        ├── controllers/
+        │   └── guest_list_controller.dart
+        ├── screens/
+        │   └── guest_list_screen.dart
+        └── widgets/
+            ├── guest_summary_card.dart
+            ├── guest_list_tile.dart
+            └── add_guest_sheet.dart
+```
+
+#### Navegação — Rotas Adicionais (go_router)
+
+```dart
+// Adicionar ao router principal:
+GoRoute(path: '/meu-casamento',             builder: (_, __) => MyCWeddingHubScreen()),
+GoRoute(path: '/meu-casamento/orcamento',   builder: (_, __) => BudgetScreen()),
+GoRoute(path: '/meu-casamento/cronograma',  builder: (_, __) => WeddingChecklistScreen()),
+GoRoute(path: '/meu-casamento/convidados',  builder: (_, __) => GuestListScreen()),
+GoRoute(path: '/meus-favoritos',            builder: (_, __) => FavoritesScreen()),
+```
+
+#### Tela Hub "Meu Casamento"
+Criar uma tela intermediária `/meu-casamento` que sirva como dashboard central das funcionalidades exclusivas, exibindo:
+1. Widget de Contagem Regressiva (resumido)
+2. Botões de navegação para: Orçamento, Cronograma, Convidados, Favoritos
+3. Acesso rápido à edição do perfil (data, convidados estimados, estilo)
+
+#### Dependências Consolidadas `pubspec.yaml`
+
+```yaml
+dependencies:
+  # Funcionalidades exclusivas
+  screenshot: ^2.1.0
+  share_plus: ^7.2.0
+  path_provider: ^2.1.0
+  url_launcher: ^6.2.0
+  sqflite: ^2.3.0
+  connectivity_plus: ^5.0.0
+  uuid: ^4.0.0
+  intl: ^0.18.0   # já deve estar no projeto
+```
+
+---
+
 ## Apêndice A: Assets Locais
 
 ```
@@ -1885,4 +2938,5 @@ assets/
 ---
 
 *Documento gerado com base no código-fonte do portal web Angular/TypeScript do Guia Noivas Piracicaba.*  
+*Seção 11 (Funcionalidades Exclusivas do App) adicionada em Abril 2026.*  
 *Para dúvidas, contato: contato@guianoivas.com*

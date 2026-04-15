@@ -109,7 +109,7 @@
         <!-- Action Buttons -->
         <div class="mt-auto flex flex-col gap-2">
           <!-- WhatsApp button for Vitrine suppliers -->
-          <button *ngIf="fornecedor.planLevel === 1 && (fornecedor.telefone || fornecedor.whatsAppUrl)"
+          <button *ngIf="fornecedor.planLevel === PlanLevel.Vitrine && (fornecedor.telefone || fornecedor.whatsAppUrl)"
             type="button"
             (click)="openWhatsAppModal(fornecedor)"
             class="block w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md text-sm font-semibold transition-colors text-center flex items-center justify-center gap-2">
@@ -119,7 +119,7 @@
             WhatsApp
           </button>
           <!-- Contact button for non-Vitrine suppliers -->
-          <button *ngIf="fornecedor.planLevel !== 1"
+          <button *ngIf="fornecedor.planLevel !== PlanLevel.Vitrine"
             type="button"
             (click)="openContactLeadModal(fornecedor)"
             class="block w-full px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-sm font-semibold transition-colors text-center">

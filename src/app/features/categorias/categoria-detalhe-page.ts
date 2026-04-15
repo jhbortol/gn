@@ -9,13 +9,15 @@ import { map } from 'rxjs/operators';
 import { CidadeService } from '../../core/cidade.service';
 import { MetaTagService } from '../../core/meta-tag.service';
 import { environment } from '../../../environments/environment';
+import { LeadFormComponent } from '../fornecedores/lead-form.component';
+import { PlanLevel } from '../../core/models/tier-system.model';
 
 @Component({
   selector: 'app-categoria-detalhe-page',
   standalone: true,
   templateUrl: './categoria-detalhe-page.html',
   styleUrls: ['./categoria-detalhe-page.css'],
-  imports: [CommonModule, RouterModule, NgOptimizedImage],
+  imports: [CommonModule, RouterModule, NgOptimizedImage, LeadFormComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CategoriaDetalhePageComponent implements OnInit {
@@ -28,6 +30,15 @@ export class CategoriaDetalhePageComponent implements OnInit {
    */
   publicFornecedores$: Observable<FornecedorListDto[]>;
   destaquesCategoria$: Observable<FornecedorListDto[]>;
+
+  // Expor enum para o template
+  PlanLevel = PlanLevel;
+
+  // Modal de contato/WhatsApp
+  showContactModal = signal(false);
+  selectedFornecedorForModal = signal<FornecedorListDto | null>(null);
+  private pendingWhatsAppUrl = signal<string>('');
+  isVitrineModal = signal(false);
 
   private cidadeService = inject(CidadeService);
 
@@ -136,6 +147,74 @@ export class CategoriaDetalhePageComponent implements OnInit {
     }
     return this.cidadeService.buildUrl(path);
   }
+
+  /**
+   * Gera link do WhatsApp para um fornecedor da lista (Vitrine apenas)
+   */
+  getWhatsAppLinkFor(fornecedor: FornecedorListDto): string {
+    if (fornecedor.planLevel !== PlanLevel.Vitrine) return '#';
+
+    const message = 'Te achei no Guia Noivas Piracicaba, e quero mais informações';
+    const encodedMessage = encodeURIComponent(message);
+
+    if (fornecedor.whatsAppUrl) {
+      let url = fornecedor.whatsAppUrl;
+      if ((url.includes('wa.me') || url.includes('whatsapp.com/send')) && !url.includes('text=')) {
+        const separator = url.includes('?') ? '&' : '?';
+        return `${url}${separator}text=${encodedMessage}`;
+      }
+      return url;
+    }
+
+    const digits = (fornecedor.telefone || '').replace(/\D/g, '');
+    return digits ? `https://wa.me/${digits}?text=${encodedMessage}` : '#';
+  }
+
+  /**
+   * Abre o modal de captura de lead para Vitrine (WhatsApp)
+   */
+  openWhatsAppModal(fornecedor: FornecedorListDto): void {
+    const url = this.getWhatsAppLinkFor(fornecedor);
+    if (!url || url === '#') return;
+    this.selectedFornecedorForModal.set(fornecedor);
+    this.pendingWhatsAppUrl.set(url);
+    this.isVitrineModal.set(true);
+    this.showContactModal.set(true);
+  }
+
+  /**
+   * Abre o modal de captura de lead para não-Vitrine (formulário de contato)
+   */
+  openContactLeadModal(fornecedor: FornecedorListDto): void {
+    this.selectedFornecedorForModal.set(fornecedor);
+    this.pendingWhatsAppUrl.set('');
+    this.isVitrineModal.set(false);
+    this.showContactModal.set(true);
+  }
+
+  /**
+   * Fecha o modal de contato
+   */
+  closeContactModal(): void {
+    this.showContactModal.set(false);
+    this.selectedFornecedorForModal.set(null);
+    this.pendingWhatsAppUrl.set('');
+  }
+
+  /**
+   * Callback quando lead do modal é submetido com sucesso.
+   * Para Vitrine: abre WhatsApp. Para não-Vitrine: apenas fecha o modal.
+   */
+  onContactModalLeadSuccess(leadId: number): void {
+    this.showContactModal.set(false);
+    const url = this.pendingWhatsAppUrl();
+    if (url && typeof window !== 'undefined') {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+    this.selectedFornecedorForModal.set(null);
+    this.pendingWhatsAppUrl.set('');
+  }
+
 
   resolveImage(url?: string | null, fallback: string = 'assets/fornecedores/placeholder.jpg'): string {
     if (!url) return fallback;

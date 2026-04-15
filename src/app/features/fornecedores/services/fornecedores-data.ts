@@ -20,6 +20,8 @@ export interface FornecedorListDto {
   seloFornecedor?: boolean;
   ativo?: boolean;
   instagram?: string;
+  telefone?: string;
+  whatsAppUrl?: string;
   categoria?: { id: string; nome: string; slug: string };
   primaryImage?: { id: string; url: string; filename: string; contentType: string; isPrimary: boolean };
   imagens?: MediaDto[];
@@ -163,6 +165,8 @@ export class FornecedoresData {
       instagram: src.instagram || src.Instagram || src.socialMedia?.instagram || src.SocialMedia?.Instagram,
       categoria: catObj,
       planLevel: planLevel,
+      telefone: src.phoneDisplay || src.PhoneDisplay || src.telefone || src.Telefone,
+      whatsAppUrl: src.whatsAppUrl || src.WhatsAppUrl,
       primaryImage: imgUrl ? {
         id: primary.id || primary.Id || 'primary',
         url: resolveImageUrl(imgUrl),

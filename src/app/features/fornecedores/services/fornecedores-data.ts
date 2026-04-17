@@ -342,7 +342,7 @@ export class FornecedoresData {
   }
 
   getByCategoria(categoriaSlugOrId: string): Observable<FornecedorListDto[]> {
-    const params: any = { page: 1, pageSize: 12 }; // Default page size for category view
+    const params: any = { page: 1, pageSize: 50 }; // Default page size for category view
     if (environment.FORNECEDOR_PUBLICADO !== null) {
       params.publicado = environment.FORNECEDOR_PUBLICADO;
     }

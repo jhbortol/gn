@@ -147,6 +147,11 @@ export const routes: Routes = [
 		redirectTo: '/piracicaba/privacy',
 		pathMatch: 'full'
 	},
+	// Política de privacidade - URL pública para Play Console
+	{
+		path: 'politica-de-privacidade',
+		loadComponent: () => import('./features/privacy/privacy-policy-page/privacy-policy-page').then(m => m.PrivacyPolicyPageComponent)
+	},
 	// Catch-all - redireciona para home
 	{
 		path: '**',

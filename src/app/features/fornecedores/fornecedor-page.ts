@@ -32,6 +32,7 @@ export class FornecedorPageComponent implements OnInit {
   selectedImageIndex = 0;
   isPreviewMode = false;
   notFound = false;
+  isLoading = true;
 
   // Novos signals para tier logic
   showLeadForm = signal(false);
@@ -85,12 +86,14 @@ export class FornecedorPageComponent implements OnInit {
         if (environment.FORNECEDOR_PUBLICADO === true && !this.isPreviewMode && !f.publicado) {
           console.warn('Fornecedor não publicado acessado diretamente:', f.id);
           this.notFound = true;
+          this.isLoading = false;
           this.updateNotFoundMetaTags();
           this.cdr.markForCheck();
           return;
         }
 
         this.fornecedor = f;
+        this.isLoading = false;
 
         // 🔴 NOVO: Aplicar lógica tier
         this.applyTierLogic(f);
@@ -108,6 +111,7 @@ export class FornecedorPageComponent implements OnInit {
       } catch (err) {
         console.error('Error loading fornecedor:', err);
         this.notFound = true;
+        this.isLoading = false;
         this.updateNotFoundMetaTags();
         this.cdr.markForCheck();
       }

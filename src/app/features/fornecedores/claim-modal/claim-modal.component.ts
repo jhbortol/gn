@@ -1,3 +1,4 @@
+// ...existing code...
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -42,6 +43,13 @@ export class ClaimModalComponent implements OnInit {
             password: ['', [Validators.required, Validators.minLength(8)]],
             aceitaTermos: [false, [Validators.requiredTrue]]
         });
+    }
+    onPhoneBlur(event: FocusEvent) {
+        const input = event.target as HTMLInputElement | null;
+        if (!input) return;
+        const masked = this.formatPhoneValue(input.value);
+        input.value = masked;
+        this.claimForm.get('phone')?.setValue(masked, { emitEvent: false });
     }
 
     ngOnInit(): void {
@@ -92,19 +100,25 @@ export class ClaimModalComponent implements OnInit {
     //     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     // }
 
-    onPhoneInput(event: any) {
-        let value = event.target.value.replace(/\D/g, '');
-        if (value.length > 11) value = value.slice(0, 11);
+    onPhoneInput(event: Event) {
+        const input = event.target as HTMLInputElement | null;
+        if (!input) return;
+        const masked = this.formatPhoneValue(input.value);
+        input.value = masked;
+        this.claimForm.get('phone')?.setValue(masked, { emitEvent: false });
+    }
 
-        // Máscara simples (XX) XXXXX-XXXX
-        if (value.length > 2) {
-            value = `(${value.slice(0, 2)}) ` + value.slice(2);
+    private formatPhoneValue(rawValue: string): string {
+        let digits = rawValue.replace(/\D/g, '');
+        if (digits.length > 11) digits = digits.slice(0, 11);
+        if (digits.length <= 2) return digits;
+        if (digits.length <= 6) {
+            return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
         }
-        if (value.length > 10) {
-            value = value.slice(0, 10) + '-' + value.slice(10);
+        if (digits.length <= 10) {
+            return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
         }
-
-        this.claimForm.get('phone')?.setValue(value, { emitEvent: false });
+        return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
     }
 
     updatePasswordStrength(event: any) {

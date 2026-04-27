@@ -20,6 +20,8 @@ export interface FornecedorListDto {
   seloFornecedor?: boolean;
   ativo?: boolean;
   instagram?: string;
+  telefone?: string;
+  whatsAppUrl?: string;
   categoria?: { id: string; nome: string; slug: string };
   primaryImage?: { id: string; url: string; filename: string; contentType: string; isPrimary: boolean };
   imagens?: MediaDto[];
@@ -90,6 +92,7 @@ export interface Fornecedor {
   whatsAppUrl?: string;
   showContactForm?: boolean;
   adInjection?: CompetitorAd[];
+  precoAPartirDe?: number; // Âncora de preço para badge "A partir de R$ X"
 }
 
 @Injectable({ providedIn: 'root' })
@@ -162,6 +165,8 @@ export class FornecedoresData {
       instagram: src.instagram || src.Instagram || src.socialMedia?.instagram || src.SocialMedia?.Instagram,
       categoria: catObj,
       planLevel: planLevel,
+      telefone: src.phoneDisplay || src.PhoneDisplay || src.telefone || src.Telefone,
+      whatsAppUrl: src.whatsAppUrl || src.WhatsAppUrl,
       primaryImage: imgUrl ? {
         id: primary.id || primary.Id || 'primary',
         url: resolveImageUrl(imgUrl),
@@ -331,12 +336,13 @@ export class FornecedoresData {
         imagemPrincipal: resolveImageUrl(ad.imagemPrincipal || ad.ImagemPrincipal || ad.fotoUrl || ad.FotoUrl),
         descricao: ad.descricao || ad.Descricao,
         cidade: ad.cidade || ad.Cidade
-      }))
+      })),
+      precoAPartirDe: src.precoAPartirDe ?? src.PrecoAPartirDe ?? undefined
     };
   }
 
   getByCategoria(categoriaSlugOrId: string): Observable<FornecedorListDto[]> {
-    const params: any = { page: 1, pageSize: 12 }; // Default page size for category view
+    const params: any = { page: 1, pageSize: 50 }; // Default page size for category view
     if (environment.FORNECEDOR_PUBLICADO !== null) {
       params.publicado = environment.FORNECEDOR_PUBLICADO;
     }

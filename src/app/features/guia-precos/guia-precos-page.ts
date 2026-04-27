@@ -1,10 +1,11 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ApiService } from '../../core/api.service';
 import { CidadeService } from '../../core/cidade.service';
+import { MetaTagService } from '../../core/meta-tag.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -14,7 +15,31 @@ import { environment } from '../../../environments/environment';
   templateUrl: './guia-precos-page.html',
   styleUrls: ['./guia-precos-page.css']
 })
-export class GuiaPrecosPage {
+export class GuiaPrecosPage implements OnInit {
+  private static readonly NOINDEX_PATTERNS = [
+    /^\/[^/]+\/guia-custos$/,
+    /^\/[^/]+\/guia-precos(?:\/[^/]+)?$/
+  ];
+
+    ngOnInit(): void {
+      const route = this.router.url.split('?')[0];
+      this.metaTagService.applyMetadata(route);
+      this.injectNoIndexIfNeeded();
+    }
+
+    private injectNoIndexIfNeeded(): void {
+      if (typeof window === 'undefined') return;
+      const path = window.location.pathname;
+      if (GuiaPrecosPage.NOINDEX_PATTERNS.some(pattern => pattern.test(path))) {
+        let metaRobots = document.querySelector('meta[name="robots"]') as HTMLMetaElement;
+        if (!metaRobots) {
+          metaRobots = document.createElement('meta');
+          metaRobots.name = 'robots';
+          document.head.appendChild(metaRobots);
+        }
+        metaRobots.content = 'noindex, follow';
+      }
+    }
   leadForm: FormGroup;
 
   submitted = signal(false);
@@ -23,6 +48,7 @@ export class GuiaPrecosPage {
   downloadUrl = signal('');
 
   private cidadeService = inject(CidadeService);
+  private metaTagService = inject(MetaTagService);
 
   constructor(
     private api: ApiService,

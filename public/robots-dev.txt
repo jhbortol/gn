@@ -1,0 +1,31 @@
+# robots.txt for DEVELOPMENT environment (dev.guianoivas.com)
+# This file blocks all search engine indexing
+# DO NOT use this file in production!
+
+User-agent: *
+Disallow: /
+
+# Explicitly block all major search engines
+User-agent: Googlebot
+Disallow: /
+
+User-agent: Googlebot-Image
+Disallow: /
+
+User-agent: Googlebot-Mobile
+Disallow: /
+
+User-agent: Bingbot
+Disallow: /
+
+User-agent: Yahoo! Slurp
+Disallow: /
+
+User-agent: DuckDuckBot
+Disallow: /
+
+User-agent: Baiduspider
+Disallow: /
+
+User-agent: YandexBot
+Disallow: /

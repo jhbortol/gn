@@ -1,14 +1,22 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
+  private platformId = inject(PLATFORM_ID);
+  
   constructor(private http: HttpClient) {}
 
   private get apiBaseUrl(): string {
-    // Tenta pegar do 'window' (injetado via script do Azure, se necessário)
+    // Durante SSR/prerendering, sempre usa environment.API_BASE_URL
+    if (!isPlatformBrowser(this.platformId)) {
+      return environment.API_BASE_URL;
+    }
+    
+    // No browser, tenta pegar do 'window' (injetado via script do Azure, se necessário)
     // senão usa o que foi definido no build (environment.ts ou environment.prod.ts)
     return (window as any).API_BASE_URL || environment.API_BASE_URL;
   }

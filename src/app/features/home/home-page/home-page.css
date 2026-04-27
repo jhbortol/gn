@@ -1,0 +1,63 @@
+.instagram-popup {
+	position: fixed;
+	right: 1rem;
+	bottom: 1rem;
+	z-index: 45;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.5rem;
+	text-decoration: none;
+}
+
+.instagram-popup__badge {
+	color: #ffffff;
+	font-size: 0.75rem;
+	font-weight: 700;
+	background: rgba(15, 23, 42, 0.88);
+	padding: 0.3rem 0.6rem;
+	border-radius: 999px;
+	box-shadow: 0 8px 20px rgba(2, 6, 23, 0.25);
+}
+
+.instagram-popup__button {
+	width: 3.4rem;
+	height: 3.4rem;
+	border-radius: 999px;
+	display: grid;
+	place-items: center;
+	color: #ffffff;
+	background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
+	box-shadow: 0 12px 24px rgba(214, 36, 159, 0.35);
+	border: 2px solid rgba(255, 255, 255, 0.9);
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	animation: instagramFloat 1.8s ease-in-out infinite;
+}
+
+.instagram-popup:hover .instagram-popup__button,
+.instagram-popup:focus-visible .instagram-popup__button {
+	transform: translateY(-2px) scale(1.04);
+	box-shadow: 0 16px 28px rgba(214, 36, 159, 0.45);
+}
+
+.instagram-popup__icon {
+	width: 1.7rem;
+	height: 1.7rem;
+}
+
+@keyframes instagramFloat {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-4px);
+	}
+}
+
+@media (min-width: 768px) {
+	.instagram-popup {
+		right: 1.5rem;
+		bottom: 1.5rem;
+	}
+}

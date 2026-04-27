@@ -3,6 +3,10 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
+    path: '',
+    loadComponent: () => import('./fornecedores-list-page').then(m => m.FornecedoresListPageComponent)
+  },
+  {
     path: ':id',
     loadComponent: () => import('./fornecedor-page').then(m => m.FornecedorPageComponent)
   }

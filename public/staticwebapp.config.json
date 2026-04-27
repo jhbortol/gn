@@ -4,7 +4,8 @@
     },
     "responseOverrides": {
         "404": {
-            "rewrite": "/index.html"
+            "rewrite": "/404.html",
+            "statusCode": 404
         }
     },
     "globalHeaders": {
@@ -12,9 +13,121 @@
     },
     "routes": [
         {
-            "route": "/sitemap.xml",
+            "route": "/",
+            "redirect": "/piracicaba",
+            "statusCode": 301
+        },
+        {
+            "route": "/categorias",
+            "redirect": "/piracicaba/categorias",
+            "statusCode": 301
+        },
+        {
+            "route": "/termos",
+            "redirect": "/piracicaba/institucional/termos",
+            "statusCode": 301
+        },
+        {
+            "route": "/fornecedores",
+            "redirect": "/piracicaba/fornecedores",
+            "statusCode": 301
+        },
+        {
+            "route": "/institucional",
+            "redirect": "/piracicaba/institucional/sobre",
+            "statusCode": 301
+        },
+        {
+            "route": "/anuncie",
+            "redirect": "/piracicaba/anuncie",
+            "statusCode": 301
+        },
+        {
+            "route": "/contato",
+            "redirect": "/piracicaba/contato",
+            "statusCode": 301
+        },
+        {
+            "route": "/blog",
+            "redirect": "/piracicaba/blog",
+            "statusCode": 301
+        },
+        {
+            "route": "/guia-precos",
+            "redirect": "/piracicaba/guia-precos",
+            "statusCode": 301
+        },
+        {
+            "route": "/guia-custos",
+            "redirect": "/piracicaba/guia-custos",
+            "statusCode": 301
+        },
+        {
+            "route": "/midia-kit",
+            "redirect": "/piracicaba/midia-kit",
+            "statusCode": 301
+        },
+        {
+            "route": "/indicado",
+            "redirect": "/piracicaba/indicado",
+            "statusCode": 301
+        },
+        {
+            "route": "/privacy",
+            "redirect": "/piracicaba/privacy",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicab",
+            "redirect": "/piracicaba",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicaba/termos",
+            "redirect": "/piracicaba/institucional/termos",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicaba/institucional/sobre-nos",
+            "redirect": "/piracicaba/institucional/sobre",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicaba/guia-precos/bolo",
+            "redirect": "/piracicaba/guia-precos",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicaba/guia-precos/buffet",
+            "redirect": "/piracicaba/guia-precos",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicaba/guia-precos/convites",
+            "redirect": "/piracicaba/guia-precos",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicaba/guia-precos/decoracao",
+            "redirect": "/piracicaba/guia-precos",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicaba/guia-precos/fotografia",
+            "redirect": "/piracicaba/guia-precos",
+            "statusCode": 301
+        },
+        {
+            "route": "/piracicaba/guia-precos/vestido",
+            "redirect": "/piracicaba/guia-precos",
+            "statusCode": 301
+        },
+        {
+            "route": "/index.html",
             "headers": {
-                "Cache-Control": "public, max-age=3600, s-maxage=86400"
+                "Cache-Control": "public, max-age=0, s-maxage=0, must-revalidate, no-store",
+                "Pragma": "no-cache",
+                "Expires": "0"
             }
         },
         {
@@ -30,9 +143,9 @@
             }
         },
         {
-            "route": "/index.html",
+            "route": "/sitemap.xml",
             "headers": {
-                "Cache-Control": "public, max-age=0, s-maxage=3600, must-revalidate"
+                "Cache-Control": "public, max-age=3600, s-maxage=86400"
             }
         },
         {

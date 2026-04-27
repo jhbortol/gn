@@ -4,11 +4,11 @@
   <!-- Content Security Policy to prevent XSS and data exfiltration -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://scripts.clarity.ms https://connect.facebook.net https://www.facebook.com;
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.googleadservices.com https://www.clarity.ms https://scripts.clarity.ms https://connect.facebook.net https://www.facebook.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' data: https:;
     font-src 'self' data: https://fonts.gstatic.com;
-    connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://scripts.clarity.ms https://z.clarity.ms https://y.clarity.ms https://b.clarity.ms https://*.guianoivas.com https://*.guianoivas.com.br https://guia-noivas.somee.com https://*.azurewebsites.net https://connect.facebook.net https://www.facebook.com https://formspree.io https://api.formspree.io https://api.bigdatacloud.net https://checkip.amazonaws.com;
+    connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.clarity.ms https://scripts.clarity.ms https://z.clarity.ms https://y.clarity.ms https://b.clarity.ms https://*.guianoivas.com https://*.guianoivas.com.br https://guia-noivas.somee.com https://*.azurewebsites.net https://connect.facebook.net https://www.facebook.com https://formspree.io https://api.formspree.io https://api.bigdatacloud.net https://checkip.amazonaws.com;
     base-uri 'self';
     form-action 'self' https://formspree.io;
   ">
@@ -16,6 +16,8 @@
   <!-- Performance resource hints -->
   <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
   <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+  <link rel="preconnect" href="https://www.googleadservices.com" crossorigin>
+  <link rel="preconnect" href="https://googleads.g.doubleclick.net" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Optional: add font preconnects if custom webfonts introduced later -->
@@ -60,7 +62,9 @@
       #nav-skeleton .inner{width:100%;max-width:1200px;margin:0 auto;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;}
       #nav-skeleton .logo{font-size:24px;font-weight:700;color:#be123c;display:flex;align-items:center;gap:.5rem;}
       #nav-skeleton .menu{display:flex;gap:2rem;font-size:14px;font-weight:600;color:#6b7280;}
-      #nav-skeleton .login{background:#be123c;color:#fff;padding:.5rem 1rem;border-radius:9999px;font-weight:600;font-size:14px;}
+      #nav-skeleton .menu a{color:#6b7280;text-decoration:none;}
+      #nav-skeleton .menu a:hover{text-decoration:underline;}
+      #nav-skeleton .login{background:#be123c;color:#fff !important;padding:.5rem 1rem;border-radius:9999px;font-weight:600;font-size:14px;text-decoration:none;}
       /* Prevent horizontal shift from scrollbar appearance */
       html{overflow-y:scroll;}
   </style>
@@ -88,15 +92,31 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23881337'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E">
+  <!-- Google tag (gtag.js) - Google Ads: AW-18077793493 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18077793493"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'AW-18077793493');
+  </script>
+  <!-- End Google tag - Google Ads -->
 </head>
   <body>
     <!-- Static Navbar Skeleton (will be replaced) -->
     <nav id="nav-skeleton">
       <div class="inner">
-        <div class="logo">Guia Noivas <span style="font-family:ui-sans-serif;font-size:18px;font-weight:400;color:#4b5563;">Piracicaba</span></div>
+        <div class="logo">
+          <a href="/piracicaba" style="color:#be123c;text-decoration:none;">Guia Noivas</a>
+          <span style="font-family:ui-sans-serif;font-size:18px;font-weight:400;color:#4b5563;">Piracicaba</span>
+        </div>
         <div class="menu">
-          <span>INÍCIO</span><span>CATEGORIAS</span><span>ANUNCIE</span><span>CONTATO</span>
-          <span class="login">LOGIN NOIVAS</span>
+          <a href="/piracicaba">INÍCIO</a>
+          <a href="/piracicaba/categorias">CATEGORIAS</a>
+          <a href="/piracicaba/fornecedores">FORNECEDORES</a>
+          <a href="/piracicaba/anuncie">ANUNCIE</a>
+          <a href="/piracicaba/contato">CONTATO</a>
+          <a href="/piracicaba/institucional/sobre">SOBRE</a>
         </div>
       </div>
     </nav>
@@ -117,7 +137,7 @@
       fbq('init', '1392814085844033');
       fbq('track', 'PageView');
     </script>
-    <noscript><img height="1" width="1" style="display:none"
+    <noscript><img height="1" width="1" style="display:none" alt=""
       src="https://www.facebook.com/tr?id=1392814085844033&ev=PageView&noscript=1" /></noscript>
     <!-- End Meta Pixel -->
   <app-root></app-root>
@@ -131,6 +151,26 @@
       },50);
       setTimeout(()=>clearInterval(interval),5000);
     })();
+
+    // Version check and cache detection on page load
+    if ('serviceWorker' in navigator || 'caches' in window) {
+      window.addEventListener('load', () => {
+        // Check for new version on load
+        if (window.__BUILD_VERSION__) {
+          const stored = localStorage.getItem('_appVersion');
+          if (stored && stored !== window.__BUILD_VERSION__) {
+            console.log('🔄 Nova versão detectada no carregamento');
+            // Clear caches to ensure fresh load
+            if ('caches' in window) {
+              caches.keys().then(names => {
+                names.forEach(name => caches.delete(name));
+              }).catch(e => console.warn('Erro ao limpar caches:', e));
+            }
+          }
+          localStorage.setItem('_appVersion', window.__BUILD_VERSION__);
+        }
+      });
+    }
   </script>
 </body>
 </html>

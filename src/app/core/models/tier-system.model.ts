@@ -53,9 +53,11 @@ export interface VendorPublicDto {
  */
 export interface LeadData {
   clienteName: string;
-  clienteEmail: string;
+  clienteEmail?: string;
   clientePhone: string;
-  message: string;
+  message?: string;
+  /** Data do evento no formato YYYY-MM-DD (ISO 8601) */
+  eventDate?: string;
   lgpdConsent: boolean;
 }
 

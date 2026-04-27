@@ -1,8 +1,7 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, signal, inject, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Meta, Title } from '@angular/platform-browser';
-import { ClickwrapAgreementComponent } from '../../shared/clickwrap-agreement/clickwrap-agreement';
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
 import { TrackingService } from '../../core/tracking.service';
 import { MetaTagService } from '../../core/meta-tag.service';
@@ -21,7 +20,6 @@ import { ClaimModalComponent } from './claim-modal/claim-modal.component';
   imports: [
     CommonModule,
     RouterModule,
-    ClickwrapAgreementComponent,
     LeadFormComponent,
     CompetitorAdsComponent,
     ClaimModalComponent
@@ -34,12 +32,17 @@ export class FornecedorPageComponent implements OnInit {
   selectedImageIndex = 0;
   isPreviewMode = false;
   notFound = false;
+  isLoading = true;
 
   // Novos signals para tier logic
   showLeadForm = signal(false);
   hasCompetitorAds = signal(false);
   showClaimBar = signal(false);
   isClaimModalOpen = signal(false);
+
+  // Modal de captura de lead antes de abrir WhatsApp
+  showWhatsAppLeadModal = signal(false);
+  private pendingContactUrl = '';
 
   // Expor enum para o template
   PlanLevel = PlanLevel;
@@ -57,7 +60,8 @@ export class FornecedorPageComponent implements OnInit {
     private tracking: TrackingService,
     private title: Title,
     private meta: Meta,
-    private metaTagService: MetaTagService
+    private metaTagService: MetaTagService,
+    @Inject(PLATFORM_ID) private platformId: object
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -82,12 +86,14 @@ export class FornecedorPageComponent implements OnInit {
         if (environment.FORNECEDOR_PUBLICADO === true && !this.isPreviewMode && !f.publicado) {
           console.warn('Fornecedor não publicado acessado diretamente:', f.id);
           this.notFound = true;
+          this.isLoading = false;
           this.updateNotFoundMetaTags();
           this.cdr.markForCheck();
           return;
         }
 
         this.fornecedor = f;
+        this.isLoading = false;
 
         // 🔴 NOVO: Aplicar lógica tier
         this.applyTierLogic(f);
@@ -105,6 +111,7 @@ export class FornecedorPageComponent implements OnInit {
       } catch (err) {
         console.error('Error loading fornecedor:', err);
         this.notFound = true;
+        this.isLoading = false;
         this.updateNotFoundMetaTags();
         this.cdr.markForCheck();
       }
@@ -166,6 +173,50 @@ export class FornecedorPageComponent implements OnInit {
       vendorName: this.fornecedor?.nome || '',
       vendorCategory: this.fornecedor?.categoria
     });
+  }
+
+  /**
+   * Abre o modal de captura de lead antes de redirecionar para o WhatsApp.
+   */
+  registrarLeadEabrirWhatsapp(): void {
+    const whatsappUrl = this.getWhatsAppLink();
+    if (!whatsappUrl || whatsappUrl === '#') return;
+
+    // Rastrear analytics
+    this.onWhatsAppClick();
+
+    this.openLeadModalForContact(whatsappUrl);
+  }
+
+  /**
+   * Fecha o modal de lead WhatsApp sem abrir o aplicativo.
+   */
+  fecharModalLeadWhatsapp(): void {
+    this.showWhatsAppLeadModal.set(false);
+    this.pendingContactUrl = '';
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Callback quando lead do modal de contato é submetido com sucesso.
+   * Fecha o modal e abre o canal selecionado.
+   */
+  onContactLeadSubmitSuccess(leadId: number): void {
+    this.showWhatsAppLeadModal.set(false);
+    console.log('Lead WhatsApp enviado com sucesso:', leadId);
+
+    // Abrir canal após captura do lead
+    if (typeof window !== 'undefined' && this.pendingContactUrl) {
+      window.open(this.pendingContactUrl, '_blank', 'noopener,noreferrer');
+    }
+    this.pendingContactUrl = '';
+    this.cdr.markForCheck();
+  }
+
+  private openLeadModalForContact(url: string): void {
+    this.pendingContactUrl = url;
+    this.showWhatsAppLeadModal.set(true);
+    this.cdr.markForCheck();
   }
 
   getSiteLink(): string {
@@ -254,8 +305,8 @@ export class FornecedorPageComponent implements OnInit {
       // Free: Sempre mostrar form (backend controla bloqueio)
       this.showLeadForm.set(true);
     } else if (planLevel === PlanLevel.Vitrine) {
-      // Vitrine: Formulário opcional (tem WhatsApp direto)
-      this.showLeadForm.set(!!fornecedor.showContactForm);
+      // Vitrine: Nunca mostrar formulário de contato (tem WhatsApp direto)
+      this.showLeadForm.set(false);
     } else {
       // Fallback para backward compatibility
       this.showLeadForm.set(!!fornecedor.showContactForm);
@@ -277,12 +328,17 @@ export class FornecedorPageComponent implements OnInit {
    * Atualiza meta tags dinâmicas para SEO
    */
   private updateSeoMetaTags(fornecedor: Fornecedor): void {
+    const currentUrl = `https://guianoivas.com${this.router.url.split('?')[0]}`;
+
     // Título da página: "Nome - Categoria em Cidade"
-    const pageTitle = `${fornecedor.nome} - ${fornecedor.categoria || 'Fornecedor'} em ${fornecedor.cidade || 'São Paulo'}`;
+    const pageTitle = `${fornecedor.nome} - ${fornecedor.categoria || 'Fornecedor'} em ${fornecedor.cidade || 'Piracicaba'}`;
     this.title.setTitle(pageTitle);
 
-    // Meta description: primeiros 155 caracteres da bio/descrição
-    const description = (fornecedor.descricao || fornecedor.nome || '').substring(0, 155);
+    // Meta description: primeiros 155 caracteres da bio/descrição (distinto do H1)
+    const rawDescription = fornecedor.descricao?.trim();
+    const description = rawDescription
+      ? rawDescription.substring(0, 155)
+      : `Veja o perfil de ${fornecedor.nome}, ${fornecedor.categoria || 'fornecedor'} para casamentos em ${fornecedor.cidade || 'Piracicaba'}. Orçamentos e contato no Guia Noivas.`;
     this.meta.updateTag({ name: 'description', content: description });
 
     // Open Graph image para compartilhamento social
@@ -296,6 +352,18 @@ export class FornecedorPageComponent implements OnInit {
     this.meta.updateTag({ property: 'og:title', content: pageTitle });
     this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:type', content: 'business.business' });
+    this.meta.updateTag({ property: 'og:url', content: currentUrl });
+    this.meta.updateTag({ property: 'og:site_name', content: 'Guia Noivas Piracicaba' });
+    this.meta.updateTag({ property: 'og:locale', content: 'pt_BR' });
+
+    // Twitter Card
+    this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+    this.meta.updateTag({ name: 'twitter:site', content: '@guianoivaspiracicaba' });
+    this.meta.updateTag({ name: 'twitter:title', content: pageTitle });
+    this.meta.updateTag({ name: 'twitter:description', content: description });
+    if (ogImage) {
+      this.meta.updateTag({ name: 'twitter:image', content: ogImage });
+    }
   }
 
   private updateNotFoundMetaTags(): void {
@@ -309,6 +377,29 @@ export class FornecedorPageComponent implements OnInit {
     this.meta.updateTag({ property: 'og:title', content: pageTitle });
     this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:type', content: 'website' });
+    
+    // 🔴 CRITICAL: Add noindex meta tag to prevent 404 pages from being indexed
+    // This prevents "soft 404" issues where Google indexes error pages as valid content
+    if (isPlatformBrowser(this.platformId)) {
+      this.injectNoIndexMetaTag();
+    }
+  }
+  
+  /**
+   * Inject noindex meta tag dynamically to prevent search engine indexing of 404 pages
+   * This is the client-side alternative to setting HTTP 404 status (which Azure Static Web Apps can't do)
+   */
+  private injectNoIndexMetaTag(): void {
+    let metaRobots = document.querySelector('meta[name="robots"]') as HTMLMetaElement;
+    
+    if (!metaRobots) {
+      metaRobots = document.createElement('meta');
+      metaRobots.name = 'robots';
+      document.head.appendChild(metaRobots);
+    }
+    
+    metaRobots.content = 'noindex, nofollow';
+    console.warn('🚫 SEO: Injected noindex meta tag for 404 page');
   }
 
   /**
@@ -349,6 +440,18 @@ export class FornecedorPageComponent implements OnInit {
     // Exemplo: mostrar toast ou redirecionar
     console.log('Lead enviado com sucesso:', leadId);
     // Opcionalmente: scrollar para seção de depoimentos
+  }
+
+  /**
+   * Scrolls suavemente até o formulário de lead (usado pelo botão sticky no mobile)
+   */
+  scrollToLeadForm(): void {
+    if (typeof document !== 'undefined') {
+      const el = document.getElementById('lead-form-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
   }
 
   /**

@@ -3,6 +3,19 @@ import { Injectable } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 export class TrackingService {
   /**
+   * Dispara um evento de conversão do Google Ads
+   */
+  private trackGoogleAdsConversion(sendTo: string, value?: number, currency?: string) {
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'conversion', {
+        send_to: sendTo,
+        ...(value !== undefined && { value }),
+        ...(currency && { currency })
+      });
+    }
+  }
+
+  /**
    * Rastreia cliques em botões de contato (WhatsApp, Instagram, Facebook, etc)
    */
   trackContactClick(contactType: 'whatsapp' | 'instagram' | 'facebook' | 'website' | 'phone' | 'maps', vendorData?: {
@@ -31,6 +44,9 @@ export class TrackingService {
         content_id: vendorData?.vendorId || ''
       });
     }
+
+    // Google Ads - track contact click as a lead conversion
+    this.trackGoogleAdsConversion('AW-18077793493');
   }
 
   /**
@@ -101,6 +117,9 @@ export class TrackingService {
     if (typeof window !== 'undefined' && (window as any).fbq) {
       (window as any).fbq('track', formType === 'newsletter' ? 'Lead' : 'Contact');
     }
+
+    // Google Ads - track form submit as a conversion
+    this.trackGoogleAdsConversion('AW-18077793493');
   }
 
   /**

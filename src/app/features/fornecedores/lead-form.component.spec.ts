@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { of, throwError } from 'rxjs';
 
 import { LeadFormComponent } from './lead-form.component';
@@ -19,7 +20,8 @@ describe('LeadFormComponent', () => {
         await TestBed.configureTestingModule({
             imports: [
                 LeadFormComponent,
-                ReactiveFormsModule
+                ReactiveFormsModule,
+                RouterTestingModule
             ],
             providers: [
                 provideHttpClient(),
@@ -48,17 +50,7 @@ describe('LeadFormComponent', () => {
             expect(control?.valid).toBeTrue();
         });
 
-        it('should require valid email format', () => {
-            const control = component.form.get('clienteEmail');
-
-            control?.setValue('invalid');
-            expect(control?.valid).toBeFalse();
-
-            control?.setValue('valid@email.com');
-            expect(control?.valid).toBeTrue();
-        });
-
-        it('should validate Brazilian phone format', () => {
+        it('should validate Brazilian phone format for WhatsApp field', () => {
             const control = component.form.get('clientePhone');
 
             // Invalid formats
@@ -79,34 +71,11 @@ describe('LeadFormComponent', () => {
             expect(control?.valid).toBeTrue();
         });
 
-        it('should require eventDate', () => {
-            const control = component.form.get('eventDate');
-
-            control?.setValue('');
-            expect(control?.valid).toBeFalse();
-
-            control?.setValue('2024-12-25');
-            expect(control?.valid).toBeTrue();
-        });
-
-        it('should require lgpdConsent to be true', () => {
-            const control = component.form.get('lgpdConsent');
-
-            control?.setValue(false);
-            expect(control?.valid).toBeFalse();
-
-            control?.setValue(true);
-            expect(control?.valid).toBeTrue();
-        });
-
-        it('should require message with min 10 characters', () => {
-            const control = component.form.get('message');
-
-            control?.setValue('short');
-            expect(control?.valid).toBeFalse();
-
-            control?.setValue('This is a valid message');
-            expect(control?.valid).toBeTrue();
+        it('should NOT have email, message, eventDate or lgpd fields', () => {
+            expect(component.form.get('clienteEmail')).toBeNull();
+            expect(component.form.get('message')).toBeNull();
+            expect(component.form.get('eventDate')).toBeNull();
+            expect(component.form.get('lgpdConsent')).toBeNull();
         });
     });
 
@@ -115,11 +84,7 @@ describe('LeadFormComponent', () => {
             // Fill form with valid data
             component.form.patchValue({
                 clienteName: 'Maria Silva',
-                clienteEmail: 'maria@email.com',
-                clientePhone: '(11) 99999-8888',
-                message: 'Gostaria de mais informações sobre o serviço',
-                eventDate: '2024-12-25',
-                lgpdConsent: true
+                clientePhone: '(11) 99999-8888'
             });
         });
 
@@ -157,20 +122,38 @@ describe('LeadFormComponent', () => {
         });
     });
 
-    describe('Field Validation Display', () => {
-        it('should return true for invalid and touched field', () => {
-            const control = component.form.get('clienteName');
-            control?.setValue('');
-            control?.markAsTouched();
+    describe('Compact Mode (WhatsApp modal)', () => {
+        let compactFixture: ComponentFixture<LeadFormComponent>;
+        let compactComponent: LeadFormComponent;
 
-            expect(component.isFieldInvalid('clienteName')).toBeTrue();
+        beforeEach(() => {
+            compactFixture = TestBed.createComponent(LeadFormComponent);
+            compactComponent = compactFixture.componentInstance;
+            compactComponent.fornecedorId = '456';
+            compactComponent.compact = true;
+            compactFixture.detectChanges(); // triggers ngOnInit
         });
 
-        it('should return false for valid field', () => {
-            const control = component.form.get('clienteName');
-            control?.setValue('Valid Name');
+        it('should be valid with only name and phone in compact mode', () => {
+            compactComponent.form.patchValue({
+                clienteName: 'Maria Silva',
+                clientePhone: '(11) 99999-8888'
+            });
+            expect(compactComponent.form.valid).toBeTrue();
+        });
 
-            expect(component.isFieldInvalid('clienteName')).toBeFalse();
+        it('should use WhatsApp-specific CTA text in compact mode', () => {
+            const buttonText = compactFixture.nativeElement.querySelector('button[type="submit"]')?.textContent;
+            expect(buttonText).toContain('Continuar para WhatsApp');
+        });
+
+        it('should submit successfully in compact mode with just name and phone', () => {
+            compactComponent.form.patchValue({
+                clienteName: 'Maria Silva',
+                clientePhone: '(11) 99999-8888'
+            });
+            compactComponent.onSubmit();
+            expect(mockLeadService.submitLead).toHaveBeenCalledWith('456', jasmine.any(Object));
         });
     });
 });

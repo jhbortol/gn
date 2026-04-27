@@ -33,6 +33,8 @@ jobs:
             echo "Creating empty placeholder"
             echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>' > public/sitemap.xml
           fi
+      - name: Normalize sitemap URLs (remove known 301s)
+        run: node normalize-sitemap.js public/sitemap.xml
       - name: Build for Development
         run: npm run prerender
       - name: Debug - List build output

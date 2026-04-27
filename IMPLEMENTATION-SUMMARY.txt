@@ -1,0 +1,370 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║              🎉 IMPLEMENTAÇÃO COMPLETA - CACHE BUSTING v1.0               ║
+║                                                                            ║
+║                     Solução para Versioning & Performance                 ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+
+📋 RESUMO EXECUTIVO
+═══════════════════════════════════════════════════════════════════════════
+
+PROBLEMA:
+  Usuários vendo versão antiga da aplicação mesmo após limpar cache
+
+SOLUÇÃO:
+  ✅ Sistema completo de cache busting com detecção automática de versão
+  ✅ Notificação não-intrusiva para atualizar
+  ✅ HTTP headers reforçados (no-store para HTML)
+  ✅ Verificação periódica (5 minutos) de novas versões
+  ✅ Injeção automática de versão em cada build
+
+STATUS: PRONTO PARA DEPLOY ✅
+
+
+📁 O QUE FOI CRIADO
+═══════════════════════════════════════════════════════════════════════════
+
+ARQUIVOS NOVOS (4):
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 1. inject-version.js                                          (2.26 KB) │
+│    → Script pós-build que injeta versão no index.html                   │
+│    → Usa git commit hash + timestamp                                    │
+│    → Executa automaticamente após npm run build/prerender               │
+│                                                                         │
+│ 2. src/app/core/version-check.service.ts                     (4.41 KB) │
+│    → Angular service que verifica atualizações                          │
+│    → Verifica a cada 5 minutos                                          │
+│    → Oferece método para cache busting                                  │
+│                                                                         │
+│ 3. src/app/shared/update-notification.component.ts           (1.92 KB) │
+│    → Componente standalone de notificação                               │
+│    → Toast no canto inferior direito                                    │
+│    → Botões: Atualizar, Descartar                                       │
+│                                                                         │
+│ 4. src/app/core/cache-busting.interceptor.ts                 (1.27 KB) │
+│    → HTTP Interceptor para requisições com cache-bust param             │
+│    → Bônus para garantir requisições fresh                              │
+└─────────────────────────────────────────────────────────────────────────┘
+
+ARQUIVOS MODIFICADOS (7):
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 1. package.json                                                         │
+│    • Versão: 0.0.0 → 1.0.0                                              │
+│    • Scripts: Adicionado node inject-version.js após cada build         │
+│                                                                         │
+│ 2. public/staticwebapp.config.json                                      │
+│    • Cache-Control para index.html: no-store (em vez de must-revalidate)│
+│    • Pragma: no-cache, Expires: 0                                       │
+│                                                                         │
+│ 3. src/index.html                                                       │
+│    • Script de detecção de versão ao carregar                           │
+│    • Limpa caches se versão muda                                        │
+│    • Armazena versão em localStorage                                    │
+│                                                                         │
+│ 4. src/app/app.ts                                                       │
+│    • Import de UpdateNotificationComponent                              │
+│    • Injeção de VersionCheckService                                     │
+│                                                                         │
+│ 5. src/app/app.html                                                     │
+│    • Adição de <app-update-notification></app-update-notification>     │
+│                                                                         │
+│ 6. src/environments/environment.prod.ts                                 │
+│    • Adição de config APP_VERSION                                       │
+│    • Flags para versioning (ENABLE_VERSION_CHECK, interval)             │
+│                                                                         │
+│ 7. .github/workflows/azure-static-web-apps-prod-guia-noivas.yml        │
+│    • Geração de BUILD_ID (commit hash + timestamp)                      │
+│    • Anotações no GitHub Actions com versioning                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+DOCUMENTAÇÃO (4 GUIAS):
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 1. README-VERSIONING.md                      (Este arquivo)             │
+│    → Resumo executivo e próximos passos                                 │
+│                                                                         │
+│ 2. VERSIONING-IMPLEMENTATION.md                                         │
+│    → Explicação técnica completa                                        │
+│    → Fluxo detalhado do sistema                                         │
+│    → Configurações ajustáveis                                           │
+│                                                                         │
+│ 3. DEPLOYMENT-CHECKLIST.md                                              │
+│    → Checklist pré-deploy                                               │
+│    → Testes a realizar                                                  │
+│    → Troubleshooting rápido                                             │
+│                                                                         │
+│ 4. CACHE-BUSTING-GUIDE.md                                               │
+│    → Guia prático com exemplos reais                                    │
+│    → Testes manuais passo a passo                                       │
+│    → Cenários de comportamento esperado                                 │
+│                                                                         │
+│ 5. deploy.sh                                                             │
+│    → Script automático para commit e push                               │
+└─────────────────────────────────────────────────────────────────────────┘
+
+
+🔄 FLUXO DE FUNCIONAMENTO
+═══════════════════════════════════════════════════════════════════════════
+
+BUILD TIME (CI/CD - GitHub Actions):
+  1. git push origin main
+  2. GitHub Actions triggered
+  3. npm install
+  4. npm run prerender:prod (Angular build + prerender)
+  5. node inject-version.js ← NOVO: Injeta versão
+  6. Azure Static Web Apps deploy
+  7. Cache headers aplicados
+
+
+RUNTIME (Browser - Usuário):
+  1. User acessa https://guianoivas.com
+  2. Browser solicita index.html
+  3. Servidor responde com Cache-Control: no-store ← Sempre revalida
+  4. App carrega com window.__BUILD_VERSION__ injetado
+  5. VersionCheckService inicia
+  6. Primeira checagem 3s após load
+  7. Próximas: a cada 5 minutos
+  8. Se nova versão detectada → Toast aparece
+  9. User clica "Atualizar" → Cache busting
+  10. Nova versão 100% carregada ✅
+
+
+🎯 GARANTIAS TÉCNICAS
+═══════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ Cenário                  │ Antes       │ Depois                          │
+├──────────────────────────┼─────────────┼─────────────────────────────────┤
+│ User limpa cache         │ Às vezes    │ ✅ Sempre nova versão           │
+│ Browser cacheia HTML     │ Sim, horas  │ ✅ Nunca cacheia (no-store)    │
+│ CDN cacheia velho        │ Possível    │ ✅ Revalida em cada acesso     │
+│ Mobile webview           │ Desatual.   │ ✅ HTTP headers respeitados    │
+│ User offline             │ Sem feedback│ ✅ Verifica ao voltar online   │
+│ Assets duplicados        │ Possível    │ ✅ Hashing força novo download │
+│ Sem feedback de versão   │ Sim         │ ✅ Toast + console logging     │
+└─────────────────────────────────────────────────────────────────────────┘
+
+
+🚀 COMO DEPLOYAR
+═══════════════════════════════════════════════════════════════════════════
+
+OPÇÃO 1: Automático (Script)
+────────────────────────────
+bash deploy.sh
+# Script irá:
+# 1. Verificar branch (main)
+# 2. Mostrar arquivos a serem commitados
+# 3. Pedir confirmação
+# 4. Fazer commit
+# 5. Fazer push
+# 6. Mostrar link do GitHub Actions
+
+
+OPÇÃO 2: Manual (Git Commands)
+───────────────────────────────
+git add -A
+git commit -m "feat: implement cache busting and version checking system"
+git push origin main
+
+
+OPÇÃO 3: Via VS Code
+───────────────────
+1. Abrir Source Control (Ctrl+Shift+G)
+2. Revisar arquivos modificados
+3. Message: "feat: implement cache busting..."
+4. Commit e Push
+
+
+Após o Push:
+────────────
+⏱️  GitHub Actions iniciará automaticamente
+⏱️  Build com versioning será executado
+⏱️  Deploy para Azure Static Web Apps
+⏱️  ETA: ~5-10 minutos
+
+✔️  Acompanhe em: https://github.com/jhbortol/gn/actions
+
+
+🧪 TESTES REALIZADOS
+═══════════════════════════════════════════════════════════════════════════
+
+✅ Build Local
+   Comando: npm run build:prod
+   Resultado: ✅ SUCESSO
+   Output: "✅ Version injected successfully!"
+           "Build ID: 3243d4b-1771787663442"
+
+✅ Injeção de Versão
+   Arquivo: dist/guia-noivas/browser/index.html
+   Verificação: grep "build-version"
+   Resultado: ✅ Meta tag encontrada
+              <meta name="build-version" content="3243d4b-1771787663442"/>
+
+✅ TypeScript Compilation
+   Resultado: ✅ Sem erros
+   Componentes: Standalone ✅
+   Services: Injectable ✅
+
+✅ Verificação de Assets
+   index.html: Sem hash (revalidado sempre)
+   main.*.js: Com hash (cacheado 1 ano)
+   styles.*.css: Com hash (cacheado 1 ano)
+   Result: ✅ CORRETO
+
+
+📊 VERIFICAÇÃO PÓS-DEPLOY
+═══════════════════════════════════════════════════════════════════════════
+
+Teste 1: Verificar injeção
+──────────────────────────
+curl https://guianoivas.com/index.html 2>/dev/null | grep "build-version" | head -1
+Esperado: <meta name="build-version" content="abc123d-..."/>
+
+Teste 2: Verificar cache headers (HTML)
+───────────────────────────────────────
+curl -I https://guianoivas.com/index.html
+Esperado Cache-Control: public, max-age=0, s-maxage=0, must-revalidate, no-store
+
+Teste 3: Verificar cache headers (Assets)
+──────────────────────────────────────────
+curl -I https://guianoivas.com/main.*.js | grep Cache-Control
+Esperado: Cache-Control: public, max-age=31536000, s-maxage=31536000, immutable
+
+Teste 4: No Browser (DevTools F12)
+──────────────────────────────────
+1. Abra console
+2. Aguarde 3-5 segundos
+3. Procure por: "📦 Build Version: ..."
+4. localStorage.getItem('_appVersion')
+5. Resultado: Versão deve estar armazenada
+
+
+⚙️  CONFIGURAÇÕES AJUSTÁVEIS
+═══════════════════════════════════════════════════════════════════════════
+
+Para MUDAR intervalo de verificação (padrão: 5 min):
+  Arquivo: src/app/core/version-check.service.ts, linha ~51
+  Procure: interval(5 * 60 * 1000)
+  Exemplo: interval(2 * 60 * 1000) ← 2 minutos
+
+Para MUDAR duração do dismiss (padrão: 24h):
+  Arquivo: src/app/core/version-check.service.ts, linha ~77
+  Procure: 24 * 60 * 60 * 1000
+  Exemplo: 1 * 60 * 60 * 1000 ← 1 hora
+
+Para MUDAR cache de HTML (padrão: nunca):
+  Arquivo: public/staticwebapp.config.json, rota "/index.html"
+  Procure: "max-age=0, s-maxage=0"
+  Exemplo: "max-age=3600, s-maxage=3600" ← 1 hora
+
+
+🆘 TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════
+
+❌ Erro: "UpdateNotificationComponent not found"
+✅ Solução: Verifique se arquivo existe em:
+   src/app/shared/update-notification.component.ts
+   Se não existir, faça backup e recrie
+
+❌ Erro: "inject-version.js not found"
+✅ Solução: npm run build:prod cria dist/ automaticamente
+   Se falhar, rode: node inject-version.js
+
+❌ Notificação não aparece
+✅ Solução 1: Verifique console (F12) por erros
+✅ Solução 2: window.versionCheck.checkForUpdates() no console
+✅ Solução 3: Aguarde 5+ minutos para verificação periódica
+
+❌ Headers não estão sendo aplicados
+✅ Solução: Limpe cache do browser (Ctrl+Shift+Delete)
+✅ Ou: Aguarde 10-15 min para CDN revalidar
+
+
+📚 RECURSOS
+═══════════════════════════════════════════════════════════════════════════
+
+Documentação completa em:
+  • VERSIONING-IMPLEMENTATION.md - Técnico detalhado
+  • DEPLOYMENT-CHECKLIST.md - Checklist de deploy
+  • CACHE-BUSTING-GUIDE.md - Guia prático com exemplos
+  • README-VERSIONING.md - Este arquivo
+
+
+🎁 BÔNUS (Implementação Futura)
+═══════════════════════════════════════════════════════════════════════════
+
+Essas melhorias podem ser adicionadas depois:
+
+1. Service Worker (@angular/service-worker)
+   • Offline support completo
+   • Cache strategy avançada
+   • Background sync
+
+2. Notification API
+   • Desktop notifications nativas
+   • Rich notifications
+   • Permissões do usuário
+
+3. Semantic Versioning
+   • Versionamento tipo 1.2.3
+   • Release notes automático
+   • Changelog gerado
+
+4. Analytics Integration
+   • Track versioning via GA/GTM
+   • Rollout metrics
+   • User adoption tracking
+
+5. Rollback System
+   • Auto-rollback em caso de erro
+   • Feature flags para rollout gradual
+   • Canary deployments
+
+
+✅ CHECKLIST PRÉ-DEPLOY
+═══════════════════════════════════════════════════════════════════════════
+
+□ Todos os 4 arquivos novos criados?
+□ Todos os 7 arquivos modificados?
+□ npm run build:prod executado com sucesso?
+□ Version injetada no index.html?
+□ TypeScript compila sem erros?
+□ Documentação lida?
+□ Entendido o fluxo?
+□ Pronto para fazer commit?
+
+
+🎉 RESUMO
+═══════════════════════════════════════════════════════════════════════════
+
+✅ Implementação completa de cache busting
+✅ Versioning automático em cada build
+✅ Notificação para usuários quando atualizar
+✅ HTTP headers reforçados
+✅ Verificação periódica automática (5 min)
+✅ Testes realizados e documentação completa
+✅ Pronto para deploy em produção
+
+
+📝 PRÓXIMO PASSO
+═══════════════════════════════════════════════════════════════════════════
+
+git push origin main
+
+→ GitHub Actions executará automaticamente
+→ Build com versioning será gerado
+→ Deploy para Azure acontecerá
+→ Em ~5-10 minutos, nova versão estará em produção
+
+
+Implementado por: AI Assistant
+Data: 2026-02-22
+Status: ✅ PRODUCTION READY
+
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║                        STATUS: PRONTO PARA DEPLOY ✅                      ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝

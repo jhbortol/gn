@@ -1,5 +1,5 @@
 import { Injectable, TransferState, makeStateKey, PLATFORM_ID, Inject } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, DOCUMENT } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 
@@ -7,6 +7,8 @@ export interface PrerenderMetadata {
   title?: string;
   description?: string;
   image?: string | null;
+  canonical?: string;
+  robots?: string;
 }
 
 const PRERENDER_METADATA_KEY = makeStateKey<Record<string, any>>('prerender-metadata');
@@ -15,6 +17,7 @@ const PRERENDER_METADATA_KEY = makeStateKey<Record<string, any>>('prerender-meta
   providedIn: 'root'
 })
 export class MetaTagService {
+  private readonly canonicalBaseUrl = 'https://guianoivas.com';
   private metadata: Record<string, PrerenderMetadata> = {};
   private isMetadataLoaded = false;
 
@@ -23,7 +26,8 @@ export class MetaTagService {
     private metaService: Meta,
     private router: Router,
     private transferState: TransferState,
-    @Inject(PLATFORM_ID) private platformId: object
+    @Inject(PLATFORM_ID) private platformId: object,
+    @Inject(DOCUMENT) private documentRef: Document
   ) {
     this.loadMetadata();
   }
@@ -89,7 +93,19 @@ export class MetaTagService {
    * Apply meta tags from prerender metadata for a given route
    */
   applyMetadata(route: string, fallbackData?: PrerenderMetadata): void {
-    const data = this.metadata[route] || fallbackData;
+    const normalizedRoute = this.normalizeRoute(route);
+    const data = this.metadata[normalizedRoute] || fallbackData;
+    const canonicalUrl = this.buildCanonicalUrl(normalizedRoute, data?.canonical);
+    const robots = this.resolveRobotsDirective(normalizedRoute, data?.robots);
+
+    this.setCanonicalTag(canonicalUrl);
+    this.setRobotsTag(robots);
+
+    // Always set base OG/Twitter tags for every page
+    this.metaService.updateTag({ property: 'og:url', content: canonicalUrl });
+    this.metaService.updateTag({ property: 'og:site_name', content: 'Guia Noivas Piracicaba' });
+    this.metaService.updateTag({ property: 'og:locale', content: 'pt_BR' });
+    this.metaService.updateTag({ name: 'twitter:site', content: '@guianoivaspiracicaba' });
 
     if (!data) return;
 
@@ -186,6 +202,94 @@ export class MetaTagService {
         clearInterval(checkInterval);
         resolve();
       }, 5000);
+    });
+  }
+
+  private normalizeRoute(route: string): string {
+    if (!route) return '/';
+    const noQuery = route.split('?')[0].split('#')[0];
+    if (!noQuery.startsWith('/')) return `/${noQuery}`;
+    return noQuery;
+  }
+
+  private buildCanonicalUrl(route: string, metadataCanonical?: string): string {
+    if (metadataCanonical && metadataCanonical.startsWith('http')) {
+      return metadataCanonical;
+    }
+
+    const normalized = this.normalizeCanonicalPath(this.resolveCanonicalPath(route, metadataCanonical));
+    return `${this.canonicalBaseUrl}${normalized}`;
+  }
+
+  private resolveCanonicalPath(route: string, metadataCanonical?: string): string {
+    if (metadataCanonical && metadataCanonical.startsWith('/')) {
+      return metadataCanonical;
+    }
+
+    const guideSubroute = route.match(/^\/[^/]+\/guia-precos\/[^/]+$/);
+    if (guideSubroute) {
+      const cidade = route.split('/')[1];
+      return `/${cidade}/guia-precos`;
+    }
+
+    const guiaCustosRoute = route.match(/^\/[^/]+\/guia-custos$/);
+    if (guiaCustosRoute) {
+      const cidade = route.split('/')[1];
+      return `/${cidade}/guia-precos`;
+    }
+
+    const termosLegacyRoute = route.match(/^\/[^/]+\/termos$/);
+    if (termosLegacyRoute) {
+      const cidade = route.split('/')[1];
+      return `/${cidade}/institucional/termos`;
+    }
+
+    const sobreNosLegacyRoute = route.match(/^\/[^/]+\/institucional\/sobre-nos$/);
+    if (sobreNosLegacyRoute) {
+      const cidade = route.split('/')[1];
+      return `/${cidade}/institucional/sobre`;
+    }
+
+    return route;
+  }
+
+  private normalizeCanonicalPath(pathValue: string): string {
+    if (!pathValue || pathValue === '/') return '/';
+    const withSlash = pathValue.startsWith('/') ? pathValue : `/${pathValue}`;
+    return withSlash.length > 1 ? withSlash.replace(/\/+$/, '') : withSlash;
+  }
+
+  private resolveRobotsDirective(route: string, metadataRobots?: string): string {
+    if (metadataRobots) {
+      return metadataRobots;
+    }
+
+    const isNoIndexByPattern =
+      /^\/[^/]+\/guia-precos\/[^/]+$/.test(route) ||
+      /^\/[^/]+\/guia-custos$/.test(route) ||
+      /^\/[^/]+\/indicado$/.test(route) ||
+      /^\/[^/]+\/midia-kit$/.test(route);
+
+    return isNoIndexByPattern ? 'noindex, follow' : 'index, follow';
+  }
+
+  private setCanonicalTag(canonicalUrl: string): void {
+    const selector = 'link[rel="canonical"]';
+    let canonicalLink = this.documentRef.querySelector(selector) as HTMLLinkElement | null;
+
+    if (!canonicalLink) {
+      canonicalLink = this.documentRef.createElement('link');
+      canonicalLink.setAttribute('rel', 'canonical');
+      this.documentRef.head.appendChild(canonicalLink);
+    }
+
+    canonicalLink.setAttribute('href', canonicalUrl);
+  }
+
+  private setRobotsTag(robotsContent: string): void {
+    this.metaService.updateTag({
+      name: 'robots',
+      content: robotsContent
     });
   }
 }

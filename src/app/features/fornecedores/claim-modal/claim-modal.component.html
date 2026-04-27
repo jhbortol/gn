@@ -47,7 +47,7 @@
                     <div class="form-group">
                         <label for="phone" class="required">Telefone / WhatsApp</label>
                         <input type="tel" id="phone" formControlName="phone" placeholder="(11) 99999-9999"
-                            [class.error]="isFieldInvalid('phone')" (input)="onPhoneInput($event)" maxlength="15" />
+                            [class.error]="isFieldInvalid('phone')" (input)="onPhoneInput($event)" (blur)="onPhoneBlur($event)" maxlength="15" />
                         <div class="error-message" *ngIf="isFieldInvalid('phone')">
                             <span *ngIf="claimForm.get('phone')?.errors?.['required']">Telefone é obrigatório</span>
                             <span *ngIf="claimForm.get('phone')?.errors?.['pattern']">Telefone inválido (use DDD)</span>

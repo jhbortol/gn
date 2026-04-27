@@ -1,9 +1,11 @@
-import { Component, OnInit, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, signal, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { BlogData, BlogPostListDto } from '../services/blog-data';
 import { CidadeService } from '../../../core/cidade.service';
+import { MetaTagService } from '../../../core/meta-tag.service';
 
 @Component({
   selector: 'app-blog-list',
@@ -19,6 +21,10 @@ export class BlogListPage implements OnInit {
   searchTerm = '';
   selectedCategory = signal<string | undefined>(undefined);
 
+  private metaTagService = inject(MetaTagService);
+  private router = inject(Router);
+  private title = inject(Title);
+
   constructor(
     private blogData: BlogData,
     private route: ActivatedRoute,
@@ -30,6 +36,12 @@ export class BlogListPage implements OnInit {
     if (category) {
       this.selectedCategory.set(category);
     }
+    const route = this.router.url.split('?')[0];
+    this.title.setTitle('Blog | Dicas e Inspirações para Casamento em Piracicaba');
+    this.metaTagService.applyMetadata(route, {
+      title: 'Blog | Dicas e Inspirações para Casamento em Piracicaba',
+      description: 'Dicas de casamento, inspirações e guias completos para noivas de Piracicaba. Leia nossos artigos sobre planejamento, decoração, fornecedores e muito mais.'
+    });
     this.loadPosts();
   }
 

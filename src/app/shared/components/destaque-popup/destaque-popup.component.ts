@@ -15,11 +15,11 @@ import { FornecedoresData, FornecedorListDto } from '../../../features/fornecedo
 import { TrackingService } from '../../../core/tracking.service';
 import { LeadFormComponent } from '../../../features/fornecedores/lead-form.component';
 import { CidadeService } from '../../../core/cidade.service';
-import { PlanLevel } from '../../../core/models/tier-system.model';
 import { DestaqueSemana } from '../../../core/models/destaque-semana.model';
 
 const SESSION_KEY = 'destaque_popup_shown';
 const POPUP_DELAY_MS = 2000;
+const WHATSAPP_MESSAGE = 'Te achei no Guia Noivas Piracicaba, e quero mais informações';
 
 @Component({
   selector: 'app-destaque-popup',
@@ -190,7 +190,12 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
             planLevel: f.planLevel,
             categoria: f.categoria ? { id: '', nome: f.categoria, slug: '' } : undefined,
             primaryImage: f.primaryImage,
-            imagens: f.imagens?.map(i => ({ id: '', url: i.url, isPrimary: (i as any).isPrimary ?? false, orderIndex: (i as any).orderIndex ?? 0 })),
+            imagens: f.imagens?.map(i => ({
+              id: (i as { id?: string }).id ?? '',
+              url: i.url,
+              isPrimary: (i as { isPrimary?: boolean }).isPrimary ?? false,
+              orderIndex: (i as { orderIndex?: number }).orderIndex ?? 0,
+            })),
           };
           this.fornecedor.set(listDto);
           this.cdr.markForCheck();
@@ -232,8 +237,7 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
   }
 
   private buildWhatsAppUrl(f: FornecedorListDto): string {
-    const message = 'Te achei no Guia Noivas Piracicaba, e quero mais informações';
-    const encodedMessage = encodeURIComponent(message);
+    const encodedMessage = encodeURIComponent(WHATSAPP_MESSAGE);
     if (f.whatsAppUrl) {
       const url = f.whatsAppUrl;
       if ((url.includes('wa.me') || url.includes('whatsapp.com/send')) && !url.includes('text=')) {

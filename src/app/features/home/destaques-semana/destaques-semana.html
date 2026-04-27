@@ -1,7 +1,7 @@
 <section class="bg-rose-50 py-16 destaques-grid">
   <div class="container mx-auto px-4">
     <div class="text-center mb-12">
-      <h2 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-3">Destaques da Semana</h2>
+      <h2 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-3">Vitrine</h2>
     </div>
     <div *ngIf="(destaques$ | async) as destaques" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 min-h-[450px]">
       <ng-container *ngIf="destaques.length; else loading">

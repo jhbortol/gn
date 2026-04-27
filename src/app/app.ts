@@ -7,11 +7,12 @@ import { TrackingService } from './core/tracking.service';
 import { SeoBlockerService } from './core/seo-blocker.service';
 import { MetaTagService } from './core/meta-tag.service';
 import { isPlatformBrowser } from '@angular/common';
+import { DestaquePopupComponent } from './shared/components/destaque-popup/destaque-popup.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, FooterComponent],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent, DestaquePopupComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })

@@ -5,8 +5,6 @@ import { catchError, map } from 'rxjs/operators';
 import { ApiService } from '../api.service';
 import { DestaqueSemana } from '../models/destaque-semana.model';
 
-const ROTATION_INDEX_KEY = 'destaque_popup_rotation_index';
-
 @Injectable({ providedIn: 'root' })
 export class DestaqueSemanaService {
   private platformId = inject(PLATFORM_ID);
@@ -26,12 +24,12 @@ export class DestaqueSemanaService {
         '/destaques-semana/active'
       )
       .pipe(
-        map(res => this.pickAlternatingActive(res)),
+        map(res => this.pickRandomActive(res)),
         catchError(() => of(null))
       );
   }
 
-  private pickAlternatingActive(
+  private pickRandomActive(
     response: DestaqueSemana | DestaqueSemana[] | { data?: DestaqueSemana[] | DestaqueSemana } | null
   ): DestaqueSemana | null {
     const rawItems = this.extractItems(response).filter(item => item?.isActive !== false);
@@ -43,7 +41,7 @@ export class DestaqueSemanaService {
       return rawItems[0];
     }
 
-    const index = this.getAndAdvanceRotationIndex(rawItems.length);
+    const index = Math.floor(Math.random() * rawItems.length);
     return rawItems[index] ?? rawItems[0];
   }
 
@@ -76,19 +74,5 @@ export class DestaqueSemanaService {
 
     const candidate = value as Partial<DestaqueSemana>;
     return typeof candidate.id === 'string' && typeof candidate.fornecedorSlug === 'string';
-  }
-
-  private getAndAdvanceRotationIndex(totalItems: number): number {
-    if (!isPlatformBrowser(this.platformId) || totalItems <= 1) {
-      return 0;
-    }
-
-    const raw = localStorage.getItem(ROTATION_INDEX_KEY);
-    const parsed = raw ? Number.parseInt(raw, 10) : 0;
-    const currentIndex = Number.isFinite(parsed) && parsed >= 0 ? parsed % totalItems : 0;
-    const nextIndex = (currentIndex + 1) % totalItems;
-
-    localStorage.setItem(ROTATION_INDEX_KEY, String(nextIndex));
-    return currentIndex;
   }
 }

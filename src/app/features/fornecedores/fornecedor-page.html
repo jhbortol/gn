@@ -298,24 +298,19 @@
   <div *ngIf="fornecedor && !notFound && fornecedor.planLevel !== PlanLevel.Vitrine"
     class="text-center py-6 border-t border-gray-100 mt-8 flex flex-col items-center gap-4">
 
-    <button *ngIf="showClaimBar()" (click)="openClaimModal()"
+    <a *ngIf="showClaimBar()" [routerLink]="['reivindicar']"
       class="text-sm font-medium text-gray-500 hover:text-rose-600 transition-colors flex items-center gap-2">
       <span>Proprietário deste negócio? Reivindique este perfil gratuitamente</span>
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M5 12h14M12 5l7 7-7 7" />
       </svg>
-    </button>
+    </a>
 
     <button (click)="requestRemoval()" class="text-xs text-gray-400 hover:text-gray-600 underline transition-colors">
       Solicitar remoção deste perfil (LGPD)
     </button>
   </div>
-
-  <!-- Claim Modal -->
-  <app-claim-modal *ngIf="isClaimModalOpen()" [fornecedorId]="fornecedor?.id || ''" (close)="closeClaimModal()"
-    (success)="onClaimSuccess()">
-  </app-claim-modal>
 </section>
 
 <!-- Contact Lead Capture Modal -->

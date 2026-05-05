@@ -7,6 +7,10 @@ const routes: Routes = [
     loadComponent: () => import('./fornecedores-list-page').then(m => m.FornecedoresListPageComponent)
   },
   {
+    path: ':id/reivindicar',
+    loadComponent: () => import('./claim-profile-page/claim-profile-page').then(m => m.ClaimProfilePageComponent)
+  },
+  {
     path: ':id',
     loadComponent: () => import('./fornecedor-page').then(m => m.FornecedorPageComponent)
   }

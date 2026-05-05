@@ -10,7 +10,6 @@ import { environment } from '../../../environments/environment';
 import { LeadFormComponent } from './lead-form.component';
 import { CompetitorAdsComponent } from './competitor-ads.component';
 import { PlanLevel } from '../../core/models/tier-system.model';
-import { ClaimModalComponent } from './claim-modal/claim-modal.component';
 
 @Component({
   selector: 'app-fornecedor-page',
@@ -21,8 +20,7 @@ import { ClaimModalComponent } from './claim-modal/claim-modal.component';
     CommonModule,
     RouterModule,
     LeadFormComponent,
-    CompetitorAdsComponent,
-    ClaimModalComponent
+    CompetitorAdsComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -37,7 +35,6 @@ export class FornecedorPageComponent implements OnInit {
   showLeadForm = signal(false);
   hasCompetitorAds = signal(false);
   showClaimBar = signal(false);
-  isClaimModalOpen = signal(false);
 
   // Modal de captura de lead antes de abrir WhatsApp
   showWhatsAppLeadModal = signal(false);
@@ -448,37 +445,6 @@ export class FornecedorPageComponent implements OnInit {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }
-  }
-
-  /**
-   * Abre modal para reivindicar perfil (Zombie tier)
-   */
-  openClaimModal(): void {
-    this.isClaimModalOpen.set(true);
-  }
-
-  /**
-   * Callback quando claim é realizado com sucesso
-   */
-  closeClaimModal(): void {
-    this.isClaimModalOpen.set(false);
-  }
-
-  /**
-   * Callback quando claim é realizado com sucesso
-   * Redireciona para o painel do fornecedor
-   */
-  onClaimSuccess(): void {
-    // Fecha modal
-    this.isClaimModalOpen.set(false);
-
-    // Mostra toast de sucesso se tivesse um service para isso
-    // alert('Perfil reivindicado com sucesso! Redirecionando...');
-
-    // Redireciona
-    setTimeout(() => {
-      window.location.href = '/supplier-panel';
-    }, 1500);
   }
 
   /**

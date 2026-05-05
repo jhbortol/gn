@@ -1,0 +1,225 @@
+<!-- Header da Página -->
+<div class="page-header">
+  <div class="container mx-auto px-4">
+    <button (click)="goBack()" class="back-button">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5M12 5l-7 7 7 7" />
+      </svg>
+      Voltar ao perfil
+    </button>
+  </div>
+</div>
+
+<!-- Estado de Carregamento -->
+<div *ngIf="loading" class="loading-state">
+  <div class="inline-flex items-center gap-3 text-gray-500">
+    <div class="spinner-lg"></div>
+    <span>Carregando informações do fornecedor...</span>
+  </div>
+</div>
+
+<!-- Fornecedor não encontrado -->
+<div *ngIf="!loading && notFound" class="not-found-state">
+  <div class="not-found-card">
+    <div class="text-5xl mb-4">😕</div>
+    <h2 class="text-2xl font-bold text-gray-800 mb-2">Perfil não encontrado</h2>
+    <p class="text-gray-500 mb-6">O perfil que você está procurando não está disponível.</p>
+    <a routerLink="/" class="btn-primary">Voltar para o início</a>
+  </div>
+</div>
+
+<!-- Conteúdo Principal -->
+<section *ngIf="!loading && !notFound && fornecedor" class="claim-page container mx-auto px-4 py-10">
+
+  <!-- Card de Informações do Fornecedor -->
+  <div class="supplier-card">
+    <div class="supplier-card-inner">
+      <!-- Imagem do Fornecedor -->
+      <div *ngIf="getSupplierImage()" class="supplier-image-wrapper">
+        <img [src]="getSupplierImage()" [alt]="fornecedor.nome" class="supplier-image" loading="eager" />
+      </div>
+      <div *ngIf="!getSupplierImage()" class="supplier-image-placeholder">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-300" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        </svg>
+      </div>
+
+      <!-- Detalhes do Fornecedor -->
+      <div class="supplier-details">
+        <div class="supplier-badge">
+          <span class="category-badge">{{ fornecedor.categoria }}</span>
+          <span *ngIf="fornecedor.cidade" class="city-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17.657 16.657L13.414 12.414a4 4 0 10-5.657 5.657l4.243 4.243a8 8 0 1111.314-11.314l-4.243 4.243z" />
+            </svg>
+            {{ fornecedor.cidade }}
+          </span>
+        </div>
+        <h1 class="supplier-name">{{ fornecedor.nome }}</h1>
+        <p *ngIf="fornecedor.descricao" class="supplier-description">{{ fornecedor.descricao }}</p>
+      </div>
+    </div>
+
+    <!-- Banner informativo -->
+    <div class="claim-info-banner">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <p>
+        Este perfil ainda não foi reivindicado. Ao reivindicar, você terá acesso ao painel de fornecedor para
+        gerenciar suas informações, receber leads e muito mais.
+      </p>
+    </div>
+  </div>
+
+  <!-- Formulário de Reivindicação -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <h2 class="form-title">
+        <span class="title-icon">🎉</span>
+        Reivindicar este perfil
+      </h2>
+      <p class="form-subtitle">Crie sua conta para gerenciar <strong>{{ fornecedor.nome }}</strong> no Guia Noivas.</p>
+    </div>
+
+    <!-- Mensagem de Sucesso -->
+    <div *ngIf="successMessage" class="success-message">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      {{ successMessage }}
+    </div>
+
+    <form *ngIf="!successMessage" [formGroup]="claimForm" (ngSubmit)="onSubmit()">
+
+      <!-- SEÇÃO 1: Dados Pessoais -->
+      <fieldset class="form-section">
+        <legend>Seus Dados de Acesso</legend>
+
+        <!-- Nome Completo -->
+        <div class="form-group">
+          <label for="fullName" class="required">Nome Completo</label>
+          <input type="text" id="fullName" formControlName="fullName" placeholder="João Silva"
+            [class.error]="isFieldInvalid('fullName')" autocomplete="name" />
+          <div class="error-message" *ngIf="isFieldInvalid('fullName')">
+            <span *ngIf="claimForm.get('fullName')?.errors?.['required']">Nome é obrigatório</span>
+            <span *ngIf="claimForm.get('fullName')?.errors?.['minlength']">Mínimo de 3 caracteres</span>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email" class="required">Email Profissional</label>
+          <input type="email" id="email" formControlName="email" placeholder="seu@email.com"
+            [class.error]="isFieldInvalid('email')" autocomplete="email" />
+          <small>Este email será usado para login no painel</small>
+          <div class="error-message" *ngIf="isFieldInvalid('email')">
+            <span *ngIf="claimForm.get('email')?.errors?.['required']">Email é obrigatório</span>
+            <span *ngIf="claimForm.get('email')?.errors?.['email']">Email inválido</span>
+          </div>
+        </div>
+
+        <!-- Telefone -->
+        <div class="form-group">
+          <label for="phone" class="required">Telefone / WhatsApp</label>
+          <input type="tel" id="phone" formControlName="phone" placeholder="(11) 99999-9999"
+            [class.error]="isFieldInvalid('phone')" (input)="onPhoneInput($event)" (blur)="onPhoneBlur($event)"
+            maxlength="15" autocomplete="tel" />
+          <div class="error-message" *ngIf="isFieldInvalid('phone')">
+            <span *ngIf="claimForm.get('phone')?.errors?.['required']">Telefone é obrigatório</span>
+            <span *ngIf="claimForm.get('phone')?.errors?.['pattern']">Telefone inválido (use DDD)</span>
+          </div>
+        </div>
+
+        <!-- Senha -->
+        <div class="form-group">
+          <label for="password" class="required">Senha de Acesso</label>
+          <div class="password-wrapper">
+            <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password"
+              placeholder="Mínimo 8 caracteres" [class.error]="isFieldInvalid('password')"
+              (input)="updatePasswordStrength($event)" autocomplete="new-password" />
+            <button type="button" class="toggle-password" (click)="showPassword = !showPassword"
+              [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'">
+              <span *ngIf="!showPassword">👁️</span>
+              <span *ngIf="showPassword">🙈</span>
+            </button>
+          </div>
+
+          <div class="password-strength" *ngIf="claimForm.get('password')?.value">
+            <div class="strength-bar" [style.width.%]="passwordStrength.score * 25"
+              [style.background-color]="passwordStrength.color">
+            </div>
+          </div>
+          <span class="strength-text" *ngIf="claimForm.get('password')?.value">
+            Força: {{ passwordStrength.label }}
+          </span>
+
+          <div class="error-message" *ngIf="isFieldInvalid('password')">
+            <span *ngIf="claimForm.get('password')?.errors?.['required']">Senha é obrigatória</span>
+            <span *ngIf="claimForm.get('password')?.errors?.['minlength']">Mínimo de 8 caracteres</span>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- SEÇÃO 2: Termos de Adesão -->
+      <fieldset class="form-section terms-section">
+        <legend>Termos de Uso</legend>
+
+        <div *ngIf="loadingTermo" class="terms-loading">
+          <div class="spinner-sm"></div>
+          Carregando termos...
+        </div>
+
+        <div *ngIf="!loadingTermo && termoHtml" class="term-preview" [innerHTML]="termoHtml"></div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="acceptTerms" formControlName="aceitaTermos" />
+          <label for="acceptTerms" class="required">
+            Li e concordo com os <strong>Termos de Adesão</strong> e Compromisso
+          </label>
+        </div>
+        <div class="error-message pl-8" *ngIf="isFieldInvalid('aceitaTermos')">
+          Você deve aceitar os termos para continuar
+        </div>
+      </fieldset>
+
+      <!-- Erro de API -->
+      <div *ngIf="errorMessage" class="api-error-message">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+          <line x1="12" y1="8" x2="12" y2="12" stroke-width="2"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16" stroke-width="2"></line>
+        </svg>
+        {{ errorMessage }}
+      </div>
+
+      <!-- Ações do Formulário -->
+      <div class="form-actions">
+        <div class="lgpd-notice">
+          🔒 Seus dados estão protegidos conforme a <a href="/politica-de-privacidade" target="_blank">LGPD</a>.
+        </div>
+        <div class="action-buttons">
+          <button type="button" class="btn-secondary" (click)="goBack()" [disabled]="isSubmitting">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-primary" [disabled]="claimForm.invalid || isSubmitting">
+            <span *ngIf="isSubmitting" class="spinner-btn"></span>
+            <span *ngIf="!isSubmitting">Confirmar e Reivindicar</span>
+            <span *ngIf="isSubmitting">Processando...</span>
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+</section>

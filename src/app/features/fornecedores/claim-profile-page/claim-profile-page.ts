@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FornecedoresData, Fornecedor } from '../services/fornecedores-data';
@@ -37,8 +37,7 @@ export class ClaimProfilePageComponent implements OnInit {
         private router: Router,
         private fb: FormBuilder,
         private fornecedoresService: FornecedoresData,
-        private ipService: IpService,
-        @Inject(PLATFORM_ID) private platformId: object
+        private ipService: IpService
     ) {
         this.claimForm = this.fb.group({
             fullName: ['', [Validators.required, Validators.minLength(3)]],
@@ -202,11 +201,9 @@ export class ClaimProfilePageComponent implements OnInit {
                 this.successMessage = 'Perfil reivindicado com sucesso! Redirecionando...';
                 this.isSubmitting = false;
 
-                if (isPlatformBrowser(this.platformId)) {
-                    setTimeout(() => {
-                        window.location.href = '/supplier-panel';
-                    }, 1500);
-                }
+                setTimeout(() => {
+                    this.router.navigate(['/supplier-panel']);
+                }, 1500);
             },
             error: (err) => {
                 console.error('[ClaimProfilePage] Erro no claim:', err);

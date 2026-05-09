@@ -184,12 +184,12 @@
         prebootState.active = false;
         document.removeEventListener('visibilitychange', onVisibilityChange);
         window.removeEventListener('pagehide', onPageHide, true);
-        window.removeEventListener('beforeunload', onPageHide, true);
+        window.removeEventListener('beforeunload', onPageHide);
       };
 
       document.addEventListener('visibilitychange', onVisibilityChange);
       window.addEventListener('pagehide', onPageHide, true);
-      window.addEventListener('beforeunload', onPageHide, true);
+      window.addEventListener('beforeunload', onPageHide);
     })();
   </script>
   <!-- End Meta Pixel -->

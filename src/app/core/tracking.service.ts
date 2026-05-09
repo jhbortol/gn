@@ -100,9 +100,20 @@ export class TrackingService {
     if (!sourcePlatform) return false;
     if (fbclid) return true;
 
-    const normalizedMedium = (utmMedium || '').toLowerCase();
-    return ['paid', 'paid_social', 'social_paid', 'cpc', 'ppc', 'ads'].some(token =>
-      normalizedMedium.includes(token)
+    const normalizedMedium = (utmMedium || '').trim().toLowerCase();
+    if (!normalizedMedium) return false;
+
+    const collapsedMedium = normalizedMedium.replace(/[\s-]+/g, '_');
+    if (['paid', 'paid_social', 'social_paid', 'cpc', 'ppc', 'ads'].includes(collapsedMedium)) {
+      return true;
+    }
+
+    const mediumParts = normalizedMedium.split(/[\s,_-]+/).filter(Boolean);
+    return (
+      mediumParts.includes('cpc') ||
+      mediumParts.includes('ppc') ||
+      mediumParts.includes('ads') ||
+      (mediumParts.includes('paid') && mediumParts.includes('social'))
     );
   }
 
@@ -299,7 +310,7 @@ export class TrackingService {
     // Meta Pixel
     if (this.hasMetaPixel()) {
       const eventName = formType === 'newsletter' ? 'Lead' : 'Contact';
-      this.trackMetaEvent(eventName, { form_type: formType });
+      this.trackMetaEvent(eventName);
     }
 
     // Google Ads - track form submit as a conversion

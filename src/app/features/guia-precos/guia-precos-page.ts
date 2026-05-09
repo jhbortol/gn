@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { ApiService } from '../../core/api.service';
 import { CidadeService } from '../../core/cidade.service';
 import { MetaTagService } from '../../core/meta-tag.service';
+import { TrackingService } from '../../core/tracking.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -49,6 +50,7 @@ export class GuiaPrecosPage implements OnInit {
 
   private cidadeService = inject(CidadeService);
   private metaTagService = inject(MetaTagService);
+  private tracking = inject(TrackingService);
 
   constructor(
     private api: ApiService,
@@ -106,14 +108,12 @@ export class GuiaPrecosPage implements OnInit {
         
         // Track conversion
         if (typeof window !== 'undefined') {
-          if ((window as any).fbq) {
-            (window as any).fbq('track', 'Lead', {
-              content_name: 'Guia de Preços 2026',
-              content_category: 'Lead Magnet',
-              value: 1,
-              currency: 'BRL'
-            });
-          }
+          this.tracking.trackMetaEvent('Lead', {
+            content_name: 'Guia de Preços 2026',
+            content_category: 'Lead Magnet',
+            value: 1,
+            currency: 'BRL'
+          });
           if ((window as any).dataLayer) {
             (window as any).dataLayer.push({
               event: 'generate_lead',

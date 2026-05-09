@@ -70,6 +70,17 @@ export class TrackingService {
     storage.setItem(this.metaAttributionStorageKey, JSON.stringify(attribution));
   }
 
+  private shouldPersistAttribution(attribution: MetaAttribution): boolean {
+    return Boolean(
+      attribution.sourcePlatform || attribution.fbclid || attribution.utmSource || attribution.utmCampaign
+    );
+  }
+
+  private hasMetaPixel(): boolean {
+    const currentWindow = this.getWindow();
+    return Boolean(currentWindow && (currentWindow as any).fbq);
+  }
+
   private inferMetaPlatform(utmSource?: string, referrer?: string, fbclid?: string): MetaPlatform | undefined {
     const normalizedSource = (utmSource || '').toLowerCase();
     const normalizedReferrer = (referrer || '').toLowerCase();
@@ -127,7 +138,7 @@ export class TrackingService {
       isPaidMetaTraffic: this.isPaidMetaTraffic(sourcePlatform, fbclid || undefined, utmMedium || undefined)
     };
 
-    if (attribution.sourcePlatform || attribution.fbclid || attribution.utmSource || attribution.utmCampaign) {
+    if (this.shouldPersistAttribution(attribution)) {
       this.saveMetaAttribution(attribution);
     }
 
@@ -178,12 +189,13 @@ export class TrackingService {
     eventData: Record<string, unknown> = {},
     options?: { custom?: boolean; pagePath?: string }
   ): void {
-    if (typeof window === 'undefined' || !(window as any).fbq) {
+    const currentWindow = this.getWindow();
+    if (!currentWindow || !(currentWindow as any).fbq) {
       return;
     }
 
     const command = options?.custom ? 'trackCustom' : 'track';
-    (window as any).fbq(command, eventName, this.getMetaEventData(eventData, options?.pagePath));
+    (currentWindow as any).fbq(command, eventName, this.getMetaEventData(eventData, options?.pagePath));
   }
 
   /**
@@ -206,7 +218,7 @@ export class TrackingService {
     }
 
     // Meta Pixel
-    if (typeof window !== 'undefined' && (window as any).fbq) {
+    if (this.hasMetaPixel()) {
       this.trackMetaEvent('Contact', {
         content_type: 'product',
         content_name: `${contactType} - ${vendorData?.vendorName || 'Unknown'}`,
@@ -239,7 +251,7 @@ export class TrackingService {
     }
 
     // Meta Pixel
-    if (typeof window !== 'undefined' && (window as any).fbq) {
+    if (this.hasMetaPixel()) {
       this.trackMetaEvent('ViewContent', {
         content_type: 'product',
         content_name: vendorData?.vendorName || 'Vendor',
@@ -264,7 +276,7 @@ export class TrackingService {
     }
 
     // Meta Pixel
-    if (typeof window !== 'undefined' && (window as any).fbq) {
+    if (this.hasMetaPixel()) {
       this.trackMetaEvent('Search', {
         search_string: searchTerm
       });
@@ -285,8 +297,9 @@ export class TrackingService {
     }
 
     // Meta Pixel
-    if (typeof window !== 'undefined' && (window as any).fbq) {
-      this.trackMetaEvent(formType === 'newsletter' ? 'Lead' : 'Contact', { form_type: formType });
+    if (this.hasMetaPixel()) {
+      const eventName = formType === 'newsletter' ? 'Lead' : 'Contact';
+      this.trackMetaEvent(eventName, { form_type: formType });
     }
 
     // Google Ads - track form submit as a conversion
@@ -306,7 +319,7 @@ export class TrackingService {
       });
     }
 
-    if (typeof window !== 'undefined' && (window as any).fbq) {
+    if (this.hasMetaPixel()) {
       this.trackMetaPaidLanding(pagePath, pageTitle);
       this.trackMetaEvent('PageView', {
         page_path: pagePath,

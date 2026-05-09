@@ -19,6 +19,31 @@ interface MetaAttribution {
 export class TrackingService {
   private readonly metaAttributionStorageKey = 'gn_meta_attribution';
   private readonly metaLandingTrackedKey = 'gn_meta_paid_landing_tracked';
+  private readonly initialGaPageviewKey = '__GN_INITIAL_GA_PAGEVIEW_PATH';
+  private readonly initialMetaPageviewKey = '__GN_INITIAL_META_PAGEVIEW_PATH';
+  private readonly prebootAnalyticsStateKey = '__GN_PREBOOT_ANALYTICS_STATE';
+  private readonly stopPrebootTrackingKey = '__gnStopPrebootAnalyticsTracking';
+  private currentPagePath?: string;
+  private currentPageTitle?: string;
+  private currentPageLocation?: string;
+  private currentPageStartedAt?: number;
+  private engagementTrackingInitialized = false;
+
+  private readonly visibilityChangeHandler = () => {
+    if (typeof document === 'undefined') return;
+
+    if (document.visibilityState === 'hidden') {
+      this.flushPageEngagement('hidden');
+      return;
+    }
+
+    if (document.visibilityState === 'visible' && this.currentPagePath && !this.currentPageStartedAt) {
+      this.currentPageStartedAt = Date.now();
+    }
+  };
+
+  private readonly pageHideHandler = () => this.flushPageEngagement('pagehide');
+  private readonly beforeUnloadHandler = () => this.flushPageEngagement('beforeunload');
 
   /**
    * Dispara um evento de conversão do Google Ads
@@ -79,6 +104,111 @@ export class TrackingService {
   private hasMetaPixel(): boolean {
     const currentWindow = this.getWindow();
     return Boolean(currentWindow && (currentWindow as any).fbq);
+  }
+
+  private getDataLayer():
+    | {
+        push: (payload: Record<string, unknown>) => void;
+      }
+    | null {
+    const currentWindow = this.getWindow();
+    if (!currentWindow || !(currentWindow as any).dataLayer?.push) {
+      return null;
+    }
+
+    return (currentWindow as any).dataLayer;
+  }
+
+  private getPrebootAnalyticsState():
+    | {
+        startedAt?: number;
+      }
+    | null {
+    const currentWindow = this.getWindow();
+    if (!currentWindow) return null;
+
+    return ((currentWindow as any)[this.prebootAnalyticsStateKey] || null) as {
+      startedAt?: number;
+    } | null;
+  }
+
+  private stopPrebootTracking(): void {
+    const currentWindow = this.getWindow();
+    if (!currentWindow) return;
+
+    const stopTracking = (currentWindow as any)[this.stopPrebootTrackingKey];
+    if (typeof stopTracking === 'function') {
+      stopTracking();
+    }
+  }
+
+  private consumeInitialPageViewFlag(flagKey: string, pagePath: string): boolean {
+    const currentWindow = this.getWindow();
+    if (!currentWindow) return false;
+
+    if ((currentWindow as any)[flagKey] !== pagePath) {
+      return false;
+    }
+
+    delete (currentWindow as any)[flagKey];
+    return true;
+  }
+
+  private ensureEngagementTracking(): void {
+    const currentWindow = this.getWindow();
+    if (!currentWindow || this.engagementTrackingInitialized || typeof document === 'undefined') {
+      return;
+    }
+
+    document.addEventListener('visibilitychange', this.visibilityChangeHandler);
+    currentWindow.addEventListener('pagehide', this.pageHideHandler);
+    currentWindow.addEventListener('beforeunload', this.beforeUnloadHandler);
+    this.engagementTrackingInitialized = true;
+  }
+
+  private startPageEngagement(pagePath: string, pageTitle: string, pageLocation?: string): void {
+    const prebootState = this.getPrebootAnalyticsState();
+    const startedAt =
+      !this.currentPagePath && prebootState?.startedAt && prebootState.startedAt <= Date.now()
+        ? prebootState.startedAt
+        : Date.now();
+
+    this.stopPrebootTracking();
+    this.currentPagePath = pagePath;
+    this.currentPageTitle = pageTitle;
+    this.currentPageLocation = pageLocation;
+    this.currentPageStartedAt = startedAt;
+    this.ensureEngagementTracking();
+  }
+
+  private flushPageEngagement(reason: 'route_change' | 'hidden' | 'pagehide' | 'beforeunload'): void {
+    if (!this.currentPagePath || !this.currentPageStartedAt) {
+      return;
+    }
+
+    const engagementTimeMs = Math.max(Date.now() - this.currentPageStartedAt, 0);
+    const engagementPayload = {
+      page_path: this.currentPagePath,
+      page_title: this.currentPageTitle || (typeof document !== 'undefined' ? document.title : ''),
+      page_location: this.currentPageLocation || this.getWindow()?.location.href,
+      engagement_time_msec: engagementTimeMs,
+      engagement_time_sec: Number((engagementTimeMs / 1000).toFixed(3)),
+      exit_reason: reason
+    };
+
+    this.getDataLayer()?.push({
+      event: 'page_engagement',
+      ...engagementPayload
+    });
+
+    if (this.hasMetaPixel()) {
+      this.trackMetaEvent('PageEngagement', engagementPayload, {
+        custom: true,
+        pagePath: this.currentPagePath
+      });
+    }
+
+    this.currentPageStartedAt = undefined;
   }
 
   private inferMetaPlatform(utmSource?: string, referrer?: string, fbclid?: string): MetaPlatform | undefined {
@@ -321,21 +451,36 @@ export class TrackingService {
    * Rastreia visualização de página (SPA pageview) para Google Analytics via GTM
    */
   trackPageView(pagePath: string, pageTitle?: string) {
-    if (typeof window !== 'undefined' && (window as any).dataLayer) {
-      (window as any).dataLayer.push({
+    const currentWindow = this.getWindow();
+    const resolvedTitle = pageTitle || (typeof document !== 'undefined' ? document.title : '');
+    const pageLocation = currentWindow?.location.href;
+
+    this.flushPageEngagement('route_change');
+
+    if (!this.consumeInitialPageViewFlag(this.initialGaPageviewKey, pagePath)) {
+      this.getDataLayer()?.push({
         event: 'page_view',
         page_path: pagePath,
-        page_title: pageTitle || (typeof document !== 'undefined' ? document.title : ''),
-        page_location: typeof window !== 'undefined' ? window.location.href : undefined
+        page_title: resolvedTitle,
+        page_location: pageLocation
       });
     }
 
     if (this.hasMetaPixel()) {
       this.trackMetaPaidLanding(pagePath, pageTitle);
-      this.trackMetaEvent('PageView', {
-        page_path: pagePath,
-        page_title: pageTitle || (typeof document !== 'undefined' ? document.title : '')
-      }, { pagePath });
+      if (!this.consumeInitialPageViewFlag(this.initialMetaPageviewKey, pagePath)) {
+        this.trackMetaEvent(
+          'PageView',
+          {
+            page_path: pagePath,
+            page_title: resolvedTitle,
+            page_location: pageLocation
+          },
+          { pagePath }
+        );
+      }
     }
+
+    this.startPageEngagement(pagePath, resolvedTitle, pageLocation);
   }
 }

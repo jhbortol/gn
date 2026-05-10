@@ -32,10 +32,122 @@ async function fetchWithRetry(url, options = {}, maxRetries = 3, timeoutMs = 300
   }
 }
 
+const API_BASE_URL = process.env['API_BASE_URL'] || 'https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1';
+
+function getNumericEnv(name, fallback) {
+  const value = process.env[name];
+  if (!value) {
+    return fallback;
+  }
+
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function getRequiredMinimums() {
+  return {
+    blogPosts: getNumericEnv('MIN_BLOG_POSTS', 5),
+    fornecedores: getNumericEnv('MIN_FORNECEDORES', 20),
+    categorias: getNumericEnv('MIN_CATEGORIAS', 10)
+  };
+}
+
+async function validateApiHealth() {
+  if (process.env.ENFORCE_API_HEALTH === 'false') {
+    console.log('ℹ️  API health precheck skipped (ENFORCE_API_HEALTH=false)');
+    return;
+  }
+
+  const healthUrl = `${API_BASE_URL}/health`;
+  try {
+    const response = await fetchWithRetry(healthUrl, {}, 2, 10000);
+    const contentType = response.headers.get('content-type') || '';
+
+    if (contentType.includes('application/json')) {
+      const payload = await response.json();
+      const normalizedStatus = String(payload?.status || payload?.Status || '').toLowerCase();
+      if (normalizedStatus && normalizedStatus !== 'ok' && normalizedStatus !== 'healthy') {
+        throw new Error(`Unexpected health status: ${normalizedStatus}`);
+      }
+    }
+
+    console.log(`✅ API health check passed (${healthUrl})`);
+  } catch (error) {
+    console.error(`❌ CRITICAL: API health check failed at ${healthUrl}:`, error.message);
+    throw error;
+  }
+}
+
+function ensureUniqueRouteEntries(routes, sourceName) {
+  const seen = new Set();
+  const duplicates = [];
+
+  routes.forEach((route) => {
+    if (seen.has(route)) {
+      duplicates.push(route);
+      return;
+    }
+    seen.add(route);
+  });
+
+  if (duplicates.length > 0) {
+    throw new Error(
+      `${sourceName} contains duplicated routes/slugs (${duplicates.length}). Example: ${duplicates[0]}`
+    );
+  }
+}
+
+function validateApiDataCompleteness({ blogPosts, fornecedores, categorias }) {
+  if (process.env.ENFORCE_API_COMPLETENESS === 'false') {
+    console.log('ℹ️  API data completeness checks skipped (ENFORCE_API_COMPLETENESS=false)');
+    return;
+  }
+
+  const minimums = getRequiredMinimums();
+  const violations = [];
+
+  const checkMinimum = (name, count, minValue) => {
+    if (count < minValue) {
+      violations.push(`${name}: ${count} (minimum required: ${minValue})`);
+    }
+  };
+
+  checkMinimum('blogPosts', blogPosts.length, minimums.blogPosts);
+  checkMinimum('fornecedores', fornecedores.length, minimums.fornecedores);
+  checkMinimum('categorias', categorias.length, minimums.categorias);
+
+  ensureUniqueRouteEntries(
+    blogPosts
+      .map((post) => String(post.slug || post.Slug || '').trim())
+      .filter(Boolean),
+    'Blog posts'
+  );
+
+  ensureUniqueRouteEntries(
+    fornecedores
+      .map((fornecedor) => String(fornecedor.slug || fornecedor.Slug || fornecedor.id || fornecedor.Id || '').trim())
+      .filter(Boolean),
+    'Fornecedores'
+  );
+
+  ensureUniqueRouteEntries(
+    categorias
+      .map((categoria) => String(categoria.slug || categoria.Slug || categoria.id || categoria.Id || '').trim().toLowerCase())
+      .filter(Boolean),
+    'Categorias'
+  );
+
+  if (violations.length > 0) {
+    console.error('\n❌ CRITICAL: API returned incomplete data for prerendering');
+    violations.forEach((line) => console.error(`   - ${line}`));
+    console.error('   Deploy blocked to avoid publishing incomplete SEO/prerender content.\n');
+    throw new Error('API data completeness validation failed');
+  }
+}
+
 async function getBlogPosts() {
   try {
-    const apiUrl = process.env['API_BASE_URL'] || 'https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1';
-    const response = await fetchWithRetry(`${apiUrl}/blog?page=1&pageSize=100`);
+    const response = await fetchWithRetry(`${API_BASE_URL}/blog?page=1&pageSize=100`);
     const data = await response.json();
     return data.data || [];
   } catch (error) {
@@ -56,7 +168,6 @@ async function getBlogPrerenderParams() {
 //melhorar isso aqui para mais de 100 por pagina
 async function getFornecedoresData() {
   try {
-    const apiUrl = process.env['API_BASE_URL'] || 'https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1';
     const pageSize = 100;
     let page = 1;
     let allFornecedores = [];
@@ -65,7 +176,7 @@ async function getFornecedoresData() {
     console.log('📦 Fetching fornecedores from API...');
 
     while (hasMorePages) {
-      const url = `${apiUrl}/fornecedores/ativos?page=${page}&pageSize=${pageSize}&publicado=true`;
+      const url = `${API_BASE_URL}/fornecedores/ativos?page=${page}&pageSize=${pageSize}&publicado=true`;
       const response = await fetchWithRetry(url);
       const result = await response.json();
       const fornecedores = result.data || [];
@@ -103,13 +214,12 @@ async function getFornecedoresData() {
 // NEW: Fetch detailed data for each fornecedor for richer metadata
 async function getFornecedorDetails(identifier) {
   try {
-    const apiUrl = process.env['API_BASE_URL'] || 'https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1';
     const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(identifier);
     const endpoint = isGuid 
       ? `/public/fornecedores/${identifier}` 
       : `/public/fornecedores/slug/${identifier.toLowerCase()}`;
     
-    const response = await fetchWithRetry(`${apiUrl}${endpoint}`);
+    const response = await fetchWithRetry(`${API_BASE_URL}${endpoint}`);
     return await response.json();
   } catch (error) {
     console.warn(`⚠️  Failed to fetch details for fornecedor ${identifier}:`, error.message);
@@ -129,8 +239,7 @@ async function getFornecedoresPrerenderParams() {
 
 async function getCategoriasData() {
   try {
-    const apiUrl = process.env['API_BASE_URL'] || 'https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1';
-    const response = await fetchWithRetry(`${apiUrl}/public/categorias`);
+    const response = await fetchWithRetry(`${API_BASE_URL}/public/categorias`);
     const data = await response.json();
     const categorias = Array.isArray(data) ? data : (data?.data || []);
     
@@ -242,11 +351,14 @@ async function generateRoutes() {
   console.log('🚀 Starting route generation with enriched metadata...\n');
   
   try {
+    await validateApiHealth();
+
     // Fetch all data
     console.log('📡 Fetching data from API...');
     const blogPosts = await getBlogPosts();
     const fornecedores = await getFornecedoresData();
     const categorias = await getCategoriasData();
+    validateApiDataCompleteness({ blogPosts, fornecedores, categorias });
     
     console.log('\n📊 Data Summary:');
     console.log(`  - Blog posts: ${blogPosts.length}`);

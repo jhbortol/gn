@@ -87,6 +87,11 @@ jobs:
         run: npm run prerender:prod
         env:
           BUILD_VERSION: ${{ env.BUILD_ID }}
+          STRICT_VALIDATION: 'true'
+          ENFORCE_API_HEALTH: 'true'
+          ENFORCE_API_COMPLETENESS: 'true'
+          MIN_PRERENDER_COVERAGE: '95'
+          MIN_METADATA_COVERAGE: '90'
 
       - name: Validate prerendered output
         if: steps.check-changes.outputs.needs_rebuild == 'true'
@@ -125,6 +130,22 @@ jobs:
           api_location: ""
           output_location: ""
           skip_app_build: true
+
+      - name: Monitor production crawl/index signals
+        if: steps.check-changes.outputs.needs_rebuild == 'true'
+        run: npm run monitor:seo:prod
+        env:
+          PRODUCTION_SITE_URL: "https://guianoivas.com"
+
+      - name: Upload prerender and SEO monitoring artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scheduled-rebuild-validation
+          path: |
+            prerender-validation-report.json
+            seo-production-monitor-report.json
+          if-no-files-found: ignore
 
       - name: Summary
         if: always()

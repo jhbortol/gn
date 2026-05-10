@@ -43,6 +43,11 @@ async function checkResponse(url, expectations = {}) {
     errors.push(`Forbidden content found: ${expectations.mustNotContain}`);
   }
 
+  if (typeof expectations.customValidator === 'function') {
+    const customErrors = expectations.customValidator(text, headers) || [];
+    customErrors.forEach((error) => errors.push(error));
+  }
+
   return {
     url,
     ok: errors.length === 0,
@@ -60,13 +65,20 @@ async function run() {
 
   const checks = [];
 
-  const sitemapCheck = await checkResponse(sitemapUrl, { mustContain: '<urlset' });
+  const sitemapCheck = await checkResponse(sitemapUrl, { mustContain: '<urlset xmlns=' });
   checks.push({
     type: 'sitemap',
     ...sitemapCheck
   });
 
-  const robotsCheck = await checkResponse(robotsUrl, { mustNotContain: 'Disallow: /' });
+  const robotsCheck = await checkResponse(robotsUrl, {
+    customValidator: (text) => {
+      if (/^\s*Disallow:\s*\/\s*$/im.test(text)) {
+        return ['robots.txt contains root block directive (Disallow: /)'];
+      }
+      return [];
+    }
+  });
   checks.push({
     type: 'robots',
     ...robotsCheck

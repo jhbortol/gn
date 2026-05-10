@@ -81,7 +81,11 @@ async function validateApiHealth() {
 
     console.log(`✅ API health check passed (${healthUrl})`);
   } catch (error) {
-    console.error(`❌ CRITICAL: API health check failed at ${healthUrl}:`, error.message);
+    const statusHint = /HTTP\s(\d{3})/.exec(String(error.message || ''));
+    const contextHint = statusHint
+      ? `status ${statusHint[1]}`
+      : 'network/timeout/unexpected response';
+    console.error(`❌ CRITICAL: API health check failed at ${healthUrl} (${contextHint}):`, error.message);
     throw error;
   }
 }
@@ -143,7 +147,7 @@ function validateApiDataCompleteness({ blogPosts, fornecedores, categorias }) {
     console.error('\n❌ CRITICAL: API returned incomplete data for prerendering');
     violations.forEach((line) => console.error(`   - ${line}`));
     console.error('   Deploy blocked to avoid publishing incomplete SEO/prerender content.\n');
-    throw new Error('API data completeness validation failed');
+    throw new Error(`API data completeness validation failed: ${violations.join(' | ')}`);
   }
 }
 

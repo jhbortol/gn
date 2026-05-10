@@ -108,7 +108,7 @@ function validatePrerender() {
   // Validation thresholds
   const MINIMUM_COVERAGE = Number(process.env.MIN_PRERENDER_COVERAGE || 95);
   const CRITICAL_COVERAGE = Number(process.env.CRITICAL_PRERENDER_COVERAGE || 80);
-  const MIN_METADATA_COVERAGE = Number(process.env.MIN_METADATA_COVERAGE || 90);
+  const MINIMUM_METADATA_COVERAGE = Number(process.env.MIN_METADATA_COVERAGE || 90);
   const allowPartial = process.env.ALLOW_PARTIAL_PRERENDER === 'true';
   
   if (coverage < CRITICAL_COVERAGE) {
@@ -178,8 +178,8 @@ function validatePrerender() {
     
     // Validate metadata coverage
     const metadataCoverage = (metadataCount / expectedRoutes.length) * 100;
-    if (metadataCoverage < MIN_METADATA_COVERAGE) {
-      console.error(`❌ Metadata coverage too low: ${metadataCoverage.toFixed(1)}% (minimum ${MIN_METADATA_COVERAGE}%)`);
+    if (metadataCoverage < MINIMUM_METADATA_COVERAGE) {
+      console.error(`❌ Metadata coverage too low: ${metadataCoverage.toFixed(1)}% (minimum ${MINIMUM_METADATA_COVERAGE}%)`);
       if (!allowPartial || process.env.STRICT_VALIDATION === 'true') {
         process.exit(1);
       }

@@ -1,7 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-async function fetchWithTimeout(url, timeoutMs = 20000, options = {}) {
+const REQUEST_TIMEOUT_MS = 20000;
+
+async function fetchWithTimeout(url, timeoutMs = REQUEST_TIMEOUT_MS, options = {}) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -24,7 +26,7 @@ function getCheckPages(baseUrl) {
 }
 
 async function checkResponse(url, expectations = {}) {
-  const response = await fetchWithTimeout(url, 20000);
+  const response = await fetchWithTimeout(url, REQUEST_TIMEOUT_MS);
   const text = await response.text();
   const headers = Object.fromEntries(response.headers.entries());
 

@@ -34,6 +34,14 @@ async function fetchWithRetry(url, options = {}, maxRetries = 3, timeoutMs = 300
 
 const API_BASE_URL = process.env['API_BASE_URL'] || 'https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1';
 
+function getEntityIdentifier(entity) {
+  return String(entity?.slug || entity?.Slug || entity?.id || entity?.Id || '').trim();
+}
+
+function getBlogSlug(entity) {
+  return String(entity?.slug || entity?.Slug || '').trim();
+}
+
 function getNumericEnv(name, fallback) {
   const value = process.env[name];
   if (!value) {
@@ -117,23 +125,17 @@ function validateApiDataCompleteness({ blogPosts, fornecedores, categorias }) {
   checkMinimum('categorias', categorias.length, minimums.categorias);
 
   ensureUniqueRouteEntries(
-    blogPosts
-      .map((post) => String(post.slug || post.Slug || '').trim())
-      .filter(Boolean),
+    blogPosts.map((post) => getBlogSlug(post)).filter(Boolean),
     'Blog posts'
   );
 
   ensureUniqueRouteEntries(
-    fornecedores
-      .map((fornecedor) => String(fornecedor.slug || fornecedor.Slug || fornecedor.id || fornecedor.Id || '').trim())
-      .filter(Boolean),
+    fornecedores.map((fornecedor) => getEntityIdentifier(fornecedor)).filter(Boolean),
     'Fornecedores'
   );
 
   ensureUniqueRouteEntries(
-    categorias
-      .map((categoria) => String(categoria.slug || categoria.Slug || categoria.id || categoria.Id || '').trim().toLowerCase())
-      .filter(Boolean),
+    categorias.map((categoria) => getEntityIdentifier(categoria).toLowerCase()).filter(Boolean),
     'Categorias'
   );
 
@@ -160,7 +162,7 @@ async function getBlogPrerenderParams() {
   const posts = await getBlogPosts();
   return posts
     .map((post) => ({
-      slug: post.slug || post.Slug
+      slug: getBlogSlug(post)
     }))
     .filter((p) => typeof p.slug === 'string' && p.slug.length > 0)
     .map(p => p.slug);
@@ -231,7 +233,7 @@ async function getFornecedoresPrerenderParams() {
   const fornecedores = await getFornecedoresData();
   return fornecedores
     .map((fornecedor) => ({
-      id: fornecedor.slug || fornecedor.Slug || fornecedor.id || fornecedor.Id
+      id: getEntityIdentifier(fornecedor)
     }))
     .filter((p) => typeof p.id === 'string' && p.id.length > 0)
     .map(p => p.id);
@@ -369,7 +371,7 @@ async function generateRoutes() {
     console.log('📝 Generating blog routes...');
     const blogRoutes = blogPosts
       .map(post => ({
-        route: `/piracicaba/blog/${post.slug || post.Slug}`,
+          route: `/piracicaba/blog/${getBlogSlug(post)}`,
         title: `${post.titulo || post.Titulo || post.title || 'Blog Post'} - Guia Noivas Piracicaba`,
         description: (post.descricao || post.Descricao || post.description || post.titulo || '').substring(0, 155),
         image: post.imagemDestaque?.url || post.ImgDestaque?.Url || post.imagemUrl || null
@@ -398,7 +400,7 @@ async function generateRoutes() {
         const image = coverImage || primaryImage || firstImage || null;
         
         return {
-          route: `/piracicaba/fornecedores/${f.slug || f.Slug || f.id || f.Id}`,
+          route: `/piracicaba/fornecedores/${getEntityIdentifier(f)}`,
           title: `${nome} - ${categoria} em ${cidade} | Guia Noivas`,
           description: metaDescription,
           image: image,
@@ -433,7 +435,7 @@ async function generateRoutes() {
         }
         
         return {
-          route: `/piracicaba/categorias/${normalizarSlug(c.slug || c.Slug || c.id || c.Id)}`,
+          route: `/piracicaba/categorias/${normalizarSlug(getEntityIdentifier(c))}`,
           title: `${nome} - Fornecedores em Piracicaba | Guia Noivas`,
           description: metaDescription,
           image: c.imageUrl || c.ImageUrl || c.thumbnailUrl || c.ThumbnailUrl || null

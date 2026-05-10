@@ -48,6 +48,11 @@ jobs:
         run: npm run prerender:prod
         env:
           BUILD_VERSION: ${{ env.BUILD_ID }}
+          STRICT_VALIDATION: 'true'
+          ENFORCE_API_HEALTH: 'true'
+          ENFORCE_API_COMPLETENESS: 'true'
+          MIN_PRERENDER_COVERAGE: '95'
+          MIN_METADATA_COVERAGE: '90'
       - name: Debug - List build output
         run: ls -la dist/guia-noivas/browser/ || echo "Build output not found"
       - name: Create deployment annotation
@@ -67,3 +72,16 @@ jobs:
           output_location: "dist/guia-noivas/browser"
           skip_app_build: true
           skip_deploy_on_missing_secrets: true
+      - name: Monitor production crawl/index signals
+        run: npm run monitor:seo:prod
+        env:
+          PRODUCTION_SITE_URL: "https://guianoivas.com"
+      - name: Upload prerender and SEO monitoring artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prerender-validation-prod
+          path: |
+            prerender-validation-report.json
+            seo-production-monitor-report.json
+          if-no-files-found: ignore

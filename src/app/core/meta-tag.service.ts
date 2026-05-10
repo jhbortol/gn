@@ -291,5 +291,9 @@ export class MetaTagService {
       name: 'robots',
       content: robotsContent
     });
+    this.metaService.updateTag({
+      name: 'googlebot',
+      content: robotsContent
+    });
   }
 }

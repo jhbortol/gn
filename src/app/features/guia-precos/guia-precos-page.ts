@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { ApiService } from '../../core/api.service';
 import { CidadeService } from '../../core/cidade.service';
 import { MetaTagService } from '../../core/meta-tag.service';
+import { TrackingService } from '../../core/tracking.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -16,29 +17,9 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./guia-precos-page.css']
 })
 export class GuiaPrecosPage implements OnInit {
-  private static readonly NOINDEX_PATTERNS = [
-    /^\/[^/]+\/guia-custos$/,
-    /^\/[^/]+\/guia-precos(?:\/[^/]+)?$/
-  ];
-
     ngOnInit(): void {
       const route = this.router.url.split('?')[0];
       this.metaTagService.applyMetadata(route);
-      this.injectNoIndexIfNeeded();
-    }
-
-    private injectNoIndexIfNeeded(): void {
-      if (typeof window === 'undefined') return;
-      const path = window.location.pathname;
-      if (GuiaPrecosPage.NOINDEX_PATTERNS.some(pattern => pattern.test(path))) {
-        let metaRobots = document.querySelector('meta[name="robots"]') as HTMLMetaElement;
-        if (!metaRobots) {
-          metaRobots = document.createElement('meta');
-          metaRobots.name = 'robots';
-          document.head.appendChild(metaRobots);
-        }
-        metaRobots.content = 'noindex, follow';
-      }
     }
   leadForm: FormGroup;
 
@@ -49,6 +30,7 @@ export class GuiaPrecosPage implements OnInit {
 
   private cidadeService = inject(CidadeService);
   private metaTagService = inject(MetaTagService);
+  private tracking = inject(TrackingService);
 
   constructor(
     private api: ApiService,
@@ -106,14 +88,12 @@ export class GuiaPrecosPage implements OnInit {
         
         // Track conversion
         if (typeof window !== 'undefined') {
-          if ((window as any).fbq) {
-            (window as any).fbq('track', 'Lead', {
-              content_name: 'Guia de Preços 2026',
-              content_category: 'Lead Magnet',
-              value: 1,
-              currency: 'BRL'
-            });
-          }
+          this.tracking.trackMetaEvent('Lead', {
+            content_name: 'Guia de Preços 2026',
+            content_category: 'Lead Magnet',
+            value: 1,
+            currency: 'BRL'
+          });
           if ((window as any).dataLayer) {
             (window as any).dataLayer.push({
               event: 'generate_lead',

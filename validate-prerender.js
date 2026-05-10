@@ -106,8 +106,10 @@ function validatePrerender() {
   }
   
   // Validation thresholds
-  const MINIMUM_COVERAGE = 95; // Require 95% coverage
-  const CRITICAL_COVERAGE = 80; // Fail build if below 80%
+  const MINIMUM_COVERAGE = Number(process.env.MIN_PRERENDER_COVERAGE || 95);
+  const CRITICAL_COVERAGE = Number(process.env.CRITICAL_PRERENDER_COVERAGE || 80);
+  const MINIMUM_METADATA_COVERAGE = Number(process.env.MIN_METADATA_COVERAGE || 90);
+  const allowPartial = process.env.ALLOW_PARTIAL_PRERENDER === 'true';
   
   if (coverage < CRITICAL_COVERAGE) {
     console.error('❌ CRITICAL: Prerender coverage below 80%!');
@@ -121,19 +123,18 @@ function validatePrerender() {
   }
   
   if (coverage < MINIMUM_COVERAGE) {
-    console.warn('⚠️  WARNING: Prerender coverage below 95%!');
+    console.warn(`⚠️  WARNING: Prerender coverage below ${MINIMUM_COVERAGE}%!`);
     console.warn('   Some routes were not pre-rendered.');
     console.warn('   These pages will show empty HTML to crawlers.');
     console.warn('   Review the missing routes above.');
     console.warn('');
-    
-    // Optional: Fail build on warning (can be disabled for non-critical deploys)
-    if (process.env.STRICT_VALIDATION === 'true') {
-      console.error('❌ STRICT_VALIDATION enabled: Failing build');
+
+    if (!allowPartial || process.env.STRICT_VALIDATION === 'true') {
+      console.error(`❌ Coverage below required minimum (${MINIMUM_COVERAGE}%). Deploy blocked.`);
       process.exit(1);
     }
-    
-    console.log('⚠️  Continuing with warning (set STRICT_VALIDATION=true to fail build)\n');
+
+    console.log('⚠️  Continuing with warning (ALLOW_PARTIAL_PRERENDER=true)\n');
   }
   
   // Additional validations
@@ -177,7 +178,12 @@ function validatePrerender() {
     
     // Validate metadata coverage
     const metadataCoverage = (metadataCount / expectedRoutes.length) * 100;
-    if (metadataCoverage < 50) {
+    if (metadataCoverage < MINIMUM_METADATA_COVERAGE) {
+      console.error(`❌ Metadata coverage too low: ${metadataCoverage.toFixed(1)}% (minimum ${MINIMUM_METADATA_COVERAGE}%)`);
+      if (!allowPartial || process.env.STRICT_VALIDATION === 'true') {
+        process.exit(1);
+      }
+    } else if (metadataCoverage < 95) {
       console.warn(`⚠️  WARNING: Only ${metadataCoverage.toFixed(1)}% of routes have metadata`);
     }
   }

@@ -69,13 +69,11 @@ export class BlogDetailPage implements OnInit {
       this.loadRelated(post.id);
       
       // Track blog view
-      if (typeof window !== 'undefined' && (window as any).fbq) {
-        (window as any).fbq('track', 'ViewContent', {
-          content_type: 'blog_post',
-          content_name: post.title,
-          content_id: post.id
-        });
-      }
+      this.tracking.trackMetaEvent('ViewContent', {
+        content_type: 'blog_post',
+        content_name: post.title,
+        content_id: post.id
+      });
     } catch (error) {
       console.error('Error loading blog post:', error);
       this.isLoading.set(false);

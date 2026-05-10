@@ -71,15 +71,11 @@
   <!-- Google Tag Manager (deferred) -->
   <script>
     window.dataLayer = window.dataLayer || [];
-    function loadGTM() {
-      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','GTM-MVF5F3ZD');
-    }
-    if (document.readyState === 'complete') loadGTM();
-    else window.addEventListener('load', loadGTM);
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MVF5F3ZD');
   </script>
   <!-- End Google Tag Manager -->
   
@@ -101,6 +97,102 @@
     gtag('config', 'AW-18077793493');
   </script>
   <!-- End Google tag - Google Ads -->
+  <!-- Meta Pixel -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1392814085844033');
+  </script>
+  <script>
+    (function () {
+      var pagePath = window.location.pathname + window.location.search;
+      var pageLocation = window.location.href;
+      var pageTitle = document.title;
+      var prebootState = {
+        pagePath: pagePath,
+        pageTitle: pageTitle,
+        pageLocation: pageLocation,
+        startedAt: Date.now(),
+        active: true
+      };
+
+      window.__GN_INITIAL_GA_PAGEVIEW_PATH = pagePath;
+      window.__GN_INITIAL_META_PAGEVIEW_PATH = pagePath;
+      window.__GN_PREBOOT_ANALYTICS_STATE = prebootState;
+
+      window.dataLayer.push({
+        event: 'page_view',
+        page_path: pagePath,
+        page_title: pageTitle,
+        page_location: pageLocation,
+        page_source: 'initial_load'
+      });
+
+      fbq('track', 'PageView', {
+        page_path: pagePath,
+        page_title: pageTitle,
+        page_location: pageLocation
+      });
+
+      function flushPrebootEngagement(reason) {
+        if (!prebootState.active) return;
+
+        var engagementTimeMs = Math.max(Date.now() - prebootState.startedAt, 0);
+        var payload = {
+          page_path: pagePath,
+          page_title: pageTitle,
+          page_location: pageLocation,
+          engagement_time_msec: engagementTimeMs,
+          engagement_time_sec: Number((engagementTimeMs / 1000).toFixed(3)),
+          exit_reason: reason
+        };
+
+        window.dataLayer.push({
+          event: 'page_engagement',
+          page_path: payload.page_path,
+          page_title: payload.page_title,
+          page_location: payload.page_location,
+          engagement_time_msec: payload.engagement_time_msec,
+          engagement_time_sec: payload.engagement_time_sec,
+          exit_reason: payload.exit_reason
+        });
+
+        if (window.fbq) {
+          fbq('trackCustom', 'PageEngagement', payload);
+        }
+
+        prebootState.active = false;
+      }
+
+      function onVisibilityChange() {
+        if (document.visibilityState === 'hidden') {
+          flushPrebootEngagement('preboot_hidden');
+        }
+      }
+
+      function onPageHide() {
+        flushPrebootEngagement('preboot_pagehide');
+      }
+
+      window.__gnStopPrebootAnalyticsTracking = function () {
+        prebootState.active = false;
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+        window.removeEventListener('pagehide', onPageHide, true);
+        window.removeEventListener('beforeunload', onPageHide);
+      };
+
+      document.addEventListener('visibilitychange', onVisibilityChange);
+      window.addEventListener('pagehide', onPageHide, true);
+      window.addEventListener('beforeunload', onPageHide);
+    })();
+  </script>
+  <!-- End Meta Pixel -->
 </head>
   <body>
     <!-- Static Navbar Skeleton (will be replaced) -->
@@ -124,22 +216,8 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MVF5F3ZD"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-    <!-- Meta Pixel -->
-    <script>
-      !function(f,b,e,v,n,t,s)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '1392814085844033');
-      fbq('track', 'PageView');
-    </script>
     <noscript><img height="1" width="1" style="display:none" alt=""
       src="https://www.facebook.com/tr?id=1392814085844033&ev=PageView&noscript=1" /></noscript>
-    <!-- End Meta Pixel -->
   <app-root></app-root>
   <script>
     // Remove skeleton once Angular navbar is present

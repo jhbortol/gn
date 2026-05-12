@@ -107,7 +107,7 @@ async function validateApiHealth() {
     }
   }
 
-  console.warn('⚠️  API health endpoints returned 404. Continuing with data fetch validation checks.');
+  console.warn('⚠️  All API health endpoints returned 404 (not found). Continuing with data fetch validation checks.');
 }
 
 function ensureUniqueRouteEntries(routes, sourceName) {

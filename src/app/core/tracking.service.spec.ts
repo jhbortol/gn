@@ -84,4 +84,35 @@ describe('TrackingService', () => {
       })
     );
   });
+
+  it('should track WhatsApp intent stages before and after lead form flow', () => {
+    const vendorData = {
+      vendorId: '1',
+      vendorName: 'Fornecedor Teste',
+      vendorCategory: 'Fotografia'
+    };
+
+    service.trackWhatsAppIntent('before_lead_form', vendorData);
+    service.trackWhatsAppIntent('after_lead_form', vendorData);
+
+    expect((window as any).dataLayer.push).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        event: 'whatsapp_intent',
+        intent_stage: 'before_lead_form',
+        vendor_id: '1',
+        vendor_name: 'Fornecedor Teste',
+        vendor_category: 'Fotografia'
+      })
+    );
+
+    expect((window as any).dataLayer.push).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        event: 'whatsapp_intent',
+        intent_stage: 'after_lead_form',
+        vendor_id: '1',
+        vendor_name: 'Fornecedor Teste',
+        vendor_category: 'Fotografia'
+      })
+    );
+  });
 });

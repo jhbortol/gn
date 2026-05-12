@@ -12,7 +12,9 @@ async function fetchWithRetry(url, options = {}, maxRetries = 3, timeoutMs = 300
       clearTimeout(timeoutId);
       
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const httpError = new Error(`HTTP ${response.status}: ${response.statusText}`);
+        httpError.status = response.status;
+        throw httpError;
       }
       
       return response;
@@ -21,7 +23,11 @@ async function fetchWithRetry(url, options = {}, maxRetries = 3, timeoutMs = 300
       console.warn(`[Attempt ${attempt}/${maxRetries}] Failed to fetch ${url}:`, error.message);
       
       if (isLastAttempt) {
-        throw new Error(`Failed after ${maxRetries} attempts: ${error.message}`);
+        const finalError = new Error(`Failed after ${maxRetries} attempts: ${error.message}`);
+        if (Number.isFinite(error?.status)) {
+          finalError.status = error.status;
+        }
+        throw finalError;
       }
       
       // Exponential backoff: 1s, 2s, 4s
@@ -60,8 +66,12 @@ function getRequiredMinimums() {
   };
 }
 
-function extractHttpStatusCode(message) {
-  const match = /HTTP\s(\d{3})/.exec(String(message || ''));
+function extractHttpStatusCode(error) {
+  if (Number.isFinite(error?.status)) {
+    return Number(error.status);
+  }
+
+  const match = /HTTP\s(\d{3})/.exec(String(error?.message || ''));
   return match ? Number(match[1]) : null;
 }
 
@@ -93,7 +103,7 @@ async function validateApiHealth() {
       console.log(`✅ API health check passed (${healthUrl})`);
       return;
     } catch (error) {
-      const statusCode = extractHttpStatusCode(error.message);
+      const statusCode = extractHttpStatusCode(error);
       if (statusCode === 404) {
         console.warn(`⚠️  API health endpoint not found (${healthUrl}). Trying next health endpoint...`);
         continue;

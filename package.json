@@ -11,6 +11,7 @@
     "prerender": "node generate-routes.js && node update-prerender-routes.js && ng run guia-noivas:prerender && node inject-version.js",
     "prerender:prod": "node generate-routes.js && node update-prerender-routes.js && ng run guia-noivas:prerender:production && node inject-version.js && node validate-prerender.js",
     "validate": "node validate-prerender.js",
+    "monitor:seo:prod": "node monitor-production-seo.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:guia-noivas": "node dist/guia-noivas/server/main.js"

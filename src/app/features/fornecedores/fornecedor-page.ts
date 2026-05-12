@@ -29,6 +29,7 @@ export class FornecedorPageComponent implements OnInit {
   selectedImage?: string;
   selectedImageIndex = 0;
   isPreviewMode = false;
+  isLoading = true;
   notFound = false;
 
   // Novos signals para tier logic
@@ -71,43 +72,49 @@ export class FornecedorPageComponent implements OnInit {
       this.metaTagService.applyMetadata(currentRoute);
     }
 
-    if (identifier) {
-      try {
-        // Use firstValueFrom to ensure the Observable completes before continuing
-        // This is critical for SSR to include meta tags in the rendered HTML
-        const f = await firstValueFrom(this.fornecedores.getById(identifier, this.isPreviewMode));
-        
-        // Validate publicado field if environment requires it
-        // Only enforce if FORNECEDOR_PUBLICADO is true (production) and not in preview mode
-        if (environment.FORNECEDOR_PUBLICADO === true && !this.isPreviewMode && !f.publicado) {
-          console.warn('Fornecedor não publicado acessado diretamente:', f.id);
-          this.notFound = true;
-          this.updateNotFoundMetaTags();
-          this.cdr.markForCheck();
-          return;
-        }
+    if (!identifier) {
+      this.notFound = true;
+      this.updateNotFoundMetaTags();
+      this.isLoading = false;
+      this.cdr.markForCheck();
+      return;
+    }
 
-        this.fornecedor = f;
+    try {
+      // Use firstValueFrom to ensure the Observable completes before continuing
+      // This is critical for SSR to include meta tags in the rendered HTML
+      const f = await firstValueFrom(this.fornecedores.getById(identifier, this.isPreviewMode));
 
-        // 🔴 NOVO: Aplicar lógica tier
-        this.applyTierLogic(f);
-
-        // 🔴 NOVO: Atualizar meta tags SEO
-        // This is now guaranteed to run before SSR renders the page
-        this.updateSeoMetaTags(f);
-
-        this.tracking.trackVendorView({
-          vendorId: f.id,
-          vendorName: f.nome,
-          vendorCategory: f.categoria
-        });
-        this.cdr.markForCheck();
-      } catch (err) {
-        console.error('Error loading fornecedor:', err);
+      // Validate publicado field if environment requires it
+      // Only enforce if FORNECEDOR_PUBLICADO is true (production) and not in preview mode
+      if (environment.FORNECEDOR_PUBLICADO === true && !this.isPreviewMode && !f.publicado) {
+        console.warn('Fornecedor não publicado acessado diretamente:', f.id);
         this.notFound = true;
         this.updateNotFoundMetaTags();
-        this.cdr.markForCheck();
+        return;
       }
+
+      this.fornecedor = f;
+
+      // 🔴 NOVO: Aplicar lógica tier
+      this.applyTierLogic(f);
+
+      // 🔴 NOVO: Atualizar meta tags SEO
+      // This is now guaranteed to run before SSR renders the page
+      this.updateSeoMetaTags(f);
+
+      this.tracking.trackVendorView({
+        vendorId: f.id,
+        vendorName: f.nome,
+        vendorCategory: f.categoria
+      });
+    } catch (err) {
+      console.error('Error loading fornecedor:', err);
+      this.notFound = true;
+      this.updateNotFoundMetaTags();
+    } finally {
+      this.isLoading = false;
+      this.cdr.markForCheck();
     }
   }
 

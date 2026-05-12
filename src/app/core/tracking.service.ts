@@ -394,7 +394,7 @@ export class TrackingService {
     if (this.hasMetaPixel()) {
       this.trackMetaEvent('Contact', {
         content_type: 'product',
-        content_name: `whatsapp_intent_${intentStage} - ${vendorData?.vendorName || 'Unknown'}`,
+        content_name: `WhatsApp Intent - ${vendorData?.vendorName || 'Unknown'}`,
         value: 0,
         currency: 'BRL',
         content_id: vendorData?.vendorId || '',

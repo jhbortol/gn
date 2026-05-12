@@ -161,6 +161,12 @@ export class FornecedorPageComponent implements OnInit {
   }
 
   onWhatsAppClick() {
+    this.tracking.trackWhatsAppIntent('before_lead_form', {
+      vendorId: this.fornecedor?.id || '',
+      vendorName: this.fornecedor?.nome || '',
+      vendorCategory: this.fornecedor?.categoria
+    });
+
     this.tracking.trackContactClick('whatsapp', {
       vendorId: this.fornecedor?.id || '',
       vendorName: this.fornecedor?.nome || '',
@@ -195,6 +201,12 @@ export class FornecedorPageComponent implements OnInit {
    * Fecha o modal e abre o canal selecionado.
    */
   onContactLeadSubmitSuccess(leadId: number): void {
+    this.tracking.trackWhatsAppIntent('after_lead_form', {
+      vendorId: this.fornecedor?.id || '',
+      vendorName: this.fornecedor?.nome || '',
+      vendorCategory: this.fornecedor?.categoria
+    });
+
     this.showWhatsAppLeadModal.set(false);
     console.log('Lead WhatsApp enviado com sucesso:', leadId);
 

@@ -305,14 +305,14 @@ describe('FornecedorPageComponent', () => {
         it('should show loading placeholder and avoid not-found while loading supplier data', () => {
             const pendingRequest$ = new Subject<Fornecedor>();
             mockFornecedoresData.getById.and.returnValue(pendingRequest$.asObservable());
-            const noIndexSpy = spyOn<any>(component, 'injectNoIndexMetaTag');
+            const updateNotFoundSpy = spyOn<any>(component, 'updateNotFoundMetaTags');
 
             fixture.detectChanges();
 
             const loadingPlaceholder = fixture.nativeElement.querySelector('.fornecedor-loading-placeholder');
             expect(loadingPlaceholder).toBeTruthy();
             expect(fixture.nativeElement.textContent).not.toContain('Fornecedor não encontrado');
-            expect(noIndexSpy).not.toHaveBeenCalled();
+            expect(updateNotFoundSpy).not.toHaveBeenCalled();
         });
     });
 });

@@ -73,8 +73,7 @@ export class FornecedorPageComponent implements OnInit {
     }
 
     if (!identifier) {
-      this.notFound = true;
-      this.updateNotFoundMetaTags();
+      this.setNotFoundState();
       this.isLoading = false;
       this.cdr.markForCheck();
       return;
@@ -89,33 +88,35 @@ export class FornecedorPageComponent implements OnInit {
       // Only enforce if FORNECEDOR_PUBLICADO is true (production) and not in preview mode
       if (environment.FORNECEDOR_PUBLICADO === true && !this.isPreviewMode && !f.publicado) {
         console.warn('Fornecedor não publicado acessado diretamente:', f.id);
-        this.notFound = true;
-        this.updateNotFoundMetaTags();
-        return;
+        this.setNotFoundState();
+      } else {
+        this.fornecedor = f;
+
+        // 🔴 NOVO: Aplicar lógica tier
+        this.applyTierLogic(f);
+
+        // 🔴 NOVO: Atualizar meta tags SEO
+        // This is now guaranteed to run before SSR renders the page
+        this.updateSeoMetaTags(f);
+
+        this.tracking.trackVendorView({
+          vendorId: f.id,
+          vendorName: f.nome,
+          vendorCategory: f.categoria
+        });
       }
-
-      this.fornecedor = f;
-
-      // 🔴 NOVO: Aplicar lógica tier
-      this.applyTierLogic(f);
-
-      // 🔴 NOVO: Atualizar meta tags SEO
-      // This is now guaranteed to run before SSR renders the page
-      this.updateSeoMetaTags(f);
-
-      this.tracking.trackVendorView({
-        vendorId: f.id,
-        vendorName: f.nome,
-        vendorCategory: f.categoria
-      });
     } catch (err) {
       console.error('Error loading fornecedor:', err);
-      this.notFound = true;
-      this.updateNotFoundMetaTags();
+      this.setNotFoundState();
     } finally {
       this.isLoading = false;
       this.cdr.markForCheck();
     }
+  }
+
+  private setNotFoundState(): void {
+    this.notFound = true;
+    this.updateNotFoundMetaTags();
   }
 
   private trackPageView(): void {

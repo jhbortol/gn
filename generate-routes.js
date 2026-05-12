@@ -12,7 +12,9 @@ async function fetchWithRetry(url, options = {}, maxRetries = 3, timeoutMs = 300
       clearTimeout(timeoutId);
       
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const httpError = new Error(`HTTP ${response.status}: ${response.statusText}`);
+        httpError.status = response.status;
+        throw httpError;
       }
       
       return response;
@@ -21,7 +23,11 @@ async function fetchWithRetry(url, options = {}, maxRetries = 3, timeoutMs = 300
       console.warn(`[Attempt ${attempt}/${maxRetries}] Failed to fetch ${url}:`, error.message);
       
       if (isLastAttempt) {
-        throw new Error(`Failed after ${maxRetries} attempts: ${error.message}`);
+        const finalError = new Error(`Failed after ${maxRetries} attempts: ${error.message}`);
+        if (Number.isFinite(error?.status)) {
+          finalError.status = error.status;
+        }
+        throw finalError;
       }
       
       // Exponential backoff: 1s, 2s, 4s
@@ -60,34 +66,58 @@ function getRequiredMinimums() {
   };
 }
 
+function extractHttpStatusCode(error) {
+  if (Number.isFinite(error?.status)) {
+    return Number(error.status);
+  }
+
+  const match = /HTTP\s(\d{3})/.exec(String(error?.message || ''));
+  return match ? Number(match[1]) : null;
+}
+
 async function validateApiHealth() {
   if (process.env.ENFORCE_API_HEALTH === 'false') {
     console.log('ℹ️  API health precheck skipped (ENFORCE_API_HEALTH=false)');
     return;
   }
 
-  const healthUrl = `${API_BASE_URL}/health`;
-  try {
-    const response = await fetchWithRetry(healthUrl, {}, 2, 10000);
-    const contentType = response.headers.get('content-type') || '';
+  const healthCandidates = [
+    `${API_BASE_URL}/health`,
+    `${API_BASE_URL}/health/ready`,
+    `${API_BASE_URL}/health/live`
+  ];
 
-    if (contentType.includes('application/json')) {
-      const payload = await response.json();
-      const normalizedStatus = String(payload?.status || payload?.Status || '').toLowerCase();
-      if (normalizedStatus && normalizedStatus !== 'ok' && normalizedStatus !== 'healthy') {
-        throw new Error(`Unexpected health status: ${normalizedStatus}`);
+  for (const healthUrl of healthCandidates) {
+    try {
+      const response = await fetchWithRetry(healthUrl, {}, 2, 10000);
+      const contentType = response.headers.get('content-type') || '';
+
+      if (contentType.includes('application/json')) {
+        const payload = await response.json();
+        const normalizedStatus = String(payload?.status || payload?.Status || '').toLowerCase();
+        if (normalizedStatus && normalizedStatus !== 'ok' && normalizedStatus !== 'healthy') {
+          throw new Error(`Unexpected health status: ${normalizedStatus}`);
+        }
       }
-    }
 
-    console.log(`✅ API health check passed (${healthUrl})`);
-  } catch (error) {
-    const statusHint = /HTTP\s(\d{3})/.exec(String(error.message || ''));
-    const contextHint = statusHint
-      ? `status ${statusHint[1]}`
-      : 'network/timeout/unexpected response';
-    console.error(`❌ CRITICAL: API health check failed at ${healthUrl} (${contextHint}):`, error.message);
-    throw error;
+      console.log(`✅ API health check passed (${healthUrl})`);
+      return;
+    } catch (error) {
+      const statusCode = extractHttpStatusCode(error);
+      if (statusCode === 404) {
+        console.warn(`⚠️  API health endpoint not found (${healthUrl}). Trying next health endpoint...`);
+        continue;
+      }
+
+      const contextHint = statusCode
+        ? `status ${statusCode}`
+        : 'network/timeout/unexpected response';
+      console.error(`❌ CRITICAL: API health check failed at ${healthUrl} (${contextHint}):`, error.message);
+      throw error;
+    }
   }
+
+  console.warn('⚠️  All API health endpoints returned 404 (not found). Continuing with data fetch validation checks.');
 }
 
 function ensureUniqueRouteEntries(routes, sourceName) {

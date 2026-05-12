@@ -100,6 +100,9 @@ async function run() {
   }
 
   const failed = checks.filter((c) => !c.ok);
+  // Cache-versioning checks a CDN-cached live URL and is timing-dependent
+  // (CDN propagation can lag behind deployment). Treat it as a warning only.
+  const fatalFailures = failed.filter((c) => c.type !== 'cache-versioning');
   const report = {
     timestamp: new Date().toISOString(),
     baseUrl,
@@ -133,7 +136,7 @@ async function run() {
   console.log(`📄 Report saved to ${reportPath}`);
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-  if (failed.length > 0) {
+  if (fatalFailures.length > 0) {
     process.exit(1);
   }
 }

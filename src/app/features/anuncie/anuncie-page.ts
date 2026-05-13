@@ -10,6 +10,23 @@ import { TermoAdesaoService } from '../../core/services/termo-adesao.service';
 import { TrackingService } from '../../core/tracking.service';
 import { firstValueFrom } from 'rxjs';
 
+interface CadastroFreePayload {
+  empresa: { nomeFantasia: string; cnpjCpf: string };
+  responsavel: { nome: string };
+  contato: { email: string; telefone: string };
+  credenciais?: { senha: string };
+  nomeFantasia: string;
+  nomeResponsavel: string;
+  cnpjCpf: string;
+  email: string;
+  telefone: string;
+  password?: string;
+  aceitaTermos: true;
+  termoHash: string;
+  dataAceite: string;
+  planLevel: 'Free';
+}
+
 @Component({
   selector: 'app-anuncie-page',
   standalone: true,
@@ -19,6 +36,7 @@ import { firstValueFrom } from 'rxjs';
 })
 export class AnunciePageComponent implements OnInit {
   readonly cadastroEndpoint = '/fornecedores/cadastro-free';
+  readonly redirectDelayMs = 1200;
   private fb = inject(FormBuilder);
 
   submitted = false;
@@ -104,11 +122,13 @@ export class AnunciePageComponent implements OnInit {
     this.pendingApproval = false;
 
     try {
-      if (this.termoHashVigente) {
-        const hashValido = await this.termoService.validarHash(this.termoConteudo, this.termoHashVigente);
-        if (!hashValido) {
-          throw { error: { codigo: 'HASH_INVALIDO' } };
-        }
+      if (!this.termoHashVigente) {
+        throw { error: { codigo: 'HASH_INVALIDO' } };
+      }
+
+      const hashValido = await this.termoService.validarHash(this.termoConteudo, this.termoHashVigente);
+      if (!hashValido) {
+        throw { error: { codigo: 'HASH_INVALIDO' } };
       }
 
       const termoHash = await this.termoService.calcularHashTermo(this.termoConteudo);
@@ -119,7 +139,8 @@ export class AnunciePageComponent implements OnInit {
       const email = (raw.email || '').trim().toLowerCase();
       const dataAceite = new Date().toISOString();
 
-      const payload: Record<string, any> = {
+      const payload: CadastroFreePayload = {
+        // Contrato estruturado principal do novo endpoint de cadastro free
         empresa: {
           nomeFantasia: (raw.nomeFantasia || '').trim(),
           cnpjCpf
@@ -131,6 +152,7 @@ export class AnunciePageComponent implements OnInit {
           email,
           telefone
         },
+        // Campos flat mantidos temporariamente para compatibilidade com contratos legados
         nomeFantasia: (raw.nomeFantasia || '').trim(),
         nomeResponsavel: (raw.nomeResponsavel || '').trim(),
         cnpjCpf,
@@ -143,8 +165,9 @@ export class AnunciePageComponent implements OnInit {
       };
 
       if (senha) {
-        payload['credenciais'] = { senha };
-        payload['password'] = senha;
+        // Senha no bloco de credenciais e também no campo legado enquanto o backend unifica contrato
+        payload.credenciais = { senha };
+        payload.password = senha;
       }
 
       const response = await firstValueFrom(this.api.post<{
@@ -167,7 +190,7 @@ export class AnunciePageComponent implements OnInit {
 
       const redirectUrl = response?.redirectUrl || response?.panelUrl;
       if (redirectUrl) {
-        setTimeout(() => window.location.assign(redirectUrl), 1200);
+        setTimeout(() => window.location.assign(redirectUrl), this.redirectDelayMs);
       }
     } catch (err: any) {
       const erro = this.mapearErroApi(err);
@@ -270,7 +293,7 @@ export class AnunciePageComponent implements OnInit {
     const valor = (control.value || '').replace(/\D/g, '');
     if (!valor) return null;
     if (valor.length === 11) return this.validarCpf(valor) ? null : { cnpjCpfInvalido: true };
-    if (valor.length === 14) return null;
+    if (valor.length === 14) return this.validarCnpj(valor) ? null : { cnpjCpfInvalido: true };
     return { cnpjCpfInvalido: true };
   }
 
@@ -290,5 +313,23 @@ export class AnunciePageComponent implements OnInit {
     resto = (soma * 10) % 11;
     if (resto === 10 || resto === 11) resto = 0;
     return resto === parseInt(cpf.substring(10, 11), 10);
+  }
+
+  private validarCnpj(cnpj: string): boolean {
+    if (!cnpj || cnpj.length !== 14 || /^(\d)\1{13}$/.test(cnpj)) return false;
+
+    const calcDigito = (base: string, pesos: number[]): number => {
+      const soma = base
+        .split('')
+        .reduce((acc, num, idx) => acc + parseInt(num, 10) * pesos[idx], 0);
+      const resto = soma % 11;
+      return resto < 2 ? 0 : 11 - resto;
+    };
+
+    const base = cnpj.substring(0, 12);
+    const digito1 = calcDigito(base, [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
+    const digito2 = calcDigito(base + digito1, [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
+
+    return cnpj.endsWith(`${digito1}${digito2}`);
   }
 }

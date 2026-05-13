@@ -56,7 +56,7 @@ describe('AnunciePageComponent', () => {
       nomeResponsavel: 'Maria Silva',
       email: 'maria@email.com',
       telefone: '(19) 99999-9999',
-      cnpjCpf: '123.456.789-09',
+      cnpjCpf: '529.982.247-25',
       aceitaTermos: false
     });
 
@@ -72,7 +72,7 @@ describe('AnunciePageComponent', () => {
       nomeResponsavel: 'Maria Silva',
       email: 'maria@email.com',
       telefone: '(19) 99999-9999',
-      cnpjCpf: '12.345.678/0001-90',
+      cnpjCpf: '11.444.777/0001-61',
       senha: 'Senha123!',
       aceitaTermos: true
     });
@@ -85,7 +85,7 @@ describe('AnunciePageComponent', () => {
     expect(payload.aceitaTermos).toBeTrue();
     expect(payload.termoHash).toBe('hash-calculado');
     expect(payload.contato.telefone).toBe('19999999999');
-    expect(payload.empresa.cnpjCpf).toBe('12345678000190');
+    expect(payload.empresa.cnpjCpf).toBe('11444777000161');
     expect(payload.password).toBe('Senha123!');
     expect(component.submitted).toBeTrue();
   });
@@ -98,7 +98,7 @@ describe('AnunciePageComponent', () => {
       nomeResponsavel: 'Maria Silva',
       email: 'maria@email.com',
       telefone: '(19) 99999-9999',
-      cnpjCpf: '123.456.789-09',
+      cnpjCpf: '529.982.247-25',
       aceitaTermos: true
     });
 

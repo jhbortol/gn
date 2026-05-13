@@ -1,9 +1,10 @@
 import { Component, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon/icon';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { CidadeService } from '../../core/cidade.service';
 import { environment } from '../../../environments/environment';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -18,7 +19,14 @@ export class NavbarComponent {
   @Output() scrollToCategories = new EventEmitter<void>();
   
   private cidadeService = inject(CidadeService);
+  private router = inject(Router);
   mobileMenuOpen = false;
+
+  constructor() {
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe(() => this.closeMobileMenu());
+  }
 
   toggleMobileMenu() {
     this.mobileMenuOpen = !this.mobileMenuOpen;

@@ -112,7 +112,7 @@ export class CategoriasPageComponent implements OnInit {
     this.showSearchResults = false;
   }
 
-  getTotalFromVitrine(vitrineSuppliers?: VitrineSupplier[]): number {
+  getSupplierCountFromVitrine(vitrineSuppliers?: VitrineSupplier[]): number {
     return vitrineSuppliers?.length ?? 0;
   }
 

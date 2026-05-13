@@ -29,20 +29,20 @@
     class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
     <article *ngFor="let fornecedor of fornecedores"
       class="rounded-lg shadow-sm hover:shadow-lg border flex flex-col overflow-hidden transition-all duration-300 group relative"
+      role="button"
+      tabindex="0"
+      [attr.aria-label]="fornecedor.nome + ' - ' + (fornecedor.categoria?.nome || 'Fornecedor') + (fornecedor.cidade ? ' em ' + fornecedor.cidade : '')"
       [class.border-amber-400]="fornecedor.planLevel === 1" [class.border-2]="fornecedor.planLevel === 1"
       [class.border-gray-200]="fornecedor.planLevel !== 1" [class.shadow-md]="fornecedor.planLevel === 1"
       [class.bg-gradient-to-br]="fornecedor.planLevel === 1" [class.from-amber-50]="fornecedor.planLevel === 1"
-      [class.to-orange-50]="fornecedor.planLevel === 1" [class.bg-white]="fornecedor.planLevel !== 1">
-      <a
-        [routerLink]="buildUrl(['fornecedores', fornecedor.slug])"
-        [attr.data-event-category]="'Navigation'"
-        [attr.data-event-action]="'Click Card - Lista Categoria'"
-        [attr.data-vendor-id]="fornecedor.id"
-        [attr.data-vendor-name]="fornecedor.nome"
-        [attr.data-vendor-category]="fornecedor.categoria?.nome"
-        class="absolute inset-0 z-10"
-        [attr.aria-label]="'Abrir perfil de ' + fornecedor.nome">
-      </a>
+      [class.to-orange-50]="fornecedor.planLevel === 1" [class.bg-white]="fornecedor.planLevel !== 1"
+      [attr.data-event-category]="'Navigation'"
+      [attr.data-event-action]="'Click Card - Lista Categoria'"
+      [attr.data-vendor-id]="fornecedor.id"
+      [attr.data-vendor-name]="fornecedor.nome"
+      [attr.data-vendor-category]="fornecedor.categoria?.nome"
+      (click)="navigateToFornecedor(fornecedor.slug)"
+      (keydown)="onCardKeydown($event, fornecedor.slug)">
 
       <!-- Imagem -->
       <div class="relative h-40 overflow-hidden">
@@ -62,8 +62,8 @@
       </div>
 
       <!-- Content -->
-      <div class="p-3 flex flex-col flex-1 relative z-20">
-        <h2 class="font-serif font-bold text-base text-gray-900 mb-1 line-clamp-2">{{fornecedor.nome}}</h2>
+      <div class="p-3 flex flex-col flex-1">
+        <p class="font-serif font-bold text-base text-gray-900 mb-1 line-clamp-2">{{fornecedor.nome}}</p>
 
         <!-- Location -->
         <div class="flex items-center gap-1 text-sm text-gray-600 mb-3" *ngIf="fornecedor.cidade">

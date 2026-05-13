@@ -220,6 +220,16 @@ export class CategoriaDetalhePageComponent implements OnInit {
     this.pendingWhatsAppUrl.set('');
   }
 
+  navigateToFornecedor(slug: string): void {
+    this.router.navigateByUrl(this.buildUrl(['fornecedores', slug]));
+  }
+
+  onCardKeydown(event: KeyboardEvent, slug: string): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.navigateToFornecedor(slug);
+    }
+  }
 
   resolveImage(url?: string | null, fallback: string = 'assets/fornecedores/placeholder.jpg'): string {
     if (!url) return fallback;

@@ -7,20 +7,21 @@
   <div class="mb-6">
     <label for="categorias-busca" class="block text-sm font-semibold text-gray-800 mb-2">O que você procura?</label>
     <div class="w-full bg-white rounded-xl border border-gray-200 px-3 py-2 flex items-center gap-2 shadow-sm">
-      <app-icon name="search" [size]="18" className="text-gray-400"></app-icon>
+      <app-icon name="search" [size]="18" className="text-gray-400" aria-hidden="true"></app-icon>
       <input
         id="categorias-busca"
         type="text"
         [(ngModel)]="buscaTerm"
         (keydown.enter)="buscar()"
         placeholder="Buscar fornecedor ou categoria"
+        aria-label="Buscar fornecedor ou categoria"
         class="w-full p-1 outline-none text-gray-700 text-sm" />
       <button (click)="buscar()" class="bg-rose-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-rose-700 transition">
         Buscar
       </button>
     </div>
     <div class="mt-3 text-right" *ngIf="showSearchResults">
-      <button (click)="clearBusca()" class="text-xs text-gray-500 hover:text-rose-600 transition-colors">Limpar busca</button>
+      <button (click)="clearBusca()" aria-label="Limpar resultados da busca" class="text-xs text-gray-500 hover:text-rose-600 transition-colors">Limpar busca</button>
     </div>
   </div>
 
@@ -63,7 +64,7 @@
       <div class="p-4 flex flex-col flex-1">
         <h3 class="font-serif font-bold text-xl text-rose-700 mb-1">{{ categoria.nome }}</h3>
         <p class="text-xs text-gray-500 mb-3">
-          {{ categoria.totalSuppliers || getTotalFromVitrine(categoria.vitrineSuppliers) }} fornecedores disponíveis
+          {{ categoria.totalSuppliers || getSupplierCountFromVitrine(categoria.vitrineSuppliers) }} fornecedores disponíveis
         </p>
           <a [routerLink]="buildUrl(['categorias', categoria.slug])" 
             class="mt-auto block px-4 py-2 border border-rose-400 text-rose-600 bg-white rounded-lg font-semibold hover:bg-rose-50 transition-all duration-300 text-center text-sm shadow-sm hover:shadow-md">

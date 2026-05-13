@@ -1,9 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MetaTagService } from '../../core/meta-tag.service';
 import { Title } from '@angular/platform-browser';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CategoriasData, Categoria } from '../categorias/services/categorias-data';
 
 @Component({
@@ -23,6 +24,7 @@ export class AnunciePageComponent implements OnInit {
   private router = inject(Router);
   private title = inject(Title);
   private categoriasData = inject(CategoriasData);
+  private destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     const route = this.router.url.split('?')[0];
@@ -31,7 +33,7 @@ export class AnunciePageComponent implements OnInit {
       title: 'Anuncie no Guia Noivas Piracicaba | Divulgue seu Negócio',
       description: 'Anuncie seu negócio para noivas de Piracicaba e região. Alcance noivas em busca de fornecedores de casamento. Cadastre sua empresa no Guia Noivas Piracicaba.'
     });
-    this.categoriasData.getAll().subscribe(cats => {
+    this.categoriasData.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(cats => {
       this.categorias = cats;
     });
   }

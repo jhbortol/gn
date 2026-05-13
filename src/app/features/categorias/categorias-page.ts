@@ -112,6 +112,14 @@ export class CategoriasPageComponent implements OnInit {
     this.showSearchResults = false;
   }
 
+  onFornecedorSearchClick(fornecedor: FornecedorListDto): void {
+    this.tracking.trackVendorView({
+      vendorId: fornecedor.id || '',
+      vendorName: fornecedor.nome || '',
+      vendorCategory: fornecedor.categoria?.nome || ''
+    });
+  }
+
   getSupplierCountFromVitrine(vitrineSuppliers?: VitrineSupplier[]): number {
     return vitrineSuppliers?.length ?? 0;
   }

@@ -43,6 +43,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         <a *ngFor="let fornecedor of fornecedoresBusca"
           [routerLink]="buildUrl(['fornecedores', fornecedor.slug])"
+          (click)="onFornecedorSearchClick(fornecedor)"
           class="rounded-lg border border-gray-100 p-3 hover:border-rose-200 hover:shadow-sm transition-all">
           <div class="text-xs uppercase tracking-wide text-rose-600 font-semibold mb-1">{{ fornecedor.categoria?.nome || 'Fornecedor' }}</div>
           <div class="text-sm font-bold text-gray-900">{{ fornecedor.nome }}</div>

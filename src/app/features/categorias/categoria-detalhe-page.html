@@ -41,8 +41,8 @@
       [attr.data-vendor-id]="fornecedor.id"
       [attr.data-vendor-name]="fornecedor.nome"
       [attr.data-vendor-category]="fornecedor.categoria?.nome"
-      (click)="navigateToFornecedor(fornecedor.slug)"
-      (keydown)="onCardKeydown($event, fornecedor.slug)">
+      (click)="navigateToFornecedor(fornecedor)"
+      (keydown)="onCardKeydown($event, fornecedor)">
 
       <!-- Imagem -->
       <div class="relative h-40 overflow-hidden">

@@ -29,7 +29,10 @@
 
       <div>
         <label class="block mb-2 text-sm font-semibold text-gray-800">Categoria *</label>
-        <input type="text" formControlName="categoria" placeholder="Ex: Fotografia, Buffet, Cerimonial..." class="w-full rounded px-3 py-2 border border-gray-300" />
+        <select formControlName="categoria" class="w-full rounded px-3 py-2 border border-gray-300 bg-white">
+          <option value="" disabled>{{ categoriasLoading ? 'Carregando categorias...' : 'Selecione uma categoria' }}</option>
+          <option *ngFor="let cat of categorias" [value]="cat.nome">{{ cat.nome }}</option>
+        </select>
         <p *ngIf="getFieldError('categoria')" class="text-xs text-red-600 mt-1">{{ getFieldError('categoria') }}</p>
       </div>
 
@@ -76,7 +79,6 @@
           <input id="aceitaTermos" type="checkbox" formControlName="aceitaTermos" class="mt-1" />
           <label for="aceitaTermos" class="text-sm text-gray-700">
             Li e aceito os termos de uso e responsabilidade.
-            <a routerLink="/piracicaba/institucional/termos" target="_blank" class="text-rose-700 underline">Ver termo em nova aba</a>
           </label>
         </div>
         <p *ngIf="getFieldError('aceitaTermos')" class="text-xs text-red-600 mt-1">{{ getFieldError('aceitaTermos') }}</p>

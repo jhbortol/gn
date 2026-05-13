@@ -1,13 +1,13 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
-import { RouterModule } from '@angular/router';
 import { MetaTagService } from '../../core/meta-tag.service';
 import { Title } from '@angular/platform-browser';
 import { ApiService } from '../../core/api.service';
 import { TermoAdesaoService } from '../../core/services/termo-adesao.service';
 import { TrackingService } from '../../core/tracking.service';
+import { CategoriasData, Categoria } from '../categorias/services/categorias-data';
 import { firstValueFrom } from 'rxjs';
 
 interface CadastroFreePayload {
@@ -35,7 +35,7 @@ interface CadastroFreePayload {
   standalone: true,
   templateUrl: './anuncie-page.html',
   styleUrls: ['./anuncie-page.css'],
-  imports: [CommonModule, ReactiveFormsModule, RouterModule]
+  imports: [CommonModule, ReactiveFormsModule]
 })
 export class AnunciePageComponent implements OnInit {
   readonly cadastroEndpoint = '/fornecedores/cadastro-free';
@@ -45,7 +45,9 @@ export class AnunciePageComponent implements OnInit {
   submitted = false;
   pendingApproval = false;
   loading = false;
-  termoLoading = false;
+  termoLoading = true;
+  categoriasLoading = true;
+  categorias: Categoria[] = [];
   errorMessage = '';
   successMessage = '';
   termoError = '';
@@ -55,7 +57,7 @@ export class AnunciePageComponent implements OnInit {
 
   cadastroForm = this.fb.group({
     nomeFantasia: ['', [Validators.required, Validators.minLength(3)]],
-    categoria: ['', [Validators.required, Validators.minLength(2)]],
+    categoria: ['', [Validators.required]],
     nomeResponsavel: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
     telefone: ['', [Validators.required, Validators.pattern(/^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/)]],
@@ -70,6 +72,8 @@ export class AnunciePageComponent implements OnInit {
   private api = inject(ApiService);
   private termoService = inject(TermoAdesaoService);
   private trackingService = inject(TrackingService);
+  private categoriasData = inject(CategoriasData);
+  private platformId = inject(PLATFORM_ID);
 
   ngOnInit(): void {
     const route = this.router.url.split('?')[0];
@@ -78,7 +82,11 @@ export class AnunciePageComponent implements OnInit {
       title: 'Cadastro Gratuito de Fornecedores | Plano Free - Guia Noivas Piracicaba',
       description: 'Cadastre sua empresa gratuitamente no Plano Free do Guia Noivas Piracicaba. Envie seus dados, aceite os termos e inicie seu perfil de fornecedor.'
     });
-    this.carregarTermoVigente();
+
+    if (isPlatformBrowser(this.platformId)) {
+      this.carregarTermoVigente();
+      this.carregarCategorias();
+    }
   }
 
   onPhoneInput(event: Event): void {
@@ -262,6 +270,21 @@ export class AnunciePageComponent implements OnInit {
       error: () => {
         this.termoError = 'Erro ao carregar o termo de adesão.';
         this.termoLoading = false;
+      }
+    });
+  }
+
+  private carregarCategorias(): void {
+    this.categoriasLoading = true;
+    this.categoriasData.getAll().subscribe({
+      next: (cats: Categoria[]) => {
+        this.categorias = [...cats].sort((a, b) =>
+          (a.nome || '').localeCompare(b.nome || '', 'pt-BR', { sensitivity: 'base' })
+        );
+        this.categoriasLoading = false;
+      },
+      error: () => {
+        this.categoriasLoading = false;
       }
     });
   }

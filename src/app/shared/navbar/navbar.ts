@@ -26,8 +26,10 @@ export class NavbarComponent {
 
   constructor() {
     this.router.events
-      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe(() => this.closeMobileMenu());
   }
 

@@ -1,10 +1,11 @@
-import { Component, Output, EventEmitter, inject } from '@angular/core';
+import { Component, Output, EventEmitter, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon/icon';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { CidadeService } from '../../core/cidade.service';
 import { environment } from '../../../environments/environment';
 import { filter } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-navbar',
@@ -20,11 +21,13 @@ export class NavbarComponent {
   
   private cidadeService = inject(CidadeService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
   mobileMenuOpen = false;
 
   constructor() {
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.closeMobileMenu());
   }
 

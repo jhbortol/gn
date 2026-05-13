@@ -115,4 +115,32 @@ describe('TrackingService', () => {
       })
     );
   });
+
+  it('should track free signup funnel stages', () => {
+    service.trackFreeSignupFunnel('inicio', { formType: 'anuncio_free' });
+    service.trackFreeSignupFunnel('falha', { formType: 'anuncio_free', reason: 'DUPLICATE_EMAIL' });
+    service.trackFreeSignupFunnel('sucesso', { formType: 'anuncio_free', vendorId: 'forn-123' });
+
+    expect((window as any).dataLayer.push).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        event: 'free_signup_funnel',
+        funnel_stage: 'inicio',
+        form_type: 'anuncio_free'
+      })
+    );
+    expect((window as any).dataLayer.push).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        event: 'free_signup_funnel',
+        funnel_stage: 'falha',
+        reason: 'DUPLICATE_EMAIL'
+      })
+    );
+    expect((window as any).dataLayer.push).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        event: 'free_signup_funnel',
+        funnel_stage: 'sucesso',
+        vendor_id: 'forn-123'
+      })
+    );
+  });
 });

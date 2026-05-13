@@ -29,6 +29,7 @@ export class FornecedorPageComponent implements OnInit {
   selectedImage?: string;
   selectedImageIndex = 0;
   isPreviewMode = false;
+  isLoading = true;
   notFound = false;
 
   // Novos signals para tier logic
@@ -71,22 +72,24 @@ export class FornecedorPageComponent implements OnInit {
       this.metaTagService.applyMetadata(currentRoute);
     }
 
-    if (identifier) {
-      try {
-        // Use firstValueFrom to ensure the Observable completes before continuing
-        // This is critical for SSR to include meta tags in the rendered HTML
-        const f = await firstValueFrom(this.fornecedores.getById(identifier, this.isPreviewMode));
-        
-        // Validate publicado field if environment requires it
-        // Only enforce if FORNECEDOR_PUBLICADO is true (production) and not in preview mode
-        if (environment.FORNECEDOR_PUBLICADO === true && !this.isPreviewMode && !f.publicado) {
-          console.warn('Fornecedor não publicado acessado diretamente:', f.id);
-          this.notFound = true;
-          this.updateNotFoundMetaTags();
-          this.cdr.markForCheck();
-          return;
-        }
+    if (!identifier) {
+      this.setNotFoundState();
+      this.isLoading = false;
+      this.cdr.markForCheck();
+      return;
+    }
 
+    try {
+      // Use firstValueFrom to ensure the Observable completes before continuing
+      // This is critical for SSR to include meta tags in the rendered HTML
+      const f = await firstValueFrom(this.fornecedores.getById(identifier, this.isPreviewMode));
+
+      // Validate publicado field if environment requires it
+      // Only enforce if FORNECEDOR_PUBLICADO is true (production) and not in preview mode
+      if (environment.FORNECEDOR_PUBLICADO === true && !this.isPreviewMode && !f.publicado) {
+        console.warn('Fornecedor não publicado acessado diretamente:', f.id);
+        this.setNotFoundState();
+      } else {
         this.fornecedor = f;
 
         // 🔴 NOVO: Aplicar lógica tier
@@ -101,14 +104,19 @@ export class FornecedorPageComponent implements OnInit {
           vendorName: f.nome,
           vendorCategory: f.categoria
         });
-        this.cdr.markForCheck();
-      } catch (err) {
-        console.error('Error loading fornecedor:', err);
-        this.notFound = true;
-        this.updateNotFoundMetaTags();
-        this.cdr.markForCheck();
       }
+    } catch (err) {
+      console.error('Error loading fornecedor:', err);
+      this.setNotFoundState();
+    } finally {
+      this.isLoading = false;
+      this.cdr.markForCheck();
     }
+  }
+
+  private setNotFoundState(): void {
+    this.notFound = true;
+    this.updateNotFoundMetaTags();
   }
 
   private trackPageView(): void {
@@ -161,6 +169,12 @@ export class FornecedorPageComponent implements OnInit {
   }
 
   onWhatsAppClick() {
+    this.tracking.trackWhatsAppIntent('before_lead_form', {
+      vendorId: this.fornecedor?.id || '',
+      vendorName: this.fornecedor?.nome || '',
+      vendorCategory: this.fornecedor?.categoria
+    });
+
     this.tracking.trackContactClick('whatsapp', {
       vendorId: this.fornecedor?.id || '',
       vendorName: this.fornecedor?.nome || '',
@@ -195,6 +209,12 @@ export class FornecedorPageComponent implements OnInit {
    * Fecha o modal e abre o canal selecionado.
    */
   onContactLeadSubmitSuccess(leadId: number): void {
+    this.tracking.trackWhatsAppIntent('after_lead_form', {
+      vendorId: this.fornecedor?.id || '',
+      vendorName: this.fornecedor?.nome || '',
+      vendorCategory: this.fornecedor?.categoria
+    });
+
     this.showWhatsAppLeadModal.set(false);
     console.log('Lead WhatsApp enviado com sucesso:', leadId);
 

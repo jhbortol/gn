@@ -4,7 +4,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 
 import { FornecedorPageComponent } from './fornecedor-page';
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
@@ -298,6 +298,21 @@ describe('FornecedorPageComponent', () => {
 
             const bannerElement = fixture.nativeElement.querySelector('.preview-banner');
             expect(bannerElement).toBeFalsy();
+        });
+    });
+
+    describe('Loading State', () => {
+        it('should show loading placeholder and avoid not-found while loading supplier data', () => {
+            const pendingRequest$ = new Subject<Fornecedor>();
+            mockFornecedoresData.getById.and.returnValue(pendingRequest$.asObservable());
+            const updateNotFoundSpy = spyOn<any>(component, 'updateNotFoundMetaTags');
+
+            fixture.detectChanges();
+
+            const loadingPlaceholder = fixture.nativeElement.querySelector('.fornecedor-loading-placeholder');
+            expect(loadingPlaceholder).toBeTruthy();
+            expect(fixture.nativeElement.textContent).not.toContain('Fornecedor não encontrado');
+            expect(updateNotFoundSpy).not.toHaveBeenCalled();
         });
     });
 });

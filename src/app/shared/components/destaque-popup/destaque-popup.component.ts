@@ -18,7 +18,7 @@ import { CidadeService } from '../../../core/cidade.service';
 import { DestaqueSemana } from '../../../core/models/destaque-semana.model';
 
 const SESSION_KEY = 'destaque_popup_shown';
-const POPUP_DELAY_MS = 2000;
+const POPUP_DELAY_MS = 15000;
 const WHATSAPP_MESSAGE = 'Te achei no Guia Noivas Piracicaba, e quero mais informações';
 
 @Component({

@@ -1,5 +1,29 @@
 .container img{display:block}
 
+/* Loading placeholder to avoid not-found flash while supplier data is being fetched */
+.fornecedor-loading-placeholder {
+  display: grid;
+  gap: 16px;
+}
+
+.fornecedor-loading-card {
+  min-height: 220px;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 37%, #f3f4f6 63%);
+  background-size: 400% 100%;
+  animation: fornecedorLoadingPulse 1.4s ease infinite;
+}
+
+@keyframes fornecedorLoadingPulse {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
 /* Preview Mode Banner */
 .preview-banner {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

@@ -84,4 +84,63 @@ describe('TrackingService', () => {
       })
     );
   });
+
+  it('should track WhatsApp intent stages before and after lead form flow', () => {
+    const vendorData = {
+      vendorId: '1',
+      vendorName: 'Fornecedor Teste',
+      vendorCategory: 'Fotografia'
+    };
+
+    service.trackWhatsAppIntent('before_lead_form', vendorData);
+    service.trackWhatsAppIntent('after_lead_form', vendorData);
+
+    expect((window as any).dataLayer.push).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        event: 'whatsapp_intent',
+        intent_stage: 'before_lead_form',
+        vendor_id: '1',
+        vendor_name: 'Fornecedor Teste',
+        vendor_category: 'Fotografia'
+      })
+    );
+
+    expect((window as any).dataLayer.push).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        event: 'whatsapp_intent',
+        intent_stage: 'after_lead_form',
+        vendor_id: '1',
+        vendor_name: 'Fornecedor Teste',
+        vendor_category: 'Fotografia'
+      })
+    );
+  });
+
+  it('should track free signup funnel stages', () => {
+    service.trackFreeSignupFunnel('inicio', { formType: 'anuncio_free' });
+    service.trackFreeSignupFunnel('falha', { formType: 'anuncio_free', reason: 'DUPLICATE_EMAIL' });
+    service.trackFreeSignupFunnel('sucesso', { formType: 'anuncio_free', vendorId: 'forn-123' });
+
+    expect((window as any).dataLayer.push).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        event: 'free_signup_funnel',
+        funnel_stage: 'inicio',
+        form_type: 'anuncio_free'
+      })
+    );
+    expect((window as any).dataLayer.push).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        event: 'free_signup_funnel',
+        funnel_stage: 'falha',
+        reason: 'DUPLICATE_EMAIL'
+      })
+    );
+    expect((window as any).dataLayer.push).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        event: 'free_signup_funnel',
+        funnel_stage: 'sucesso',
+        vendor_id: 'forn-123'
+      })
+    );
+  });
 });

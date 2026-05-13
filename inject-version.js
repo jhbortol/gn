@@ -1,6 +1,6 @@
 /**
- * Script to inject build version and cache busting metadata into index.html
- * Runs AFTER build to ensure fresh builds clear client cache
+ * Script to inject build version and cache busting metadata into all prerendered index.html files.
+ * Runs AFTER build to ensure fresh builds clear client cache.
  * Usage: node inject-version.js
  */
 
@@ -10,7 +10,6 @@ const crypto = require('crypto');
 const { execSync } = require('child_process');
 
 const distPath = path.join(__dirname, 'dist', 'guia-noivas', 'browser');
-const indexPath = path.join(distPath, 'index.html');
 
 function generateBuildId() {
   try {
@@ -26,18 +25,29 @@ function generateBuildId() {
   }
 }
 
+function findAllIndexHtml(dir, results = []) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      findAllIndexHtml(fullPath, results);
+    } else if (entry.isFile() && entry.name === 'index.html') {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
+
 function injectVersion() {
   try {
-    if (!fs.existsSync(indexPath)) {
-      console.warn('⚠️  index.html not found at:', indexPath);
+    if (!fs.existsSync(distPath)) {
+      console.warn('⚠️  Build output not found at:', distPath);
       console.log('Build output might not exist yet. Skipping version injection.');
       return;
     }
 
     const buildId = generateBuildId();
     const timestamp = new Date().toISOString();
-    
-    let htmlContent = fs.readFileSync(indexPath, 'utf-8');
 
     // Inject build version meta tag before closing </head>
     const versionMeta = `  <!-- Build Version Info - Auto-injected by inject-version.js -->
@@ -51,12 +61,26 @@ function injectVersion() {
     console.log('📦 Build Version:', window.__BUILD_VERSION__);
   </script>`;
 
-    htmlContent = htmlContent.replace('</head>', `${versionMeta}\n</head>`);
+    const htmlFiles = findAllIndexHtml(distPath);
+    if (htmlFiles.length === 0) {
+      console.warn('⚠️  No index.html files found in:', distPath);
+      return;
+    }
 
-    fs.writeFileSync(indexPath, htmlContent, 'utf-8');
+    let injectedCount = 0;
+    for (const filePath of htmlFiles) {
+      let htmlContent = fs.readFileSync(filePath, 'utf-8');
+      if (htmlContent.includes('</head>') && !htmlContent.includes('name="build-version"')) {
+        htmlContent = htmlContent.replace('</head>', `${versionMeta}\n</head>`);
+        fs.writeFileSync(filePath, htmlContent, 'utf-8');
+        injectedCount++;
+      }
+    }
+
     console.log('✅ Version injected successfully!');
     console.log('   Build ID:', buildId);
     console.log('   Timestamp:', timestamp);
+    console.log(`   Injected into ${injectedCount} of ${htmlFiles.length} HTML files`);
   } catch (error) {
     console.error('❌ Error injecting version:', error.message);
     process.exit(1);

@@ -1,39 +1,74 @@
-<section class="container mx-auto px-4 py-12">
-  <div class="text-center mb-12">
-    <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-3">Categorias</h1>
-    <p class="text-gray-600 text-lg">Encontre os melhores profissionais para o seu casamento</p>
+<section class="container mx-auto px-4 py-6 md:py-8">
+  <div class="text-center mb-5 md:mb-7">
+    <h1 class="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-2">Categorias</h1>
+    <p class="text-gray-600 text-sm md:text-base">Encontre fornecedores em poucos toques.</p>
   </div>
-  <div *ngIf="categorias$ | async as categorias; else categoriasLoading" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+
+  <div class="mb-6">
+    <label for="categorias-busca" class="block text-sm font-semibold text-gray-800 mb-2">O que você procura?</label>
+    <div class="w-full bg-white rounded-xl border border-gray-200 px-3 py-2 flex items-center gap-2 shadow-sm">
+      <app-icon name="search" [size]="18" className="text-gray-400" aria-hidden="true"></app-icon>
+      <input
+        id="categorias-busca"
+        type="text"
+        [(ngModel)]="buscaTerm"
+        (keydown.enter)="buscar()"
+        placeholder="Buscar fornecedor ou categoria"
+        aria-label="Buscar fornecedor ou categoria"
+        class="w-full p-1 outline-none text-gray-700 text-sm" />
+      <button (click)="buscar()" class="bg-rose-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-rose-700 transition">
+        Buscar
+      </button>
+    </div>
+    <div class="mt-3 text-right" *ngIf="showSearchResults">
+      <button (click)="clearBusca()" aria-label="Limpar resultados da busca" class="text-xs text-gray-500 hover:text-rose-600 transition-colors">Limpar busca</button>
+    </div>
+  </div>
+
+  <section *ngIf="showSearchResults" class="mb-7 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+    <div *ngIf="categoriasBusca$ | async as categoriasBusca" class="mb-4">
+      <h2 class="text-sm font-bold text-gray-800 mb-2">Categorias encontradas</h2>
+      <div class="flex flex-wrap gap-2">
+        <a *ngFor="let categoria of categoriasBusca"
+          [routerLink]="buildUrl(['categorias', categoria.slug])"
+          class="px-3 py-1.5 rounded-full border border-rose-200 text-rose-700 bg-rose-50 text-xs font-semibold hover:bg-rose-100 transition-colors">
+          {{ categoria.nome }}
+        </a>
+        <p *ngIf="categoriasBusca.length === 0" class="text-xs text-gray-500">Nenhuma categoria encontrada.</p>
+      </div>
+    </div>
+
+    <div *ngIf="fornecedoresBusca$ | async as fornecedoresBusca">
+      <h2 class="text-sm font-bold text-gray-800 mb-2">Fornecedores encontrados</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        <a *ngFor="let fornecedor of fornecedoresBusca"
+          [routerLink]="buildUrl(['fornecedores', fornecedor.slug])"
+          (click)="onFornecedorSearchClick(fornecedor)"
+          class="rounded-lg border border-gray-100 p-3 hover:border-rose-200 hover:shadow-sm transition-all">
+          <div class="text-xs uppercase tracking-wide text-rose-600 font-semibold mb-1">{{ fornecedor.categoria?.nome || 'Fornecedor' }}</div>
+          <div class="text-sm font-bold text-gray-900">{{ fornecedor.nome }}</div>
+          <div class="text-xs text-gray-500 mt-1">{{ fornecedor.cidade || 'Piracicaba' }}</div>
+        </a>
+      </div>
+      <p *ngIf="fornecedoresBusca.length === 0" class="text-xs text-gray-500">Nenhum fornecedor encontrado.</p>
+    </div>
+  </section>
+
+  <div *ngIf="categorias$ | async as categorias; else categoriasLoading" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
     <div *ngFor="let categoria of categorias" 
-         class="bg-white rounded-2xl shadow-md hover:shadow-2xl border border-gray-100 flex flex-col transition-all duration-300 hover:-translate-y-2 overflow-hidden group h-full">
-      <div class="h-48 overflow-hidden">
-        <img [ngSrc]="resolveImage(categoria.imageUrl, 'assets/categorias/placeholder.jpg')" loading="lazy" decoding="async" width="240" height="180"
+         class="bg-white rounded-xl shadow-sm hover:shadow-lg border border-gray-100 flex flex-col transition-all duration-300 hover:-translate-y-1 overflow-hidden group h-full">
+      <div class="h-32 md:h-36 overflow-hidden">
+        <img [ngSrc]="resolveImage(categoria.imageUrl, 'assets/categorias/placeholder.jpg')" loading="lazy" decoding="async" width="220" height="140"
              [alt]="categoria.nome" 
              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
       </div>
-      <div class="p-6 flex flex-col flex-1">
-        <h3 class="font-serif font-bold text-2xl text-rose-700 mb-2">{{ categoria.nome }}</h3>
-        <p class="text-gray-600 mb-4 flex-grow" *ngIf="categoria.descricao">{{ categoria.descricao }}</p>
-        <div *ngIf="categoria.vitrineSuppliers && categoria.vitrineSuppliers.length > 0" class="mb-4 min-h-[80px]">
-          <div class="flex items-center font-semibold text-[13px] tracking-wide text-amber-500 uppercase mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.966a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.049 9.393c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.966z"/></svg>
-            DESTAQUES
-          </div>
-          <ul class="space-y-1">
-            <li *ngFor="let fornecedor of categoria.vitrineSuppliers" class="flex items-start text-sm">
-              <span class="mt-[6px] w-2 h-2 rounded-full bg-rose-500 inline-block mr-2"></span>
-                <a [routerLink]="buildUrl(['fornecedores', fornecedor.slug])" 
-                 [attr.data-event-category]="'Navigation'"
-                 [attr.data-event-action]="'Click Destaque - Categoria'"
-                 [attr.data-vendor-id]="fornecedor.id"
-                 [attr.data-vendor-name]="fornecedor.nome"
-                 [attr.data-vendor-category]="categoria.nome"
-                 class="text-gray-800 hover:text-rose-600 transition-colors">{{ fornecedor.nome }}</a>
-            </li>
-          </ul>
-        </div>
+      <div class="p-4 flex flex-col flex-1">
+        <h3 class="font-serif font-bold text-xl text-rose-700 mb-1">{{ categoria.nome }}</h3>
+        <p class="text-xs text-gray-500 mb-3">
+          {{ categoria.totalSuppliers || getSupplierCountFromVitrine(categoria.vitrineSuppliers) }} fornecedores disponíveis
+        </p>
           <a [routerLink]="buildUrl(['categorias', categoria.slug])" 
-            class="mt-auto block px-6 py-3 border border-rose-400 text-rose-600 bg-white rounded-lg font-semibold hover:bg-rose-50 transition-all duration-300 text-center shadow-sm hover:shadow-md">
+            class="mt-auto block px-4 py-2 border border-rose-400 text-rose-600 bg-white rounded-lg font-semibold hover:bg-rose-50 transition-all duration-300 text-center text-sm shadow-sm hover:shadow-md">
           Ver todos fornecedores
         </a>
       </div>
@@ -42,12 +77,11 @@
 </section>
 
 <ng-template #categoriasLoading>
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-    <div *ngFor="let sk of [1,2,3,4,5,6]" class="bg-white rounded-2xl border border-gray-100 p-6 animate-pulse h-full">
-      <div class="h-48 bg-gray-200 rounded mb-4"></div>
-      <div class="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
-      <div class="h-4 bg-gray-100 rounded w-full mb-2"></div>
-      <div class="h-4 bg-gray-100 rounded w-5/6 mb-4"></div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+    <div *ngFor="let sk of [1,2,3,4,5,6]" class="bg-white rounded-xl border border-gray-100 p-4 animate-pulse h-full">
+      <div class="h-32 md:h-36 bg-gray-200 rounded mb-3"></div>
+      <div class="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
+      <div class="h-3 bg-gray-100 rounded w-2/3 mb-3"></div>
       <div class="mt-auto h-10 bg-gray-200 rounded"></div>
     </div>
   </div>

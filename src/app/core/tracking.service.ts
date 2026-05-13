@@ -478,6 +478,24 @@ export class TrackingService {
   }
 
   /**
+   * Rastreia etapas do funil de cadastro gratuito de fornecedor (Plano Free)
+   */
+  trackFreeSignupFunnel(
+    stage: 'inicio' | 'falha' | 'sucesso',
+    context?: { formType?: string; vendorId?: string; reason?: string }
+  ) {
+    if (typeof window !== 'undefined' && (window as any).dataLayer) {
+      (window as any).dataLayer.push({
+        event: 'free_signup_funnel',
+        funnel_stage: stage,
+        form_type: context?.formType || 'anuncio_free',
+        vendor_id: context?.vendorId,
+        reason: context?.reason
+      });
+    }
+  }
+
+  /**
    * Rastreia visualização de página (SPA pageview) para Google Analytics via GTM
    */
   trackPageView(pagePath: string, pageTitle?: string) {

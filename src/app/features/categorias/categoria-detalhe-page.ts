@@ -11,6 +11,7 @@ import { MetaTagService } from '../../core/meta-tag.service';
 import { environment } from '../../../environments/environment';
 import { LeadFormComponent } from '../fornecedores/lead-form.component';
 import { PlanLevel } from '../../core/models/tier-system.model';
+import { TrackingService } from '../../core/tracking.service';
 
 @Component({
   selector: 'app-categoria-detalhe-page',
@@ -29,6 +30,7 @@ export class CategoriaDetalhePageComponent implements OnInit {
    * Zombie (planLevel: -2) é filtrado localmente para garantia extra.
    */
   publicFornecedores$: Observable<FornecedorListDto[]>;
+  fornecedorCount$: Observable<number>;
   destaquesCategoria$: Observable<FornecedorListDto[]>;
 
   // Expor enum para o template
@@ -47,6 +49,7 @@ export class CategoriaDetalhePageComponent implements OnInit {
     private router: Router,
     private fornecedores: FornecedoresData,
     private categorias: CategoriasData,
+    private tracking: TrackingService,
     private metaTagService: MetaTagService,
     private title: Title,
     private meta: Meta
@@ -65,6 +68,10 @@ export class CategoriaDetalhePageComponent implements OnInit {
     this.categoriaNome$ = this.categoriaId$.pipe(
       switchMap((slug: string) => this.categorias.getBySlug(slug)),
       map(categoria => categoria?.nome || '')
+    );
+
+    this.fornecedorCount$ = this.publicFornecedores$.pipe(
+      map(list => list.length)
     );
 
     this.destaquesCategoria$ = this.publicFornecedores$.pipe(
@@ -176,6 +183,18 @@ export class CategoriaDetalhePageComponent implements OnInit {
   openWhatsAppModal(fornecedor: FornecedorListDto): void {
     const url = this.getWhatsAppLinkFor(fornecedor);
     if (!url || url === '#') return;
+
+    this.tracking.trackWhatsAppIntent('before_lead_form', {
+      vendorId: fornecedor.id || '',
+      vendorName: fornecedor.nome || '',
+      vendorCategory: fornecedor.categoria?.nome || ''
+    });
+    this.tracking.trackContactClick('whatsapp', {
+      vendorId: fornecedor.id || '',
+      vendorName: fornecedor.nome || '',
+      vendorCategory: fornecedor.categoria?.nome || ''
+    });
+
     this.selectedFornecedorForModal.set(fornecedor);
     this.pendingWhatsAppUrl.set(url);
     this.isVitrineModal.set(true);
@@ -208,6 +227,14 @@ export class CategoriaDetalhePageComponent implements OnInit {
   onContactModalLeadSuccess(leadId: number): void {
     this.showContactModal.set(false);
     const url = this.pendingWhatsAppUrl();
+    const fornecedor = this.selectedFornecedorForModal();
+    if (url && fornecedor) {
+      this.tracking.trackWhatsAppIntent('after_lead_form', {
+        vendorId: fornecedor.id || '',
+        vendorName: fornecedor.nome || '',
+        vendorCategory: fornecedor.categoria?.nome || ''
+      });
+    }
     if (url && typeof window !== 'undefined') {
       window.open(url, '_blank', 'noopener,noreferrer');
     }
@@ -215,6 +242,21 @@ export class CategoriaDetalhePageComponent implements OnInit {
     this.pendingWhatsAppUrl.set('');
   }
 
+  navigateToFornecedor(fornecedor: FornecedorListDto): void {
+    this.tracking.trackVendorView({
+      vendorId: fornecedor.id || '',
+      vendorName: fornecedor.nome || '',
+      vendorCategory: fornecedor.categoria?.nome || ''
+    });
+    this.router.navigateByUrl(this.buildUrl(['fornecedores', fornecedor.slug]));
+  }
+
+  onCardKeydown(event: KeyboardEvent, fornecedor: FornecedorListDto): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.navigateToFornecedor(fornecedor);
+    }
+  }
 
   resolveImage(url?: string | null, fallback: string = 'assets/fornecedores/placeholder.jpg'): string {
     if (!url) return fallback;

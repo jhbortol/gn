@@ -13,78 +13,60 @@
   </div>
 
   <!-- Header (sem dropdown de ordenação - API já ordena corretamente) -->
-  <div class="mb-6">
-    <h1 class="text-3xl font-serif font-bold text-gray-900 mb-1">{{ categoriaNome$ | async }}</h1>
-    <p class="text-sm text-gray-600">Mostrando os melhores profissionais para o seu evento.</p>
+  <div class="mb-5">
+    <h1 class="text-3xl font-serif font-bold text-gray-900 mb-1">
+      {{ categoriaNome$ | async }}
+      <span *ngIf="fornecedorCount$ | async as total" class="text-base font-sans text-gray-500">({{ total }})</span>
+    </h1>
+    <p class="text-sm text-gray-600">
+      <ng-container *ngIf="fornecedorCount$ | async as total">{{ total }} fornecedores disponíveis</ng-container>
+    </p>
   </div>
 
   <!-- Grid de Fornecedores (ordenado pela API: Vitrine → Free → Low) -->
   <h2 class="sr-only">Lista de Fornecedores</h2>
   <div *ngIf="publicFornecedores$ | async as fornecedores; else fornecedoresLoading"
     class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-    <div *ngFor="let fornecedor of fornecedores"
+    <article *ngFor="let fornecedor of fornecedores"
       class="rounded-lg shadow-sm hover:shadow-lg border flex flex-col overflow-hidden transition-all duration-300 group relative"
+      role="link"
+      tabindex="0"
+      [attr.aria-label]="fornecedor.nome + ' - ' + (fornecedor.categoria?.nome || 'Fornecedor') + (fornecedor.cidade ? ' em ' + fornecedor.cidade : '')"
       [class.border-amber-400]="fornecedor.planLevel === 1" [class.border-2]="fornecedor.planLevel === 1"
       [class.border-gray-200]="fornecedor.planLevel !== 1" [class.shadow-md]="fornecedor.planLevel === 1"
       [class.bg-gradient-to-br]="fornecedor.planLevel === 1" [class.from-amber-50]="fornecedor.planLevel === 1"
-      [class.to-orange-50]="fornecedor.planLevel === 1" [class.bg-white]="fornecedor.planLevel !== 1">
-
-      <!-- Favorite Icon -->
-      <button
-        class="absolute top-3 right-3 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-rose-50 transition-colors"
-        aria-label="Adicionar aos favoritos">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 hover:text-rose-500" fill="none"
-          viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-        </svg>
-      </button>
+      [class.to-orange-50]="fornecedor.planLevel === 1" [class.bg-white]="fornecedor.planLevel !== 1"
+      [attr.data-event-category]="'Navigation'"
+      [attr.data-event-action]="'Click Card - Lista Categoria'"
+      [attr.data-vendor-id]="fornecedor.id"
+      [attr.data-vendor-name]="fornecedor.nome"
+      [attr.data-vendor-category]="fornecedor.categoria?.nome"
+      (click)="navigateToFornecedor(fornecedor)"
+      (keydown)="onCardKeydown($event, fornecedor)">
 
       <!-- Imagem -->
-      <div class="relative h-48 overflow-hidden">
+      <div class="relative h-40 overflow-hidden">
         <img
           [ngSrc]="resolveImage(fornecedor.primaryImage?.url || fornecedor.imagens?.[0]?.url, 'assets/fornecedores/placeholder.jpg')"
           loading="lazy" decoding="async" width="300" height="220" [alt]="fornecedor.nome"
           class="w-full h-full object-cover" />
         <!-- Vitrine Badge (planLevel === 1) -->
         <span *ngIf="fornecedor.planLevel === 1"
-          class="absolute top-3 left-3 text-[10px] bg-amber-500 text-white px-2 py-1 rounded font-bold shadow-md uppercase flex items-center gap-1">
+          class="absolute top-2 left-2 text-[10px] bg-amber-500 text-white px-2 py-1 rounded font-bold shadow-sm uppercase flex items-center gap-1 z-20">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
             <path
               d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.966a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.049 9.393c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.966z" />
           </svg>
           VITRINE
         </span>
-        <!-- Verified Badge (old seloFornecedor field, keep for backward compatibility) -->
-        <span *ngIf="fornecedor.seloFornecedor && fornecedor.planLevel !== 1"
-          class="absolute top-3 left-3 text-[10px] bg-teal-600 text-white px-2 py-1 rounded font-bold shadow-md uppercase flex items-center gap-1">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd"
-              d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-              clip-rule="evenodd" />
-          </svg>
-          VERIFICADO
-        </span>
       </div>
 
       <!-- Content -->
-      <div class="p-4 flex flex-col flex-1">
-        <!-- Categoria Badge -->
-        <div class="text-[11px] text-rose-600 font-bold uppercase mb-2">{{fornecedor.categoria?.nome || 'FOTOGRAFIA'}}
-        </div>
-
-        <!-- Nome com ícone de estrela para Vitrine -->
-        <div class="flex items-center gap-2 mb-2">
-          <h2 class="font-serif font-bold text-lg text-gray-900">{{fornecedor.nome}}</h2>
-          <svg *ngIf="fornecedor.planLevel === 1" xmlns="http://www.w3.org/2000/svg"
-            class="w-4 h-4 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.966a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.049 9.393c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.966z" />
-          </svg>
-        </div>
+      <div class="p-3 flex flex-col flex-1">
+        <p class="font-serif font-bold text-base text-gray-900 mb-1 line-clamp-2">{{fornecedor.nome}}</p>
 
         <!-- Location -->
-        <div class="flex items-center gap-1 text-sm text-gray-600 mb-2" *ngIf="fornecedor.cidade">
+        <div class="flex items-center gap-1 text-sm text-gray-600 mb-3" *ngIf="fornecedor.cidade">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -93,25 +75,12 @@
           <span class="text-xs">{{fornecedor.cidade}}</span>
         </div>
 
-        <!-- Description Preview -->
-        <p class="text-sm text-gray-600 mb-3 line-clamp-2" *ngIf="fornecedor.descricao">{{fornecedor.descricao}}</p>
-
-        <!-- Rating -->
-        <div class="flex items-center gap-1 mb-3" *ngIf="fornecedor.rating">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-yellow-500" fill="currentColor"
-            viewBox="0 0 20 20">
-            <path
-              d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.966a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.049 9.393c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.966z" />
-          </svg>
-          <span class="text-sm font-semibold text-gray-900">{{fornecedor.rating}}</span>
-        </div>
-
         <!-- Action Buttons -->
         <div class="mt-auto flex flex-col gap-2">
           <!-- WhatsApp button for Vitrine suppliers -->
           <button *ngIf="fornecedor.planLevel === PlanLevel.Vitrine && (fornecedor.telefone || fornecedor.whatsAppUrl)"
             type="button"
-            (click)="openWhatsAppModal(fornecedor)"
+            (click)="$event.stopPropagation(); $event.preventDefault(); openWhatsAppModal(fornecedor)"
             class="block w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md text-sm font-semibold transition-colors text-center flex items-center justify-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
@@ -121,19 +90,13 @@
           <!-- Contact button for non-Vitrine suppliers -->
           <button *ngIf="fornecedor.planLevel !== PlanLevel.Vitrine"
             type="button"
-            (click)="openContactLeadModal(fornecedor)"
+            (click)="$event.stopPropagation(); $event.preventDefault(); openContactLeadModal(fornecedor)"
             class="block w-full px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-sm font-semibold transition-colors text-center">
             Entrar em Contato
           </button>
-          <a [routerLink]="buildUrl(['fornecedores', fornecedor.slug])" [attr.data-event-category]="'Navigation'"
-            [attr.data-event-action]="'Click Ver Perfil - Lista'" [attr.data-vendor-id]="fornecedor.id"
-            [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria?.nome"
-            class="block w-full px-4 py-2 border border-rose-400 text-rose-600 bg-white rounded-md text-sm font-semibold hover:bg-rose-50 transition-colors text-center">
-            Ver Perfil
-          </a>
         </div>
       </div>
-    </div>
+    </article>
   </div>
 </section>
 

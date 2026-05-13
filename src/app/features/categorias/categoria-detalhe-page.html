@@ -29,7 +29,7 @@
     class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
     <article *ngFor="let fornecedor of fornecedores"
       class="rounded-lg shadow-sm hover:shadow-lg border flex flex-col overflow-hidden transition-all duration-300 group relative"
-      role="button"
+      role="link"
       tabindex="0"
       [attr.aria-label]="fornecedor.nome + ' - ' + (fornecedor.categoria?.nome || 'Fornecedor') + (fornecedor.cidade ? ' em ' + fornecedor.cidade : '')"
       [class.border-amber-400]="fornecedor.planLevel === 1" [class.border-2]="fornecedor.planLevel === 1"

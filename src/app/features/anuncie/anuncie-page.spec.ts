@@ -53,6 +53,7 @@ describe('AnunciePageComponent', () => {
   it('should require terms acceptance before submit', async () => {
     component.cadastroForm.patchValue({
       nomeFantasia: 'Studio X',
+      categoria: 'Fotografia',
       nomeResponsavel: 'Maria Silva',
       email: 'maria@email.com',
       telefone: '(19) 99999-9999',
@@ -69,6 +70,7 @@ describe('AnunciePageComponent', () => {
   it('should submit payload with free plan and legal acceptance metadata', async () => {
     component.cadastroForm.patchValue({
       nomeFantasia: 'Studio X',
+      categoria: 'Fotografia',
       nomeResponsavel: 'Maria Silva',
       email: 'maria@email.com',
       telefone: '(19) 99999-9999',
@@ -84,10 +86,29 @@ describe('AnunciePageComponent', () => {
     expect(payload.planLevel).toBe('Free');
     expect(payload.aceitaTermos).toBeTrue();
     expect(payload.termoHash).toBe('hash-calculado');
+    expect(payload.categoria).toBe('Fotografia');
+    expect(payload.empresa.categoria).toBe('Fotografia');
     expect(payload.contato.telefone).toBe('19999999999');
     expect(payload.empresa.cnpjCpf).toBe('11444777000161');
     expect(payload.password).toBe('Senha123!');
     expect(component.submitted).toBeTrue();
+  });
+
+  it('should require categoria before submit', async () => {
+    component.cadastroForm.patchValue({
+      nomeFantasia: 'Studio X',
+      categoria: '',
+      nomeResponsavel: 'Maria Silva',
+      email: 'maria@email.com',
+      telefone: '(19) 99999-9999',
+      cnpjCpf: '11.444.777/0001-61',
+      aceitaTermos: true
+    });
+
+    await component.onSubmit();
+
+    expect(apiSpy.post).not.toHaveBeenCalled();
+    expect(component.getFieldError('categoria')).toContain('obrigatório');
   });
 
   it('should map duplicate email API errors to email field', async () => {
@@ -95,6 +116,7 @@ describe('AnunciePageComponent', () => {
 
     component.cadastroForm.patchValue({
       nomeFantasia: 'Studio X',
+      categoria: 'Fotografia',
       nomeResponsavel: 'Maria Silva',
       email: 'maria@email.com',
       telefone: '(19) 99999-9999',

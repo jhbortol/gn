@@ -28,6 +28,12 @@
       </div>
 
       <div>
+        <label class="block mb-2 text-sm font-semibold text-gray-800">Categoria *</label>
+        <input type="text" formControlName="categoria" placeholder="Ex: Fotografia, Buffet, Cerimonial..." class="w-full rounded px-3 py-2 border border-gray-300" />
+        <p *ngIf="getFieldError('categoria')" class="text-xs text-red-600 mt-1">{{ getFieldError('categoria') }}</p>
+      </div>
+
+      <div>
         <label class="block mb-2 text-sm font-semibold text-gray-800">Responsável *</label>
         <input type="text" formControlName="nomeResponsavel" placeholder="Nome completo" class="w-full rounded px-3 py-2 border border-gray-300" />
         <p *ngIf="getFieldError('nomeResponsavel')" class="text-xs text-red-600 mt-1">{{ getFieldError('nomeResponsavel') }}</p>

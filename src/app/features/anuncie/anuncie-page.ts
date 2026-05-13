@@ -12,12 +12,13 @@ import { firstValueFrom } from 'rxjs';
 
 interface CadastroFreePayload {
   // Campos estruturados do contrato alvo
-  empresa: { nomeFantasia: string; cnpjCpf: string };
+  empresa: { nomeFantasia: string; cnpjCpf: string; categoria: string };
   responsavel: { nome: string };
   contato: { email: string; telefone: string };
   credenciais?: { senha: string };
   // Campos flat legados: manter até backend concluir contrato unificado
   nomeFantasia: string;
+  categoria: string;
   nomeResponsavel: string;
   cnpjCpf: string;
   email: string;
@@ -54,6 +55,7 @@ export class AnunciePageComponent implements OnInit {
 
   cadastroForm = this.fb.group({
     nomeFantasia: ['', [Validators.required, Validators.minLength(3)]],
+    categoria: ['', [Validators.required, Validators.minLength(2)]],
     nomeResponsavel: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
     telefone: ['', [Validators.required, Validators.pattern(/^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/)]],
@@ -139,13 +141,15 @@ export class AnunciePageComponent implements OnInit {
       const telefone = (raw.telefone || '').replace(/\D/g, '');
       const senha = (raw.senha || '').trim();
       const email = (raw.email || '').trim().toLowerCase();
+      const categoria = (raw.categoria || '').trim();
       const dataAceite = new Date().toISOString();
 
       const payload: CadastroFreePayload = {
         // Contrato estruturado principal do novo endpoint de cadastro free
         empresa: {
           nomeFantasia: (raw.nomeFantasia || '').trim(),
-          cnpjCpf
+          cnpjCpf,
+          categoria
         },
         responsavel: {
           nome: (raw.nomeResponsavel || '').trim()
@@ -157,6 +161,7 @@ export class AnunciePageComponent implements OnInit {
         // TODO(backend-contract): remover campos flat após unificação definitiva do endpoint /fornecedores/cadastro-free
         // Campos flat mantidos temporariamente para compatibilidade com contratos legados
         nomeFantasia: (raw.nomeFantasia || '').trim(),
+        categoria,
         nomeResponsavel: (raw.nomeResponsavel || '').trim(),
         cnpjCpf,
         email,

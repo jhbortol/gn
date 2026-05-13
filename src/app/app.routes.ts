@@ -54,7 +54,7 @@ export const routes: Routes = [
 			},
 			{
 				path: 'anuncie',
-				loadChildren: () => import('./features/anuncie/anuncie-module').then(m => m.AnuncieModule)
+				loadComponent: () => import('./features/anuncie/anuncie-page').then(m => m.AnunciePageComponent)
 			},
 			{
 				path: 'contato',

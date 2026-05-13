@@ -9,6 +9,7 @@ import { ApiService } from '../../core/api.service';
 import { TermoAdesaoService } from '../../core/services/termo-adesao.service';
 import { TrackingService } from '../../core/tracking.service';
 import { MetaTagService } from '../../core/meta-tag.service';
+import { CategoriasData } from '../categorias/services/categorias-data';
 
 describe('AnunciePageComponent', () => {
   let component: AnunciePageComponent;
@@ -17,17 +18,22 @@ describe('AnunciePageComponent', () => {
   let termoSpy: jasmine.SpyObj<TermoAdesaoService>;
   let trackingSpy: jasmine.SpyObj<TrackingService>;
   let metaSpy: jasmine.SpyObj<MetaTagService>;
+  let categoriasSpy: jasmine.SpyObj<CategoriasData>;
 
   beforeEach(async () => {
     apiSpy = jasmine.createSpyObj('ApiService', ['post']);
     termoSpy = jasmine.createSpyObj('TermoAdesaoService', ['carregarTermo', 'calcularHashTermo', 'validarHash']);
     trackingSpy = jasmine.createSpyObj('TrackingService', ['trackFormSubmit', 'trackFreeSignupFunnel']);
     metaSpy = jasmine.createSpyObj('MetaTagService', ['applyMetadata']);
+    categoriasSpy = jasmine.createSpyObj('CategoriasData', ['getAll']);
 
     termoSpy.carregarTermo.and.returnValue(of({ termo: { texto: 'Termo teste', hash: 'abc123' } } as any));
     termoSpy.validarHash.and.resolveTo(true);
     termoSpy.calcularHashTermo.and.resolveTo('hash-calculado');
     apiSpy.post.and.returnValue(of({ fornecedorId: 'forn-1', status: 'SUCESSO' }));
+    categoriasSpy.getAll.and.returnValue(of([
+      { id: 'fotografia', nome: 'Fotografia', slug: 'fotografia', descricao: null, imageId: null, imageUrl: null }
+    ] as any));
 
     await TestBed.configureTestingModule({
       imports: [AnunciePageComponent],
@@ -37,7 +43,8 @@ describe('AnunciePageComponent', () => {
         { provide: ApiService, useValue: apiSpy },
         { provide: TermoAdesaoService, useValue: termoSpy },
         { provide: TrackingService, useValue: trackingSpy },
-        { provide: MetaTagService, useValue: metaSpy }
+        { provide: MetaTagService, useValue: metaSpy },
+        { provide: CategoriasData, useValue: categoriasSpy }
       ]
     }).compileComponents();
 

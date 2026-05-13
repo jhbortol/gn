@@ -29,6 +29,7 @@ export class CategoriaDetalhePageComponent implements OnInit {
    * Zombie (planLevel: -2) é filtrado localmente para garantia extra.
    */
   publicFornecedores$: Observable<FornecedorListDto[]>;
+  fornecedorCount$: Observable<number>;
   destaquesCategoria$: Observable<FornecedorListDto[]>;
 
   // Expor enum para o template
@@ -65,6 +66,10 @@ export class CategoriaDetalhePageComponent implements OnInit {
     this.categoriaNome$ = this.categoriaId$.pipe(
       switchMap((slug: string) => this.categorias.getBySlug(slug)),
       map(categoria => categoria?.nome || '')
+    );
+
+    this.fornecedorCount$ = this.publicFornecedores$.pipe(
+      map(list => list.length)
     );
 
     this.destaquesCategoria$ = this.publicFornecedores$.pipe(

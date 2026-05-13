@@ -46,7 +46,8 @@ Accept: application/json
 {
   "empresa": {
     "nomeFantasia": "Studio Bella Noiva",
-    "cnpjCpf": "12345678000190"
+    "cnpjCpf": "12345678000190",
+    "categoria": "Fotografia"
   },
   "responsavel": {
     "nome": "Maria Silva"
@@ -59,6 +60,7 @@ Accept: application/json
     "senha": "Senha123!"
   },
   "nomeFantasia": "Studio Bella Noiva",
+  "categoria": "Fotografia",
   "nomeResponsavel": "Maria Silva",
   "cnpjCpf": "12345678000190",
   "email": "contato@studio.com.br",
@@ -82,6 +84,7 @@ Accept: application/json
 | Campo | Regra |
 |---|---|
 | `nomeFantasia` | obrigatório, mínimo 3 caracteres |
+| `categoria` / `empresa.categoria` | obrigatório, mínimo 2 caracteres |
 | `nomeResponsavel` / `responsavel.nome` | obrigatório, mínimo 3 caracteres |
 | `email` / `contato.email` | obrigatório, formato válido, normalizar para lowercase |
 | `telefone` / `contato.telefone` | obrigatório, 10-11 dígitos numéricos |

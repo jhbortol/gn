@@ -11,10 +11,12 @@ import { TrackingService } from '../../core/tracking.service';
 import { firstValueFrom } from 'rxjs';
 
 interface CadastroFreePayload {
+  // Campos estruturados do contrato alvo
   empresa: { nomeFantasia: string; cnpjCpf: string };
   responsavel: { nome: string };
   contato: { email: string; telefone: string };
   credenciais?: { senha: string };
+  // Campos flat legados: manter até backend concluir contrato unificado
   nomeFantasia: string;
   nomeResponsavel: string;
   cnpjCpf: string;
@@ -123,12 +125,12 @@ export class AnunciePageComponent implements OnInit {
 
     try {
       if (!this.termoHashVigente) {
-        throw { error: { codigo: 'HASH_INVALIDO' } };
+        throw this.criarErroApi('HASH_INVALIDO');
       }
 
       const hashValido = await this.termoService.validarHash(this.termoConteudo, this.termoHashVigente);
       if (!hashValido) {
-        throw { error: { codigo: 'HASH_INVALIDO' } };
+        throw this.criarErroApi('HASH_INVALIDO');
       }
 
       const termoHash = await this.termoService.calcularHashTermo(this.termoConteudo);
@@ -152,6 +154,7 @@ export class AnunciePageComponent implements OnInit {
           email,
           telefone
         },
+        // TODO(backend-contract): remover campos flat após unificação definitiva do endpoint /fornecedores/cadastro-free
         // Campos flat mantidos temporariamente para compatibilidade com contratos legados
         nomeFantasia: (raw.nomeFantasia || '').trim(),
         nomeResponsavel: (raw.nomeResponsavel || '').trim(),
@@ -165,6 +168,7 @@ export class AnunciePageComponent implements OnInit {
       };
 
       if (senha) {
+        // TODO(backend-contract): remover password legado quando backend consumir apenas credenciais.senha
         // Senha no bloco de credenciais e também no campo legado enquanto o backend unifica contrato
         payload.credenciais = { senha };
         payload.password = senha;
@@ -231,10 +235,17 @@ export class AnunciePageComponent implements OnInit {
   }
 
   private carregarTermoVigente(): void {
+    type TermoApiResponse = {
+      termo?: { conteudo?: string; texto?: string; hash?: string };
+      conteudo?: string;
+      texto?: string;
+      hash?: string;
+    };
+
     this.termoLoading = true;
     this.termoError = '';
     this.termoService.carregarTermo('ADESAO').subscribe({
-      next: (response: any) => {
+      next: (response: TermoApiResponse) => {
         const payload = response?.termo ?? response;
         this.termoConteudo = payload?.conteudo ?? payload?.texto ?? '';
         this.termoHashVigente = payload?.hash ?? '';
@@ -261,6 +272,7 @@ export class AnunciePageComponent implements OnInit {
 
   private mapearErroApi(err: any): { mensagem: string; campo?: string; codigo: string } {
     const codigo = String(
+      err?.apiCode ||
       err?.error?.codigo ||
       err?.error?.error ||
       err?.error?.code ||
@@ -313,6 +325,12 @@ export class AnunciePageComponent implements OnInit {
     resto = (soma * 10) % 11;
     if (resto === 10 || resto === 11) resto = 0;
     return resto === parseInt(cpf.substring(10, 11), 10);
+  }
+
+  private criarErroApi(codigo: string): Error {
+    const error = new Error(codigo) as Error & { apiCode: string };
+    error.apiCode = codigo;
+    return error;
   }
 
   private validarCnpj(cnpj: string): boolean {

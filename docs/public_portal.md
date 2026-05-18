@@ -266,7 +266,7 @@ A experiência visual deve deixar **muito claro** qual fornecedor é Vitrine vs.
 | **Selo/Badge** | Nenhum | Nenhum | ✅ Badge destacado "Fornecedor Verificado" ou "Vitrine" |
 | **Borda do Card** | Cinza claro (1px) | Cinza claro (1px) | ✅ Dourada ou azul (2-3px) com sombra forte |
 | **Ícone de Destaque** | Nenhum | Nenhum | ✅ Coroa ou estrela (16-24px) ao lado do nome |
-| **Botões de Contato** | ❌ Não exibir | ❌ Não exibir | ✅ WhatsApp, Instagram, Facebook (com background) |
+| **Botões de Contato** | ⚠️ Exibir apenas botão WhatsApp-isca (abre modal de captura, sem link direto) | ⚠️ Exibir apenas botão WhatsApp-isca (abre modal de captura, sem link direto) | ✅ WhatsApp, Instagram, Facebook (com background e links diretos) |
 | **Telefone** | Texto simples, sem link | Texto simples, sem link | ✅ Link clicável com `tel:` |
 | **Background do Card** | Branco | Branco | ✅ Gradiente suave ou background com cor de marca |
 | **Posicionamento** | Padrão | Padrão | ✅ "Destaque" ou posição 1 (antes dos demais) |
@@ -466,6 +466,54 @@ export const SupplierCard = ({ supplier, category }) => {
   background: #0052a3;
 }
 ```
+
+#### Requisitos Complementares (Novas Funcionalidades - Portal da Noiva)
+
+Para cobrir as novas funcionalidades, o item 3.3 deve incluir também os requisitos abaixo:
+
+##### RF-3.3.1 — WhatsApp com comportamento por plano
+- **Vitrine (`planLevel: 1`)**: botão com redirecionamento direto para `wa.me`.
+- **Free (`planLevel: 0`) e Low (`planLevel: -1`)**: botão visualmente equivalente ao de Vitrine, porém com ação de **captura de lead** (sem redirecionamento direto).
+
+##### RF-3.3.2 — Modal de captura para Free/Low
+- Ao clicar no botão WhatsApp de fornecedor Free/Low, abrir modal com mensagem orientativa.
+- Campos obrigatórios do formulário: **Nome, Data do Casamento, Telefone, E-mail, Mensagem**.
+- O envio deve criar lead com origem `whatsapp_fallback` e acionar fluxo de contato por e-mail.
+
+##### RF-3.3.3 — Observabilidade e Analytics no card
+- Clique em WhatsApp (todos os planos): registrar `whatsapp_intent`.
+- Clique em WhatsApp de Free/Low: registrar também `log_missed_click`.
+- Envio do modal de captura: registrar `form_submit` com contexto do fornecedor e categoria.
+
+##### RF-3.3.4 — Busca global integrada à listagem
+- O Portal da Noiva deve oferecer busca textual no topo, integrada à listagem de cards.
+- A busca deve considerar, no mínimo: `company_name`, `category_name` e `tags`.
+- A listagem resultante deve manter as regras de diferenciação visual por plano.
+
+##### RF-3.3.5 — Regra de ordenação e visibilidade na listagem
+- Ordem obrigatória de renderização: **Autoridade (quando existir) → Vitrine → Free → Low**.
+- Fornecedores Vitrine devem permanecer randomizados por requisição para distribuição justa de destaque.
+- Fornecedores com plano bloqueado/oculto (ex.: Zombie) não devem ser exibidos.
+
+##### RF-3.3.6 — Carregamento progressivo da lista
+- A experiência mobile deve usar **"Ver mais"** ou **infinite scroll**.
+- Evitar paginação clássica numerada (1, 2, 3...) para a jornada principal da noiva.
+
+##### RF-3.3.7 — Performance visual dos cards
+- As imagens dos cards devem priorizar versão `thumbnail` otimizada (preferencialmente WebP).
+- Aplicar `loading="lazy"` em listagens para evitar carregamento de itens fora da viewport.
+
+##### RF-3.3.8 — Privacidade e proteção anti-scraping na listagem
+- Não expor e-mail do fornecedor em texto puro ou `mailto:` nos cards.
+- Priorizar contato por botões de ação controlados (WhatsApp/modal/formulário).
+
+##### Critérios de aceite para o item 3.3 (Portal da Noiva)
+- [ ] Cards continuam com diferenciação visual clara entre Vitrine e Free/Low.
+- [ ] Free/Low exibem botão WhatsApp-isca com abertura de modal e envio de lead.
+- [ ] Vitrine mantém links diretos de contato.
+- [ ] Busca global retorna cards corretamente ordenados por plano.
+- [ ] Lista usa carregamento progressivo e lazy loading de imagens.
+- [ ] Eventos de analytics são disparados em todos os pontos críticos do funil.
 
 ### 3.4. Diferenciação Visual na Página de Perfil Completo
 

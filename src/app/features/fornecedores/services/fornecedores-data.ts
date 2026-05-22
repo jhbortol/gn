@@ -56,6 +56,15 @@ export interface FornecedorDetailDto {
   createdAt?: string;
   updatedAt?: string | null;
   testemunhos?: Array<{ id: string; nome: string; descricao: string; createdAt: string }>;
+  // Tier fields returned by the API
+  planLevel?: number; // 0 = Free, 1 = Vitrine, -2 = Zombie, -1 = Low
+  isClaimed?: boolean;
+  whatsAppUrl?: string;
+  showContactForm?: boolean;
+  adInjection?: any[];
+  precoAPartirDe?: number;
+  coverPictureUrl?: string;
+  profilePictureUrl?: string;
 }
 
 // Interface consumida pelo template (normalizada)
@@ -142,11 +151,20 @@ export class FornecedoresData {
       };
     }
 
-    // Normalize image
-    const primary = src.primaryImage || src.PrimaryImage || {};
-    const imgUrl = src.fotoUrl || src.FotoUrl || src.imageUrl || src.ImageUrl || primary.url || primary.Url;
+    // Normalize image: also check primaryMedia (used by some backend versions per spec)
+    const primary = src.primaryImage || src.PrimaryImage || src.primaryMedia || src.PrimaryMedia || {};
+    const imgUrl = src.fotoUrl || src.FotoUrl || src.imageUrl || src.ImageUrl
+      || src.logoUrl || src.LogoUrl
+      || src.profilePictureUrl || src.ProfilePictureUrl
+      || primary.url || primary.Url;
 
     const planLevel = this._resolvePlanLevel(src);
+
+    // Normalize WhatsApp URL from various field names
+    const whatsAppRaw = src.whatsAppUrl || src.WhatsAppUrl || src.whatsApp || src.WhatsApp;
+    const whatsAppUrl = whatsAppRaw
+      ? (String(whatsAppRaw).startsWith('http') ? whatsAppRaw : `https://wa.me/${String(whatsAppRaw).replace(/\D/g, '')}`)
+      : undefined;
 
     return {
       id: src.id || src.Id,
@@ -158,11 +176,13 @@ export class FornecedoresData {
       destaque: src.destaque ?? src.Destaque ?? false,
       seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
       ativo: src.ativo ?? src.Ativo ?? true,
-      instagram: src.instagram || src.Instagram || src.socialMedia?.instagram || src.SocialMedia?.Instagram,
+      instagram: src.instagram || src.Instagram
+        || src.socialMedia?.Instagram || src.socialMedia?.instagram
+        || src.SocialMedia?.Instagram || src.SocialMedia?.instagram,
       categoria: catObj,
       planLevel: planLevel,
       telefone: src.phoneDisplay || src.PhoneDisplay || src.telefone || src.Telefone || src.phone || src.Phone,
-      whatsAppUrl: src.whatsAppUrl || src.WhatsAppUrl,
+      whatsAppUrl,
       primaryImage: imgUrl ? {
         id: primary.id || primary.Id || 'primary',
         url: resolveImageUrl(imgUrl),
@@ -174,7 +194,7 @@ export class FornecedoresData {
         id: m.id || m.Id,
         url: resolveImageUrl(m.url || m.Url),
         isPrimary: m.isPrimary ?? m.IsPrimary ?? false,
-        orderIndex: m.orderIndex ?? m.OrderIndex ?? 0
+        orderIndex: m.orderIndex ?? m.OrderIndex ?? m.ordem ?? m.Ordem ?? 0
       }))
     };
   }
@@ -247,8 +267,43 @@ export class FornecedoresData {
 
     return this.api.get<any>(endpoint, params).pipe(
       map(detail => {
-        const payload = detail?.data ?? detail?.Data ?? detail;
+        // Support multiple response envelope patterns used by different backend versions:
+        // { data: {...} }, { Data: {...} }, { result: {...} }, { fornecedor: {...} }, or direct object
+        const payload = detail?.data ?? detail?.Data
+          ?? detail?.result ?? detail?.Result
+          ?? detail?.fornecedor ?? detail?.Fornecedor
+          ?? detail?.item ?? detail?.Item
+          ?? detail?.value ?? detail?.Value
+          ?? detail;
+
+        if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+          console.warn('[FORNECEDOR] Unexpected response format for', identifier, detail);
+          throw new Error('Unexpected API response format');
+        }
+
         const fornecedor = this._mapDetailToFornecedor(payload);
+
+        // Debug log in non-production to help diagnose field mapping issues
+        if (typeof window !== 'undefined' && !(window as any).__PROD__) {
+          console.debug('[FORNECEDOR DEBUG] raw fields:', {
+            planLevel: payload.planLevel ?? payload.PlanLevel,
+            endereco: payload.endereco ?? payload.Endereco ?? payload.address ?? payload.Address,
+            horarioFuncionamento: payload.horarioFuncionamento ?? payload.HorarioFuncionamento
+              ?? payload.businessHours ?? payload.BusinessHours,
+            whatsApp: payload.whatsApp ?? payload.WhatsApp ?? payload.whatsAppUrl,
+            website: payload.website ?? payload.Website ?? payload.socialMedia?.Website,
+            socialMedia: payload.socialMedia ?? payload.SocialMedia
+          });
+          console.debug('[FORNECEDOR DEBUG] mapped:', {
+            planLevel: fornecedor.planLevel,
+            endereco: fornecedor.endereco,
+            horarioFuncionamento: fornecedor.horarioFuncionamento,
+            whatsAppUrl: fornecedor.whatsAppUrl,
+            website: fornecedor.website,
+            instagram: fornecedor.instagram
+          });
+        }
+
         // Store in TransferState if running on server
         if (isPlatformServer(this.platformId)) {
           this.transferState.set(stateKey, fornecedor);
@@ -265,7 +320,7 @@ export class FornecedoresData {
   private _mapDetailToFornecedor(src: any): Fornecedor {
     if (!src) return {} as Fornecedor;
 
-    // Normalize images: can be in Gallery, gallery, imagens, Imagens or single FotoUrl
+    // Normalize images: can be in Gallery, gallery, imagens, Imagens or single FotoUrl/profilePictureUrl
     let rawImgs = src.imagens || src.Imagens || src.gallery || src.Gallery || [];
     if (!Array.isArray(rawImgs) && typeof rawImgs === 'object') rawImgs = [rawImgs];
 
@@ -275,12 +330,14 @@ export class FornecedoresData {
       filename: m.filename || m.Filename,
       contentType: m.contentType || m.ContentType,
       isPrimary: m.isPrimary ?? m.IsPrimary ?? false,
-      orderIndex: m.orderIndex ?? m.OrderIndex ?? 0
+      orderIndex: m.orderIndex ?? m.OrderIndex ?? m.ordem ?? m.Ordem ?? 0
     }));
 
-    // If FotoUrl present but not in gallery, add it as primary
-    const fotoUrl = src.fotoUrl || src.FotoUrl;
-    if (fotoUrl && !mappedImgs.some((m: any) => m.url === fotoUrl)) {
+    // If FotoUrl / profilePictureUrl / coverPictureUrl present but not in gallery, add as primary
+    const fotoUrl = src.fotoUrl || src.FotoUrl
+      || src.profilePictureUrl || src.ProfilePictureUrl
+      || src.logoUrl || src.LogoUrl;
+    if (fotoUrl && !mappedImgs.some((m: any) => m.url === resolveImageUrl(fotoUrl))) {
       mappedImgs.unshift({
         id: 'primary',
         url: resolveImageUrl(fotoUrl),
@@ -289,23 +346,55 @@ export class FornecedoresData {
       } as any);
     }
 
-    const cat = src.categoria || src.Categoria;
+    const coverUrl = src.coverPictureUrl || src.CoverPictureUrl || src.coverUrl || src.CoverUrl;
+
+    const cat = src.categoria || src.Categoria || src.categoriaPrincipal || src.CategoriaPrincipal;
     const mappedCategoria = (typeof cat === 'object' && cat !== null) ? (cat.nome || cat.Nome) : cat;
 
-    return {
+    const planLevel = this._resolvePlanLevel(src);
+
+    // Normalize WhatsApp URL from various field names used by the backend
+    const whatsAppRaw = src.whatsAppUrl || src.WhatsAppUrl || src.whatsApp || src.WhatsApp;
+    const whatsAppUrl = whatsAppRaw
+      ? (String(whatsAppRaw).startsWith('http') ? whatsAppRaw : `https://wa.me/${String(whatsAppRaw).replace(/\D/g, '')}`)
+      : undefined;
+
+    const mapped: Fornecedor = {
       id: src.id || src.Id,
       nome: src.nomeFantasia || src.NomeFantasia || src.nome || src.Nome || src.name || src.Name,
       slug: src.slug || src.Slug,
       descricao: src.descricao || src.Descricao || src.bio || src.Bio,
-      publicado: src.publicado ?? src.Publicado ?? true, // Default to true if missing in detail
+      publicado: src.publicado ?? src.Publicado ?? true,
       cidade: src.cidade || src.Cidade || src.city || src.City,
-      endereco: src.endereco || src.Endereco || src.address || src.Address || src.location || src.Location,
-      horarioFuncionamento: src.horarioFuncionamento || src.HorarioFuncionamento || src.businessHours || src.BusinessHours || src.openingHours || src.OpeningHours || src.workingHours || src.WorkingHours,
+      // Address: tries all known Portuguese and English field aliases used by the backend
+      endereco: src.endereco || src.Endereco
+        || src.address || src.Address
+        || src.logradouro || src.Logradouro
+        || src.location || src.Location
+        || src.rua || src.Rua
+        || src.street || src.Street,
+      // Business hours: tries all known field aliases
+      horarioFuncionamento: src.horarioFuncionamento || src.HorarioFuncionamento
+        || src.businessHours || src.BusinessHours
+        || src.openingHours || src.OpeningHours
+        || src.workingHours || src.WorkingHours
+        || src.horario || src.Horario
+        || src.hours || src.Hours
+        || src.schedule || src.Schedule,
       telefone: src.phoneDisplay || src.PhoneDisplay || src.telefone || src.Telefone || src.phone || src.Phone,
       email: src.email || src.Email,
-      website: src.website || src.Website || src.site || src.Site || src.siteUrl || src.SiteUrl,
-      instagram: src.instagram || src.Instagram || src.instagramUrl || src.InstagramUrl || src.socialMedia?.instagram || src.SocialMedia?.Instagram,
-      facebook: src.facebook || src.Facebook || src.facebookUrl || src.FacebookUrl || src.socialMedia?.facebook || src.SocialMedia?.Facebook,
+      // website: top-level OR inside socialMedia object (PascalCase key as used by backend)
+      website: src.website || src.Website || src.site || src.Site || src.siteUrl || src.SiteUrl
+        || src.socialMedia?.Website || src.socialMedia?.website
+        || src.SocialMedia?.Website || src.SocialMedia?.website,
+      // instagram: top-level OR inside socialMedia (PascalCase key as used by backend)
+      instagram: src.instagram || src.Instagram || src.instagramUrl || src.InstagramUrl
+        || src.socialMedia?.Instagram || src.socialMedia?.instagram
+        || src.SocialMedia?.Instagram || src.SocialMedia?.instagram,
+      // facebook: top-level OR inside socialMedia (PascalCase key as used by backend)
+      facebook: src.facebook || src.Facebook || src.facebookUrl || src.FacebookUrl
+        || src.socialMedia?.Facebook || src.socialMedia?.facebook
+        || src.SocialMedia?.Facebook || src.SocialMedia?.facebook,
       destaque: src.destaque ?? src.Destaque ?? false,
       seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
       ativo: src.ativo ?? src.Ativo ?? true,
@@ -313,18 +402,19 @@ export class FornecedoresData {
       visitas: src.visitas ?? src.Visitas ?? 0,
       categoria: mappedCategoria || null,
       imagens: mappedImgs.sort((a: any, b: any) => a.orderIndex - b.orderIndex),
+      coverPictureUrl: coverUrl ? resolveImageUrl(coverUrl) : undefined,
       depoimentos: (src.testemunhos || src.Testemunhos || src.testimonials || src.Testimonials || []).map((t: any) => ({
         texto: t.descricao || t.Descricao || t.texto || t.Texto || t.comment || t.Comment,
         casal: t.nome || t.Nome || t.casal || t.Casal || t.brideName || t.BrideName
       })),
 
-      // Novos campos tier
-      planLevel: this._resolvePlanLevel(src),
+      // Tier fields
+      planLevel,
       isClaimed: src.isClaimed ?? src.IsClaimed ?? false,
       totalLeadsAllTime: src.totalLeadsAllTime ?? src.TotalLeadsAllTime ?? 0,
       leadLimit: src.leadLimit ?? src.LeadLimit ?? 3,
-      whatsAppUrl: src.whatsAppUrl || src.WhatsAppUrl,
-      showContactForm: src.showContactForm ?? src.ShowContactForm ?? true,
+      whatsAppUrl,
+      showContactForm: src.showContactForm ?? src.ShowContactForm ?? (planLevel !== PlanLevel.Vitrine),
       adInjection: (src.adInjection || src.AdInjection || []).map((ad: any) => ({
         id: ad.id || ad.Id,
         nome: ad.nomeFantasia || ad.NomeFantasia || ad.nome || ad.Nome,
@@ -336,10 +426,17 @@ export class FornecedoresData {
       })),
       precoAPartirDe: src.precoAPartirDe ?? src.PrecoAPartirDe ?? undefined
     };
+
+    return mapped;
   }
 
   private _resolvePlanLevel(src: any): PlanLevel {
-    const raw = src?.planLevel ?? src?.PlanLevel;
+    // Try every known field name the backend might use for plan level
+    const raw = src?.planLevel ?? src?.PlanLevel
+      ?? src?.tier ?? src?.Tier
+      ?? src?.plan ?? src?.Plan
+      ?? src?.nivelPlano ?? src?.NivelPlano
+      ?? src?.planLevelId ?? src?.PlanLevelId;
 
     if (typeof raw === 'string') {
       const normalized = raw.trim().toLowerCase();
@@ -348,7 +445,13 @@ export class FornecedoresData {
         low: PlanLevel.Low,
         free: PlanLevel.Free,
         vitrine: PlanLevel.Vitrine,
-        premium: PlanLevel.Vitrine
+        premium: PlanLevel.Vitrine,
+        paid: PlanLevel.Vitrine,
+        pago: PlanLevel.Vitrine,
+        '1': PlanLevel.Vitrine,
+        '0': PlanLevel.Free,
+        '-1': PlanLevel.Low,
+        '-2': PlanLevel.Zombie
       };
 
       if (normalized in namedLevels) {
@@ -369,6 +472,15 @@ export class FornecedoresData {
       return parsed as PlanLevel;
     }
 
+    // Fallback: infer tier from available signals when planLevel field is absent
+    // whatsAppUrl or showContactForm=false are strong indicators of Vitrine plan
+    const hasWhatsApp = !!(src?.whatsAppUrl || src?.WhatsAppUrl || src?.whatsApp || src?.WhatsApp);
+    const showForm = src?.showContactForm ?? src?.ShowContactForm;
+    if (hasWhatsApp || showForm === false) {
+      return PlanLevel.Vitrine;
+    }
+
+    // destaque=true was historically used as a proxy for Vitrine
     return (src?.destaque ?? src?.Destaque) ? PlanLevel.Vitrine : PlanLevel.Free;
   }
 

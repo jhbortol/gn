@@ -322,7 +322,12 @@ export class FornecedoresData {
       })),
 
       // Novos campos tier
-      planLevel: Number(src.planLevel ?? src.PlanLevel ?? PlanLevel.Zombie) as PlanLevel,
+      // Fallback: se planLevel ausente, deduz pelo campo destaque (igual ao _mapToFornecedorListDto)
+      planLevel: (() => {
+        const raw = src.planLevel ?? src.PlanLevel;
+        if (raw !== undefined && raw !== null) return Number(raw) as PlanLevel;
+        return (src.destaque ?? src.Destaque) ? PlanLevel.Vitrine : PlanLevel.Free;
+      })(),
       isClaimed: src.isClaimed ?? src.IsClaimed ?? false,
       totalLeadsAllTime: src.totalLeadsAllTime ?? src.TotalLeadsAllTime ?? 0,
       leadLimit: src.leadLimit ?? src.LeadLimit ?? 3,

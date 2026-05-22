@@ -160,8 +160,8 @@
         </div>
       </div>
 
-      <!-- Localização & Horários: para qualquer plano com endereço, horário ou website -->
-      <div *ngIf="fornecedor.endereco || fornecedor.horarioFuncionamento || fornecedor.website"
+      <!-- Localização & Horários: apenas para Vitrine com endereço, horário ou website -->
+      <div *ngIf="fornecedor.planLevel === PlanLevel.Vitrine && (fornecedor.endereco || fornecedor.horarioFuncionamento || fornecedor.website)"
         class="bg-white rounded-2xl shadow-lg p-8 mb-6 border border-gray-100">
         <h2 class="font-serif font-bold text-2xl text-gray-900 mb-6">Informações</h2>
 
@@ -279,8 +279,8 @@
             </svg>
             WhatsApp
           </button>
-          <!-- Instagram -->
-          <a *ngIf="fornecedor.instagram" [href]="getInstagramLink()"
+          <!-- Instagram: Button for Vitrine only -->
+          <a *ngIf="fornecedor.instagram && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getInstagramLink()"
             target="_blank" (click)="onInstagramClick()" [attr.data-event-category]="'Contato'"
             [attr.data-event-action]="'Clique Instagram'" [attr.data-vendor-id]="fornecedor.id"
             [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria"
@@ -288,8 +288,8 @@
             Instagram
           </a>
 
-          <!-- Facebook -->
-          <a *ngIf="fornecedor.facebook" [href]="getFacebookLink()"
+          <!-- Facebook: Button for Vitrine only -->
+          <a *ngIf="fornecedor.facebook && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getFacebookLink()"
             target="_blank" (click)="onFacebookClick()" [attr.data-event-category]="'Contato'"
             [attr.data-event-action]="'Clique Facebook'" [attr.data-vendor-id]="fornecedor.id"
             [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria"
@@ -297,8 +297,8 @@
             Facebook
           </a>
 
-          <!-- Website -->
-          <a *ngIf="fornecedor.website" [href]="getSiteLink()"
+          <!-- Website: Button for Vitrine only -->
+          <a *ngIf="fornecedor.website && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getSiteLink()"
             target="_blank" rel="noopener noreferrer" (click)="onSiteClick()" [attr.data-event-category]="'Contato'"
             [attr.data-event-action]="'Clique Site'" [attr.data-vendor-id]="fornecedor.id"
             [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria"

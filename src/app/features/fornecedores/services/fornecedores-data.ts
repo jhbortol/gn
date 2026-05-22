@@ -146,11 +146,7 @@ export class FornecedoresData {
     const primary = src.primaryImage || src.PrimaryImage || {};
     const imgUrl = src.fotoUrl || src.FotoUrl || src.imageUrl || src.ImageUrl || primary.url || primary.Url;
 
-    // Deducing planLevel if missing from API
-    let planLevel = src.planLevel ?? src.PlanLevel;
-    if (planLevel === undefined) {
-      planLevel = (src.destaque ?? src.Destaque) ? PlanLevel.Vitrine : PlanLevel.Free;
-    }
+    const planLevel = this._resolvePlanLevel(src);
 
     return {
       id: src.id || src.Id,
@@ -240,7 +236,7 @@ export class FornecedoresData {
       return of(fornecedor);
     }
 
-    const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(identifier);
+    const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(identifier);
     const endpoint = isGuid ? `/public/fornecedores/${identifier}` : `/public/fornecedores/slug/${identifier.toLowerCase()}`;
 
     // If preview mode, add query param to bypass publicado filter
@@ -251,7 +247,8 @@ export class FornecedoresData {
 
     return this.api.get<any>(endpoint, params).pipe(
       map(detail => {
-        const fornecedor = this._mapDetailToFornecedor(detail);
+        const payload = detail?.data ?? detail?.Data ?? detail;
+        const fornecedor = this._mapDetailToFornecedor(payload);
         // Store in TransferState if running on server
         if (isPlatformServer(this.platformId)) {
           this.transferState.set(stateKey, fornecedor);
@@ -322,12 +319,7 @@ export class FornecedoresData {
       })),
 
       // Novos campos tier
-      // Fallback: se planLevel ausente, deduz pelo campo destaque (igual ao _mapToFornecedorListDto)
-      planLevel: (() => {
-        const raw = src.planLevel ?? src.PlanLevel;
-        if (raw !== undefined && raw !== null) return Number(raw) as PlanLevel;
-        return (src.destaque ?? src.Destaque) ? PlanLevel.Vitrine : PlanLevel.Free;
-      })(),
+      planLevel: this._resolvePlanLevel(src),
       isClaimed: src.isClaimed ?? src.IsClaimed ?? false,
       totalLeadsAllTime: src.totalLeadsAllTime ?? src.TotalLeadsAllTime ?? 0,
       leadLimit: src.leadLimit ?? src.LeadLimit ?? 3,
@@ -344,6 +336,24 @@ export class FornecedoresData {
       })),
       precoAPartirDe: src.precoAPartirDe ?? src.PrecoAPartirDe ?? undefined
     };
+  }
+
+  private _resolvePlanLevel(src: any): PlanLevel {
+    const raw = src?.planLevel ?? src?.PlanLevel;
+    const parsed = typeof raw === 'number'
+      ? raw
+      : typeof raw === 'string'
+        ? Number(raw)
+        : NaN;
+
+    if (
+      Number.isFinite(parsed) &&
+      [PlanLevel.Zombie, PlanLevel.Low, PlanLevel.Free, PlanLevel.Vitrine].includes(parsed as PlanLevel)
+    ) {
+      return parsed as PlanLevel;
+    }
+
+    return (src?.destaque ?? src?.Destaque) ? PlanLevel.Vitrine : PlanLevel.Free;
   }
 
   getByCategoria(categoriaSlugOrId: string): Observable<FornecedorListDto[]> {
@@ -480,4 +490,3 @@ export interface ClaimResponse {
   planLevel: number;
   leadLimit: number;
 }
-

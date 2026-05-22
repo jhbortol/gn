@@ -322,7 +322,7 @@ export class FornecedoresData {
       })),
 
       // Novos campos tier
-      planLevel: src.planLevel ?? src.PlanLevel ?? PlanLevel.Zombie,
+      planLevel: Number(src.planLevel ?? src.PlanLevel ?? PlanLevel.Zombie) as PlanLevel,
       isClaimed: src.isClaimed ?? src.IsClaimed ?? false,
       totalLeadsAllTime: src.totalLeadsAllTime ?? src.TotalLeadsAllTime ?? 0,
       leadLimit: src.leadLimit ?? src.LeadLimit ?? 3,

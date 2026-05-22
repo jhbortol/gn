@@ -150,10 +150,10 @@ export class FornecedoresData {
 
     return {
       id: src.id || src.Id,
-      nome: src.nomeFantasia || src.NomeFantasia || src.nome || src.Nome,
+      nome: src.nomeFantasia || src.NomeFantasia || src.nome || src.Nome || src.name || src.Name,
       slug: src.slug || src.Slug,
-      descricao: src.descricao || src.Descricao,
-      cidade: src.cidade || src.Cidade,
+      descricao: src.descricao || src.Descricao || src.bio || src.Bio,
+      cidade: src.cidade || src.Cidade || src.city || src.City,
       rating: src.rating ?? src.Rating ?? null,
       destaque: src.destaque ?? src.Destaque ?? false,
       seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
@@ -161,7 +161,7 @@ export class FornecedoresData {
       instagram: src.instagram || src.Instagram || src.socialMedia?.instagram || src.SocialMedia?.Instagram,
       categoria: catObj,
       planLevel: planLevel,
-      telefone: src.phoneDisplay || src.PhoneDisplay || src.telefone || src.Telefone,
+      telefone: src.phoneDisplay || src.PhoneDisplay || src.telefone || src.Telefone || src.phone || src.Phone,
       whatsAppUrl: src.whatsAppUrl || src.WhatsAppUrl,
       primaryImage: imgUrl ? {
         id: primary.id || primary.Id || 'primary',
@@ -294,18 +294,18 @@ export class FornecedoresData {
 
     return {
       id: src.id || src.Id,
-      nome: src.nomeFantasia || src.NomeFantasia || src.nome || src.Nome,
+      nome: src.nomeFantasia || src.NomeFantasia || src.nome || src.Nome || src.name || src.Name,
       slug: src.slug || src.Slug,
-      descricao: src.descricao || src.Descricao,
+      descricao: src.descricao || src.Descricao || src.bio || src.Bio,
       publicado: src.publicado ?? src.Publicado ?? true, // Default to true if missing in detail
-      cidade: src.cidade || src.Cidade,
-      endereco: src.endereco || src.Endereco,
-      horarioFuncionamento: src.horarioFuncionamento || src.HorarioFuncionamento,
-      telefone: src.phoneDisplay || src.PhoneDisplay || src.telefone || src.Telefone,
+      cidade: src.cidade || src.Cidade || src.city || src.City,
+      endereco: src.endereco || src.Endereco || src.address || src.Address || src.location || src.Location,
+      horarioFuncionamento: src.horarioFuncionamento || src.HorarioFuncionamento || src.businessHours || src.BusinessHours || src.openingHours || src.OpeningHours || src.workingHours || src.WorkingHours,
+      telefone: src.phoneDisplay || src.PhoneDisplay || src.telefone || src.Telefone || src.phone || src.Phone,
       email: src.email || src.Email,
-      website: src.website || src.Website,
-      instagram: src.instagram || src.Instagram || src.socialMedia?.instagram || src.SocialMedia?.Instagram,
-      facebook: src.facebook || src.Facebook || src.socialMedia?.facebook || src.SocialMedia?.Facebook,
+      website: src.website || src.Website || src.site || src.Site || src.siteUrl || src.SiteUrl,
+      instagram: src.instagram || src.Instagram || src.instagramUrl || src.InstagramUrl || src.socialMedia?.instagram || src.SocialMedia?.Instagram,
+      facebook: src.facebook || src.Facebook || src.facebookUrl || src.FacebookUrl || src.socialMedia?.facebook || src.SocialMedia?.Facebook,
       destaque: src.destaque ?? src.Destaque ?? false,
       seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
       ativo: src.ativo ?? src.Ativo ?? true,
@@ -314,8 +314,8 @@ export class FornecedoresData {
       categoria: mappedCategoria || null,
       imagens: mappedImgs.sort((a: any, b: any) => a.orderIndex - b.orderIndex),
       depoimentos: (src.testemunhos || src.Testemunhos || src.testimonials || src.Testimonials || []).map((t: any) => ({
-        texto: t.descricao || t.Descricao || t.texto || t.Texto,
-        casal: t.nome || t.Nome || t.casal || t.Casal
+        texto: t.descricao || t.Descricao || t.texto || t.Texto || t.comment || t.Comment,
+        casal: t.nome || t.Nome || t.casal || t.Casal || t.brideName || t.BrideName
       })),
 
       // Novos campos tier
@@ -340,6 +340,22 @@ export class FornecedoresData {
 
   private _resolvePlanLevel(src: any): PlanLevel {
     const raw = src?.planLevel ?? src?.PlanLevel;
+
+    if (typeof raw === 'string') {
+      const normalized = raw.trim().toLowerCase();
+      const namedLevels: Record<string, PlanLevel> = {
+        zombie: PlanLevel.Zombie,
+        low: PlanLevel.Low,
+        free: PlanLevel.Free,
+        vitrine: PlanLevel.Vitrine,
+        premium: PlanLevel.Vitrine
+      };
+
+      if (normalized in namedLevels) {
+        return namedLevels[normalized];
+      }
+    }
+
     const parsed = typeof raw === 'number'
       ? raw
       : typeof raw === 'string'

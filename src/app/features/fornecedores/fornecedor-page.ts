@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, signal, inject, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Meta, Title } from '@angular/platform-browser';
+import { Meta, Title, DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
 import { TrackingService } from '../../core/tracking.service';
 import { MetaTagService } from '../../core/meta-tag.service';
@@ -58,6 +58,7 @@ export class FornecedorPageComponent implements OnInit {
     private title: Title,
     private meta: Meta,
     private metaTagService: MetaTagService,
+    private sanitizer: DomSanitizer,
     @Inject(PLATFORM_ID) private platformId: object
   ) { }
 
@@ -293,6 +294,14 @@ export class FornecedorPageComponent implements OnInit {
     if (!endereco) return '#';
     const encoded = encodeURIComponent(endereco);
     return `https://www.google.com/maps/search/${encoded}`;
+  }
+
+  getEmbedMapUrl(): SafeResourceUrl {
+    const endereco = this.fornecedor?.endereco || '';
+    if (!endereco) return this.sanitizer.bypassSecurityTrustResourceUrl('about:blank');
+    const encoded = encodeURIComponent(endereco);
+    const url = `https://maps.google.com/maps?q=${encoded}&output=embed&hl=pt-BR&z=15`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   onMapsClick() {

@@ -160,6 +160,74 @@
         </div>
       </div>
 
+      <!-- Localização & Horários: apenas para Vitrine com endereço ou horário -->
+      <div *ngIf="fornecedor.planLevel === PlanLevel.Vitrine && (fornecedor.endereco || fornecedor.horarioFuncionamento || fornecedor.website)"
+        class="bg-white rounded-2xl shadow-lg p-8 mb-6 border border-gray-100">
+        <h2 class="font-serif font-bold text-2xl text-gray-900 mb-6">Informações</h2>
+
+        <!-- Website -->
+        <div *ngIf="fornecedor.website" class="flex items-start gap-3 mb-5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-rose-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+          </svg>
+          <div>
+            <p class="text-sm text-gray-500 mb-1">Site</p>
+            <a [href]="getSiteLink()" target="_blank" rel="noopener noreferrer" (click)="onSiteClick()"
+              [attr.data-event-category]="'Contato'" [attr.data-event-action]="'Clique Site'"
+              [attr.data-vendor-id]="fornecedor.id" [attr.data-vendor-name]="fornecedor.nome"
+              class="text-rose-600 hover:text-rose-700 font-medium break-all">
+              {{fornecedor.website}}
+            </a>
+          </div>
+        </div>
+
+        <!-- Endereço -->
+        <div *ngIf="fornecedor.endereco" class="flex items-start gap-3 mb-5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-rose-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <div>
+            <p class="text-sm text-gray-500 mb-1">Endereço</p>
+            <p class="font-medium text-gray-800 mb-2">{{fornecedor.endereco}}</p>
+            <a [href]="getMapsLink()" target="_blank" rel="noopener noreferrer" (click)="onMapsClick()"
+              [attr.data-event-category]="'Contato'" [attr.data-event-action]="'Clique Mapa'"
+              [attr.data-vendor-id]="fornecedor.id" [attr.data-vendor-name]="fornecedor.nome"
+              class="inline-flex items-center gap-1.5 text-sm text-rose-600 hover:text-rose-700 font-medium">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              Ver no Google Maps
+            </a>
+          </div>
+        </div>
+
+        <!-- Mapa embutido -->
+        <div *ngIf="fornecedor.endereco" class="rounded-xl overflow-hidden border border-gray-100 mb-5" style="height:260px">
+          <iframe
+            [src]="getEmbedMapUrl()"
+            width="100%"
+            height="100%"
+            style="border:0;"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Localização no mapa">
+          </iframe>
+        </div>
+
+        <!-- Horário de funcionamento -->
+        <div *ngIf="fornecedor.horarioFuncionamento" class="flex items-start gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-rose-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <p class="text-sm text-gray-500 mb-1">Horário de Funcionamento</p>
+            <p class="text-gray-700 whitespace-pre-line">{{fornecedor.horarioFuncionamento}}</p>
+          </div>
+        </div>
+      </div>
+
       <section
         *ngIf="fornecedor.planLevel === PlanLevel.Vitrine && fornecedor.depoimentos && fornecedor.depoimentos.length > 0"
         class="py-12 px-2 mb-6 rounded-2xl bg-depoimentos">
@@ -231,51 +299,25 @@
 
           <!-- Website: Button for Vitrine only -->
           <a *ngIf="fornecedor.website && fornecedor.planLevel === PlanLevel.Vitrine" [href]="getSiteLink()"
-            target="_blank" (click)="onSiteClick()" [attr.data-event-category]="'Contato'"
+            target="_blank" rel="noopener noreferrer" (click)="onSiteClick()" [attr.data-event-category]="'Contato'"
             [attr.data-event-action]="'Clique Site'" [attr.data-vendor-id]="fornecedor.id"
             [attr.data-vendor-name]="fornecedor.nome" [attr.data-vendor-category]="fornecedor.categoria"
-            class="inline-flex items-center justify-center gap-2 border border-gray-400 text-gray-700 bg-white hover:bg-gray-50 rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
+            class="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+            </svg>
             Visitar Site
           </a>
         </div>
 
-        <div class="text-sm text-gray-600">
-          <div *ngIf="fornecedor.email" class="flex items-center gap-2 mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            {{fornecedor.email}}
-          </div>
-          <div *ngIf="fornecedor.endereco && fornecedor.planLevel === PlanLevel.Vitrine"
-            class="flex items-center gap-2 mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <span>{{fornecedor.endereco}}</span>
-            <a [href]="getMapsLink()" target="_blank" (click)="onMapsClick()" [attr.data-event-category]="'Contato'"
-              [attr.data-event-action]="'Clique Mapa'" [attr.data-vendor-id]="fornecedor.id"
-              [attr.data-vendor-name]="fornecedor.nome"
-              class="text-rose-600 hover:text-rose-700 text-xs font-semibold ml-2 whitespace-nowrap"
-              aria-label="Ver localização no Google Maps">
-              Ver no mapa ↗
-            </a>
-          </div>
-          <div *ngIf="fornecedor.horarioFuncionamento && fornecedor.planLevel === PlanLevel.Vitrine"
-            class="flex items-center gap-2 mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            {{fornecedor.horarioFuncionamento}}
-          </div>
-          <!-- whatsapp/instagram removidos pois não estão presentes no DTO atual -->
+        <!-- Email: shown for all tiers when present -->
+        <div *ngIf="fornecedor.email" class="text-sm text-gray-600 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 flex-shrink-0" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          <span class="break-all">{{fornecedor.email}}</span>
         </div>
       </div>
     </aside>

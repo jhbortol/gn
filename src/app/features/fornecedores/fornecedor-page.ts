@@ -245,6 +245,15 @@ export class FornecedorPageComponent implements OnInit {
     });
   }
 
+  openSite(): void {
+    const url = this.getSiteLink();
+    if (!url || url === '#') return;
+    this.onSiteClick();
+    if (typeof window !== 'undefined') {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+  }
+
   getInstagramLink(): string {
     const instagram = this.fornecedor?.instagram || '';
     const username = instagram.replace('@', '').trim();

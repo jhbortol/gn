@@ -285,11 +285,14 @@ export class FornecedoresData {
 
         // Debug log in non-production to help diagnose field mapping issues
         if (typeof window !== 'undefined' && !(window as any).__PROD__) {
+          console.debug('[FORNECEDOR DEBUG] all payload keys:', Object.keys(payload));
           console.debug('[FORNECEDOR DEBUG] raw fields:', {
             planLevel: payload.planLevel ?? payload.PlanLevel,
-            endereco: payload.endereco ?? payload.Endereco ?? payload.address ?? payload.Address,
+            endereco: payload.endereco ?? payload.Endereco ?? payload.address ?? payload.Address
+              ?? payload.enderecoCompleto ?? payload.EnderecoCompleto,
             horarioFuncionamento: payload.horarioFuncionamento ?? payload.HorarioFuncionamento
-              ?? payload.businessHours ?? payload.BusinessHours,
+              ?? payload.businessHours ?? payload.BusinessHours
+              ?? payload.horarioAtendimento ?? payload.HorarioAtendimento,
             whatsApp: payload.whatsApp ?? payload.WhatsApp ?? payload.whatsAppUrl,
             website: payload.website ?? payload.Website ?? payload.socialMedia?.Website,
             socialMedia: payload.socialMedia ?? payload.SocialMedia
@@ -369,6 +372,7 @@ export class FornecedoresData {
       // Address: tries all known Portuguese and English field aliases used by the backend
       endereco: src.endereco || src.Endereco
         || src.address || src.Address
+        || src.enderecoCompleto || src.EnderecoCompleto
         || src.logradouro || src.Logradouro
         || src.location || src.Location
         || src.rua || src.Rua
@@ -376,6 +380,8 @@ export class FornecedoresData {
       // Business hours: tries all known field aliases
       horarioFuncionamento: src.horarioFuncionamento || src.HorarioFuncionamento
         || src.businessHours || src.BusinessHours
+        || src.horarioAtendimento || src.HorarioAtendimento
+        || src.horariosAtendimento || src.HorariosAtendimento
         || src.openingHours || src.OpeningHours
         || src.workingHours || src.WorkingHours
         || src.horario || src.Horario

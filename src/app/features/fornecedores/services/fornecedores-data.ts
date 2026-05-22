@@ -176,7 +176,9 @@ export class FornecedoresData {
       destaque: src.destaque ?? src.Destaque ?? false,
       seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
       ativo: src.ativo ?? src.Ativo ?? true,
-      instagram: src.instagram || src.Instagram || src.socialMedia?.instagram || src.SocialMedia?.Instagram,
+      instagram: src.instagram || src.Instagram
+        || src.socialMedia?.Instagram || src.socialMedia?.instagram
+        || src.SocialMedia?.Instagram || src.SocialMedia?.instagram,
       categoria: catObj,
       planLevel: planLevel,
       telefone: src.phoneDisplay || src.PhoneDisplay || src.telefone || src.Telefone || src.phone || src.Phone,
@@ -289,14 +291,16 @@ export class FornecedoresData {
             horarioFuncionamento: payload.horarioFuncionamento ?? payload.HorarioFuncionamento
               ?? payload.businessHours ?? payload.BusinessHours,
             whatsApp: payload.whatsApp ?? payload.WhatsApp ?? payload.whatsAppUrl,
-            website: payload.website ?? payload.Website
+            website: payload.website ?? payload.Website ?? payload.socialMedia?.Website,
+            socialMedia: payload.socialMedia ?? payload.SocialMedia
           });
           console.debug('[FORNECEDOR DEBUG] mapped:', {
             planLevel: fornecedor.planLevel,
             endereco: fornecedor.endereco,
             horarioFuncionamento: fornecedor.horarioFuncionamento,
             whatsAppUrl: fornecedor.whatsAppUrl,
-            website: fornecedor.website
+            website: fornecedor.website,
+            instagram: fornecedor.instagram
           });
         }
 
@@ -379,9 +383,18 @@ export class FornecedoresData {
         || src.schedule || src.Schedule,
       telefone: src.phoneDisplay || src.PhoneDisplay || src.telefone || src.Telefone || src.phone || src.Phone,
       email: src.email || src.Email,
-      website: src.website || src.Website || src.site || src.Site || src.siteUrl || src.SiteUrl,
-      instagram: src.instagram || src.Instagram || src.instagramUrl || src.InstagramUrl || src.socialMedia?.instagram || src.SocialMedia?.Instagram,
-      facebook: src.facebook || src.Facebook || src.facebookUrl || src.FacebookUrl || src.socialMedia?.facebook || src.SocialMedia?.Facebook,
+      // website: top-level OR inside socialMedia object (PascalCase key as used by backend)
+      website: src.website || src.Website || src.site || src.Site || src.siteUrl || src.SiteUrl
+        || src.socialMedia?.Website || src.socialMedia?.website
+        || src.SocialMedia?.Website || src.SocialMedia?.website,
+      // instagram: top-level OR inside socialMedia (PascalCase key as used by backend)
+      instagram: src.instagram || src.Instagram || src.instagramUrl || src.InstagramUrl
+        || src.socialMedia?.Instagram || src.socialMedia?.instagram
+        || src.SocialMedia?.Instagram || src.SocialMedia?.instagram,
+      // facebook: top-level OR inside socialMedia (PascalCase key as used by backend)
+      facebook: src.facebook || src.Facebook || src.facebookUrl || src.FacebookUrl
+        || src.socialMedia?.Facebook || src.socialMedia?.facebook
+        || src.SocialMedia?.Facebook || src.SocialMedia?.facebook,
       destaque: src.destaque ?? src.Destaque ?? false,
       seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
       ativo: src.ativo ?? src.Ativo ?? true,

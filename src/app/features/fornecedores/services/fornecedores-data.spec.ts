@@ -141,5 +141,70 @@ describe('FornecedoresData mapping', () => {
       expect(fornecedor.imagens.length).toBe(2);
       expect(fornecedor.imagens[0].orderIndex).toBe(1); // sorted ascending
     });
+
+    it('should map socialMedia.Instagram (PascalCase) to instagram field', () => {
+      const fornecedor = service._mapDetailToFornecedor({
+        planLevel: 1,
+        socialMedia: { Instagram: '@atelie_deby_mya' }
+      });
+      expect(fornecedor.instagram).toBe('@atelie_deby_mya');
+    });
+
+    it('should map socialMedia.Website (PascalCase) to website field', () => {
+      const fornecedor = service._mapDetailToFornecedor({
+        planLevel: 1,
+        socialMedia: { Website: 'https://www.instagram.com/atelie_deby_mya' }
+      });
+      expect(fornecedor.website).toBe('https://www.instagram.com/atelie_deby_mya');
+    });
+
+    it('should map socialMedia.Facebook (PascalCase) to facebook field', () => {
+      const fornecedor = service._mapDetailToFornecedor({
+        planLevel: 1,
+        socialMedia: { Facebook: 'facebook.com/test' }
+      });
+      expect(fornecedor.facebook).toBe('facebook.com/test');
+    });
+
+    it('should map real API response shape (Ateliê Deby & Myá)', () => {
+      // Exact subset of real API response
+      const fornecedor = service._mapDetailToFornecedor({
+        id: '2a9df2d4-2914-4b60-bc6d-ab867d1eb8c5',
+        nomeFantasia: 'Ateliê Deby & Myá',
+        slug: 'atelie-deby-mya',
+        descricao: 'Somos Especializadas em Realizar Sonhos',
+        cidade: 'Piracicaba',
+        fotoUrl: 'https://cdn.example.com/foto.webp',
+        planLevel: 1,
+        isClaimed: true,
+        totalLeadsAllTime: 0,
+        leadLimit: 3,
+        phoneDisplay: '(19) 99590-3834',
+        whatsAppUrl: 'https://wa.me/5519995903834',
+        showContactForm: true,
+        adInjection: [],
+        socialMedia: {
+          Instagram: '@atelie_deby_mya',
+          Website: 'https://www.instagram.com/atelie_deby_mya'
+        },
+        rating: null,
+        gallery: [
+          { id: 'img1', url: 'https://cdn.example.com/foto.webp', isPrimary: true, orderIndex: 0 },
+          { id: 'img2', url: 'https://cdn.example.com/img2.webp', isPrimary: false, orderIndex: 1 }
+        ],
+        testimonials: [],
+        categoria: 'Dia da Noiva'
+      });
+
+      expect(fornecedor.planLevel).toBe(PlanLevel.Vitrine);
+      expect(fornecedor.nome).toBe('Ateliê Deby & Myá');
+      expect(fornecedor.telefone).toBe('(19) 99590-3834');
+      expect(fornecedor.whatsAppUrl).toBe('https://wa.me/5519995903834');
+      expect(fornecedor.instagram).toBe('@atelie_deby_mya');
+      expect(fornecedor.website).toBe('https://www.instagram.com/atelie_deby_mya');
+      expect(fornecedor.categoria).toBe('Dia da Noiva');
+      // fotoUrl already in gallery[0], should not be duplicated
+      expect(fornecedor.imagens.length).toBe(2);
+    });
   });
 });

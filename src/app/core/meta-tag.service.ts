@@ -277,6 +277,16 @@ export class MetaTagService {
     return isNoIndexByPattern ? 'noindex, follow' : 'index, follow';
   }
 
+  /**
+   * Override the canonical link tag with an explicit URL.
+   * Use this for dynamic pages where the canonical differs from the current route
+   * (e.g. a vendor listed under a secondary city should canonicalise to its primary city URL).
+   */
+  setCanonical(canonicalUrl: string): void {
+    this.setCanonicalTag(canonicalUrl);
+    this.metaService.updateTag({ property: 'og:url', content: canonicalUrl });
+  }
+
   private setCanonicalTag(canonicalUrl: string): void {
     const selector = 'link[rel="canonical"]';
     let canonicalLink = this.documentRef.querySelector(selector) as HTMLLinkElement | null;

@@ -365,8 +365,16 @@ export class FornecedorPageComponent implements OnInit {
   private updateSeoMetaTags(fornecedor: Fornecedor): void {
     const cidade = this.cidadeService.getCidade();
     const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
-    const currentUrl = `https://guianoivas.com${this.router.url.split('?')[0]}`;
     const cidadeFornecedor = fornecedor.cidadePrincipal?.nome || fornecedor.cidade || nomeFormatado;
+
+    // Canonical aponta para a cidade principal do fornecedor (evita conteúdo duplicado
+    // quando o mesmo perfil é acessado via uma cidade secundária).
+    const canonicalCidade = fornecedor.cidadePrincipal?.slug || cidade;
+    const currentPath = this.router.url.split('?')[0];
+    // Replace the city segment in the path with the canonical city
+    const canonicalPath = currentPath.replace(/^\/[^/]+\//, `/${canonicalCidade}/`);
+    const canonicalUrl = `https://guianoivas.com${canonicalPath}`;
+    this.metaTagService.setCanonical(canonicalUrl);
 
     // Título da página: "Nome - Categoria em Cidade"
     const pageTitle = `${fornecedor.nome} - ${fornecedor.categoria || 'Fornecedor'} em ${cidadeFornecedor}`;
@@ -390,7 +398,6 @@ export class FornecedorPageComponent implements OnInit {
     this.meta.updateTag({ property: 'og:title', content: pageTitle });
     this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:type', content: 'business.business' });
-    this.meta.updateTag({ property: 'og:url', content: currentUrl });
     this.meta.updateTag({ property: 'og:site_name', content: `Guia Noivas ${nomeFormatado}` });
     this.meta.updateTag({ property: 'og:locale', content: 'pt_BR' });
 

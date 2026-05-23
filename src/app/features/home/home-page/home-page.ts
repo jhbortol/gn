@@ -34,6 +34,11 @@ export class HomePageComponent implements OnInit {
   private metaTagService = inject(MetaTagService);
   private router = inject(Router);
 
+  get cidadeNome(): string {
+    const c = this.cidadeService.getCidade();
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  }
+
   constructor(private categoriasData: CategoriasData, private fornecedoresData: FornecedoresData, private tracking: TrackingService) {
     const cidade = this.cidadeService.getCidade();
 

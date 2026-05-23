@@ -33,6 +33,11 @@ export class CategoriasPageComponent implements OnInit {
   private router = inject(Router);
   private title = inject(Title);
 
+  get cidadeNome(): string {
+    const c = this.cidadeService.getCidade();
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  }
+
   constructor(
     private categoriasData: CategoriasData,
     private fornecedoresData: FornecedoresData,

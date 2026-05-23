@@ -32,6 +32,11 @@ export class GuiaPrecosPage implements OnInit {
   private metaTagService = inject(MetaTagService);
   private tracking = inject(TrackingService);
 
+  get cidadeNome(): string {
+    const c = this.cidadeService.getCidade();
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  }
+
   constructor(
     private api: ApiService,
     private http: HttpClient,
@@ -139,7 +144,7 @@ export class GuiaPrecosPage implements OnInit {
           const blobUrl = window.URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = blobUrl;
-          link.download = 'guia-precos-piracicaba-2026.pdf';
+          link.download = `guia-precos-${this.cidadeService.getCidade()}-2026.pdf`;
           link.click();
           window.URL.revokeObjectURL(blobUrl);
         },
@@ -153,9 +158,7 @@ export class GuiaPrecosPage implements OnInit {
   }
 
   goToCategorias(): void {
-    // Obtém a cidade a partir da URL atual (/:cidade/guia-precos)
-    const segments = this.router.url.split('?')[0].split('/').filter(Boolean);
-    const cidade = segments.length > 0 ? segments[0] : 'piracicaba';
+    const cidade = this.cidadeService.getCidade();
 
     // Evento opcional para analytics
     if (typeof window !== 'undefined' && (window as any).dataLayer) {

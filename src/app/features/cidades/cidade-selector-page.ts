@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CidadeService } from '../../core/cidade.service';
@@ -11,7 +11,6 @@ import { CidadeService } from '../../core/cidade.service';
   styleUrls: ['./cidade-selector-page.css']
 })
 export class CidadeSelectorPageComponent {
+  private cidadeService = inject(CidadeService);
   cidades$ = this.cidadeService.carregarCidadesDisponiveis();
-
-  constructor(private cidadeService: CidadeService) {}
 }

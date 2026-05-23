@@ -1,4 +1,5 @@
-import { CanMatchFn, Router, Routes, inject } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanMatchFn, Router, Routes } from '@angular/router';
 import { CidadeService } from './core/cidade.service';
 
 const ROTAS_RESERVADAS = new Set(['selecionar-cidade', 'politica-de-privacidade']);

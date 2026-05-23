@@ -3,6 +3,7 @@ import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MetaTagService } from '../../core/meta-tag.service';
+import { CidadeService } from '../../core/cidade.service';
 import { Title } from '@angular/platform-browser';
 import { ApiService } from '../../core/api.service';
 import { TermoAdesaoService } from '../../core/services/termo-adesao.service';
@@ -74,13 +75,21 @@ export class AnunciePageComponent implements OnInit {
   private trackingService = inject(TrackingService);
   private categoriasData = inject(CategoriasData);
   private platformId = inject(PLATFORM_ID);
+  private cidadeService = inject(CidadeService);
+
+  get cidadeNome(): string {
+    const c = this.cidadeService.getCidade();
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  }
 
   ngOnInit(): void {
     const route = this.router.url.split('?')[0];
-    this.title.setTitle('Cadastro Gratuito de Fornecedores | Plano Free - Guia Noivas Piracicaba');
+    const cidade = this.cidadeService.getCidade();
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+    this.title.setTitle(`Cadastro Gratuito de Fornecedores | Plano Free - Guia Noivas ${nomeFormatado}`);
     this.metaTagService.applyMetadata(route, {
-      title: 'Cadastro Gratuito de Fornecedores | Plano Free - Guia Noivas Piracicaba',
-      description: 'Cadastre sua empresa gratuitamente no Plano Free do Guia Noivas Piracicaba. Envie seus dados, aceite os termos e inicie seu perfil de fornecedor.'
+      title: `Cadastro Gratuito de Fornecedores | Plano Free - Guia Noivas ${nomeFormatado}`,
+      description: `Cadastre sua empresa gratuitamente no Plano Free do Guia Noivas ${nomeFormatado}. Envie seus dados, aceite os termos e inicie seu perfil de fornecedor.`
     });
 
     if (isPlatformBrowser(this.platformId)) {

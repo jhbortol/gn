@@ -12,6 +12,7 @@ export class CidadesDataService {
 
   getAll(): Observable<CidadeConfig[]> {
     if (this.cache$) return this.cache$;
+    if (typeof this.api.get !== 'function') return of(CIDADES_DISPONIVEIS);
 
     const requests = this.endpoints.map(endpoint =>
       this.api.get<any>(endpoint).pipe(

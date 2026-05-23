@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, inject, DestroyRef } from '@angular/core';
+import { Component, Output, EventEmitter, inject, DestroyRef, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon/icon';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
@@ -18,11 +18,15 @@ export class NavbarComponent {
   @Output() goHome = new EventEmitter<void>();
   @Output() navigateTo = new EventEmitter<string>();
   @Output() scrollToCategories = new EventEmitter<void>();
-  
+
   private cidadeService = inject(CidadeService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
   mobileMenuOpen = false;
+
+  readonly cidadeAtualNome = computed(() =>
+    this.cidadeService.getCidadeNome(this.cidadeService.cidadeAtual())
+  );
 
   constructor() {
     this.router.events
@@ -43,10 +47,6 @@ export class NavbarComponent {
 
   buildUrl(path: string): string {
     return this.cidadeService.buildUrl(path);
-  }
-
-  getCidadeAtualNome(): string {
-    return this.cidadeService.getCidadeNome(this.cidadeService.getCidade());
   }
 
   getPainelUrl(): string {

@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MetaTagService } from '../../core/meta-tag.service';
+import { CidadeService } from '../../core/cidade.service';
 import { Title } from '@angular/platform-browser';
 
 @Component({
@@ -18,13 +19,16 @@ export class ContatoPageComponent implements OnInit {
   private metaTagService = inject(MetaTagService);
   private router = inject(Router);
   private title = inject(Title);
+  private cidadeService = inject(CidadeService);
 
   ngOnInit(): void {
     const route = this.router.url.split('?')[0];
-    this.title.setTitle('Contato | Guia Noivas Piracicaba');
+    const cidade = this.cidadeService.getCidade();
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+    this.title.setTitle(`Contato | Guia Noivas ${nomeFormatado}`);
     this.metaTagService.applyMetadata(route, {
-      title: 'Contato | Guia Noivas Piracicaba',
-      description: 'Entre em contato com o Guia Noivas Piracicaba. Estamos aqui para ajudar você a encontrar os melhores fornecedores para o seu casamento em Piracicaba e região.'
+      title: `Contato | Guia Noivas ${nomeFormatado}`,
+      description: `Entre em contato com o Guia Noivas ${nomeFormatado}. Estamos aqui para ajudar você a encontrar os melhores fornecedores para o seu casamento em ${nomeFormatado} e região.`
     });
   }
 

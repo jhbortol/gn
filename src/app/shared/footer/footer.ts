@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -23,6 +23,10 @@ export class FooterComponent {
   successMessage = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
 
+  readonly cidadeAtualNome = computed(() =>
+    this.cidadeService.getCidadeNome(this.cidadeService.cidadeAtual())
+  );
+
   buildUrl(path: string | string[]): string | string[] {
     if (Array.isArray(path)) {
       // Para rotas com parâmetros como ['/categorias', 'fotografia']
@@ -32,10 +36,6 @@ export class FooterComponent {
       return this.cidadeService.buildUrl(fullPath.replace(/^\//, ''));
     }
     return this.cidadeService.buildUrl(path.toString().replace(/^\//, ''));
-  }
-
-  getCidadeAtualNome(): string {
-    return this.cidadeService.getCidadeNome(this.cidadeService.getCidade());
   }
 
   subscribe() {

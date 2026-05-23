@@ -1,7 +1,8 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { CidadeService } from '../../../core/cidade.service';
 import { RemovalRequestService } from '../../../core/services/removal-request.service';
 import {
   RemovalReason,
@@ -87,6 +88,13 @@ export class RemovalRequestPageComponent implements OnInit {
     private fb: FormBuilder,
     private removalService: RemovalRequestService
   ) { }
+
+  private cidadeService = inject(CidadeService);
+
+  get cidadeNome(): string {
+    const c = this.cidadeService.getCidade();
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  }
 
   ngOnInit(): void {
     this.initForm();

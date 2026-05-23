@@ -123,7 +123,10 @@ export class FornecedoresData {
     private transferState: TransferState,
     private cidadeService: CidadeService,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) { }
+  ) {
+    // Limpar cache de destaques ao trocar de cidade
+    this.cidadeService.cidadeMudou$.subscribe(() => this.highlightsCache.clear());
+  }
 
   search(term: string, page = 1, pageSize = 12, destaque?: boolean, cidadeSlug?: string): Observable<FornecedorListDto[]> {
     const trimmed = (term || '').trim();

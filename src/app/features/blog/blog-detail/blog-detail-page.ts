@@ -109,7 +109,7 @@ export class BlogDetailPage implements OnInit {
     this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:type', content: 'article' });
     this.meta.updateTag({ property: 'og:url', content: currentUrl });
-    this.meta.updateTag({ property: 'og:site_name', content: 'Guia Noivas Piracicaba' });
+    this.meta.updateTag({ property: 'og:site_name', content: `Guia Noivas ${this.cidadeService.getCidade().charAt(0).toUpperCase() + this.cidadeService.getCidade().slice(1)}` });
     this.meta.updateTag({ property: 'og:locale', content: 'pt_BR' });
     if (post.featuredImage) {
       this.meta.updateTag({ property: 'og:image', content: post.featuredImage });
@@ -118,7 +118,7 @@ export class BlogDetailPage implements OnInit {
 
     // Twitter Card
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
-    this.meta.updateTag({ name: 'twitter:site', content: '@guianoivaspiracicaba' });
+    this.meta.updateTag({ name: 'twitter:site', content: `@guianoivas${this.cidadeService.getCidade()}` });
     this.meta.updateTag({ name: 'twitter:title', content: post.title });
     this.meta.updateTag({ name: 'twitter:description', content: description });
     if (post.featuredImage) {
@@ -152,7 +152,7 @@ export class BlogDetailPage implements OnInit {
       },
       'publisher': {
         '@type': 'Organization',
-        'name': 'Guia Noivas Piracicaba',
+        'name': `Guia Noivas ${this.cidadeService.getCidade().charAt(0).toUpperCase() + this.cidadeService.getCidade().slice(1)}`,
         'logo': {
           '@type': 'ImageObject',
           'url': 'https://guianoivas.com/assets/logo.png'

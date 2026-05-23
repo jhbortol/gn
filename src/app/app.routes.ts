@@ -1,14 +1,31 @@
 import { Routes, UrlMatchResult, UrlSegment } from '@angular/router';
 
-const CIDADES_VALIDAS = new Set(['piracicaba']);
+// Rotas de nível raiz que não são cidades
+const ROTAS_RAIZ = new Set([
+	'politica-de-privacidade',
+	'assets',
+	'api',
+	'_next',
+]);
+
+// Cidades suportadas (fallback local — expandido dinamicamente via API)
+const CIDADES_VALIDAS = new Set(['piracicaba', 'limeira', 'americana', 'campinas', 'sao-paulo']);
 
 function cidadeMatcher(segments: UrlSegment[]): UrlMatchResult | null {
 	if (!segments.length) {
 		return null;
 	}
 
-	const cidade = segments[0].path.toLowerCase();
-	if (!CIDADES_VALIDAS.has(cidade)) {
+	const segmento = segments[0].path.toLowerCase();
+
+	// Rejeitar segmentos que são rotas conhecidas de nível raiz
+	if (ROTAS_RAIZ.has(segmento)) {
+		return null;
+	}
+
+	// Aceitar qualquer slug no formato esperado (letras, números e hífens)
+	// que seja uma cidade conhecida OU que não seja uma rota estática conhecida
+	if (!/^[a-z0-9][a-z0-9-]*$/.test(segmento)) {
 		return null;
 	}
 

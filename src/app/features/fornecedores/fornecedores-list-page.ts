@@ -16,7 +16,7 @@ import { environment } from '../../../environments/environment';
     <section class="container mx-auto px-4 py-12">
       <div class="text-center mb-12">
         <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-3">
-          Fornecedores para Casamento em Piracicaba
+          Fornecedores para Casamento em {{ nomeCidade }}
         </h1>
         <p class="text-gray-600 text-lg">
           Conheça fornecedores verificados e encontre o parceiro ideal para cada etapa do seu casamento.
@@ -54,7 +54,7 @@ import { environment } from '../../../environments/environment';
       <section class="container mx-auto px-4 py-12">
         <div class="text-center mb-12">
           <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-3">
-            Fornecedores para Casamento em Piracicaba
+            Fornecedores para Casamento em {{ nomeCidade }}
           </h1>
           <p class="text-gray-600 text-lg">Carregando fornecedores...</p>
         </div>
@@ -65,6 +65,7 @@ import { environment } from '../../../environments/environment';
 })
 export class FornecedoresListPageComponent implements OnInit {
   fornecedores$: Observable<FornecedorListDto[]>;
+  nomeCidade = '';
 
   private cidadeService = inject(CidadeService);
   private metaTagService = inject(MetaTagService);
@@ -72,15 +73,19 @@ export class FornecedoresListPageComponent implements OnInit {
   private title = inject(Title);
 
   constructor(private fornecedoresData: FornecedoresData) {
-    this.fornecedores$ = this.fornecedoresData.getAll(1, 24);
+    const cidade = this.cidadeService.getCidade();
+    this.nomeCidade = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+    this.fornecedores$ = this.fornecedoresData.getAll(1, 24, cidade);
   }
 
   ngOnInit(): void {
+    const cidade = this.cidadeService.getCidade();
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
     const route = this.router.url.split('?')[0];
-    this.title.setTitle('Fornecedores de Casamento em Piracicaba | Guia Noivas');
+    this.title.setTitle(`Fornecedores de Casamento em ${nomeFormatado} | Guia Noivas`);
     this.metaTagService.applyMetadata(route, {
-      title: 'Fornecedores de Casamento em Piracicaba | Guia Noivas',
-      description: 'Explore fornecedores de casamento em Piracicaba e encontre opções por categoria para cada etapa do seu evento.'
+      title: `Fornecedores de Casamento em ${nomeFormatado} | Guia Noivas`,
+      description: `Explore fornecedores de casamento em ${nomeFormatado} e encontre opções por categoria para cada etapa do seu evento.`
     });
   }
 

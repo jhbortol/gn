@@ -5,6 +5,7 @@ import { Meta, Title, DomSanitizer, SafeResourceUrl } from '@angular/platform-br
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
 import { TrackingService } from '../../core/tracking.service';
 import { MetaTagService } from '../../core/meta-tag.service';
+import { CidadeService } from '../../core/cidade.service';
 import { Observable, firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { LeadFormComponent } from './lead-form.component';
@@ -48,6 +49,8 @@ export class FornecedorPageComponent implements OnInit {
   get fornecedorId(): string {
     return this.fornecedor?.id || '';
   }
+
+  private cidadeService = inject(CidadeService);
 
   constructor(
     private route: ActivatedRoute,
@@ -360,17 +363,20 @@ export class FornecedorPageComponent implements OnInit {
    * Atualiza meta tags dinâmicas para SEO
    */
   private updateSeoMetaTags(fornecedor: Fornecedor): void {
+    const cidade = this.cidadeService.getCidade();
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
     const currentUrl = `https://guianoivas.com${this.router.url.split('?')[0]}`;
+    const cidadeFornecedor = fornecedor.cidadePrincipal?.nome || fornecedor.cidade || nomeFormatado;
 
     // Título da página: "Nome - Categoria em Cidade"
-    const pageTitle = `${fornecedor.nome} - ${fornecedor.categoria || 'Fornecedor'} em ${fornecedor.cidade || 'Piracicaba'}`;
+    const pageTitle = `${fornecedor.nome} - ${fornecedor.categoria || 'Fornecedor'} em ${cidadeFornecedor}`;
     this.title.setTitle(pageTitle);
 
     // Meta description: primeiros 155 caracteres da bio/descrição (distinto do H1)
     const rawDescription = fornecedor.descricao?.trim();
     const description = rawDescription
       ? rawDescription.substring(0, 155)
-      : `Veja o perfil de ${fornecedor.nome}, ${fornecedor.categoria || 'fornecedor'} para casamentos em ${fornecedor.cidade || 'Piracicaba'}. Orçamentos e contato no Guia Noivas.`;
+      : `Veja o perfil de ${fornecedor.nome}, ${fornecedor.categoria || 'fornecedor'} para casamentos em ${cidadeFornecedor}. Orçamentos e contato no Guia Noivas.`;
     this.meta.updateTag({ name: 'description', content: description });
 
     // Open Graph image para compartilhamento social
@@ -385,12 +391,12 @@ export class FornecedorPageComponent implements OnInit {
     this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:type', content: 'business.business' });
     this.meta.updateTag({ property: 'og:url', content: currentUrl });
-    this.meta.updateTag({ property: 'og:site_name', content: 'Guia Noivas Piracicaba' });
+    this.meta.updateTag({ property: 'og:site_name', content: `Guia Noivas ${nomeFormatado}` });
     this.meta.updateTag({ property: 'og:locale', content: 'pt_BR' });
 
     // Twitter Card
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
-    this.meta.updateTag({ name: 'twitter:site', content: '@guianoivaspiracicaba' });
+    this.meta.updateTag({ name: 'twitter:site', content: `@guianoivas${cidade.replace(/-/g, '')}` });
     this.meta.updateTag({ name: 'twitter:title', content: pageTitle });
     this.meta.updateTag({ name: 'twitter:description', content: description });
     if (ogImage) {
@@ -399,10 +405,12 @@ export class FornecedorPageComponent implements OnInit {
   }
 
   private updateNotFoundMetaTags(): void {
-    const pageTitle = 'Fornecedor não encontrado - Guia Noivas Piracicaba';
+    const cidade = this.cidadeService.getCidade();
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+    const pageTitle = `Fornecedor não encontrado - Guia Noivas ${nomeFormatado}`;
     this.title.setTitle(pageTitle);
 
-    const description = 'O perfil que você está procurando não está disponível ou ainda não foi publicado no Guia Noivas Piracicaba.';
+    const description = `O perfil que você está procurando não está disponível ou ainda não foi publicado no Guia Noivas ${nomeFormatado}.`;
     this.meta.updateTag({ name: 'description', content: description });
 
     // Open Graph para página 404
@@ -445,7 +453,9 @@ export class FornecedorPageComponent implements OnInit {
       return '#';
     }
 
-    const message = 'Te achei no Guia Noivas Piracicaba, e quero mais informações';
+    const cidade = this.cidadeService.getCidade();
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+    const message = `Te achei no Guia Noivas ${nomeFormatado}, e quero mais informações`;
     const encodedMessage = encodeURIComponent(message);
 
     // Priorizar URL do backend, mas garantir a mensagem se for link do WhatsApp

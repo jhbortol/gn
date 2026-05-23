@@ -39,7 +39,8 @@ export class DestaquesSemanaComponent implements OnInit {
   constructor(private fornecedoresData: FornecedoresData) {}
 
   ngOnInit(): void {
-    this.destaques$ = this.fornecedoresData.getDestaques(1, this.limit * 3).pipe(
+    const cidade = this.cidadeService.getCidade();
+    this.destaques$ = this.fornecedoresData.getDestaques(1, this.limit * 3, cidade).pipe(
       map(list => {
         if (!list || !Array.isArray(list)) {
           console.warn('[DESTAQUES] API returned invalid data:', list);

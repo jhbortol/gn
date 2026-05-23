@@ -1,7 +1,8 @@
-import { Injectable, TransferState, makeStateKey, PLATFORM_ID, Inject } from '@angular/core';
+import { Injectable, TransferState, makeStateKey, PLATFORM_ID, Inject, inject } from '@angular/core';
 import { isPlatformBrowser, DOCUMENT } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { CidadeService } from './cidade.service';
 
 export interface PrerenderMetadata {
   title?: string;
@@ -20,6 +21,7 @@ export class MetaTagService {
   private readonly canonicalBaseUrl = 'https://guianoivas.com';
   private metadata: Record<string, PrerenderMetadata> = {};
   private isMetadataLoaded = false;
+  private cidadeService = inject(CidadeService);
 
   constructor(
     private titleService: Title,
@@ -102,10 +104,12 @@ export class MetaTagService {
     this.setRobotsTag(robots);
 
     // Always set base OG/Twitter tags for every page
+    const cidade = this.cidadeService.getCidade();
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
     this.metaService.updateTag({ property: 'og:url', content: canonicalUrl });
-    this.metaService.updateTag({ property: 'og:site_name', content: 'Guia Noivas Piracicaba' });
+    this.metaService.updateTag({ property: 'og:site_name', content: `Guia Noivas ${nomeFormatado}` });
     this.metaService.updateTag({ property: 'og:locale', content: 'pt_BR' });
-    this.metaService.updateTag({ name: 'twitter:site', content: '@guianoivaspiracicaba' });
+    this.metaService.updateTag({ name: 'twitter:site', content: `@guianoivas${cidade.replace(/-/g, '')}` });
 
     if (!data) return;
 

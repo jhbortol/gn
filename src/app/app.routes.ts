@@ -1,25 +1,19 @@
-import { Routes, UrlMatchResult, UrlSegment } from '@angular/router';
-import { CIDADES_DISPONIVEIS } from './core/cidades.config';
+import { CanMatchFn, Router, Routes, inject } from '@angular/router';
+import { CidadeService } from './core/cidade.service';
 
-const CIDADES_VALIDAS = new Set(CIDADES_DISPONIVEIS.map(cidade => cidade.slug));
+const ROTAS_RESERVADAS = new Set(['selecionar-cidade', 'politica-de-privacidade']);
 
-function cidadeMatcher(segments: UrlSegment[]): UrlMatchResult | null {
-	if (!segments.length) {
-		return null;
-	}
+const cidadeCanMatch: CanMatchFn = async (_route, segments) => {
+	if (!segments.length) return false;
 
 	const cidade = segments[0].path.toLowerCase();
-	if (!CIDADES_VALIDAS.has(cidade)) {
-		return null;
-	}
+	if (ROTAS_RESERVADAS.has(cidade)) return false;
 
-	return {
-		consumed: [segments[0]],
-		posParams: {
-			cidade: segments[0]
-		}
-	};
-}
+	const cidadeService = inject(CidadeService);
+	const router = inject(Router);
+	const cidadeValida = await cidadeService.isCidadeValidaAsync(cidade);
+	return cidadeValida ? true : router.parseUrl('/selecionar-cidade');
+};
 
 export const routes: Routes = [
 	{
@@ -31,7 +25,8 @@ export const routes: Routes = [
 		loadComponent: () => import('./features/cidades/cidade-selector-page').then(m => m.CidadeSelectorPageComponent)
 	},
 	{
-		matcher: cidadeMatcher,
+		path: ':cidade',
+		canMatch: [cidadeCanMatch],
 		children: [
 			{
 				path: '',
@@ -88,7 +83,7 @@ export const routes: Routes = [
 			}
 		]
 	},
-	// Rotas legadas sem cidade - redirecionar para /piracicaba (compatibilidade)
+	// Rotas legadas sem cidade - redirecionar para seletor de cidades
 	{
 		path: 'termos',
 		redirectTo: '/selecionar-cidade',

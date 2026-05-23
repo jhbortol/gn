@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { CIDADES_DISPONIVEIS } from '../../core/cidades.config';
+import { CidadeService } from '../../core/cidade.service';
 
 @Component({
   selector: 'app-cidade-selector-page',
@@ -11,5 +11,7 @@ import { CIDADES_DISPONIVEIS } from '../../core/cidades.config';
   styleUrls: ['./cidade-selector-page.css']
 })
 export class CidadeSelectorPageComponent {
-  cidades = CIDADES_DISPONIVEIS;
+  cidades$ = this.cidadeService.carregarCidadesDisponiveis();
+
+  constructor(private cidadeService: CidadeService) {}
 }

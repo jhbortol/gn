@@ -1,0 +1,15 @@
+<section class="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-rose-50 to-white flex items-center">
+  <div class="max-w-3xl mx-auto px-4 py-12 w-full">
+    <h1 class="text-3xl md:text-4xl font-serif text-rose-700 text-center mb-3">Escolha sua cidade</h1>
+    <p class="text-center text-gray-600 mb-8">Selecione a cidade para ver os fornecedores da sua região.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <a
+        *ngFor="let cidade of cidades"
+        [routerLink]="['/', cidade.slug]"
+        class="cidade-card bg-white border border-rose-100 rounded-xl p-6 text-center shadow-sm hover:shadow-md transition no-underline">
+        <p class="text-lg font-semibold text-rose-700">{{ cidade.nome }}</p>
+      </a>
+    </div>
+  </div>
+</section>

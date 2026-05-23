@@ -34,6 +34,10 @@ export class FooterComponent {
     return this.cidadeService.buildUrl(path.toString().replace(/^\//, ''));
   }
 
+  getCidadeAtualNome(): string {
+    return this.cidadeService.getCidadeNome(this.cidadeService.getCidade());
+  }
+
   subscribe() {
     const trimmed = this.email.trim();
     if (!trimmed) return;

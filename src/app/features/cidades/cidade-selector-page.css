@@ -1,0 +1,7 @@
+.cidade-card {
+  transform: translateY(0);
+}
+
+.cidade-card:hover {
+  transform: translateY(-2px);
+}

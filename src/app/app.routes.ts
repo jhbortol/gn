@@ -1,6 +1,7 @@
 import { Routes, UrlMatchResult, UrlSegment } from '@angular/router';
+import { CIDADES_DISPONIVEIS } from './core/cidades.config';
 
-const CIDADES_VALIDAS = new Set(['piracicaba']);
+const CIDADES_VALIDAS = new Set(CIDADES_DISPONIVEIS.map(cidade => cidade.slug));
 
 function cidadeMatcher(segments: UrlSegment[]): UrlMatchResult | null {
 	if (!segments.length) {
@@ -21,13 +22,14 @@ function cidadeMatcher(segments: UrlSegment[]): UrlMatchResult | null {
 }
 
 export const routes: Routes = [
-	// Rota raiz - redireciona para /piracicaba (cidade padrão)
 	{
 		path: '',
-		redirectTo: '/piracicaba',
-		pathMatch: 'full'
+		loadComponent: () => import('./features/cidades/cidade-selector-page').then(m => m.CidadeSelectorPageComponent)
 	},
-	// Rotas por cidade - estrutura escalável para futuras cidades (limeira, americana, etc)
+	{
+		path: 'selecionar-cidade',
+		loadComponent: () => import('./features/cidades/cidade-selector-page').then(m => m.CidadeSelectorPageComponent)
+	},
 	{
 		matcher: cidadeMatcher,
 		children: [
@@ -89,62 +91,62 @@ export const routes: Routes = [
 	// Rotas legadas sem cidade - redirecionar para /piracicaba (compatibilidade)
 	{
 		path: 'termos',
-		redirectTo: '/piracicaba/termos',
+		redirectTo: '/selecionar-cidade',
 		pathMatch: 'full'
 	},
 	{
 		path: 'categorias',
-		redirectTo: '/piracicaba/categorias',
+		redirectTo: '/selecionar-cidade',
 		pathMatch: 'full'
 	},
 	{
 		path: 'fornecedores',
-		redirectTo: '/piracicaba/fornecedores',
+		redirectTo: '/selecionar-cidade',
 		pathMatch: 'full'
 	},
 	{
 		path: 'institucional',
-		redirectTo: '/piracicaba/institucional',
+		redirectTo: '/selecionar-cidade',
 		pathMatch: 'full'
 	},
 	{
 		path: 'anuncie',
-		redirectTo: '/piracicaba/anuncie',
+		redirectTo: '/selecionar-cidade',
 		pathMatch: 'full'
 	},
 	{
 		path: 'contato',
-		redirectTo: '/piracicaba/contato',
+		redirectTo: '/selecionar-cidade',
 		pathMatch: 'full'
 	},
 	{
 		path: 'blog',
-		redirectTo: '/piracicaba/blog',
+		redirectTo: '/selecionar-cidade',
 		pathMatch: 'full'
 	},
 	{
 		path: 'guia-precos',
-		redirectTo: '/piracicaba/guia-precos',
+		redirectTo: '/selecionar-cidade',
 		pathMatch: 'full'
 	},
 	{
 		path: 'guia-custos',
-		redirectTo: '/piracicaba/guia-custos',
+		redirectTo: '/selecionar-cidade',
 		pathMatch: 'full'
 	},
 	{
 		path: 'midia-kit',
-		redirectTo: '/piracicaba/midia-kit',
+		redirectTo: '/selecionar-cidade',
 		pathMatch: 'full'
 	},
 	{
 		path: 'indicado',
-		redirectTo: '/piracicaba/indicado',
+		redirectTo: '/selecionar-cidade',
 		pathMatch: 'full'
 	},
 	{
 		path: 'privacy',
-		redirectTo: '/piracicaba/privacy',
+		redirectTo: '/selecionar-cidade',
 		pathMatch: 'full'
 	},
 	// Política de privacidade - URL pública para Play Console
@@ -155,7 +157,7 @@ export const routes: Routes = [
 	// Catch-all - redireciona para home
 	{
 		path: '**',
-		redirectTo: '/piracicaba',
+		redirectTo: '/selecionar-cidade',
 		pathMatch: 'full'
 	}
 ];

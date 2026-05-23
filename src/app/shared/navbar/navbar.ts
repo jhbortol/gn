@@ -45,6 +45,10 @@ export class NavbarComponent {
     return this.cidadeService.buildUrl(path);
   }
 
+  getCidadeAtualNome(): string {
+    return this.cidadeService.getCidadeNome(this.cidadeService.getCidade());
+  }
+
   getPainelUrl(): string {
     return environment.PAINEL_URL;
   }

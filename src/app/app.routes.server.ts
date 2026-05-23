@@ -3,6 +3,23 @@ import { getPrerenderParams as getCategoriasPrerenderParams } from './features/c
 import { getPrerenderParams as getFornecedoresPrerenderParams } from './features/fornecedores/fornecedores-routing-module';
 import { getPrerenderParams as getBlogPrerenderParams } from './features/blog/blog-routing-module';
 
+const API_BASE_URL = process.env['API_BASE_URL'] || 'https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1';
+
+async function getCidadesSlugs(): Promise<string[]> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/public/cidades`);
+    if (!res.ok) return ['piracicaba'];
+    const data = await res.json();
+    const list: any[] = Array.isArray(data) ? data : (data?.data ?? []);
+    const slugs = list
+      .map((c: any) => ((c.slug || c.Slug || '') as string).toLowerCase())
+      .filter(Boolean);
+    return slugs.length > 0 ? slugs : ['piracicaba'];
+  } catch {
+    return ['piracicaba'];
+  }
+}
+
 export const serverRoutes: ServerRoute[] = [
   {
     path: ':cidade/categorias/:id',
@@ -14,9 +31,11 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Prerender,
     getPrerenderParams: async () => {
       const fornecedoresParams = await getFornecedoresPrerenderParams();
-      // Map to include cidade parameter (piracicaba)
+      // Each vendor carries its own cidadeSlug; fall back to the first available city
+      const defaultCidades = await getCidadesSlugs();
+      const defaultCidade = defaultCidades[0] ?? 'piracicaba';
       return fornecedoresParams.map(param => ({
-        cidade: 'piracicaba',
+        cidade: param.cidadeSlug ?? defaultCidade,
         id: param.id
       }));
     }
@@ -25,12 +44,9 @@ export const serverRoutes: ServerRoute[] = [
     path: ':cidade/blog/:slug',
     renderMode: RenderMode.Prerender,
     getPrerenderParams: async () => {
-      const blogParams = await getBlogPrerenderParams();
-      // Map to include cidade parameter (piracicaba)
-      return blogParams.map(param => ({
-        cidade: 'piracicaba',
-        slug: param.slug
-      }));
+      const [cidades, blogParams] = await Promise.all([getCidadesSlugs(), getBlogPrerenderParams()]);
+      // Blog posts are not city-specific; prerender for every available city
+      return cidades.flatMap(cidade => blogParams.map(param => ({ cidade, slug: param.slug })));
     }
   },
   {

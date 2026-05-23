@@ -4,24 +4,31 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ApiService } from '../api.service';
 import { DestaqueSemana } from '../models/destaque-semana.model';
+import { CidadeService } from '../cidade.service';
 
 @Injectable({ providedIn: 'root' })
 export class DestaqueSemanaService {
   private platformId = inject(PLATFORM_ID);
+  private cidadeService = inject(CidadeService);
 
   constructor(private api: ApiService) {}
 
   /**
    * Returns the currently active destaque da semana, or null when none is active (204 / no record).
+   * Filters by current city when a cidadeSlug is provided.
    */
-  getActive(): Observable<DestaqueSemana | null> {
+  getActive(cidadeSlug?: string): Observable<DestaqueSemana | null> {
     if (!isPlatformBrowser(this.platformId)) {
       return of(null);
     }
 
+    const cidade = cidadeSlug ?? this.cidadeService.getCidade();
+    const params = cidade ? { cidadeSlug: cidade } : {};
+
     return this.api
       .get<DestaqueSemana | DestaqueSemana[] | { data?: DestaqueSemana[] | DestaqueSemana } | null>(
-        '/destaques-semana/active'
+        '/destaques-semana/active',
+        params
       )
       .pipe(
         map(res => this.pickRandomActive(res)),

@@ -107,17 +107,19 @@ export class CategoriaDetalhePageComponent implements OnInit {
    * Atualiza meta tags SEO para a categoria
    */
   private updateSeoMetaTags(categoria: any, slug: string): void {
+    const cidade = this.cidadeService.getCidade();
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
     const currentUrl = `https://guianoivas.com${this.router.url.split('?')[0]}`;
 
-    // Título: "Categoria - Fornecedores em Piracicaba"
-    const pageTitle = `${categoria.nome || 'Categoria'} - Fornecedores em Piracicaba`;
+    // Título: "Categoria - Fornecedores em {cidade}"
+    const pageTitle = `${categoria.nome || 'Categoria'} - Fornecedores em ${nomeFormatado}`;
     this.title.setTitle(pageTitle);
 
     // Meta description: distinto do H1 (não apenas o nome da categoria)
     const rawDescription = categoria.descricao?.trim();
     const description = rawDescription
       ? rawDescription.substring(0, 155)
-      : `Encontre os melhores fornecedores de ${categoria.nome || 'casamento'} em Piracicaba. Compare perfis, avaliações e solicite orçamentos no Guia Noivas.`;
+      : `Encontre os melhores fornecedores de ${categoria.nome || 'casamento'} em ${nomeFormatado}. Compare perfis, avaliações e solicite orçamentos no Guia Noivas.`;
     this.meta.updateTag({ name: 'description', content: description });
 
     // Open Graph tags
@@ -125,20 +127,20 @@ export class CategoriaDetalhePageComponent implements OnInit {
     this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:type', content: 'website' });
     this.meta.updateTag({ property: 'og:url', content: currentUrl });
-    this.meta.updateTag({ property: 'og:site_name', content: 'Guia Noivas Piracicaba' });
+    this.meta.updateTag({ property: 'og:site_name', content: `Guia Noivas ${nomeFormatado}` });
     this.meta.updateTag({ property: 'og:locale', content: 'pt_BR' });
 
     // Image
     const ogImage = categoria.imageUrl || categoria.thumbnailUrl || '';
     if (ogImage) {
       this.meta.updateTag({ property: 'og:image', content: ogImage });
-      this.meta.updateTag({ property: 'og:image:alt', content: `${categoria.nome} - Fornecedores em Piracicaba` });
+      this.meta.updateTag({ property: 'og:image:alt', content: `${categoria.nome} - Fornecedores em ${nomeFormatado}` });
       this.meta.updateTag({ name: 'twitter:image', content: ogImage });
     }
 
     // Twitter Card
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
-    this.meta.updateTag({ name: 'twitter:site', content: '@guianoivaspiracicaba' });
+    this.meta.updateTag({ name: 'twitter:site', content: `@guianoivas${cidade.replace(/-/g, '')}` });
     this.meta.updateTag({ name: 'twitter:title', content: pageTitle });
     this.meta.updateTag({ name: 'twitter:description', content: description });
 
@@ -161,7 +163,9 @@ export class CategoriaDetalhePageComponent implements OnInit {
   getWhatsAppLinkFor(fornecedor: FornecedorListDto): string {
     if (fornecedor.planLevel !== PlanLevel.Vitrine) return '#';
 
-    const message = 'Te achei no Guia Noivas Piracicaba, e quero mais informações';
+    const cidade = this.cidadeService.getCidade();
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+    const message = `Te achei no Guia Noivas ${nomeFormatado}, e quero mais informações`;
     const encodedMessage = encodeURIComponent(message);
 
     if (fornecedor.whatsAppUrl) {

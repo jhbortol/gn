@@ -37,10 +37,12 @@ export class BlogListPage implements OnInit {
       this.selectedCategory.set(category);
     }
     const route = this.router.url.split('?')[0];
-    this.title.setTitle('Blog | Dicas e Inspirações para Casamento em Piracicaba');
+    const cidade = this.cidadeService.getCidade();
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+    this.title.setTitle(`Blog | Dicas e Inspirações para Casamento em ${nomeFormatado}`);
     this.metaTagService.applyMetadata(route, {
-      title: 'Blog | Dicas e Inspirações para Casamento em Piracicaba',
-      description: 'Dicas de casamento, inspirações e guias completos para noivas de Piracicaba. Leia nossos artigos sobre planejamento, decoração, fornecedores e muito mais.'
+      title: `Blog | Dicas e Inspirações para Casamento em ${nomeFormatado}`,
+      description: `Dicas de casamento, inspirações e guias completos para noivas de ${nomeFormatado}. Leia nossos artigos sobre planejamento, decoração, fornecedores e muito mais.`
     });
     this.loadPosts();
   }

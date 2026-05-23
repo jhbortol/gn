@@ -4,7 +4,7 @@
     <div class="container mx-auto px-4 relative z-10 text-center">
       <span class="text-sm tracking-[0.3em] uppercase text-gray-500 mb-2 block">Planejamento Financeiro</span>
       <h1 class="text-4xl md:text-6xl font-serif font-bold text-gray-800 mb-4">
-        Casamento em Piracicaba
+        Casamento em {{ cidadeNome }}
       </h1>
       <div class="flex items-center justify-center space-x-4 mb-6">
         <span class="h-px w-12 bg-gray-300"></span>
@@ -14,7 +14,7 @@
       <p class="text-gray-500 max-w-lg mx-auto leading-relaxed">
         Análise detalhada de custos baseada em 150 convidados.
         <br>
-        <span class="text-xs uppercase tracking-wider mt-2 block">Fonte: GuiaNoivas Piracicaba</span>
+        <span class="text-xs uppercase tracking-wider mt-2 block">Fonte: GuiaNoivas {{ cidadeNome }}</span>
       </p>
     </div>
   </header>
@@ -242,7 +242,7 @@
           </tbody>
         </table>
       </div>
-      <p class="text-xs text-gray-400 mt-2 text-center">*Valores estimados para o mercado de Piracicaba em 2026. Podem variar conforme negociação e data.</p>
+      <p class="text-xs text-gray-400 mt-2 text-center">*Valores estimados para o mercado de {{ cidadeNome }} em 2026. Podem variar conforme negociação e data.</p>
     </section>
   </main>
 
@@ -254,8 +254,8 @@
         Faça seu sonho acontecer em 2026
       </div>
       <div class="mt-10 pt-6 border-t border-gray-700 text-xs text-gray-500 space-y-2">
-        <p>Fonte: GuiaNoivas Piracicaba</p>
-        <p>Valores estimados com base na média de mercado da região de Piracicaba/SP para o ano de 2026. Os preços podem variar de acordo com a data, disponibilidade e negociação específica.</p>
+        <p>Fonte: GuiaNoivas {{ cidadeNome }}</p>
+        <p>Valores estimados com base na média de mercado da região de {{ cidadeNome }}/SP para o ano de 2026. Os preços podem variar de acordo com a data, disponibilidade e negociação específica.</p>
       </div>
     </div>
   </footer>

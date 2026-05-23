@@ -23,6 +23,11 @@ export class FooterComponent {
   successMessage = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
 
+  get cidadeNome(): string {
+    const c = this.cidadeService.getCidade();
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  }
+
   buildUrl(path: string | string[]): string | string[] {
     if (Array.isArray(path)) {
       // Para rotas com parâmetros como ['/categorias', 'fotografia']

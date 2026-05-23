@@ -1,4 +1,6 @@
 import { Routes, UrlMatchResult, UrlSegment } from '@angular/router';
+import { Component } from '@angular/core';
+import { legacyRedirectGuard } from './core/legacy-redirect.guard';
 
 // Rotas de nível raiz que não são cidades
 const ROTAS_RAIZ = new Set([
@@ -10,6 +12,10 @@ const ROTAS_RAIZ = new Set([
 
 // Cidades suportadas (fallback local — expandido dinamicamente via API)
 const CIDADES_VALIDAS = new Set(['piracicaba', 'limeira', 'americana', 'campinas', 'sao-paulo']);
+
+// Componente vazio usado apenas para satisfazer rotas com canActivate que sempre redirecionam.
+@Component({ standalone: true, template: '' })
+class EmptyComponent {}
 
 function cidadeMatcher(segments: UrlSegment[]): UrlMatchResult | null {
 	if (!segments.length) {
@@ -38,10 +44,10 @@ function cidadeMatcher(segments: UrlSegment[]): UrlMatchResult | null {
 }
 
 export const routes: Routes = [
-	// Rota raiz - redireciona para /piracicaba (cidade padrão)
+	// Rota raiz - página de seleção de cidade
 	{
 		path: '',
-		redirectTo: '/piracicaba',
+		loadComponent: () => import('./features/home/cidade-selector/cidade-selector-page').then(m => m.CidadeSelectorPage),
 		pathMatch: 'full'
 	},
 	// Rotas por cidade - estrutura escalável para futuras cidades (limeira, americana, etc)
@@ -103,76 +109,77 @@ export const routes: Routes = [
 			}
 		]
 	},
-	// Rotas legadas sem cidade - redirecionar para /piracicaba (compatibilidade)
+	// Rotas legadas sem cidade — redirecionar para a cidade preferida do usuário
 	{
 		path: 'termos',
-		redirectTo: '/piracicaba/termos',
-		pathMatch: 'full'
+		canActivate: [legacyRedirectGuard('institucional/termos')],
+		component: EmptyComponent
 	},
 	{
 		path: 'categorias',
-		redirectTo: '/piracicaba/categorias',
-		pathMatch: 'full'
+		canActivate: [legacyRedirectGuard('categorias')],
+		component: EmptyComponent
 	},
 	{
 		path: 'fornecedores',
-		redirectTo: '/piracicaba/fornecedores',
-		pathMatch: 'full'
+		canActivate: [legacyRedirectGuard('fornecedores')],
+		component: EmptyComponent
 	},
 	{
 		path: 'institucional',
-		redirectTo: '/piracicaba/institucional',
-		pathMatch: 'full'
+		canActivate: [legacyRedirectGuard('institucional')],
+		component: EmptyComponent
 	},
 	{
 		path: 'anuncie',
-		redirectTo: '/piracicaba/anuncie',
-		pathMatch: 'full'
+		canActivate: [legacyRedirectGuard('anuncie')],
+		component: EmptyComponent
 	},
 	{
 		path: 'contato',
-		redirectTo: '/piracicaba/contato',
-		pathMatch: 'full'
+		canActivate: [legacyRedirectGuard('contato')],
+		component: EmptyComponent
 	},
 	{
 		path: 'blog',
-		redirectTo: '/piracicaba/blog',
-		pathMatch: 'full'
+		canActivate: [legacyRedirectGuard('blog')],
+		component: EmptyComponent
 	},
 	{
 		path: 'guia-precos',
-		redirectTo: '/piracicaba/guia-precos',
-		pathMatch: 'full'
+		canActivate: [legacyRedirectGuard('guia-precos')],
+		component: EmptyComponent
 	},
 	{
 		path: 'guia-custos',
-		redirectTo: '/piracicaba/guia-custos',
-		pathMatch: 'full'
+		canActivate: [legacyRedirectGuard('guia-custos')],
+		component: EmptyComponent
 	},
 	{
 		path: 'midia-kit',
-		redirectTo: '/piracicaba/midia-kit',
-		pathMatch: 'full'
+		canActivate: [legacyRedirectGuard('midia-kit')],
+		component: EmptyComponent
 	},
 	{
 		path: 'indicado',
-		redirectTo: '/piracicaba/indicado',
-		pathMatch: 'full'
+		canActivate: [legacyRedirectGuard('indicado')],
+		component: EmptyComponent
 	},
 	{
 		path: 'privacy',
-		redirectTo: '/piracicaba/privacy',
-		pathMatch: 'full'
+		canActivate: [legacyRedirectGuard('privacy')],
+		component: EmptyComponent
 	},
 	// Política de privacidade - URL pública para Play Console
 	{
 		path: 'politica-de-privacidade',
 		loadComponent: () => import('./features/privacy/privacy-policy-page/privacy-policy-page').then(m => m.PrivacyPolicyPageComponent)
 	},
-	// Catch-all - redireciona para home
+	// Catch-all - redireciona para seleção de cidade
 	{
 		path: '**',
-		redirectTo: '/piracicaba',
+		redirectTo: '/',
 		pathMatch: 'full'
 	}
 ];
+

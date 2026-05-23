@@ -1,9 +1,12 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { filter, Observable, of, shareReplay, catchError, map } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { CidadeDto } from './models/cidade.model';
+
+const PREFERRED_CITY_KEY = 'gn_cidade_preferida';
 
 @Injectable({ providedIn: 'root' })
 export class CidadeService {
@@ -18,6 +21,8 @@ export class CidadeService {
 
   // Cache de cidades da API
   private cidades$?: Observable<CidadeDto[]>;
+
+  private platformId = inject(PLATFORM_ID);
 
   constructor(
     private router: Router,
@@ -47,6 +52,7 @@ export class CidadeService {
         const cidadeDetectada = this.extrairCidadeDaUrl();
         if (cidadeDetectada) {
           this.cidadeAtual.set(cidadeDetectada);
+          this.setPreferredCidade(cidadeDetectada);
         }
       });
 
@@ -54,6 +60,7 @@ export class CidadeService {
     const cidadeDetectada = this.extrairCidadeDaUrl();
     if (cidadeDetectada) {
       this.cidadeAtual.set(cidadeDetectada);
+      this.setPreferredCidade(cidadeDetectada);
     }
   }
 
@@ -129,6 +136,27 @@ export class CidadeService {
     return this.getCidades().pipe(
       map(cidades => cidades.find(c => c.slug === slug.toLowerCase()) ?? null)
     );
+  }
+
+  /**
+   * Retorna a cidade preferida do usuário (salva em localStorage).
+   * Usado para redirecionar links legados sem cidade na URL.
+   */
+  getPreferredCidade(): string {
+    if (isPlatformBrowser(this.platformId)) {
+      const saved = localStorage.getItem(PREFERRED_CITY_KEY);
+      if (saved) return saved;
+    }
+    return this.CIDADES_FALLBACK[0];
+  }
+
+  /**
+   * Salva a cidade preferida em localStorage (SSR-safe).
+   */
+  setPreferredCidade(slug: string): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(PREFERRED_CITY_KEY, slug.toLowerCase());
+    }
   }
 
   /**

@@ -107,12 +107,12 @@
 	</section>
 
 	<a
-		href="https://www.instagram.com/guianoivaspiracicaba/"
+		[href]="instagramUrl"
 		target="_blank"
 		rel="noopener noreferrer"
 		class="instagram-popup"
-		aria-label="Abrir Instagram do Guia Noivas Piracicaba"
-		title="Siga @guianoivaspiracicaba"
+		[attr.aria-label]="'Abrir Instagram do Guia Noivas ' + cidadeNome"
+		[attr.title]="'Siga @' + instagramHandle"
 	>
 		<span class="instagram-popup__badge">Instagram</span>
 		<span class="instagram-popup__button" aria-hidden="true">

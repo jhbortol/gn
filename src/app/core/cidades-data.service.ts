@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, catchError, map, of, shareReplay, switchMap } from 'rxjs';
+import { Observable, catchError, map, of, shareReplay, switchMap, timeout } from 'rxjs';
 import { ApiService } from './api.service';
 import { CIDADES_DISPONIVEIS, CidadeConfig } from './cidades.config';
 
@@ -16,6 +16,7 @@ export class CidadesDataService {
 
     const requests = this.endpoints.map(endpoint =>
       this.api.get<any>(endpoint).pipe(
+        timeout(5000),
         map(response => this.normalizeResponse(response)),
         catchError(() => of([]))
       )

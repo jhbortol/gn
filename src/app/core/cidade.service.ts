@@ -1,70 +1,48 @@
-import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { filter, Observable, of, shareReplay, catchError, map, Subject } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
+import { NavigationEnd, Router } from '@angular/router';
+import { Observable, Subject, filter, firstValueFrom, map, shareReplay, tap } from 'rxjs';
+import { CIDADE_PADRAO, CIDADES_DISPONIVEIS, CidadeConfig } from './cidades.config';
+import { CidadesDataService } from './cidades-data.service';
 import { CidadeDto } from './models/cidade.model';
 
 const PREFERRED_CITY_KEY = 'gn_cidade_preferida';
 
 @Injectable({ providedIn: 'root' })
 export class CidadeService {
-  // Cidades conhecidas localmente (usadas como fallback enquanto a API não carrega)
-  private readonly CIDADES_FALLBACK = ['piracicaba'];
+  private cidadesDisponiveis = CIDADES_DISPONIVEIS;
+  private slugsCidadesDisponiveis = this.cidadesDisponiveis.map(c => c.slug);
+  private cidades$?: Observable<CidadeDto[]>;
+  private platformId = inject(PLATFORM_ID);
 
-  // Cidades carregadas da API
-  private cidadesDisponiveis: string[] = this.CIDADES_FALLBACK;
+  cidadeAtual = signal<string>(CIDADE_PADRAO);
 
-  // Sinal reativo da cidade atual
-  cidadeAtual = signal<string>('piracicaba');
-
-  // Emite o novo slug sempre que a cidade muda
   private _cidadeMudou$ = new Subject<string>();
   cidadeMudou$: Observable<string> = this._cidadeMudou$.asObservable();
 
-  // Cache de cidades da API
-  private cidades$?: Observable<CidadeDto[]>;
-
-  private platformId = inject(PLATFORM_ID);
-
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private http: HttpClient
-  ) {
+  constructor(private router: Router, private cidadesData: CidadesDataService) {
     this.initializarCidade();
-    this.carregarCidades();
-  }
-
-  /**
-   * Carrega a lista de cidades disponíveis da API e atualiza o sinal reativo.
-   */
-  private carregarCidades(): void {
-    this.getCidades().subscribe(cidades => {
-      if (cidades.length > 0) {
-        this.cidadesDisponiveis = cidades.map(c => c.slug.toLowerCase());
-      }
-    });
+    this.carregarCidadesDisponiveis().subscribe();
   }
 
   private initializarCidade(): void {
-    // Detectar cidade na rota quando navegar
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
         const cidadeDetectada = this.extrairCidadeDaUrl();
-        if (cidadeDetectada && cidadeDetectada !== this.cidadeAtual()) {
+        if (!cidadeDetectada) return;
+
+        if (cidadeDetectada !== this.cidadeAtual()) {
           this.cidadeAtual.set(cidadeDetectada);
           this.setPreferredCidade(cidadeDetectada);
           this._cidadeMudou$.next(cidadeDetectada);
-        } else if (cidadeDetectada) {
-          this.cidadeAtual.set(cidadeDetectada);
-          this.setPreferredCidade(cidadeDetectada);
+          return;
         }
+
+        this.cidadeAtual.set(cidadeDetectada);
+        this.setPreferredCidade(cidadeDetectada);
       });
 
-    // Também detectar na primeira navegação
     const cidadeDetectada = this.extrairCidadeDaUrl();
     if (cidadeDetectada) {
       this.cidadeAtual.set(cidadeDetectada);
@@ -73,110 +51,117 @@ export class CidadeService {
   }
 
   private extrairCidadeDaUrl(): string | null {
-    const url = this.router.url;
+    const partes = this.router.url.split('/').filter(p => p);
 
-    // Verificar se a primeira parte da URL é uma cidade válida
-    const partes = url.split('/').filter(p => p);
+    if (!partes.length) return null;
 
-    if (partes.length > 0) {
-      const candidato = partes[0].toLowerCase();
-      // Aceitar qualquer slug que pareça uma cidade (não seja uma rota conhecida de nível raiz)
-      const rotasRaiz = new Set(['politica-de-privacidade', 'assets']);
-      if (!rotasRaiz.has(candidato)) {
-        return candidato;
-      }
-    }
+    const cidadeSlug = this.normalizarSlug(partes[0]);
+    if (!cidadeSlug) return null;
 
-    return null;
+    return this.slugsCidadesDisponiveis.includes(cidadeSlug) ? cidadeSlug : null;
   }
 
-  /**
-   * Obtém a cidade atual
-   */
+  carregarCidadesDisponiveis(): Observable<CidadeConfig[]> {
+    return this.cidadesData.getAll().pipe(
+      tap(cidades => {
+        if (!Array.isArray(cidades) || !cidades.length) return;
+
+        this.cidadesDisponiveis = cidades;
+        this.slugsCidadesDisponiveis = cidades.map(c => this.normalizarSlug(c.slug)).filter(Boolean);
+
+        const cidadeAtual = this.normalizarSlug(this.cidadeAtual());
+        if (!this.isCidadeValida(cidadeAtual)) {
+          const cidadeFallback = this.slugsCidadesDisponiveis[0] || CIDADE_PADRAO;
+          if (cidadeFallback !== this.cidadeAtual()) {
+            this.cidadeAtual.set(cidadeFallback);
+            this.setPreferredCidade(cidadeFallback);
+            this._cidadeMudou$.next(cidadeFallback);
+          }
+        }
+      })
+    );
+  }
+
+  async isCidadeValidaAsync(cidade: string): Promise<boolean> {
+    await firstValueFrom(this.carregarCidadesDisponiveis());
+    return this.isCidadeValida(cidade);
+  }
+
   getCidade(): string {
     return this.cidadeAtual();
   }
 
-  /**
-   * Verifica se uma cidade é válida
-   */
   isCidadeValida(cidade: string): boolean {
-    return this.cidadesDisponiveis.includes(cidade.toLowerCase())
-      || this.CIDADES_FALLBACK.includes(cidade.toLowerCase());
+    const slug = this.normalizarSlug(cidade);
+    return !!slug && this.slugsCidadesDisponiveis.includes(slug);
   }
 
-  /**
-   * Retorna lista de slugs de cidades disponíveis
-   */
   getCidadesDisponiveis(): string[] {
-    return this.cidadesDisponiveis;
+    return this.slugsCidadesDisponiveis;
   }
 
-  /**
-   * Retorna a lista completa de cidades (com metadados) da API.
-   * Resultados são cacheados após a primeira chamada.
-   */
+  getCidadeNome(slug: string): string {
+    const normalized = this.normalizarSlug(slug);
+    const cidade = this.cidadesDisponiveis.find(c => c.slug === normalized);
+    return cidade?.nome || slug;
+  }
+
   getCidades(): Observable<CidadeDto[]> {
     if (!this.cidades$) {
-      this.cidades$ = this.http
-        .get<CidadeDto[] | { data: CidadeDto[] }>(`${environment.API_BASE_URL}/public/cidades`)
-        .pipe(
-          map(res => {
-            const list = Array.isArray(res) ? res : (res as any)?.data ?? [];
-            return list.map((c: any) => ({
-              id: c.id || c.Id,
-              nome: c.nome || c.Nome || '',
-              slug: (c.slug || c.Slug || '').toLowerCase(),
-              estado: c.estado || c.Estado || undefined
-            })) as CidadeDto[];
-          }),
-          catchError(() => of(this.CIDADES_FALLBACK.map(slug => ({ id: slug, nome: slug, slug })))),
-          shareReplay(1)
-        );
+      this.cidades$ = this.carregarCidadesDisponiveis().pipe(
+        map(cidades => cidades.map(cidade => ({
+          id: cidade.slug,
+          nome: cidade.nome,
+          slug: cidade.slug,
+          estado: undefined
+        }))),
+        shareReplay(1)
+      );
     }
+
     return this.cidades$;
   }
 
-  /**
-   * Busca detalhes de uma cidade pelo slug.
-   */
   getCidadeBySlug(slug: string): Observable<CidadeDto | null> {
+    const normalized = this.normalizarSlug(slug);
     return this.getCidades().pipe(
-      map(cidades => cidades.find(c => c.slug === slug.toLowerCase()) ?? null)
+      map(cidades => cidades.find(c => c.slug === normalized) ?? null)
     );
   }
 
-  /**
-   * Retorna a cidade preferida do usuário (salva em localStorage).
-   * Usado para redirecionar links legados sem cidade na URL.
-   */
   getPreferredCidade(): string {
     if (isPlatformBrowser(this.platformId)) {
       const saved = localStorage.getItem(PREFERRED_CITY_KEY);
-      if (saved) return saved;
+      if (saved) return this.normalizarSlug(saved) || CIDADE_PADRAO;
     }
-    return this.CIDADES_FALLBACK[0];
+
+    return CIDADE_PADRAO;
   }
 
-  /**
-   * Salva a cidade preferida em localStorage (SSR-safe).
-   */
   setPreferredCidade(slug: string): void {
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem(PREFERRED_CITY_KEY, slug.toLowerCase());
+      const normalized = this.normalizarSlug(slug);
+      if (normalized) {
+        localStorage.setItem(PREFERRED_CITY_KEY, normalized);
+      }
     }
   }
 
-  /**
-   * Constrói uma URL com a cidade
-   * Exemplo: buildUrl('fornecedores') → '/piracicaba/fornecedores'
-   */
   buildUrl(path: string): string {
-    const cidade = this.getCidade();
+    const cidade = this.normalizarSlug(this.getCidade()) || CIDADE_PADRAO;
     const caminhoLimpo = path.startsWith('/') ? path.slice(1) : path;
-    // Normalizar segmentos para lowercase (slugs são case-sensitive no backend Linux)
     const segmentos = caminhoLimpo.split('/').filter(s => s).map(s => s.toString().toLowerCase());
     const joined = segmentos.join('/');
     return `/${cidade}/${joined}`;
+  }
+
+  private normalizarSlug(value: string): string {
+    return String(value || '')
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .replace(/[^\w\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .toLowerCase();
   }
 }

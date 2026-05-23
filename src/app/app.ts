@@ -36,9 +36,10 @@ export class App implements AfterViewInit {
         const hideNavbar = ev.url.includes('/midia-kit');
         const hideFooter = ev.url.includes('/midia-kit');
         const currentRoute = (ev.urlAfterRedirects || ev.url || '/').split('?')[0].split('#')[0];
+        const isCidadeSelector = currentRoute === '/' || currentRoute === '/selecionar-cidade';
 
-        this.showNavbar.set(!hideNavbar);
-        this.showFooter.set(!hideFooter);
+        this.showNavbar.set(!hideNavbar && !isCidadeSelector);
+        this.showFooter.set(!hideFooter && !isCidadeSelector);
 
         this.metaTagService.applyMetadata(currentRoute);
         

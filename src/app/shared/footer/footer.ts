@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -23,10 +23,9 @@ export class FooterComponent {
   successMessage = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
 
-  get cidadeNome(): string {
-    const c = this.cidadeService.getCidade();
-    return c.charAt(0).toUpperCase() + c.slice(1);
-  }
+  readonly cidadeAtualNome = computed(() =>
+    this.cidadeService.getCidadeNome(this.cidadeService.cidadeAtual())
+  );
 
   buildUrl(path: string | string[]): string | string[] {
     if (Array.isArray(path)) {

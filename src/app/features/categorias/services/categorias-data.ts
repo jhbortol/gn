@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
-import { Observable, of, shareReplay, tap } from 'rxjs';
+import { Observable, of, shareReplay } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { resolveImageUrl } from '../../../core/image-url.helper';
+import { CidadeService } from '../../../core/cidade.service';
 
 export interface VitrineSupplier {
   id: string;
@@ -179,5 +180,8 @@ export class CategoriasData {
     );
   }
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private cidadeService: CidadeService) {
+    // Limpar cache ao trocar de cidade para garantir dados frescos da nova cidade
+    this.cidadeService.cidadeMudou$.subscribe(() => this.cache$.clear());
+  }
 }

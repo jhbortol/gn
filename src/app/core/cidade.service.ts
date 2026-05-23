@@ -1,7 +1,7 @@
 import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { filter, Observable, of, shareReplay, catchError, map } from 'rxjs';
+import { filter, Observable, of, shareReplay, catchError, map, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { CidadeDto } from './models/cidade.model';
@@ -18,6 +18,10 @@ export class CidadeService {
 
   // Sinal reativo da cidade atual
   cidadeAtual = signal<string>('piracicaba');
+
+  // Emite o novo slug sempre que a cidade muda
+  private _cidadeMudou$ = new Subject<string>();
+  cidadeMudou$: Observable<string> = this._cidadeMudou$.asObservable();
 
   // Cache de cidades da API
   private cidades$?: Observable<CidadeDto[]>;
@@ -50,7 +54,11 @@ export class CidadeService {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
         const cidadeDetectada = this.extrairCidadeDaUrl();
-        if (cidadeDetectada) {
+        if (cidadeDetectada && cidadeDetectada !== this.cidadeAtual()) {
+          this.cidadeAtual.set(cidadeDetectada);
+          this.setPreferredCidade(cidadeDetectada);
+          this._cidadeMudou$.next(cidadeDetectada);
+        } else if (cidadeDetectada) {
           this.cidadeAtual.set(cidadeDetectada);
           this.setPreferredCidade(cidadeDetectada);
         }

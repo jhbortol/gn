@@ -309,7 +309,8 @@ export class FornecedorPageComponent implements OnInit {
     const endereco = this.fornecedor?.endereco || '';
     if (!endereco) return this.sanitizer.bypassSecurityTrustResourceUrl('about:blank');
     const encoded = encodeURIComponent(endereco);
-    const url = `https://maps.google.com/maps?q=${encoded}&output=embed&hl=pt-BR&z=15`;
+    // Use official Google Maps Embed API format (requires no API key for basic iframes)
+    const url = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3!2d-47.6476!3d-22.4086!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0:0x0!2s${encoded}!5e0!3m2!1spt-BR!2sbr!4v1234567890`;
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 

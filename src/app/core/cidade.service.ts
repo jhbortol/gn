@@ -1,6 +1,6 @@
 import { Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { NavigationEnd, Router } from '@angular/router';
+import { GuardsCheckEnd, NavigationEnd, Router } from '@angular/router';
 import { Observable, Subject, filter, firstValueFrom, map, shareReplay, tap } from 'rxjs';
 import { CIDADE_PADRAO, CIDADES_DISPONIVEIS, CidadeConfig } from './cidades.config';
 import { CidadesDataService } from './cidades-data.service';
@@ -26,19 +26,30 @@ export class CidadeService {
   }
 
   private initializarCidade(): void {
+    // Update cidadeAtual at GuardsCheckEnd – fires AFTER the async city-validation
+    // guard (which loads cities from the API) but BEFORE components are activated.
+    // This ensures getCidade() returns the correct city in component constructors
+    // and ngOnInit, fixing wrong-city data when navigating directly via URL.
+    this.router.events
+      .pipe(filter(event => event instanceof GuardsCheckEnd))
+      .subscribe((event: GuardsCheckEnd) => {
+        if (!event.shouldActivate) return;
+        const cidadeDetectada = this.extrairCidadeDaUrlString(event.urlAfterRedirects || event.url);
+        if (!cidadeDetectada) return;
+        if (cidadeDetectada !== this.cidadeAtual()) {
+          this.cidadeAtual.set(cidadeDetectada);
+          this.setPreferredCidade(cidadeDetectada);
+          this._cidadeMudou$.next(cidadeDetectada);
+        }
+      });
+
+    // Keep NavigationEnd subscription as a safety net to stay in sync,
+    // but do NOT emit cidadeMudou$ here – GuardsCheckEnd already handled it.
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
         const cidadeDetectada = this.extrairCidadeDaUrl();
         if (!cidadeDetectada) return;
-
-        if (cidadeDetectada !== this.cidadeAtual()) {
-          this.cidadeAtual.set(cidadeDetectada);
-          this.setPreferredCidade(cidadeDetectada);
-          this._cidadeMudou$.next(cidadeDetectada);
-          return;
-        }
-
         this.cidadeAtual.set(cidadeDetectada);
         this.setPreferredCidade(cidadeDetectada);
       });
@@ -48,6 +59,15 @@ export class CidadeService {
       this.cidadeAtual.set(cidadeDetectada);
       this.setPreferredCidade(cidadeDetectada);
     }
+  }
+
+  /** Extracts city slug from an arbitrary URL string using the current valid-cities list. */
+  private extrairCidadeDaUrlString(url: string): string | null {
+    const partes = (url || '').split('?')[0].split('/').filter(p => p);
+    if (!partes.length) return null;
+    const cidadeSlug = this.normalizarSlug(partes[0]);
+    if (!cidadeSlug) return null;
+    return this.slugsCidadesDisponiveis.includes(cidadeSlug) ? cidadeSlug : null;
   }
 
   private extrairCidadeDaUrl(): string | null {

@@ -77,6 +77,11 @@ export class AnunciePageComponent implements OnInit {
   private platformId = inject(PLATFORM_ID);
   private cidadeService = inject(CidadeService);
 
+  get cidadeNome(): string {
+    const c = this.cidadeService.getCidade();
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  }
+
   ngOnInit(): void {
     const route = this.router.url.split('?')[0];
     const cidade = this.cidadeService.getCidade();

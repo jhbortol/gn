@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CidadeService } from '../../core/cidade.service';
 
 @Component({
   selector: 'app-clickwrap-agreement',
@@ -10,6 +11,12 @@ import { CommonModule } from '@angular/common';
 })
 export class ClickwrapAgreementComponent {
   isVisible = false;
+  private cidadeService = inject(CidadeService);
+
+  get cidadeNome(): string {
+    const c = this.cidadeService.getCidade();
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  }
 
   ngOnInit() {
     if (typeof window !== 'undefined' && window.localStorage) {

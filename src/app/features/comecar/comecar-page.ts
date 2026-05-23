@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ApiService } from '../../core/api.service';
+import { CidadeService } from '../../core/cidade.service';
 import { TermoAdesaoService } from '../../core/services/termo-adesao.service';
 import { TermoScrollTrackerComponent } from './termo-scroll-tracker.component';
 import { ComprovanteAceiteComponent } from './comprovante-aceite.component';
@@ -33,6 +34,12 @@ export class ComecarPage implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
   private termoService = inject(TermoAdesaoService);
+  private cidadeService = inject(CidadeService);
+
+  get cidadeNome(): string {
+    const c = this.cidadeService.getCidade();
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  }
 
   readonly INFINITEPAY_URL = 'https://link.infinitepay.io/guianoivaspiracicaba/Ri1D-72iRl1Vgzd-397,00';
   readonly PRECO_FINAL = 397.00;

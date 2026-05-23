@@ -2,6 +2,7 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from '../../../core/api.service';
+import { CidadeService } from '../../../core/cidade.service';
 import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
@@ -20,6 +21,12 @@ export class GuiaPrecosCTAComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private toastService = inject(ToastService);
+  private cidadeService = inject(CidadeService);
+
+  get cidadeNome(): string {
+    const c = this.cidadeService.getCidade();
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  }
 
   ngOnInit(): void {
     this.initForm();
@@ -49,7 +56,7 @@ export class GuiaPrecosCTAComponent implements OnInit {
     }).subscribe({
       next: (response: any) => {
         this.submitted.set(true);
-        this.downloadUrl.set(response.downloadUrl || '/assets/guia-precos-piracicaba-2026.pdf');
+        this.downloadUrl.set(response.downloadUrl || `/assets/guia-precos-${this.cidadeService.getCidade()}-2026.pdf`);
         this.toastService.success('Pronto! Seu PDF está pronto para download');
         this.submitting.set(false);
       },

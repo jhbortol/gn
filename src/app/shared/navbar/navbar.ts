@@ -24,6 +24,11 @@ export class NavbarComponent {
   private destroyRef = inject(DestroyRef);
   mobileMenuOpen = false;
 
+  get cidadeNome(): string {
+    const c = this.cidadeService.getCidade();
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  }
+
   constructor() {
     this.router.events
       .pipe(

@@ -1,7 +1,8 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { LeadService } from '../../core/services/lead.service';
+import { CidadeService } from '../../core/cidade.service';
 
 @Component({
   selector: 'app-lead-form',
@@ -61,7 +62,7 @@ import { LeadService } from '../../core/services/lead.service';
         <!-- Disclaimer termos -->
         <p class="text-center" style="font-size:10px; color:#9ca3af;">
           Ao enviar, você concorda com os
-          <a href="/piracicaba/institucional/termos" class="underline hover:text-gray-600">Termos de Uso e Isenção de Responsabilidade</a>
+          <a [href]="termosUrl" class="underline hover:text-gray-600">Termos de Uso e Isenção de Responsabilidade</a>
           do Guia Noivas.
         </p>
 
@@ -104,6 +105,11 @@ export class LeadFormComponent {
   isSubmitting = signal(false);
   successMessage = signal('');
   errorMessage = signal('');
+  private cidadeService = inject(CidadeService);
+
+  get termosUrl(): string {
+    return this.cidadeService.buildUrl('institucional/termos');
+  }
 
   constructor(private leadService: LeadService) { }
 

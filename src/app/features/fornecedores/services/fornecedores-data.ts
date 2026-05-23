@@ -7,6 +7,7 @@ import { environment } from '../../../../environments/environment';
 import { CompetitorAd, PlanLevel } from '../../../core/models/tier-system.model';
 import { resolveImageUrl } from '../../../core/image-url.helper';
 import { CategoriasData } from '../../categorias/services/categorias-data';
+import { CidadeService } from '../../../core/cidade.service';
 
 // DTOs alinhados ao backend (simplificados)
 export interface FornecedorListDto {
@@ -15,6 +16,10 @@ export interface FornecedorListDto {
   slug: string;
   descricao?: string;
   cidade?: string;
+  /** Cidade principal do fornecedor (multi-cidades) */
+  cidadePrincipal?: { id: string; nome: string; slug: string; estado?: string };
+  /** Todas as cidades em que o fornecedor está cadastrado */
+  cidades?: Array<{ id: string; nome: string; slug: string; estado?: string }>;
   rating?: number | null;
   destaque?: boolean;
   seloFornecedor?: boolean;
@@ -74,6 +79,10 @@ export interface Fornecedor {
   slug: string;
   descricao?: string;
   cidade?: string;
+  /** Cidade principal do fornecedor (multi-cidades) */
+  cidadePrincipal?: { id: string; nome: string; slug: string; estado?: string };
+  /** Todas as cidades em que o fornecedor está cadastrado */
+  cidades?: Array<{ id: string; nome: string; slug: string; estado?: string }>;
   endereco?: string;
   horarioFuncionamento?: string;
   telefone?: string;
@@ -107,9 +116,19 @@ export interface Fornecedor {
 @Injectable({ providedIn: 'root' })
 export class FornecedoresData {
   private highlightsCache = new Map<string, Observable<FornecedorListDto[]>>();
-  search(term: string, page = 1, pageSize = 12, destaque?: boolean): Observable<FornecedorListDto[]> {
+
+  constructor(
+    private api: ApiService,
+    private categoriasData: CategoriasData,
+    private transferState: TransferState,
+    private cidadeService: CidadeService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
+
+  search(term: string, page = 1, pageSize = 12, destaque?: boolean, cidadeSlug?: string): Observable<FornecedorListDto[]> {
     const trimmed = (term || '').trim();
-    const params: any = { page, pageSize };
+    const cidade = cidadeSlug ?? this.cidadeService.getCidade();
+    const params: any = { page, pageSize, cidadeSlug: cidade };
 
     // Enviar q/nome/descricao para permitir busca por nome e descrição (compatibilidade com backend)
     if (trimmed.length) {
@@ -123,7 +142,7 @@ export class FornecedoresData {
       params.publicado = environment.FORNECEDOR_PUBLICADO;
     }
 
-    // Novo endpoint v1/search/fornecedores
+    // Endpoint de busca com filtro obrigatório de cidade
     return this.api.get<any>(`/search/fornecedores`, params).pipe(
       map(r => {
         const list = Array.isArray(r) ? r : (r.data || r.Data || []);
@@ -166,12 +185,33 @@ export class FornecedoresData {
       ? (String(whatsAppRaw).startsWith('http') ? whatsAppRaw : `https://wa.me/${String(whatsAppRaw).replace(/\D/g, '')}`)
       : undefined;
 
+    // Normalize cidadePrincipal (multi-cidades)
+    const cidadePrincipalRaw = src.cidadePrincipal || src.CidadePrincipal;
+    const cidadePrincipal = cidadePrincipalRaw ? {
+      id: cidadePrincipalRaw.id || cidadePrincipalRaw.Id || '',
+      nome: cidadePrincipalRaw.nome || cidadePrincipalRaw.Nome || '',
+      slug: (cidadePrincipalRaw.slug || cidadePrincipalRaw.Slug || '').toLowerCase(),
+      estado: cidadePrincipalRaw.estado || cidadePrincipalRaw.Estado || undefined
+    } : undefined;
+
+    // Normalize cidades (multi-cidades)
+    const cidadesRaw = src.cidades || src.Cidades || [];
+    const cidades = Array.isArray(cidadesRaw) ? cidadesRaw.map((c: any) => ({
+      id: c.id || c.Id || '',
+      nome: c.nome || c.Nome || '',
+      slug: (c.slug || c.Slug || '').toLowerCase(),
+      estado: c.estado || c.Estado || undefined
+    })) : undefined;
+
     return {
       id: src.id || src.Id,
       nome: src.nomeFantasia || src.NomeFantasia || src.nome || src.Nome || src.name || src.Name,
       slug: src.slug || src.Slug,
       descricao: src.descricao || src.Descricao || src.bio || src.Bio,
-      cidade: src.cidade || src.Cidade || src.city || src.City,
+      cidade: src.cidade || src.Cidade || src.city || src.City
+        || cidadePrincipal?.nome,
+      cidadePrincipal,
+      cidades: cidades?.length ? cidades : undefined,
       rating: src.rating ?? src.Rating ?? null,
       destaque: src.destaque ?? src.Destaque ?? false,
       seloFornecedor: src.seloFornecedor ?? src.SeloFornecedor ?? false,
@@ -199,34 +239,41 @@ export class FornecedoresData {
     };
   }
 
-  constructor(
-    private api: ApiService,
-    private categoriasData: CategoriasData,
-    private transferState: TransferState,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) { }
-
-  getAll(page = 1, pageSize = 12): Observable<FornecedorListDto[]> {
-    // Usar /fornecedores/ativos para exibir apenas fornecedores ativos (público)
-    const params: any = { page, pageSize };
+  getAll(page = 1, pageSize = 12, cidadeSlug?: string): Observable<FornecedorListDto[]> {
+    const cidade = cidadeSlug ?? this.cidadeService.getCidade();
+    const params: any = { skip: (page - 1) * pageSize, take: pageSize };
     if (environment.FORNECEDOR_PUBLICADO !== null) {
       params.publicado = environment.FORNECEDOR_PUBLICADO;
     }
-    return this.api.get<{ data: any[] }>(`/fornecedores/ativos`, params).pipe(
-      map(r => (r.data || []).map((src: any) => this._mapToFornecedorListDto(src)))
+    // Novo endpoint por cidade, com fallback para o legado
+    return this.api.get<any>(`/public/${cidade}/fornecedores`, params).pipe(
+      map(r => {
+        const list = Array.isArray(r) ? r : (r.data || r.Data || r.items || r.Items || []);
+        return list.map((src: any) => this._mapToFornecedorListDto(src));
+      }),
+      catchError(() => {
+        // Fallback para endpoint legado sem cidade
+        const legacyParams: any = { page, pageSize };
+        if (environment.FORNECEDOR_PUBLICADO !== null) legacyParams.publicado = environment.FORNECEDOR_PUBLICADO;
+        return this.api.get<{ data: any[] }>(`/fornecedores/ativos`, legacyParams).pipe(
+          map(r => (r.data || []).map((src: any) => this._mapToFornecedorListDto(src)))
+        );
+      })
     );
   }
 
-  getDestaques(page = 1, pageSize = 24): Observable<FornecedorListDto[]> {
-    const params: any = { page, pageSize, destaque: true };
+  getDestaques(page = 1, pageSize = 24, cidadeSlug?: string): Observable<FornecedorListDto[]> {
+    const cidade = cidadeSlug ?? this.cidadeService.getCidade();
+    const params: any = { skip: (page - 1) * pageSize, take: pageSize, destaque: true };
     if (environment.FORNECEDOR_PUBLICADO !== null) {
       params.publicado = environment.FORNECEDOR_PUBLICADO;
     }
-    return this.api.get<any>(`/fornecedores/ativos`, params).pipe(
+    return this.api.get<any>(`/public/${cidade}/fornecedores`, params).pipe(
       map(r => {
         let list: any[] = [];
         if (Array.isArray(r)) list = r;
         else if (r && Array.isArray(r.data)) list = r.data;
+        else if (r && Array.isArray(r.items)) list = r.items;
         else console.warn('[DESTAQUES] formato inesperado da resposta:', r);
 
         return list.map(src => this._mapToFornecedorListDto(src));
@@ -246,8 +293,9 @@ export class FornecedoresData {
     );
   }
 
-  getById(identifier: string, preview = false): Observable<Fornecedor> {
-    const stateKey = makeStateKey<Fornecedor>(`fornecedor-${identifier}-${preview}`);
+  getById(identifier: string, preview = false, cidadeSlug?: string): Observable<Fornecedor> {
+    const cidade = cidadeSlug ?? this.cidadeService.getCidade();
+    const stateKey = makeStateKey<Fornecedor>(`fornecedor-${cidade}-${identifier}-${preview}`);
 
     // Check if data is already available in TransferState (from server-side rendering)
     if (this.transferState.hasKey(stateKey)) {
@@ -256,16 +304,24 @@ export class FornecedoresData {
       return of(fornecedor);
     }
 
-    const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(identifier);
-    const endpoint = isGuid ? `/public/fornecedores/${identifier}` : `/public/fornecedores/slug/${identifier.toLowerCase()}`;
-
-    // If preview mode, add query param to bypass publicado filter
+    // Params
     const params: any = {};
     if (preview) {
       params.preview = 'true';
     }
 
-    return this.api.get<any>(endpoint, params).pipe(
+    // Tentar novo endpoint por cidade primeiro: /public/{cidadeSlug}/fornecedores/{fornecedorSlug}
+    // Se o identifier for um GUID, usar endpoint legado
+    const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(identifier);
+
+    const cityEndpoint = isGuid
+      ? `/public/fornecedores/${identifier}`
+      : `/public/${cidade}/fornecedores/${identifier.toLowerCase()}`;
+    const legacyEndpoint = isGuid
+      ? `/public/fornecedores/${identifier}`
+      : `/public/fornecedores/slug/${identifier.toLowerCase()}`;
+
+    const fetchDetail = (endpoint: string) => this.api.get<any>(endpoint, params).pipe(
       map(detail => {
         // Support multiple response envelope patterns used by different backend versions:
         // { data: {...} }, { Data: {...} }, { result: {...} }, { fornecedor: {...} }, or direct object
@@ -312,7 +368,12 @@ export class FornecedoresData {
           this.transferState.set(stateKey, fornecedor);
         }
         return fornecedor;
-      }),
+      })
+    );
+
+    // Tentar novo endpoint, com fallback para endpoint legado se cidade não suportada ou 404
+    return fetchDetail(cityEndpoint).pipe(
+      catchError(() => fetchDetail(legacyEndpoint)),
       catchError(err => { throw err; })
     );
   }
@@ -362,13 +423,34 @@ export class FornecedoresData {
       ? (String(whatsAppRaw).startsWith('http') ? whatsAppRaw : `https://wa.me/${String(whatsAppRaw).replace(/\D/g, '')}`)
       : undefined;
 
+    // Normalize cidadePrincipal (multi-cidades)
+    const cidadePrincipalRaw = src.cidadePrincipal || src.CidadePrincipal;
+    const cidadePrincipal = cidadePrincipalRaw ? {
+      id: cidadePrincipalRaw.id || cidadePrincipalRaw.Id || '',
+      nome: cidadePrincipalRaw.nome || cidadePrincipalRaw.Nome || '',
+      slug: (cidadePrincipalRaw.slug || cidadePrincipalRaw.Slug || '').toLowerCase(),
+      estado: cidadePrincipalRaw.estado || cidadePrincipalRaw.Estado || undefined
+    } : undefined;
+
+    // Normalize cidades (multi-cidades)
+    const cidadesRaw = src.cidades || src.Cidades || [];
+    const cidades = Array.isArray(cidadesRaw) && cidadesRaw.length ? cidadesRaw.map((c: any) => ({
+      id: c.id || c.Id || '',
+      nome: c.nome || c.Nome || '',
+      slug: (c.slug || c.Slug || '').toLowerCase(),
+      estado: c.estado || c.Estado || undefined
+    })) : undefined;
+
     const mapped: Fornecedor = {
       id: src.id || src.Id,
       nome: src.nomeFantasia || src.NomeFantasia || src.nome || src.Nome || src.name || src.Name,
       slug: src.slug || src.Slug,
       descricao: src.descricao || src.Descricao || src.bio || src.Bio,
       publicado: src.publicado ?? src.Publicado ?? true,
-      cidade: src.cidade || src.Cidade || src.city || src.City,
+      cidade: src.cidade || src.Cidade || src.city || src.City
+        || cidadePrincipal?.nome,
+      cidadePrincipal,
+      cidades,
       // Address: tries all known Portuguese and English field aliases used by the backend
       endereco: src.endereco || src.Endereco
         || src.address || src.Address
@@ -490,75 +572,92 @@ export class FornecedoresData {
     return (src?.destaque ?? src?.Destaque) ? PlanLevel.Vitrine : PlanLevel.Free;
   }
 
-  getByCategoria(categoriaSlugOrId: string): Observable<FornecedorListDto[]> {
-    const params: any = { page: 1, pageSize: 50 }; // Default page size for category view
-    if (environment.FORNECEDOR_PUBLICADO !== null) {
-      params.publicado = environment.FORNECEDOR_PUBLICADO;
-    }
-
+  getByCategoria(categoriaSlugOrId: string, cidadeSlug?: string): Observable<FornecedorListDto[]> {
+    const cidade = cidadeSlug ?? this.cidadeService.getCidade();
     const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(categoriaSlugOrId);
-    if (isGuid) {
-      return this.api.get<any>(`/fornecedores/ativos/categoria/${categoriaSlugOrId}`, params).pipe(
+
+    const fetchByCidade = (categoriaId: string) => {
+      // Novo endpoint: /public/{cidadeSlug}/fornecedores?categorias={id}
+      const params: any = { categorias: categoriaId, skip: 0, take: 50 };
+      if (environment.FORNECEDOR_PUBLICADO !== null) params.publicado = environment.FORNECEDOR_PUBLICADO;
+      return this.api.get<any>(`/public/${cidade}/fornecedores`, params).pipe(
         map(r => {
-          const list = Array.isArray(r) ? r : (r.data || r.Data || []);
+          const list = Array.isArray(r) ? r : (r.data || r.Data || r.items || r.Items || []);
           return list.map((src: any) => this._mapToFornecedorListDto(src));
+        }),
+        catchError(() => {
+          // Fallback para endpoint legado
+          const legacyParams: any = { page: 1, pageSize: 50 };
+          if (environment.FORNECEDOR_PUBLICADO !== null) legacyParams.publicado = environment.FORNECEDOR_PUBLICADO;
+          return this.api.get<any>(`/fornecedores/ativos/categoria/${categoriaId}`, legacyParams).pipe(
+            map(r => {
+              const list = Array.isArray(r) ? r : (r.data || r.Data || []);
+              return list.map((src: any) => this._mapToFornecedorListDto(src));
+            })
+          );
         })
       );
-    }
+    };
+
+    if (isGuid) return fetchByCidade(categoriaSlugOrId);
 
     return this.categoriasData.getBySlug(categoriaSlugOrId).pipe(
-      switchMap(cat => {
-        if (!cat) return of([]);
-        return this.api.get<any>(`/fornecedores/ativos/categoria/${cat.id}`, params).pipe(
-          map(r => {
-            const list = Array.isArray(r) ? r : (r.data || r.Data || []);
-            return list.map((src: any) => this._mapToFornecedorListDto(src));
-          })
-        );
-      })
+      switchMap(cat => cat ? fetchByCidade(cat.id) : of([]))
     );
   }
 
-  getDestaquesByCategoria(categoriaSlugOrId: string): Observable<FornecedorListDto[]> {
-    const params: any = { page: 1, pageSize: 24, destaque: true };
-    if (environment.FORNECEDOR_PUBLICADO !== null) {
-      params.publicado = environment.FORNECEDOR_PUBLICADO;
-    }
-
+  getDestaquesByCategoria(categoriaSlugOrId: string, cidadeSlug?: string): Observable<FornecedorListDto[]> {
+    const cidade = cidadeSlug ?? this.cidadeService.getCidade();
     const isGuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(categoriaSlugOrId);
 
-    const fetch = (id: string) => this.api.get<any>(`/fornecedores/ativos/categoria/${id}`, params).pipe(
-      map(r => {
-        const list = Array.isArray(r) ? r : (r.data || r.Data || []);
-        return list.map((src: any) => this._mapToFornecedorListDto(src));
-      }),
-      catchError(() => this.getByCategoria(id).pipe(map(list => list.filter((f: any) => f.destaque))))
-    );
+    const fetchByCidade = (categoriaId: string) => {
+      const params: any = { categorias: categoriaId, destaque: true, skip: 0, take: 24 };
+      if (environment.FORNECEDOR_PUBLICADO !== null) params.publicado = environment.FORNECEDOR_PUBLICADO;
+      return this.api.get<any>(`/public/${cidade}/fornecedores`, params).pipe(
+        map(r => {
+          const list = Array.isArray(r) ? r : (r.data || r.Data || r.items || r.Items || []);
+          return list.map((src: any) => this._mapToFornecedorListDto(src));
+        }),
+        catchError(() => this.getByCategoria(categoriaId, cidade).pipe(map(list => list.filter((f: any) => f.destaque))))
+      );
+    };
 
-    if (isGuid) return fetch(categoriaSlugOrId);
+    if (isGuid) return fetchByCidade(categoriaSlugOrId);
 
     return this.categoriasData.getBySlug(categoriaSlugOrId).pipe(
-      switchMap(cat => cat ? fetch(cat.id) : of([]))
+      switchMap(cat => cat ? fetchByCidade(cat.id) : of([]))
     );
   }
 
-  getDestaquesByCategoriaId(categoriaId: string): Observable<FornecedorListDto[]> {
-    const cacheKey = `destaques-cat-id-${categoriaId}`;
+  getDestaquesByCategoriaId(categoriaId: string, cidadeSlug?: string): Observable<FornecedorListDto[]> {
+    const cidade = cidadeSlug ?? this.cidadeService.getCidade();
+    const cacheKey = `destaques-cat-id-${cidade}-${categoriaId}`;
     if (this.highlightsCache.has(cacheKey)) return this.highlightsCache.get(cacheKey)!;
 
-    const params: any = { page: 1, pageSize: 24, destaque: true };
+    const params: any = { categorias: categoriaId, destaque: true, skip: 0, take: 24 };
     if (environment.FORNECEDOR_PUBLICADO !== null) {
       params.publicado = environment.FORNECEDOR_PUBLICADO;
     }
 
-    const obs = this.api.get<any>(`/fornecedores/ativos/categoria/${categoriaId}`, params).pipe(
+    const obs = this.api.get<any>(`/public/${cidade}/fornecedores`, params).pipe(
       map(r => {
-        const list = Array.isArray(r) ? r : (r.data || r.Data || []);
+        const list = Array.isArray(r) ? r : (r.data || r.Data || r.items || r.Items || []);
         return list.map((src: any) => this._mapToFornecedorListDto(src)).filter((f: any) => f.destaque);
       }),
-      catchError(err => {
-        console.warn('[DESTAQUES BY CATEGORIA ID] error:', err);
-        return of([]);
+      catchError(() => {
+        // Fallback para endpoint legado
+        const legacyParams: any = { page: 1, pageSize: 24, destaque: true };
+        if (environment.FORNECEDOR_PUBLICADO !== null) legacyParams.publicado = environment.FORNECEDOR_PUBLICADO;
+        return this.api.get<any>(`/fornecedores/ativos/categoria/${categoriaId}`, legacyParams).pipe(
+          map(r => {
+            const list = Array.isArray(r) ? r : (r.data || r.Data || []);
+            return list.map((src: any) => this._mapToFornecedorListDto(src)).filter((f: any) => f.destaque);
+          }),
+          catchError(err => {
+            console.warn('[DESTAQUES BY CATEGORIA ID] error:', err);
+            return of([]);
+          })
+        );
       }),
       shareReplay(1)
     );

@@ -17,7 +17,7 @@ const routes: Routes = [
 ];
 
 // Function to fetch supplier IDs/slugs for prerendering
-export async function getPrerenderParams(): Promise<{ id: string }[]> {
+export async function getPrerenderParams(): Promise<{ id: string; cidadeSlug?: string }[]> {
   try {
     const apiUrl = process.env['API_BASE_URL'] || 'https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1';
     // Fetch all active suppliers - using a large page size to get most suppliers
@@ -28,11 +28,17 @@ export async function getPrerenderParams(): Promise<{ id: string }[]> {
       return [];
     }
 
+    interface CidadeInfo {
+      slug?: string;
+      Slug?: string;
+    }
+
     interface FornecedorDto {
       id?: string;
       Id?: string;
       slug?: string;
       Slug?: string;
+      cidadePrincipal?: CidadeInfo;
     }
 
     interface ApiResponse {
@@ -42,11 +48,15 @@ export async function getPrerenderParams(): Promise<{ id: string }[]> {
     const result: ApiResponse = await response.json();
     const fornecedores = result.data || [];
     
-    return fornecedores
-      .map((fornecedor: FornecedorDto) => ({
-        id: fornecedor.slug || fornecedor.Slug || fornecedor.id || fornecedor.Id
-      }))
-      .filter((p): p is { id: string } => typeof p.id === 'string' && p.id.length > 0);
+    const params: { id: string; cidadeSlug?: string }[] = [];
+    for (const fornecedor of fornecedores) {
+      const id = fornecedor.slug || fornecedor.Slug || fornecedor.id || fornecedor.Id;
+      if (typeof id !== 'string' || id.length === 0) continue;
+      const rawCidade = fornecedor.cidadePrincipal?.slug || fornecedor.cidadePrincipal?.Slug || '';
+      const cidadeSlug = rawCidade.toLowerCase() || undefined;
+      params.push({ id, cidadeSlug });
+    }
+    return params;
   } catch (error) {
     console.warn('Error fetching suppliers for prerendering:', error);
     return [];

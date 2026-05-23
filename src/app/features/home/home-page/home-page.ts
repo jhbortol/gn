@@ -34,8 +34,23 @@ export class HomePageComponent implements OnInit {
   private metaTagService = inject(MetaTagService);
   private router = inject(Router);
 
+  get cidadeNome(): string {
+    const c = this.cidadeService.getCidade();
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  }
+
+  get instagramHandle(): string {
+    return `guianoivas${this.cidadeService.getCidade().replace(/-/g, '')}`;
+  }
+
+  get instagramUrl(): string {
+    return `https://www.instagram.com/${this.instagramHandle}/`;
+  }
+
   constructor(private categoriasData: CategoriasData, private fornecedoresData: FornecedoresData, private tracking: TrackingService) {
-    this.categorias$ = this.categoriasData.getAll().pipe(
+    const cidade = this.cidadeService.getCidade();
+
+    this.categorias$ = this.categoriasData.getAll(cidade).pipe(
       map(cats => cats.slice().sort((a, b) => (a.nome || '').localeCompare(b.nome || '')))
     );
     this.fornecedoresBusca$ = this.buscaTerm$.pipe(
@@ -44,7 +59,7 @@ export class HomePageComponent implements OnInit {
       distinctUntilChanged(),
       switchMap(term => {
         if (term.length > 0) {
-          return this.fornecedoresData.search(term).pipe(
+          return this.fornecedoresData.search(term, 1, 12, undefined, cidade).pipe(
             map(results => {
               // Track search
               this.tracking.trackSearch(term, results.length);

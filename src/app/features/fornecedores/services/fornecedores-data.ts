@@ -267,22 +267,24 @@ export class FornecedoresData {
 
   getDestaques(page = 1, pageSize = 24, cidadeSlug?: string): Observable<FornecedorListDto[]> {
     const cidade = cidadeSlug ?? this.cidadeService.getCidade();
+    const cacheKey = `${cidade}-${page}-${pageSize}`;
+    if (this.highlightsCache.has(cacheKey)) {
+      return this.highlightsCache.get(cacheKey)!;
+    }
     const params: any = { skip: (page - 1) * pageSize, take: pageSize, destaque: true };
     if (environment.FORNECEDOR_PUBLICADO !== null) {
       params.publicado = environment.FORNECEDOR_PUBLICADO;
     }
-    return this.api.get<any>(`/public/${cidade}/fornecedores`, params).pipe(
+    const request$ = this.api.get<any>(`/public/${cidade}/fornecedores`, params).pipe(
       map(r => {
         let list: any[] = [];
         if (Array.isArray(r)) list = r;
         else if (r && Array.isArray(r.data)) list = r.data;
         else if (r && Array.isArray(r.items)) list = r.items;
         else console.warn('[DESTAQUES] formato inesperado da resposta:', r);
-
-        return list.map(src => this._mapToFornecedorListDto(src));
+        return list.map((src: any) => this._mapToFornecedorListDto(src));
       }),
       map(list => {
-        // Garantir que filtramos apenas os que têm destaque=true se a API retornou tudo
         const highlights = list.filter(f => f.destaque);
         if (list.length > 0 && highlights.length === 0) {
           console.warn('[DESTAQUES] nenhum fornecedor com destaque=true encontrado na lista');
@@ -292,8 +294,11 @@ export class FornecedoresData {
       catchError(err => {
         console.error('[DESTAQUES] API error:', err);
         return of([]);
-      })
+      }),
+      shareReplay(1)
     );
+    this.highlightsCache.set(cacheKey, request$);
+    return request$;
   }
 
   getById(identifier: string, preview = false, cidadeSlug?: string): Observable<Fornecedor> {
@@ -599,7 +604,7 @@ export class FornecedoresData {
 
     if (isGuid) return fetchByCidade(categoriaSlugOrId);
 
-    return this.categoriasData.getBySlug(categoriaSlugOrId).pipe(
+    return this.categoriasData.getBySlug(categoriaSlugOrId, cidade).pipe(
       switchMap(cat => cat ? fetchByCidade(cat.id) : of([]))
     );
   }
@@ -622,7 +627,7 @@ export class FornecedoresData {
 
     if (isGuid) return fetchByCidade(categoriaSlugOrId);
 
-    return this.categoriasData.getBySlug(categoriaSlugOrId).pipe(
+    return this.categoriasData.getBySlug(categoriaSlugOrId, cidade).pipe(
       switchMap(cat => cat ? fetchByCidade(cat.id) : of([]))
     );
   }

@@ -222,7 +222,7 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
       this.destaque.set(d);
 
       // Load supplier details to get WhatsApp URL, name, etc.
-      this.fornecedoresData.getById(d.fornecedorSlug).subscribe({
+      this.fornecedoresData.getById(d.fornecedorSlug, false, cidade).subscribe({
         next: f => {
           // Map Fornecedor → FornecedorListDto-compatible shape
           const listDto: FornecedorListDto = {

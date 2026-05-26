@@ -25,16 +25,18 @@ describe('FornecedoresData mapping', () => {
       expect(service._resolvePlanLevel({ tier: 1 })).toBe(PlanLevel.Vitrine);
       expect(service._resolvePlanLevel({ tier: 'vitrine' })).toBe(PlanLevel.Vitrine);
       expect(service._resolvePlanLevel({ plan: 'free' })).toBe(PlanLevel.Free);
+      expect(service._resolvePlanLevel({ planType: 'vitrine' })).toBe(PlanLevel.Vitrine);
+      expect(service._resolvePlanLevel({ tipoPlano: 'free' })).toBe(PlanLevel.Free);
     });
 
-    it('should infer Vitrine from whatsApp signal when planLevel is absent', () => {
-      expect(service._resolvePlanLevel({ whatsApp: '5519999999999' })).toBe(PlanLevel.Vitrine);
-      expect(service._resolvePlanLevel({ whatsAppUrl: 'https://wa.me/1' })).toBe(PlanLevel.Vitrine);
-      expect(service._resolvePlanLevel({ showContactForm: false })).toBe(PlanLevel.Vitrine);
+    it('should not infer Vitrine from WhatsApp/contact signals when planLevel is absent', () => {
+      expect(service._resolvePlanLevel({ whatsApp: '5519999999999' })).toBe(PlanLevel.Free);
+      expect(service._resolvePlanLevel({ whatsAppUrl: 'https://wa.me/1' })).toBe(PlanLevel.Free);
+      expect(service._resolvePlanLevel({ showContactForm: false })).toBe(PlanLevel.Free);
     });
 
-    it('should fall back to destaque when no other signals present', () => {
-      expect(service._resolvePlanLevel({ destaque: true })).toBe(PlanLevel.Vitrine);
+    it('should fall back to Free when no explicit plan fields are present', () => {
+      expect(service._resolvePlanLevel({ destaque: true })).toBe(PlanLevel.Free);
       expect(service._resolvePlanLevel({ destaque: false })).toBe(PlanLevel.Free);
       expect(service._resolvePlanLevel({})).toBe(PlanLevel.Free);
     });

@@ -526,6 +526,8 @@ export class FornecedoresData {
     const raw = src?.planLevel ?? src?.PlanLevel
       ?? src?.tier ?? src?.Tier
       ?? src?.plan ?? src?.Plan
+      ?? src?.planType ?? src?.PlanType
+      ?? src?.tipoPlano ?? src?.TipoPlano
       ?? src?.nivelPlano ?? src?.NivelPlano
       ?? src?.planLevelId ?? src?.PlanLevelId;
 
@@ -563,16 +565,9 @@ export class FornecedoresData {
       return parsed as PlanLevel;
     }
 
-    // Fallback: infer tier from available signals when planLevel field is absent
-    // whatsAppUrl or showContactForm=false are strong indicators of Vitrine plan
-    const hasWhatsApp = !!(src?.whatsAppUrl || src?.WhatsAppUrl || src?.whatsApp || src?.WhatsApp);
-    const showForm = src?.showContactForm ?? src?.ShowContactForm;
-    if (hasWhatsApp || showForm === false) {
-      return PlanLevel.Vitrine;
-    }
-
-    // destaque=true was historically used as a proxy for Vitrine
-    return (src?.destaque ?? src?.Destaque) ? PlanLevel.Vitrine : PlanLevel.Free;
+    // Fallback seguro: sem tipo de plano explícito, tratar como Free.
+    // Evita classificar Vitrine com base em sinais de contato (ex.: WhatsApp).
+    return PlanLevel.Free;
   }
 
   getByCategoria(categoriaSlugOrId: string, cidadeSlug?: string): Observable<FornecedorListDto[]> {

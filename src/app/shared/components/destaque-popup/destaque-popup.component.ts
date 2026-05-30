@@ -19,7 +19,6 @@ import { DestaqueSemana } from '../../../core/models/destaque-semana.model';
 
 const SESSION_KEY = 'destaque_popup_shown';
 const POPUP_DELAY_MS = 15000;
-const WHATSAPP_MESSAGE = 'Te achei no Guia Noivas Piracicaba, e quero mais informações';
 
 @Component({
   selector: 'app-destaque-popup',
@@ -217,12 +216,13 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
     if (!isPlatformBrowser(this.platformId)) return;
     if (sessionStorage.getItem(SESSION_KEY)) return;
 
-    this.destaqueService.getActive().subscribe(d => {
+    const cidade = this.cidadeService.getCidade();
+    this.destaqueService.getActive(cidade).subscribe(d => {
       if (!d) return;
       this.destaque.set(d);
 
       // Load supplier details to get WhatsApp URL, name, etc.
-      this.fornecedoresData.getById(d.fornecedorSlug).subscribe({
+      this.fornecedoresData.getById(d.fornecedorSlug, false, cidade).subscribe({
         next: f => {
           // Map Fornecedor → FornecedorListDto-compatible shape
           const listDto: FornecedorListDto = {
@@ -284,7 +284,10 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
   }
 
   private buildWhatsAppUrl(f: FornecedorListDto): string {
-    const encodedMessage = encodeURIComponent(WHATSAPP_MESSAGE);
+    const cidade = this.cidadeService.getCidade();
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+    const message = `Te achei no Guia Noivas ${nomeFormatado}, e quero mais informações`;
+    const encodedMessage = encodeURIComponent(message);
     if (f.whatsAppUrl) {
       const url = f.whatsAppUrl;
       if ((url.includes('wa.me') || url.includes('whatsapp.com/send')) && !url.includes('text=')) {

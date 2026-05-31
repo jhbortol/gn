@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, switchMap, throwError } from 'rxjs';
 import { catchError, filter, first, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { isPlatformBrowser } from '@angular/common';
 
 interface LoginResponse {
   accessToken: string;
@@ -19,9 +20,11 @@ const TOKEN_EXPIRY_KEY = 'token_expiry';
 export class AuthTokenService {
   private token$ = new BehaviorSubject<string | null>(null);
   private loginInFlight = false;
+  private readonly platformId: object;
 
-  constructor(private http: HttpClient) {
-    // Try to restore token from sessionStorage on init
+  constructor(private http: HttpClient, @Inject(PLATFORM_ID) platformId: object) {
+    this.platformId = platformId;
+    // Try to restore token from sessionStorage on init (only in browser)
     this.restoreToken();
   }
 
@@ -33,10 +36,15 @@ export class AuthTokenService {
   }
 
   private restoreToken(): void {
+    if (!this.canUseSessionStorage()) {
+      console.warn('[AUTH] sessionStorage not available; skipping token restore');
+      return;
+    }
+
     try {
       const storedToken = sessionStorage.getItem(TOKEN_KEY);
       const expiry = sessionStorage.getItem(TOKEN_EXPIRY_KEY);
-      
+
       if (storedToken && expiry) {
         const expiryTime = parseInt(expiry, 10);
         if (Date.now() < expiryTime) {
@@ -47,7 +55,7 @@ export class AuthTokenService {
         }
       }
     } catch (e) {
-      console.warn('[AUTH] Unable to restore token from storage');
+      console.warn('[AUTH] Unable to restore token from storage', e);
     }
   }
 
@@ -83,26 +91,47 @@ export class AuthTokenService {
   }
 
   private storeToken(token: string, expiresIn?: number): void {
+    if (!this.canUseSessionStorage()) {
+      console.warn('[AUTH] sessionStorage not available; skipping token store');
+      return;
+    }
+
     try {
       sessionStorage.setItem(TOKEN_KEY, token);
-      
+
       // Store expiry time (default 1 hour)
       const expiryMs = (expiresIn || 3600) * 1000;
       const expiryTime = Date.now() + expiryMs;
       sessionStorage.setItem(TOKEN_EXPIRY_KEY, expiryTime.toString());
     } catch (e) {
-      console.warn('[AUTH] Unable to store token in sessionStorage');
+      console.warn('[AUTH] Unable to store token in sessionStorage', e);
     }
   }
 
   clearToken(): void {
+    if (!this.canUseSessionStorage()) {
+      // nothing to clear
+      this.token$.next(null);
+      return;
+    }
+
     try {
       sessionStorage.removeItem(TOKEN_KEY);
       sessionStorage.removeItem(REFRESH_TOKEN_KEY);
       sessionStorage.removeItem(TOKEN_EXPIRY_KEY);
     } catch (e) {
-      console.warn('[AUTH] Unable to clear token from storage');
+      console.warn('[AUTH] Unable to clear token from storage', e);
     }
     this.token$.next(null);
+  }
+
+  private canUseSessionStorage(): boolean {
+    try {
+      if (!isPlatformBrowser(this.platformId)) return false;
+      // access window.sessionStorage safely
+      return typeof window !== 'undefined' && !!window.sessionStorage;
+    } catch {
+      return false;
+    }
   }
 }

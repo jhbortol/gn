@@ -123,10 +123,7 @@ export class FornecedoresData {
     private transferState: TransferState,
     private cidadeService: CidadeService,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {
-    // Limpar cache de destaques ao trocar de cidade
-    this.cidadeService.cidadeMudou$.subscribe(() => this.highlightsCache.clear());
-  }
+  ) {}
 
   search(term: string, page = 1, pageSize = 12, destaque?: boolean, cidadeSlug?: string): Observable<FornecedorListDto[]> {
     const trimmed = (term || '').trim();
@@ -604,7 +601,7 @@ export class FornecedoresData {
 
     if (isGuid) return fetchByCidade(categoriaSlugOrId);
 
-    return this.categoriasData.getBySlug(categoriaSlugOrId, cidade).pipe(
+    return this.categoriasData.getBySlug(categoriaSlugOrId).pipe(
       switchMap(cat => cat ? fetchByCidade(cat.id) : of([]))
     );
   }
@@ -627,7 +624,7 @@ export class FornecedoresData {
 
     if (isGuid) return fetchByCidade(categoriaSlugOrId);
 
-    return this.categoriasData.getBySlug(categoriaSlugOrId, cidade).pipe(
+    return this.categoriasData.getBySlug(categoriaSlugOrId).pipe(
       switchMap(cat => cat ? fetchByCidade(cat.id) : of([]))
     );
   }

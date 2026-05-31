@@ -66,7 +66,7 @@ export class CategoriaDetalhePageComponent implements OnInit {
     );
 
     this.categoriaNome$ = this.categoriaId$.pipe(
-      switchMap((slug: string) => this.categorias.getBySlug(slug, this.cidadeService.getCidade())),
+      switchMap((slug: string) => this.categorias.getBySlug(slug)),
       map(categoria => categoria?.nome || '')
     );
 
@@ -91,7 +91,7 @@ export class CategoriaDetalhePageComponent implements OnInit {
       if (categoriaSlug) {
         // Fetch categoria data to get title, description, and image
         const categoria = await firstValueFrom(
-          this.categorias.getBySlug(categoriaSlug, this.cidadeService.getCidade())
+          this.categorias.getBySlug(categoriaSlug)
         );
         
         if (categoria) {

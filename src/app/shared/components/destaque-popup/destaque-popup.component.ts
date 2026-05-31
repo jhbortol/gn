@@ -216,13 +216,12 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
     if (!isPlatformBrowser(this.platformId)) return;
     if (sessionStorage.getItem(SESSION_KEY)) return;
 
-    const cidade = this.cidadeService.getCidade();
-    this.destaqueService.getActive(cidade).subscribe(d => {
+    this.destaqueService.getActive().subscribe(d => {
       if (!d) return;
       this.destaque.set(d);
 
       // Load supplier details to get WhatsApp URL, name, etc.
-      this.fornecedoresData.getById(d.fornecedorSlug, false, cidade).subscribe({
+      this.fornecedoresData.getById(d.fornecedorSlug, false, this.cidadeService.getCidade()).subscribe({
         next: f => {
           // Map Fornecedor → FornecedorListDto-compatible shape
           const listDto: FornecedorListDto = {

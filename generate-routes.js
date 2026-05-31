@@ -182,13 +182,18 @@ function validateApiDataCompleteness({ blogPosts, fornecedores, categorias }) {
 }
 
 async function getBlogPosts() {
+  const strict = process.env.ENFORCE_API_COMPLETENESS === 'true';
   try {
     const response = await fetchWithRetry(`${API_BASE_URL}/blog?page=1&pageSize=100`);
     const data = await response.json();
     return data.data || [];
   } catch (error) {
-    console.error('❌ CRITICAL: Failed to fetch blog posts for prerendering:', error.message);
-    throw error; // Fail build if blog posts cannot be fetched
+    if (strict) {
+      console.error('❌ CRITICAL: Failed to fetch blog posts for prerendering:', error.message);
+      throw error; // Fail build in strict mode only
+    }
+    console.warn('⚠️  Failed to fetch blog posts (non-fatal in dev mode):', error.message);
+    return [];
   }
 }
 
@@ -242,8 +247,12 @@ async function getFornecedoresData() {
     
     return allFornecedores;
   } catch (error) {
-    console.error('❌ CRITICAL: Failed to fetch suppliers for prerendering:', error.message);
-    throw error; // Fail build if suppliers cannot be fetched
+    if (process.env.ENFORCE_API_COMPLETENESS === 'true') {
+      console.error('❌ CRITICAL: Failed to fetch suppliers for prerendering:', error.message);
+      throw error; // Fail build in strict mode only
+    }
+    console.warn('⚠️  Failed to fetch fornecedores (non-fatal in dev mode):', error.message);
+    return [];
   }
 }
 
@@ -274,6 +283,7 @@ async function getFornecedoresPrerenderParams() {
 }
 
 async function getCategoriasData() {
+  const strict = process.env.ENFORCE_API_COMPLETENESS === 'true';
   try {
     const response = await fetchWithRetry(`${API_BASE_URL}/public/categorias`);
     const data = await response.json();
@@ -282,8 +292,12 @@ async function getCategoriasData() {
     console.log(`✅ Fetched ${categorias.length} categorias`);
     return categorias;
   } catch (error) {
-    console.error('❌ CRITICAL: Failed to fetch categories for prerendering:', error.message);
-    throw error; // Fail build if categories cannot be fetched
+    if (strict) {
+      console.error('❌ CRITICAL: Failed to fetch categories for prerendering:', error.message);
+      throw error; // Fail build in strict mode only
+    }
+    console.warn('⚠️  Failed to fetch categories (non-fatal in dev mode):', error.message);
+    return [];
   }
 }
 

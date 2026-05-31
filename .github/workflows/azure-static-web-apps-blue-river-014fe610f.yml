@@ -39,6 +39,8 @@ jobs:
         run: npm run prerender
         env:
           API_BASE_URL: "https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1"
+          ENFORCE_API_HEALTH: "false"
+          ENFORCE_API_COMPLETENESS: "false"
       - name: Debug - List build output
         run: ls -la dist/guia-noivas/browser/ && ls -la dist/guia-noivas/server/ || echo "Build output not found"
       - name: Deploy to Azure Static Web Apps

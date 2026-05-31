@@ -6,6 +6,7 @@ import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { CidadeService } from '../../../core/cidade.service';
 import { resolveImageUrl, addCacheBuster } from '../../../core/image-url.helper';
+import { PlanLevel } from '../../../core/models/tier-system.model';
 
 export interface DestaqueView {
   id: string;
@@ -46,9 +47,15 @@ export class DestaquesSemanaComponent implements OnInit {
           return [];
         }
         const filtered = list
+          // Filtrar apenas fornecedores do plano Vitrine (planLevel === 1)
+          .filter(f => f.planLevel === PlanLevel.Vitrine)
           .filter(f => !this.category || (f.categoria?.nome || '').toLowerCase() === this.category!.toLowerCase())
           .filter(f => !this.exclude?.length || !this.exclude.includes(f.id));
         
+        if (filtered.length === 0) {
+          console.warn('[DESTAQUES] nenhum fornecedor Vitrine com destaque encontrado. Total na lista:', list.length);
+        }
+
         // Randomize order to show different highlights on each page load
         const shuffled = filtered.sort(() => Math.random() - 0.5);
         
@@ -65,7 +72,7 @@ export class DestaquesSemanaComponent implements OnInit {
             imagem: this.getPreferredImageUrl(f)
           }));
         if (!result.length) {
-          console.warn('[DESTAQUES] nenhum resultado após filtragem.');
+          console.warn('[DESTAQUES] nenhum resultado após filtragem. Filtrados:', filtered.length);
         }
         this.displayed.emit(result.map(x => x.id));
         return result;

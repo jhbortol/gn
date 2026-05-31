@@ -92,6 +92,13 @@ export class CidadeService {
         this.slugsCidadesDisponiveis = cidades.map(c => this.normalizarSlug(c.slug)).filter(Boolean);
 
         const cidadeAtual = this.normalizarSlug(this.cidadeAtual());
+
+        // Não sobrescrever cidade nem emitir mudança quando o usuário está
+        // explicitamente na tela de seleção — evita loop de navegação.
+        const urlAtual = this.router.url.split('?')[0];
+        const naTelaDeSelecao = urlAtual === '/' || urlAtual === '/selecionar-cidade';
+        if (naTelaDeSelecao) return;
+
         if (!this.isCidadeValida(cidadeAtual)) {
           const cidadeFallback = this.slugsCidadesDisponiveis[0] || CIDADE_PADRAO;
           if (cidadeFallback !== this.cidadeAtual()) {

@@ -14,7 +14,7 @@
     "routes": [
         {
             "route": "/",
-            "redirect": "/piracicaba",
+            "redirect": "/selecionar-cidade",
             "statusCode": 301
         },
         {

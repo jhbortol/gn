@@ -24,9 +24,11 @@ export class NavbarComponent {
   private destroyRef = inject(DestroyRef);
   mobileMenuOpen = false;
 
-  readonly cidadeAtualNome = computed(() =>
-    this.cidadeService.getCidadeNome(this.cidadeService.cidadeAtual())
-  );
+  readonly cidadeAtualNome = computed(() => {
+    const cidade = this.cidadeService.cidadeAtual();
+    // Se não há cidade selecionada (página de seleção), não mostra o nome
+    return cidade ? this.cidadeService.getCidadeNome(cidade) : '';
+  });
 
   constructor() {
     this.router.events

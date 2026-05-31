@@ -217,6 +217,9 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
     if (sessionStorage.getItem(SESSION_KEY)) return;
 
     const cidade = this.cidadeService.getCidade();
+    // Se não há cidade selecionada (página de seleção), não tenta carregar destaque
+    if (!cidade) return;
+    
     this.destaqueService.getActive(cidade).subscribe(d => {
       if (!d) return;
       this.destaque.set(d);

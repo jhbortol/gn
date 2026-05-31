@@ -23,9 +23,11 @@ export class FooterComponent {
   successMessage = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
 
-  readonly cidadeAtualNome = computed(() =>
-    this.cidadeService.getCidadeNome(this.cidadeService.cidadeAtual())
-  );
+  readonly cidadeAtualNome = computed(() => {
+    const cidade = this.cidadeService.cidadeAtual();
+    // Se não há cidade selecionada (página de seleção), não mostra o nome
+    return cidade ? this.cidadeService.getCidadeNome(cidade) : '';
+  });
 
   buildUrl(path: string | string[]): string | string[] {
     if (Array.isArray(path)) {

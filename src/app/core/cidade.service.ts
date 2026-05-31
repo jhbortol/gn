@@ -15,7 +15,9 @@ export class CidadeService {
   private cidades$?: Observable<CidadeDto[]>;
   private platformId = inject(PLATFORM_ID);
 
-  cidadeAtual = signal<string>(CIDADE_PADRAO);
+  // Inicializa vazio para permitir que a página de seleção de cidade seja exibida
+  // Será preenchido apenas quando uma cidade for detectada na URL ou carregada do localStorage
+  cidadeAtual = signal<string>('');
 
   private _cidadeMudou$ = new Subject<string>();
   cidadeMudou$: Observable<string> = this._cidadeMudou$.asObservable();

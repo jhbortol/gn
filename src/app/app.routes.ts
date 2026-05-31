@@ -31,7 +31,7 @@ return cidadeValida ? true : router.parseUrl('/selecionar-cidade');
 export const routes: Routes = [
 {
 path: '',
-loadComponent: () => import('./features/cidades/cidade-selector-page').then(m => m.CidadeSelectorPageComponent),
+redirectTo: 'selecionar-cidade',
 pathMatch: 'full'
 },
 {

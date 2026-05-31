@@ -152,6 +152,7 @@
           "builder": "@angular-devkit/build-angular:prerender",
           "options": {
             "routes": [
+              "selecionar-cidade",
               "piracicaba",
               "piracicaba/categorias",
               "piracicaba/blog",

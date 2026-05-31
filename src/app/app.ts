@@ -31,20 +31,6 @@ export class App implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Fallback client-side redirect: if user landed on root ('/'),
-    // force navigate to the city selector. This ensures environments
-    // where the static host routing isn't applied (or is cached)
-    // still behave correctly.
-    try {
-      const initialUrl = (this.router.url || '/').split('?')[0].split('#')[0] || '/';
-      if (this.isBrowser && (initialUrl === '/' || initialUrl === '')) {
-        // Use replaceUrl to avoid creating an extra history entry
-        this.router.navigateByUrl('/selecionar-cidade', { replaceUrl: true });
-      }
-    } catch (e) {
-      // noop - defensive in case router isn't ready
-      console.warn('Fallback redirect failed', e);
-    }
     this.router.events.subscribe(ev => {
       if (ev instanceof NavigationEnd) {
         const hideNavbar = ev.url.includes('/midia-kit');

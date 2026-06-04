@@ -9,7 +9,7 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { DestaqueSemanaService } from '../../../core/services/destaque-semana.service';
 import { FornecedoresData, FornecedorListDto } from '../../../features/fornecedores/services/fornecedores-data';
 import { TrackingService } from '../../../core/tracking.service';
@@ -208,7 +208,6 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
   private timer?: ReturnType<typeof setTimeout>;
   private platformId = inject(PLATFORM_ID);
   private cdr = inject(ChangeDetectorRef);
-  private route = inject(ActivatedRoute);
   private destaqueService = inject(DestaqueSemanaService);
   private fornecedoresData = inject(FornecedoresData);
   private tracking = inject(TrackingService);
@@ -217,7 +216,7 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    const instant = this.route.snapshot.queryParamMap.has('destaque');
+    const instant = new URLSearchParams(window.location.search).has('destaque');
     if (!instant && sessionStorage.getItem(SESSION_KEY)) return;
 
     this.destaqueService.getActive().subscribe(d => {

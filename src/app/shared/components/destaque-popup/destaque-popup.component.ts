@@ -19,6 +19,7 @@ import { DestaqueSemana } from '../../../core/models/destaque-semana.model';
 
 const SESSION_KEY = 'destaque_popup_shown';
 const POPUP_DELAY_MS = 15000;
+const POPUP_INSTANT_DELAY_MS = 800;
 
 @Component({
   selector: 'app-destaque-popup',
@@ -214,7 +215,9 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    if (sessionStorage.getItem(SESSION_KEY)) return;
+
+    const instant = new URLSearchParams(window.location.search).has('destaque');
+    if (!instant && sessionStorage.getItem(SESSION_KEY)) return;
 
     this.destaqueService.getActive().subscribe(d => {
       if (!d) return;
@@ -245,7 +248,7 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
           };
           this.fornecedor.set(listDto);
           this.cdr.markForCheck();
-          this.schedulePopup();
+          this.schedulePopup(instant);
         },
         error: () => {
           this.loadError.set(true);
@@ -259,11 +262,11 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
     if (this.timer) clearTimeout(this.timer);
   }
 
-  private schedulePopup(): void {
+  private schedulePopup(instant = false): void {
     this.timer = setTimeout(() => {
       this.visible.set(true);
       this.cdr.markForCheck();
-    }, POPUP_DELAY_MS);
+    }, instant ? POPUP_INSTANT_DELAY_MS : POPUP_DELAY_MS);
   }
 
   close(): void {

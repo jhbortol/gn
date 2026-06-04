@@ -9,7 +9,7 @@ import {
   PLATFORM_ID,
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { DestaqueSemanaService } from '../../../core/services/destaque-semana.service';
 import { FornecedoresData, FornecedorListDto } from '../../../features/fornecedores/services/fornecedores-data';
 import { TrackingService } from '../../../core/tracking.service';
@@ -19,6 +19,7 @@ import { DestaqueSemana } from '../../../core/models/destaque-semana.model';
 
 const SESSION_KEY = 'destaque_popup_shown';
 const POPUP_DELAY_MS = 15000;
+const POPUP_INSTANT_DELAY_MS = 800;
 
 @Component({
   selector: 'app-destaque-popup',
@@ -207,6 +208,7 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
   private timer?: ReturnType<typeof setTimeout>;
   private platformId = inject(PLATFORM_ID);
   private cdr = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
   private destaqueService = inject(DestaqueSemanaService);
   private fornecedoresData = inject(FornecedoresData);
   private tracking = inject(TrackingService);
@@ -214,7 +216,9 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    if (sessionStorage.getItem(SESSION_KEY)) return;
+
+    const instant = this.route.snapshot.queryParamMap.has('destaque');
+    if (!instant && sessionStorage.getItem(SESSION_KEY)) return;
 
     this.destaqueService.getActive().subscribe(d => {
       if (!d) return;
@@ -245,7 +249,7 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
           };
           this.fornecedor.set(listDto);
           this.cdr.markForCheck();
-          this.schedulePopup();
+          this.schedulePopup(instant);
         },
         error: () => {
           this.loadError.set(true);
@@ -259,11 +263,11 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
     if (this.timer) clearTimeout(this.timer);
   }
 
-  private schedulePopup(): void {
+  private schedulePopup(instant = false): void {
     this.timer = setTimeout(() => {
       this.visible.set(true);
       this.cdr.markForCheck();
-    }, POPUP_DELAY_MS);
+    }, instant ? POPUP_INSTANT_DELAY_MS : POPUP_DELAY_MS);
   }
 
   close(): void {

@@ -216,7 +216,7 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
-    const instant = new URLSearchParams(window.location.search).has('destaque');
+    const instant = this.shouldShowInstantPopup();
     if (!instant && sessionStorage.getItem(SESSION_KEY)) return;
 
     this.destaqueService.getActive().subscribe(d => {
@@ -260,6 +260,19 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.timer) clearTimeout(this.timer);
+  }
+
+  private shouldShowInstantPopup(): boolean {
+    const query = new URLSearchParams(window.location.search);
+
+    for (const [key, value] of query.entries()) {
+      if (key.trim() !== 'destaque') continue;
+
+      const normalizedValue = value.trim().toLowerCase();
+      return normalizedValue === '' || normalizedValue === '1' || normalizedValue === 'true';
+    }
+
+    return false;
   }
 
   private schedulePopup(instant = false): void {

@@ -182,7 +182,7 @@ export class MeuCasamentoStoreService {
 
     const nextItems = existing.syncState === 'created'
       ? current.budget.items.filter(item => item.id !== itemId)
-      : current.budget.items.map(item => item.id === itemId ? { ...item, syncState: 'deleted', updatedAt: new Date().toISOString() } : item);
+      : current.budget.items.map(item => item.id === itemId ? { ...item, syncState: 'deleted' as const, updatedAt: new Date().toISOString() } : item);
 
     this.patchState({
       budget: {
@@ -226,7 +226,7 @@ export class MeuCasamentoStoreService {
 
     const nextGuests = existing.syncState === 'created'
       ? current.guests.filter(item => item.id !== guestId)
-      : current.guests.map(item => item.id === guestId ? { ...item, syncState: 'deleted', updatedAt: new Date().toISOString() } : item);
+      : current.guests.map(item => item.id === guestId ? { ...item, syncState: 'deleted' as const, updatedAt: new Date().toISOString() } : item);
 
     this.patchState({
       guests: nextGuests,
@@ -263,7 +263,7 @@ export class MeuCasamentoStoreService {
 
     const nextFavorites = existing.syncState === 'created'
       ? current.favorites.filter(item => item.fornecedorId !== fornecedorId)
-      : current.favorites.map(item => item.fornecedorId === fornecedorId ? { ...item, syncState: 'deleted' } : item);
+      : current.favorites.map(item => item.fornecedorId === fornecedorId ? { ...item, syncState: 'deleted' as const } : item);
 
     this.patchState({
       favorites: nextFavorites,

@@ -3,6 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.service';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
+import { GuestItem } from '../../meu-casamento.models';
+
+type GuestDraft = Pick<GuestItem, 'id' | 'name' | 'group' | 'status' | 'plusOnes'> & {
+  phone: string;
+  notes: string;
+};
 
 @Component({
   selector: 'app-meu-casamento-convidados',
@@ -19,7 +25,7 @@ export class MeuCasamentoConvidadosComponent implements OnInit {
   groupFilter = '';
   statusFilter = '';
   editingId: string | null = null;
-  draft = this.createEmptyDraft();
+  draft: GuestDraft = this.createEmptyDraft();
 
   readonly guests = computed(() => this.store.guests()
     .filter(guest => !this.search || guest.name.toLowerCase().includes(this.search.toLowerCase()))
@@ -80,7 +86,7 @@ export class MeuCasamentoConvidadosComponent implements OnInit {
     this.draft = this.createEmptyDraft();
   }
 
-  private createEmptyDraft() {
+  private createEmptyDraft(): GuestDraft {
     return {
       id: '',
       name: '',

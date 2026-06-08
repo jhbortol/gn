@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { signal } from '@angular/core';
+import { provideExperimentalZonelessChangeDetection, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { weddingToolsGuard } from './wedding-tools.guard';
@@ -16,6 +16,7 @@ describe('weddingToolsGuard', () => {
 
     TestBed.configureTestingModule({
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         {
           provide: MeuCasamentoStoreService,
           useValue: {

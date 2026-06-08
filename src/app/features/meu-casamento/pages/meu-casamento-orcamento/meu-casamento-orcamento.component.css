@@ -71,6 +71,15 @@
   margin-top: 1rem;
 }
 
+.setup-card {
+  margin-top: 1rem;
+}
+
+.setup-card p {
+  margin: 0.35rem 0 0;
+  color: #4b5563;
+}
+
 .totals-grid div {
   background: #fff1f2;
   border-radius: 0.9rem;

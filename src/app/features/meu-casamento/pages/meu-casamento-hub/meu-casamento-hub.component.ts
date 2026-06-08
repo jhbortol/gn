@@ -1,7 +1,7 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
 import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.service';
 
@@ -16,11 +16,15 @@ export class MeuCasamentoHubComponent implements OnInit {
   private readonly store = inject(MeuCasamentoStoreService);
   private readonly sync = inject(MeuCasamentoSyncService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   readonly profile = this.store.profile;
   readonly backupCode = this.store.backupCode;
   readonly availableTools = this.store.availableTools;
   readonly error = computed(() => this.store.state().lastError);
+  readonly blockedMessage = computed(() => this.route.snapshot.queryParamMap.has('desbloqueioPendente')
+    ? 'Preencha nome do casal e WhatsApp para liberar cronograma, convidados e orçamento.'
+    : null);
   readonly countdownText = computed(() => {
     const date = this.store.profile().weddingDate;
     if (!date) return null;
@@ -64,6 +68,7 @@ export class MeuCasamentoHubComponent implements OnInit {
 
   navigate(path: string): void {
     if (!this.availableTools() && ['/meu-casamento/cronograma', '/meu-casamento/convidados', '/meu-casamento/orcamento'].includes(path)) {
+      void this.router.navigate(['/meu-casamento'], { queryParams: { desbloqueioPendente: '1' } });
       return;
     }
 

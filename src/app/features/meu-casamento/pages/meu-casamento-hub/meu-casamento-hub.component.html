@@ -52,6 +52,7 @@
         <button type="button" class="secondary" (click)="copyBackupCode()">Copiar código de backup</button>
       </div>
 
+      <p *ngIf="blockedMessage()" class="wedding-warning">{{ blockedMessage() }}</p>
       <p *ngIf="error()" class="wedding-error">{{ error() }}</p>
       <p class="wedding-helper">Código de backup atual: <strong>{{ backupCode() }}</strong></p>
     </article>

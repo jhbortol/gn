@@ -14,7 +14,7 @@
   <article class="card total-card">
     <div>
       <h2>Orçamento total</h2>
-      <p>Defina o valor total para iniciar o acompanhamento.</p>
+      <p>Defina o valor total para iniciar o acompanhamento e liberar a edição por categoria.</p>
     </div>
     <div class="total-actions">
       <input type="number" [(ngModel)]="totalBudgetInput" min="0" placeholder="75000">
@@ -22,6 +22,12 @@
     </div>
   </article>
 
+  <article class="card setup-card" *ngIf="!hasBudgetStarted()">
+    <strong>Defina primeiro o orçamento total.</strong>
+    <p>As categorias permanecem preparadas localmente, mas a edição detalhada só é liberada após informar um valor total maior que zero.</p>
+  </article>
+
+  <ng-container *ngIf="hasBudgetStarted()">
   <article class="card totals-grid">
     <div>
       <span>Alocado</span>
@@ -76,4 +82,5 @@
 
     <button type="button" class="primary" (click)="saveItem(item)">Salvar categoria</button>
   </article>
+  </ng-container>
 </section>

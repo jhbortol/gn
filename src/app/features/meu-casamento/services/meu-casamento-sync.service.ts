@@ -2,8 +2,10 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 import { MeuCasamentoApiService } from './meu-casamento-api.service';
+import { MeuCasamentoObservabilityService } from './meu-casamento-observability.service';
 import { MeuCasamentoStoreService } from './meu-casamento-store.service';
 import { FavoriteItem, GuestItem, SyncQueueItem, WeddingRestorePayload } from '../meu-casamento.models';
+import { getWeddingRetryDelayMs, shouldRetryWeddingSync } from './meu-casamento-sync.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +18,7 @@ export class MeuCasamentoSyncService {
   constructor(
     private readonly api: MeuCasamentoApiService,
     private readonly store: MeuCasamentoStoreService,
+    private readonly observability: MeuCasamentoObservabilityService,
     @Inject(PLATFORM_ID) platformId: object
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -59,7 +62,7 @@ export class MeuCasamentoSyncService {
   }
 
   async restoreByDeviceId(deviceId: string): Promise<WeddingRestorePayload> {
-    const payload = await firstValueFrom(this.api.restoreAll(deviceId));
+    const payload = await this.withRetry('restore', () => firstValueFrom(this.api.restoreAll(deviceId)));
     this.store.replaceFromRestore(payload, deviceId);
     await this.loadBudgetCategories();
     return payload;
@@ -80,11 +83,12 @@ export class MeuCasamentoSyncService {
         throw new Error('offline');
       }
 
-      await firstValueFrom(this.api.deleteAllData(deviceId));
+      await this.withRetry('delete-all', () => firstValueFrom(this.api.deleteAllData(deviceId)));
       this.store.clearPendingDeleteIntent();
       this.store.resetLocalData();
       return { queued: false };
     } catch (error) {
+      this.observability.logSyncFailure('delete-all', error, { queued: true });
       this.store.savePendingDeleteIntent(intent);
       this.store.resetLocalData();
       return { queued: true };
@@ -97,7 +101,7 @@ export class MeuCasamentoSyncService {
     if (!isEmpty || !navigator.onLine) return;
 
     try {
-      const payload = await firstValueFrom(this.api.restoreAll(state.deviceId));
+      const payload = await this.withRetry('hydrate-empty', () => firstValueFrom(this.api.restoreAll(state.deviceId)));
       this.store.replaceFromRestore(payload, state.deviceId);
       await this.loadBudgetCategories();
     } catch {
@@ -109,7 +113,7 @@ export class MeuCasamentoSyncService {
     const intent = this.store.getPendingDeleteIntent();
     if (!intent || !navigator.onLine) return;
 
-    await firstValueFrom(this.api.deleteAllData(intent.deviceId));
+    await this.withRetry('delete-intent', () => firstValueFrom(this.api.deleteAllData(intent.deviceId)));
     this.store.clearPendingDeleteIntent();
   }
 
@@ -119,11 +123,11 @@ export class MeuCasamentoSyncService {
 
     switch (item.type) {
       case 'profileSync':
-        await firstValueFrom(this.api.saveWeddingProfile(deviceId, state.profile));
+        await this.withRetry('profile', () => firstValueFrom(this.api.saveWeddingProfile(deviceId, state.profile)));
         this.store.markQueueProcessed(item.type);
         break;
       case 'checklistSync':
-        await firstValueFrom(this.api.syncChecklist(deviceId, state.checklist));
+        await this.withRetry('checklist', () => firstValueFrom(this.api.syncChecklist(deviceId, state.checklist)));
         this.store.markQueueProcessed(item.type);
         break;
       case 'budgetSync':
@@ -139,7 +143,7 @@ export class MeuCasamentoSyncService {
         this.store.markQueueProcessed(item.type);
         break;
       case 'deleteAllData':
-        await firstValueFrom(this.api.deleteAllData(deviceId));
+        await this.withRetry('delete-all', () => firstValueFrom(this.api.deleteAllData(deviceId)));
         this.store.markQueueProcessed(item.type);
         break;
       default:
@@ -149,38 +153,38 @@ export class MeuCasamentoSyncService {
 
   private async syncBudget(deviceId: string): Promise<void> {
     const budget = this.store.state().budget;
-    await firstValueFrom(this.api.updateBudgetTotal(deviceId, budget.totalBudget));
+    await this.withRetry('budget-total', () => firstValueFrom(this.api.updateBudgetTotal(deviceId, budget.totalBudget)));
 
     for (const item of budget.items) {
       if (item.syncState === 'deleted') {
-        await firstValueFrom(this.api.deleteBudgetItem(deviceId, item.id));
+        await this.withRetry('budget-delete-item', () => firstValueFrom(this.api.deleteBudgetItem(deviceId, item.id)));
         continue;
       }
 
       if (item.syncState === 'created' || item.syncState === 'updated') {
-        await firstValueFrom(this.api.upsertBudgetItem(deviceId, item));
+        await this.withRetry('budget-upsert-item', () => firstValueFrom(this.api.upsertBudgetItem(deviceId, item)));
       }
     }
 
-    const remoteBudget = await firstValueFrom(this.api.getBudget(deviceId));
+    const remoteBudget = await this.withRetry('budget-refresh', () => firstValueFrom(this.api.getBudget(deviceId)));
     this.store.markBudgetSynced(remoteBudget);
   }
 
   private async syncFavorites(deviceId: string): Promise<void> {
     const activeFavorites = this.store.state().favorites.filter(item => item.syncState !== 'deleted');
-    await firstValueFrom(this.api.syncFavorites(deviceId, activeFavorites));
+    await this.withRetry('favorites', () => firstValueFrom(this.api.syncFavorites(deviceId, activeFavorites)));
 
     const deletedFavorites = this.store.state().favorites.filter(item => item.syncState === 'deleted');
     for (const item of deletedFavorites) {
-      await firstValueFrom(this.api.deleteFavorite(deviceId, item.fornecedorId));
+      await this.withRetry('favorites-delete-item', () => firstValueFrom(this.api.deleteFavorite(deviceId, item.fornecedorId)));
     }
 
     const updatedNotes = activeFavorites.filter(item => item.syncState === 'updated' && item.nota);
     for (const item of updatedNotes) {
-      await firstValueFrom(this.api.updateFavoriteNote(deviceId, item.fornecedorId, item.nota));
+      await this.withRetry('favorites-note', () => firstValueFrom(this.api.updateFavoriteNote(deviceId, item.fornecedorId, item.nota)));
     }
 
-    const remoteFavorites = await firstValueFrom(this.api.getFavorites(deviceId));
+    const remoteFavorites = await this.withRetry('favorites-refresh', () => firstValueFrom(this.api.getFavorites(deviceId)));
     this.store.markFavoritesSynced(remoteFavorites as FavoriteItem[]);
   }
 
@@ -188,19 +192,46 @@ export class MeuCasamentoSyncService {
     const guests = this.store.state().guests;
     for (const guest of guests) {
       if (guest.syncState === 'deleted') {
-        await firstValueFrom(this.api.deleteGuest(deviceId, guest.id));
+        await this.withRetry('guests-delete-item', () => firstValueFrom(this.api.deleteGuest(deviceId, guest.id)));
         continue;
       }
 
       if (guest.syncState === 'created') {
-        await firstValueFrom(this.api.createGuest(deviceId, guest));
+        await this.withRetry('guests-create-item', () => firstValueFrom(this.api.createGuest(deviceId, guest)));
       } else if (guest.syncState === 'updated') {
-        await firstValueFrom(this.api.updateGuest(deviceId, guest));
+        await this.withRetry('guests-update-item', () => firstValueFrom(this.api.updateGuest(deviceId, guest)));
       }
     }
 
-    const remoteGuests = await firstValueFrom(this.api.getGuests(deviceId));
+    const remoteGuests = await this.withRetry('guests-refresh', () => firstValueFrom(this.api.getGuests(deviceId)));
     this.store.markGuestsSynced(remoteGuests as GuestItem[]);
+  }
+
+  private async withRetry<T>(feature: string, operation: () => Promise<T>, maxAttempts = 3): Promise<T> {
+    let lastError: unknown;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+      try {
+        return await operation();
+      } catch (error) {
+        lastError = error;
+        if (!shouldRetryWeddingSync(error) || attempt === maxAttempts) {
+          this.observability.logSyncFailure(feature, error, { attempt });
+          throw error;
+        }
+
+        const delayMs = getWeddingRetryDelayMs(attempt);
+        this.observability.logSyncRetry(feature, attempt, delayMs, error);
+        await this.delay(delayMs);
+      }
+    }
+
+    this.observability.logSyncFailure(feature, lastError, { attempt: maxAttempts });
+    throw lastError;
+  }
+
+  private async delay(ms: number): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, ms));
   }
 
   private toFriendlyError(error: unknown): string {

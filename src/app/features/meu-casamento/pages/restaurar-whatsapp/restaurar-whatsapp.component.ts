@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { MeuCasamentoApiService } from '../../services/meu-casamento-api.service';
+import { MeuCasamentoObservabilityService } from '../../services/meu-casamento-observability.service';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
 
 @Component({
@@ -15,6 +16,7 @@ import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.servi
 export class RestaurarWhatsappComponent {
   private readonly api = inject(MeuCasamentoApiService);
   private readonly sync = inject(MeuCasamentoSyncService);
+  private readonly observability = inject(MeuCasamentoObservabilityService);
 
   whatsappNumber = '';
   otp = '';
@@ -34,6 +36,7 @@ export class RestaurarWhatsappComponent {
       this.expiresInSeconds = response.expiresInSeconds;
       this.message = `OTP enviado para ${response.maskedNumber}. Ele expira em ${response.expiresInSeconds / 60} minutos.`;
     } catch (error: unknown) {
+      this.observability.logOtpFailure('send', error);
       this.error = this.resolveErrorMessage(error);
     } finally {
       this.loading = false;
@@ -48,6 +51,7 @@ export class RestaurarWhatsappComponent {
       const response = await this.sync.restoreByWhatsapp(this.whatsappNumber, this.otp);
       this.message = `Dados restaurados com sucesso para o backup ${response.deviceId}.`;
     } catch (error: unknown) {
+      this.observability.logOtpFailure('verify', error);
       this.error = this.resolveErrorMessage(error);
     } finally {
       this.loading = false;

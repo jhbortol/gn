@@ -20,6 +20,7 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
   drafts: Record<string, Partial<BudgetItem>> = {};
 
   readonly budget = this.store.budget;
+  readonly hasBudgetStarted = computed(() => (this.store.budget().totalBudget ?? 0) > 0);
   readonly totals = computed(() => {
     const items = this.store.budget().items;
     const allocated = items.reduce((sum, item) => sum + item.allocatedAmount, 0);
@@ -52,6 +53,7 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
   }
 
   async saveItem(item: BudgetItem): Promise<void> {
+    if (!this.hasBudgetStarted()) return;
     const draft = this.getDraft(item);
     this.store.saveBudgetItem({
       id: item.id,
@@ -69,6 +71,7 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
   }
 
   async deleteItem(id: string): Promise<void> {
+    if (!this.hasBudgetStarted()) return;
     this.store.deleteBudgetItem(id);
     delete this.drafts[id];
     await this.sync.syncPendingChanges();

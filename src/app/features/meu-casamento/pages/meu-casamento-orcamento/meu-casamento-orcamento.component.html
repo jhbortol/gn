@@ -1,0 +1,79 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div>
+      <p class="page-eyebrow">Orçamento</p>
+      <h1>Controle o total e os gastos por categoria</h1>
+    </div>
+    <div class="summary-card">
+      <strong>{{ totals().progress }}%</strong>
+      <span>do orçamento já gasto</span>
+      <small>Restante: {{ totals().remaining | currency:'BRL':'symbol':'1.0-2':'pt-BR' }}</small>
+    </div>
+  </header>
+
+  <article class="card total-card">
+    <div>
+      <h2>Orçamento total</h2>
+      <p>Defina o valor total para iniciar o acompanhamento.</p>
+    </div>
+    <div class="total-actions">
+      <input type="number" [(ngModel)]="totalBudgetInput" min="0" placeholder="75000">
+      <button type="button" class="primary" (click)="saveTotalBudget()">Salvar total</button>
+    </div>
+  </article>
+
+  <article class="card totals-grid">
+    <div>
+      <span>Alocado</span>
+      <strong>{{ totals().allocated | currency:'BRL':'symbol':'1.0-2':'pt-BR' }}</strong>
+    </div>
+    <div>
+      <span>Gasto</span>
+      <strong>{{ totals().spent | currency:'BRL':'symbol':'1.0-2':'pt-BR' }}</strong>
+    </div>
+    <div>
+      <span>Orçamento total</span>
+      <strong>{{ (budget().totalBudget ?? 0) | currency:'BRL':'symbol':'1.0-2':'pt-BR' }}</strong>
+    </div>
+  </article>
+
+  <article class="budget-item" *ngFor="let item of budget().items">
+    <div class="budget-item__header">
+      <div>
+        <h3>{{ item.categoryName }}</h3>
+        <p>{{ item.categorySlug }}</p>
+      </div>
+      <button type="button" class="danger" (click)="deleteItem(item.id)">Excluir</button>
+    </div>
+
+    <div class="budget-grid">
+      <label>
+        <span>Valor alocado</span>
+        <input type="number" [ngModel]="getDraft(item).allocatedAmount" (ngModelChange)="getDraft(item).allocatedAmount = $event">
+      </label>
+      <label>
+        <span>Valor gasto</span>
+        <input type="number" [ngModel]="getDraft(item).spentAmount" (ngModelChange)="getDraft(item).spentAmount = $event">
+      </label>
+      <label>
+        <span>Status</span>
+        <select [ngModel]="getDraft(item).status" (ngModelChange)="getDraft(item).status = $event">
+          <option value="pending">Pendente</option>
+          <option value="inProgress">Em andamento</option>
+          <option value="contracted">Contratado</option>
+          <option value="paid">Pago</option>
+        </select>
+      </label>
+      <label>
+        <span>Fornecedor</span>
+        <input [ngModel]="getDraft(item).supplierName" (ngModelChange)="getDraft(item).supplierName = $event" placeholder="Opcional">
+      </label>
+      <label class="budget-grid__full">
+        <span>Observações</span>
+        <textarea rows="3" [ngModel]="getDraft(item).notes" (ngModelChange)="getDraft(item).notes = $event"></textarea>
+      </label>
+    </div>
+
+    <button type="button" class="primary" (click)="saveItem(item)">Salvar categoria</button>
+  </article>
+</section>

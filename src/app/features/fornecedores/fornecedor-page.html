@@ -226,6 +226,12 @@
         <h2 class="font-serif font-bold text-xl text-gray-900 mb-6">
           {{ fornecedor.planLevel === PlanLevel.Vitrine ? 'Solicitar Orçamento' : 'Entrar em Contato' }}
         </h2>
+        <button
+          type="button"
+          (click)="toggleFavorite()"
+          class="mb-4 inline-flex items-center justify-center gap-2 border border-rose-200 bg-rose-50 text-rose-700 rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:bg-rose-100 w-full">
+          {{ isFavorite() ? 'Remover dos favoritos' : 'Salvar em favoritos' }}
+        </button>
         <div class="flex flex-col gap-3 mb-6">
           <button *ngIf="fornecedor.planLevel !== PlanLevel.Vitrine && showLeadForm()"
             type="button" (click)="scrollToLeadForm()"

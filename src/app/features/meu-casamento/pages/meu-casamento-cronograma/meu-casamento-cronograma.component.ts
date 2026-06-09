@@ -4,11 +4,12 @@ import { RouterModule } from '@angular/router';
 import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.service';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
 import { WEDDING_CHECKLIST_TASKS } from '../../meu-casamento.models';
+import { MeuCasamentoBottomNavComponent } from '../../components/meu-casamento-bottom-nav/meu-casamento-bottom-nav.component';
 
 @Component({
   selector: 'app-meu-casamento-cronograma',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MeuCasamentoBottomNavComponent],
   templateUrl: './meu-casamento-cronograma.component.html',
   styleUrl: './meu-casamento-cronograma.component.css'
 })

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.service';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
 import { GuestItem } from '../../meu-casamento.models';
+import { MeuCasamentoBottomNavComponent } from '../../components/meu-casamento-bottom-nav/meu-casamento-bottom-nav.component';
 
 type GuestDraft = Pick<GuestItem, 'id' | 'name' | 'group' | 'status' | 'plusOnes'> & {
   phone: string;
@@ -13,7 +14,7 @@ type GuestDraft = Pick<GuestItem, 'id' | 'name' | 'group' | 'status' | 'plusOnes
 @Component({
   selector: 'app-meu-casamento-convidados',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MeuCasamentoBottomNavComponent],
   templateUrl: './meu-casamento-convidados.component.html',
   styleUrl: './meu-casamento-convidados.component.css'
 })
@@ -25,6 +26,7 @@ export class MeuCasamentoConvidadosComponent implements OnInit {
   groupFilter = '';
   statusFilter = '';
   editingId: string | null = null;
+  showFormModal = false;
   draft: GuestDraft = this.createEmptyDraft();
 
   readonly guests = computed(() => this.store.guests()
@@ -37,7 +39,8 @@ export class MeuCasamentoConvidadosComponent implements OnInit {
     const invited = guests.reduce((sum, guest) => sum + 1 + guest.plusOnes, 0);
     const confirmed = guests.filter(guest => guest.status === 'confirmed').reduce((sum, guest) => sum + 1 + guest.plusOnes, 0);
     const declined = guests.filter(guest => guest.status === 'declined').reduce((sum, guest) => sum + 1 + guest.plusOnes, 0);
-    return { invited, confirmed, declined };
+    const pending = guests.filter(guest => guest.status === 'pending').reduce((sum, guest) => sum + 1 + guest.plusOnes, 0);
+    return { invited, confirmed, declined, pending };
   });
 
   async ngOnInit(): Promise<void> {
@@ -57,6 +60,7 @@ export class MeuCasamentoConvidadosComponent implements OnInit {
       phone: guest.phone ?? '',
       notes: guest.notes ?? ''
     };
+    this.showFormModal = true;
   }
 
   async saveGuest(): Promise<void> {
@@ -73,6 +77,7 @@ export class MeuCasamentoConvidadosComponent implements OnInit {
       notes: this.draft.notes
     });
     this.resetDraft();
+    this.showFormModal = false;
     await this.sync.syncPendingChanges();
   }
 
@@ -84,6 +89,35 @@ export class MeuCasamentoConvidadosComponent implements OnInit {
   resetDraft(): void {
     this.editingId = null;
     this.draft = this.createEmptyDraft();
+  }
+
+  openCreateModal(): void {
+    this.resetDraft();
+    this.showFormModal = true;
+  }
+
+  closeFormModal(): void {
+    this.showFormModal = false;
+    this.resetDraft();
+  }
+
+  resolveGroupLabel(group: GuestItem['group']): string {
+    if (group === 'familia') return 'Família';
+    if (group === 'trabalho') return 'Trabalho';
+    if (group === 'amigos') return 'Amigos';
+    return 'Outros';
+  }
+
+  resolveStatusLabel(status: GuestItem['status']): string {
+    if (status === 'confirmed') return 'Confirmado';
+    if (status === 'declined') return 'Recusado';
+    return 'Pendente';
+  }
+
+  resolveStatusClass(status: GuestItem['status']): string {
+    if (status === 'confirmed') return 'status-badge status-badge--confirmed';
+    if (status === 'declined') return 'status-badge status-badge--declined';
+    return 'status-badge status-badge--pending';
   }
 
   private createEmptyDraft(): GuestDraft {

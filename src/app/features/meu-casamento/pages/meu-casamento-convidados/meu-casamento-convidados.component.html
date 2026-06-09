@@ -1,62 +1,21 @@
 <section class="page-shell">
   <header class="page-header">
-    <div>
-      <p class="page-eyebrow">Lista de convidados</p>
-      <h1>Gerencie nomes, acompanhantes e RSVP</h1>
-    </div>
+    <h1>Lista de Convidados</h1>
+    <p class="page-subtitle">Gerencie nomes, acompanhantes e RSVP.</p>
     <div class="stats-grid">
-      <article><strong>{{ stats().invited }}</strong><span>convidados totais</span></article>
-      <article><strong>{{ stats().confirmed }}</strong><span>confirmados</span></article>
-      <article><strong>{{ stats().declined }}</strong><span>recusados</span></article>
+      <article class="stats-card stats-card--total"><strong>{{ stats().invited }}</strong><span>Convidados totais</span></article>
+      <article class="stats-card stats-card--confirmed"><strong>{{ stats().confirmed }}</strong><span>Confirmados</span></article>
+      <article class="stats-card stats-card--declined"><strong>{{ stats().declined }}</strong><span>Recusados</span></article>
+      <article class="stats-card stats-card--pending"><strong>{{ stats().pending }}</strong><span>Pendentes</span></article>
     </div>
   </header>
 
-  <article class="card form-card">
-    <div class="form-grid">
-      <label>
-        <span>Nome</span>
-        <input [(ngModel)]="draft.name" placeholder="Nome do convidado">
-      </label>
-      <label>
-        <span>Grupo</span>
-        <select [(ngModel)]="draft.group">
-          <option value="familia">Família</option>
-          <option value="trabalho">Trabalho</option>
-          <option value="amigos">Amigos</option>
-          <option value="outros">Outros</option>
-        </select>
-      </label>
-      <label>
-        <span>Status</span>
-        <select [(ngModel)]="draft.status">
-          <option value="pending">Pendente</option>
-          <option value="confirmed">Confirmado</option>
-          <option value="declined">Recusado</option>
-        </select>
-      </label>
-      <label>
-        <span>Acompanhantes</span>
-        <input type="number" [(ngModel)]="draft.plusOnes" min="0" max="10">
-      </label>
-      <label>
-        <span>Telefone</span>
-        <input [(ngModel)]="draft.phone" placeholder="Opcional">
-      </label>
-      <label>
-        <span>Observações</span>
-        <input [(ngModel)]="draft.notes" placeholder="Vegetariano, mesa especial...">
-      </label>
-    </div>
-
-    <div class="actions-row">
-      <button type="button" class="primary" (click)="saveGuest()">{{ editingId ? 'Salvar alterações' : 'Adicionar convidado' }}</button>
-      <button type="button" class="secondary" *ngIf="editingId" (click)="resetDraft()">Cancelar</button>
-    </div>
-  </article>
-
   <article class="card filters-card">
-    <div class="filters-grid">
+    <label class="search-field">
+      <span class="field-icon" aria-hidden="true">⌕</span>
       <input [(ngModel)]="search" placeholder="Buscar por nome">
+    </label>
+    <div class="filters-row">
       <select [(ngModel)]="groupFilter">
         <option value="">Todos os grupos</option>
         <option value="familia">Família</option>
@@ -75,17 +34,76 @@
 
   <article class="card guest-list">
     <div class="guest-row" *ngFor="let guest of guests()">
-      <div>
-        <strong>{{ guest.name }}</strong>
-        <p>{{ guest.group }} · {{ guest.status }} · {{ 1 + guest.plusOnes }} pessoa(s)</p>
+      <div class="guest-content">
+        <strong class="guest-name">{{ guest.name }}</strong>
+        <span [class]="resolveStatusClass(guest.status)">{{ resolveStatusLabel(guest.status) }}</span>
+        <p class="guest-meta">
+          <span><span aria-hidden="true">◉</span> {{ resolveGroupLabel(guest.group) }}</span>
+          <span><span aria-hidden="true">👥</span> {{ 1 + guest.plusOnes }} pessoa(s)</span>
+        </p>
         <small *ngIf="guest.notes">{{ guest.notes }}</small>
       </div>
       <div class="inline-actions">
-        <button type="button" class="secondary" (click)="editGuest(guest.id)">Editar</button>
-        <button type="button" class="danger" (click)="removeGuest(guest.id)">Excluir</button>
+        <button type="button" class="outline" (click)="editGuest(guest.id)"><span aria-hidden="true">✎</span> Editar</button>
+        <button type="button" class="outline danger" (click)="removeGuest(guest.id)"><span aria-hidden="true">🗑</span> Excluir</button>
       </div>
     </div>
 
     <p *ngIf="!guests().length" class="empty-state">Nenhum convidado encontrado para os filtros selecionados.</p>
   </article>
+
+  <button class="fab-add" type="button" (click)="openCreateModal()" aria-label="Adicionar novo convidado">
+    <span aria-hidden="true">+</span>
+  </button>
+
+  <section class="modal-overlay" *ngIf="showFormModal" (click)="closeFormModal()">
+    <article class="card form-modal" (click)="$event.stopPropagation()">
+      <header class="modal-header">
+        <h2>{{ editingId ? 'Editar convidado' : 'Adicionar novo convidado' }}</h2>
+        <button type="button" class="close-button" (click)="closeFormModal()" aria-label="Fechar modal">×</button>
+      </header>
+
+      <div class="form-grid">
+        <label>
+          <span>Nome</span>
+          <input [(ngModel)]="draft.name" placeholder="Nome do convidado">
+        </label>
+        <label class="select-field">
+          <span>Grupo</span>
+          <select [(ngModel)]="draft.group">
+            <option value="familia">Família</option>
+            <option value="trabalho">Trabalho</option>
+            <option value="amigos">Amigos</option>
+            <option value="outros">Outros</option>
+          </select>
+        </label>
+        <label class="select-field">
+          <span>Status</span>
+          <select [(ngModel)]="draft.status">
+            <option value="pending">Pendente</option>
+            <option value="confirmed">Confirmado</option>
+            <option value="declined">Recusado</option>
+          </select>
+        </label>
+        <label>
+          <span>Acompanhantes</span>
+          <input type="number" [(ngModel)]="draft.plusOnes" min="0" max="10">
+        </label>
+        <label>
+          <span>Telefone</span>
+          <input [(ngModel)]="draft.phone" placeholder="Opcional">
+        </label>
+        <label>
+          <span>Observações</span>
+          <input [(ngModel)]="draft.notes" placeholder="Vegetariano, mesa especial...">
+        </label>
+      </div>
+
+      <div class="actions-row">
+        <button type="button" class="primary" (click)="saveGuest()">{{ editingId ? 'Salvar alterações' : 'Adicionar convidado' }}</button>
+      </div>
+    </article>
+  </section>
 </section>
+
+<app-meu-casamento-bottom-nav />

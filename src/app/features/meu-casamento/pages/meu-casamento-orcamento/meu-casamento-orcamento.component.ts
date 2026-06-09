@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.service';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
 import { BudgetItem } from '../../meu-casamento.models';
+import { MeuCasamentoBottomNavComponent } from '../../components/meu-casamento-bottom-nav/meu-casamento-bottom-nav.component';
 
 @Component({
   selector: 'app-meu-casamento-orcamento',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MeuCasamentoBottomNavComponent],
   templateUrl: './meu-casamento-orcamento.component.html',
   styleUrl: './meu-casamento-orcamento.component.css'
 })

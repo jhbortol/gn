@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
 import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.service';
+import { MeuCasamentoBottomNavComponent } from '../../components/meu-casamento-bottom-nav/meu-casamento-bottom-nav.component';
 
 @Component({
   selector: 'app-meu-casamento-hub',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, MeuCasamentoBottomNavComponent],
   templateUrl: './meu-casamento-hub.component.html',
   styleUrl: './meu-casamento-hub.component.css'
 })

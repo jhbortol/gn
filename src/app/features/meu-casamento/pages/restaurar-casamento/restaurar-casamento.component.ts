@@ -5,11 +5,12 @@ import { RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { MeuCasamentoApiService } from '../../services/meu-casamento-api.service';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
+import { MeuCasamentoBottomNavComponent } from '../../components/meu-casamento-bottom-nav/meu-casamento-bottom-nav.component';
 
 @Component({
   selector: 'app-restaurar-casamento',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, MeuCasamentoBottomNavComponent],
   templateUrl: './restaurar-casamento.component.html',
   styleUrl: './restaurar-casamento.component.css'
 })

@@ -1,30 +1,107 @@
-<section class="page-shell">
-  <header class="page-header">
-    <div>
-      <p class="page-eyebrow">Cronograma</p>
-      <h1>Checklist regressivo do casamento</h1>
-    </div>
-    <div class="progress-card">
-      <strong>{{ progress() }}%</strong>
-      <span>tarefas concluídas</span>
-      <div class="progress-bar"><span [style.width.%]="progress()"></span></div>
-    </div>
+<div class="cronograma-page">
+
+  <!-- ── App Bar ─────────────────────────────────────────── -->
+  <header class="app-bar">
+    <button class="back-btn" (click)="goBack()" aria-label="Voltar">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <h1 class="app-bar-title">Cronograma do Casamento</h1>
   </header>
 
-  <article class="group-card" *ngFor="let group of groups()">
-    <div class="group-header">
-      <h2>{{ group.title }}</h2>
-      <span>{{ group.tasks.length }} tarefas</span>
-    </div>
+  <!-- ── Scrollable content ─────────────────────────────── -->
+  <main class="content">
 
-    <label class="task-row" *ngFor="let task of group.tasks">
-      <input type="checkbox" [checked]="isCompleted(task.id)" (change)="toggleTask(task.id, $any($event.target).checked)">
-      <div>
-        <strong>{{ task.label }}</strong>
-        <a *ngIf="task.deepLink" [routerLink]="task.deepLink">Abrir atalho</a>
+    <p class="global-progress">
+      {{ completedCount() }} de {{ totalTasks }} tarefas concluídas
+    </p>
+
+    <ng-container *ngFor="let group of groups()">
+
+      <!-- Section header -->
+      <div class="section-header">
+        <span class="section-label">{{ group.title }}</span>
+        <span class="section-counter">{{ group.completed }}/{{ group.total }}</span>
       </div>
-    </label>
-  </article>
-</section>
 
-<app-meu-casamento-bottom-nav />
+      <!-- Task cards -->
+      <div class="task-card" *ngFor="let task of group.tasks"
+           [class.task-card--done]="isCompleted(task.id)">
+        <div class="task-main">
+          <span class="task-label" [class.task-label--done]="isCompleted(task.id)">
+            {{ task.label }}
+          </span>
+          <button class="task-checkbox"
+                  [class.task-checkbox--checked]="isCompleted(task.id)"
+                  (click)="toggleTask(task.id, !isCompleted(task.id))"
+                  [attr.aria-checked]="isCompleted(task.id)"
+                  role="checkbox"
+                  [attr.aria-label]="'Marcar tarefa: ' + task.label">
+            <svg *ngIf="isCompleted(task.id)" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </button>
+        </div>
+        <button *ngIf="task.ctaLabel" class="cta-pill" (click)="navigateToCta(task)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+          {{ task.ctaLabel }}
+        </button>
+      </div>
+
+    </ng-container>
+
+    <!-- bottom padding so last card isn't hidden behind nav -->
+    <div class="content-spacer"></div>
+  </main>
+
+  <!-- ── Bottom Navigation ──────────────────────────────── -->
+  <nav class="bottom-nav" aria-label="Navegação principal">
+    <a class="nav-item" routerLink="/selecionar-cidade">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span>Início</span>
+    </a>
+    <a class="nav-item" routerLink="/selecionar-cidade">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+      </svg>
+      <span>Categorias</span>
+    </a>
+    <a class="nav-item" routerLink="/selecionar-cidade">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+      </svg>
+      <span>Blog</span>
+    </a>
+    <a class="nav-item nav-item--active" routerLink="/meu-casamento" routerLinkActive="nav-item--active">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+           fill="currentColor" stroke="none">
+        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17 5.8 21.3l2.4-7.4L2 9.4h7.6z"/>
+      </svg>
+      <span>Meu Casamento</span>
+    </a>
+    <a class="nav-item" routerLink="/meu-casamento">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+      </svg>
+      <span>Mais</span>
+    </a>
+  </nav>
+
+</div>

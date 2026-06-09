@@ -1,0 +1,33 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div>
+      <p class="page-eyebrow">Meus Favoritos</p>
+      <h1>Fornecedores salvos</h1>
+    </div>
+    <p>{{ favorites().length }} fornecedor(es) salvo(s).</p>
+  </header>
+
+  <article class="favorite-card" *ngFor="let favorite of favorites()">
+    <div class="favorite-card__content">
+      <div>
+        <h2>{{ favorite.fornecedorNome }}</h2>
+        <p>{{ favorite.categoriaNome || 'Categoria não informada' }}</p>
+        <a [routerLink]="buildFornecedorUrl(favorite.fornecedorSlug)">Abrir detalhe do fornecedor</a>
+      </div>
+
+      <label>
+        <span>Nota</span>
+        <textarea rows="3" [ngModel]="getDraft(favorite.fornecedorId, favorite.nota)" (ngModelChange)="notesDraft[favorite.fornecedorId] = $event"></textarea>
+      </label>
+    </div>
+
+    <div class="actions-row">
+      <button type="button" class="primary" (click)="saveNote(favorite.fornecedorId)">Salvar nota</button>
+      <button type="button" class="secondary" (click)="removeFavorite(favorite.fornecedorId)">Remover</button>
+    </div>
+  </article>
+
+  <article class="empty-card" *ngIf="!favorites().length">
+    <p>Você ainda não salvou fornecedores. Use o botão “Salvar em favoritos” dentro do perfil do fornecedor.</p>
+  </article>
+</section>

@@ -11,6 +11,8 @@ import { environment } from '../../../environments/environment';
 import { LeadFormComponent } from './lead-form.component';
 import { CompetitorAdsComponent } from './competitor-ads.component';
 import { PlanLevel } from '../../core/models/tier-system.model';
+import { MeuCasamentoStoreService } from '../meu-casamento/services/meu-casamento-store.service';
+import { MeuCasamentoSyncService } from '../meu-casamento/services/meu-casamento-sync.service';
 
 @Component({
   selector: 'app-fornecedor-page',
@@ -51,6 +53,8 @@ export class FornecedorPageComponent implements OnInit {
   }
 
   private cidadeService = inject(CidadeService);
+  private weddingStore = inject(MeuCasamentoStoreService);
+  private weddingSync = inject(MeuCasamentoSyncService);
 
   constructor(
     private route: ActivatedRoute,
@@ -66,6 +70,7 @@ export class FornecedorPageComponent implements OnInit {
   ) { }
 
   async ngOnInit(): Promise<void> {
+    await this.weddingSync.init();
     const identifier = this.route.snapshot.params['id']; // pode ser GUID ou slug
     this.isPreviewMode = this.route.snapshot.queryParams['preview'] === 'true';
 
@@ -516,6 +521,30 @@ export class FornecedorPageComponent implements OnInit {
       relativeTo: this.route,
       queryParams: { fornecedorId: this.fornecedor.id }
     });
+  }
+
+  isFavorite(): boolean {
+    if (!this.fornecedor) return false;
+    return this.weddingStore.favorites().some(item => item.fornecedorId === this.fornecedor!.id);
+  }
+
+  async toggleFavorite(): Promise<void> {
+    if (!this.fornecedor) return;
+
+    if (this.isFavorite()) {
+      this.weddingStore.removeFavorite(this.fornecedor.id);
+    } else {
+      this.weddingStore.saveFavorite({
+        fornecedorId: this.fornecedor.id,
+        fornecedorNome: this.fornecedor.nome,
+        fornecedorSlug: this.fornecedor.slug,
+        imagemUrl: this.fornecedor.primaryImage?.url || this.fornecedor.coverPictureUrl || null,
+        categoriaNome: this.fornecedor.categoria || null,
+        nota: null
+      });
+    }
+
+    await this.weddingSync.syncPendingChanges();
   }
 
 }

@@ -54,8 +54,4 @@ export class NavbarComponent {
   getPainelUrl(): string {
     return environment.PAINEL_URL;
   }
-
-  openPainel(): void {
-    window.open(environment.PAINEL_URL, '_blank');
-  }
 }

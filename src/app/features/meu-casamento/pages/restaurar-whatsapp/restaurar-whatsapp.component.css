@@ -1,0 +1,75 @@
+:host {
+  display: block;
+}
+
+.page-shell {
+  max-width: 720px;
+  margin: 2rem auto 3rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #f3f4f6;
+  border-radius: 1rem;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+  padding: 1.5rem;
+}
+
+.page-eyebrow {
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: #be123c;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 1rem 0;
+}
+
+input,
+button {
+  font: inherit;
+}
+
+input {
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+  padding: 0.8rem 0.9rem;
+}
+
+button {
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  margin-right: 0.75rem;
+}
+
+button.primary {
+  background: #e11d48;
+  color: #fff;
+}
+
+button.secondary {
+  background: #111827;
+  color: #fff;
+}
+
+.helper {
+  color: #4b5563;
+  margin-top: 1rem;
+}
+
+.success {
+  color: #166534;
+  margin-top: 1rem;
+}
+
+.error {
+  color: #b91c1c;
+  margin-top: 1rem;
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Guia Noivas - Meu Casamento",
+  "short_name": "Meu Casamento",
+  "description": "Organize cronograma, convidados, orçamento, favoritos e restauração do casamento no PWA do Guia Noivas.",
+  "start_url": "/meu-casamento",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fff1f2",
+  "theme_color": "#be123c",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48 32x32 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+<section class="wedding-shell">
+  <header class="wedding-hero">
+    <div>
+      <p class="wedding-eyebrow">Meu Casamento</p>
+      <h1>Organize tudo do casamento em um só lugar.</h1>
+      <p class="wedding-subtitle">Salvamos localmente na hora e sincronizamos com a API quando a conexão volta.</p>
+    </div>
+    <div class="wedding-countdown" *ngIf="countdownText()">{{ countdownText() }}</div>
+  </header>
+
+  <div class="wedding-grid">
+    <article class="wedding-card">
+      <div class="wedding-card__header">
+        <div>
+          <h2>Dados do casal</h2>
+          <p>Nome do casal e WhatsApp liberam cronograma, convidados e orçamento.</p>
+        </div>
+        <span class="wedding-badge" [class.wedding-badge--ok]="availableTools()">{{ availableTools() ? 'Ferramentas liberadas' : 'Ferramentas bloqueadas' }}</span>
+      </div>
+
+      <label class="wedding-field">
+        <span>Nome do casal</span>
+        <input type="text" [ngModel]="profile().brideFirstName" (ngModelChange)="updateText('brideFirstName', $event)" placeholder="Ex.: Ana & Carlos">
+      </label>
+
+      <div class="wedding-field-grid">
+        <label class="wedding-field">
+          <span>Nº convidados estimados</span>
+          <input type="number" [ngModel]="profile().estimatedGuests" (ngModelChange)="updateGuests($event)" min="0" max="9999" placeholder="150">
+        </label>
+
+        <label class="wedding-field">
+          <span>Nº WhatsApp</span>
+          <input type="tel" [ngModel]="profile().whatsappNumber" (ngModelChange)="updateText('whatsappNumber', $event)" placeholder="19999999999">
+        </label>
+      </div>
+
+      <div class="wedding-field-grid">
+        <label class="wedding-field">
+          <span>Data do casamento</span>
+          <input type="date" [ngModel]="profile().weddingDate" (ngModelChange)="updateDate($event)">
+        </label>
+
+        <label class="wedding-field">
+          <span>Estilo do casamento</span>
+          <input type="text" [ngModel]="profile().weddingStyle" (ngModelChange)="updateText('weddingStyle', $event)" placeholder="Clássico, rústico, etc.">
+        </label>
+      </div>
+
+      <div class="wedding-actions">
+        <button type="button" class="primary" (click)="saveNow()">Salvar dados</button>
+        <button type="button" class="secondary" (click)="copyBackupCode()">Copiar código de backup</button>
+      </div>
+
+      <p *ngIf="blockedMessage()" class="wedding-warning">{{ blockedMessage() }}</p>
+      <p *ngIf="error()" class="wedding-error">{{ error() }}</p>
+      <p class="wedding-helper">Código de backup atual: <strong>{{ backupCode() }}</strong></p>
+    </article>
+
+    <aside class="wedding-card wedding-card--tools">
+      <h2>Ferramentas</h2>
+      <div class="tool-list">
+        <button type="button" class="tool-item" [disabled]="!availableTools()" (click)="navigate('/meu-casamento/cronograma')">
+          <strong>Cronograma</strong>
+          <span>Checklist regressivo com progresso.</span>
+        </button>
+        <button type="button" class="tool-item" [disabled]="!availableTools()" (click)="navigate('/meu-casamento/convidados')">
+          <strong>Convidados</strong>
+          <span>CRUD, filtros e contagem com acompanhantes.</span>
+        </button>
+        <button type="button" class="tool-item" [disabled]="!availableTools()" (click)="navigate('/meu-casamento/orcamento')">
+          <strong>Orçamento</strong>
+          <span>Total, categorias e acompanhamento de gastos.</span>
+        </button>
+        <button type="button" class="tool-item" (click)="navigate('/meus-favoritos')">
+          <strong>Favoritos</strong>
+          <span>Fornecedores salvos com nota rápida.</span>
+        </button>
+      </div>
+
+      <div class="tool-links">
+        <a routerLink="/restaurar">Restaurar por código</a>
+        <a routerLink="/restaurar/whatsapp">Recuperar por WhatsApp</a>
+        <a routerLink="/meus-dados/remover">Remover meus dados</a>
+      </div>
+    </aside>
+  </div>
+</section>

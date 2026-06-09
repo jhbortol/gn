@@ -1,0 +1,91 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div>
+      <p class="page-eyebrow">Lista de convidados</p>
+      <h1>Gerencie nomes, acompanhantes e RSVP</h1>
+    </div>
+    <div class="stats-grid">
+      <article><strong>{{ stats().invited }}</strong><span>convidados totais</span></article>
+      <article><strong>{{ stats().confirmed }}</strong><span>confirmados</span></article>
+      <article><strong>{{ stats().declined }}</strong><span>recusados</span></article>
+    </div>
+  </header>
+
+  <article class="card form-card">
+    <div class="form-grid">
+      <label>
+        <span>Nome</span>
+        <input [(ngModel)]="draft.name" placeholder="Nome do convidado">
+      </label>
+      <label>
+        <span>Grupo</span>
+        <select [(ngModel)]="draft.group">
+          <option value="familia">Família</option>
+          <option value="trabalho">Trabalho</option>
+          <option value="amigos">Amigos</option>
+          <option value="outros">Outros</option>
+        </select>
+      </label>
+      <label>
+        <span>Status</span>
+        <select [(ngModel)]="draft.status">
+          <option value="pending">Pendente</option>
+          <option value="confirmed">Confirmado</option>
+          <option value="declined">Recusado</option>
+        </select>
+      </label>
+      <label>
+        <span>Acompanhantes</span>
+        <input type="number" [(ngModel)]="draft.plusOnes" min="0" max="10">
+      </label>
+      <label>
+        <span>Telefone</span>
+        <input [(ngModel)]="draft.phone" placeholder="Opcional">
+      </label>
+      <label>
+        <span>Observações</span>
+        <input [(ngModel)]="draft.notes" placeholder="Vegetariano, mesa especial...">
+      </label>
+    </div>
+
+    <div class="actions-row">
+      <button type="button" class="primary" (click)="saveGuest()">{{ editingId ? 'Salvar alterações' : 'Adicionar convidado' }}</button>
+      <button type="button" class="secondary" *ngIf="editingId" (click)="resetDraft()">Cancelar</button>
+    </div>
+  </article>
+
+  <article class="card filters-card">
+    <div class="filters-grid">
+      <input [(ngModel)]="search" placeholder="Buscar por nome">
+      <select [(ngModel)]="groupFilter">
+        <option value="">Todos os grupos</option>
+        <option value="familia">Família</option>
+        <option value="trabalho">Trabalho</option>
+        <option value="amigos">Amigos</option>
+        <option value="outros">Outros</option>
+      </select>
+      <select [(ngModel)]="statusFilter">
+        <option value="">Todos os status</option>
+        <option value="pending">Pendente</option>
+        <option value="confirmed">Confirmado</option>
+        <option value="declined">Recusado</option>
+      </select>
+    </div>
+  </article>
+
+  <article class="card guest-list">
+    <div class="guest-row" *ngFor="let guest of guests()">
+      <div>
+        <strong>{{ guest.name }}</strong>
+        <p>{{ guest.group }} · {{ guest.status }} · {{ 1 + guest.plusOnes }} pessoa(s)</p>
+        <small *ngIf="guest.notes">{{ guest.notes }}</small>
+      </div>
+      <div class="inline-actions">
+        <button type="button" class="secondary" (click)="editGuest(guest.id)">Editar</button>
+        <button type="button" class="danger" (click)="removeGuest(guest.id)">Excluir</button>
+      </div>
+    </div>
+
+    <p *ngIf="!guests().length" class="empty-state">Nenhum convidado encontrado para os filtros selecionados.</p>
+  </article>
+</section>

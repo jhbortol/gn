@@ -13,8 +13,22 @@
 <a [routerLink]="buildUrl('categorias')" class="hover:text-rose-600 transition py-2">CATEGORIAS</a>
 <a [routerLink]="buildUrl('blog')" class="hover:text-rose-600 transition py-2">BLOG</a>
 <a [routerLink]="buildUrl('anuncie')" class="hover:text-rose-600 transition py-2">ANUNCIE</a>
-            <a [routerLink]="buildUrl('contato')" class="hover:text-rose-600 transition py-2">CONTATO</a>
-<button (click)="openPainel()" class="px-4 py-2 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-md">PAINEL FORNECEDOR</button>
+<a [routerLink]="buildUrl('contato')" class="hover:text-rose-600 transition py-2">CONTATO</a>
+<a
+  [href]="getPainelUrl()"
+  target="_blank"
+  rel="noopener noreferrer"
+  class="hover:text-rose-600 transition py-2"
+>
+  PAINEL FORNECEDOR
+</a>
+<a
+  routerLink="/meu-casamento"
+  title="Organize seu casamento grátis"
+  class="px-4 py-2 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-md"
+>
+  MEU CASAMENTO
+</a>
 </div>
 <button (click)="toggleMobileMenu()" class="md:hidden text-gray-600 p-2 hover:bg-gray-100 rounded-lg transition-colors" aria-label="Abrir menu de navegação">
 <svg *ngIf="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -34,7 +48,22 @@
 <a [routerLink]="buildUrl('blog')" class="text-gray-700 hover:text-rose-600 font-semibold py-2">BLOG</a>
 <a [routerLink]="buildUrl('anuncie')" class="text-gray-700 hover:text-rose-600 font-semibold py-2">ANUNCIE</a>
 <a [routerLink]="buildUrl('contato')" class="text-gray-700 hover:text-rose-600 font-semibold py-2">CONTATO</a>
-<button (click)="openPainel(); closeMobileMenu();" class="text-center w-full px-4 py-2 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-md font-semibold text-sm">PAINEL FORNECEDOR</button>
+<a
+  [href]="getPainelUrl()"
+  target="_blank"
+  rel="noopener noreferrer"
+  (click)="closeMobileMenu()"
+  class="text-gray-700 hover:text-rose-600 font-semibold py-2"
+>
+  PAINEL FORNECEDOR
+</a>
+<a
+  routerLink="/meu-casamento"
+  title="Organize seu casamento grátis"
+  class="text-center w-full px-4 py-2 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-md font-semibold text-sm"
+>
+  MEU CASAMENTO
+</a>
 </div>
 </div>
 </nav>

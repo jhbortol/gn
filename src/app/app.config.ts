@@ -1,4 +1,4 @@
-import { ApplicationConfig } from '@angular/core';
+import { APP_INITIALIZER, ApplicationConfig } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authTokenInterceptor } from './core/auth-token.interceptor';
@@ -7,6 +7,7 @@ import { casingNormalizerInterceptor } from './core/casing-normalizer.intercepto
 
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { MeuCasamentoSyncService } from './features/meu-casamento/services/meu-casamento-sync.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,7 +19,12 @@ export const appConfig: ApplicationConfig = {
       })
     ),
     provideClientHydration(withEventReplay()),
-    provideHttpClient(withInterceptors([authTokenInterceptor, casingNormalizerInterceptor]))
+    provideHttpClient(withInterceptors([authTokenInterceptor, casingNormalizerInterceptor])),
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      deps: [MeuCasamentoSyncService],
+      useFactory: (syncService: MeuCasamentoSyncService) => () => syncService.init()
+    }
   ]
 };
-

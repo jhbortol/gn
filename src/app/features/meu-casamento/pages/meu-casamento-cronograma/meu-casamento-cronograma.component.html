@@ -1,0 +1,28 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div>
+      <p class="page-eyebrow">Cronograma</p>
+      <h1>Checklist regressivo do casamento</h1>
+    </div>
+    <div class="progress-card">
+      <strong>{{ progress() }}%</strong>
+      <span>tarefas concluídas</span>
+      <div class="progress-bar"><span [style.width.%]="progress()"></span></div>
+    </div>
+  </header>
+
+  <article class="group-card" *ngFor="let group of groups()">
+    <div class="group-header">
+      <h2>{{ group.title }}</h2>
+      <span>{{ group.tasks.length }} tarefas</span>
+    </div>
+
+    <label class="task-row" *ngFor="let task of group.tasks">
+      <input type="checkbox" [checked]="isCompleted(task.id)" (change)="toggleTask(task.id, $any($event.target).checked)">
+      <div>
+        <strong>{{ task.label }}</strong>
+        <a *ngIf="task.deepLink" [routerLink]="task.deepLink">Abrir atalho</a>
+      </div>
+    </label>
+  </article>
+</section>

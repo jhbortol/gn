@@ -5,11 +5,12 @@ import { firstValueFrom } from 'rxjs';
 import { MeuCasamentoApiService } from '../../services/meu-casamento-api.service';
 import { MeuCasamentoObservabilityService } from '../../services/meu-casamento-observability.service';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
+import { MeuCasamentoBottomNavComponent } from '../../components/meu-casamento-bottom-nav/meu-casamento-bottom-nav.component';
 
 @Component({
   selector: 'app-restaurar-whatsapp',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MeuCasamentoBottomNavComponent],
   templateUrl: './restaurar-whatsapp.component.html',
   styleUrl: './restaurar-whatsapp.component.css'
 })

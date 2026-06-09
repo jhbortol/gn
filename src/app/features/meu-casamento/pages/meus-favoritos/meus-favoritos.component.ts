@@ -5,11 +5,12 @@ import { RouterModule } from '@angular/router';
 import { CidadeService } from '../../../../core/cidade.service';
 import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.service';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
+import { MeuCasamentoBottomNavComponent } from '../../components/meu-casamento-bottom-nav/meu-casamento-bottom-nav.component';
 
 @Component({
   selector: 'app-meus-favoritos',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, MeuCasamentoBottomNavComponent],
   templateUrl: './meus-favoritos.component.html',
   styleUrl: './meus-favoritos.component.css'
 })

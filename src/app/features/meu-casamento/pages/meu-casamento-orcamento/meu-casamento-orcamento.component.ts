@@ -101,6 +101,20 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
     };
   }
 
+  updateDraftText(field: 'supplierName' | 'notes', value: string): void {
+    this.activeDraft = {
+      ...this.activeDraft,
+      [field]: value
+    };
+  }
+
+  updateDraftStatus(status: BudgetItem['status']): void {
+    this.activeDraft = {
+      ...this.activeDraft,
+      status
+    };
+  }
+
   async saveActiveItem(): Promise<void> {
     if (!this.activeItemId) return;
     const currentItem = this.store.budget().items.find(item => item.id === this.activeItemId);
@@ -150,6 +164,11 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
 
   buildCategoryLink(categorySlug: string): string {
     return this.cidadeService.buildUrl(`categorias/${categorySlug}`);
+  }
+
+  getActiveCategoryName(): string {
+    if (!this.activeItemId) return '';
+    return this.budget().items.find(item => item.id === this.activeItemId)?.categoryName ?? '';
   }
 
   formatCurrency(value: number | null | undefined): string {

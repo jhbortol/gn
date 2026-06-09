@@ -108,7 +108,7 @@
 <section class="sheet-overlay" *ngIf="activeItemId" (click)="closeItemEditor()">
   <article class="bottom-sheet" (click)="$event.stopPropagation()">
     <header class="sheet-header">
-      <h3>{{ budget().items.find(item => item.id === activeItemId)?.categoryName }}</h3>
+      <h3>{{ getActiveCategoryName() }}</h3>
       <button type="button" class="icon-button" (click)="closeItemEditor()" aria-label="Fechar">×</button>
     </header>
 
@@ -140,14 +140,14 @@
           type="text"
           placeholder=" "
           [ngModel]="activeDraft.supplierName"
-          (ngModelChange)="activeDraft = { ...activeDraft, supplierName: $event }">
+          (ngModelChange)="updateDraftText('supplierName', $event)">
         <span>Nome do Fornecedor (opcional)</span>
       </label>
 
       <label class="floating-field floating-field--select">
         <select
           [ngModel]="activeDraft.status"
-          (ngModelChange)="activeDraft = { ...activeDraft, status: $event }">
+          (ngModelChange)="updateDraftStatus($event)">
           <option value="pending">Pendente</option>
           <option value="inProgress">Em andamento</option>
           <option value="contracted">Contratado</option>
@@ -161,7 +161,7 @@
           rows="3"
           placeholder=" "
           [ngModel]="activeDraft.notes"
-          (ngModelChange)="activeDraft = { ...activeDraft, notes: $event }"></textarea>
+          (ngModelChange)="updateDraftText('notes', $event)"></textarea>
         <span>Observações (opcional)</span>
       </label>
     </div>

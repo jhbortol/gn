@@ -1,88 +1,177 @@
-<section class="page-shell">
-  <header class="page-header">
-    <div>
-      <p class="page-eyebrow">Orçamento</p>
-      <h1>Controle o total e os gastos por categoria</h1>
-    </div>
-    <div class="summary-card">
-      <strong>{{ totals().progress }}%</strong>
-      <span>do orçamento já gasto</span>
-      <small>Restante: {{ totals().remaining | currency:'BRL':'symbol':'1.0-2':'pt-BR' }}</small>
-    </div>
+<section class="page-shell" *ngIf="!hasBudgetStarted(); else budgetDashboard">
+  <header class="app-bar">
+    <a class="back-button" routerLink="/meu-casamento" aria-label="Voltar">←</a>
+    <h1>Gestor de Orçamento</h1>
   </header>
 
-  <article class="card total-card">
-    <div>
-      <h2>Orçamento total</h2>
-      <p>Defina o valor total para iniciar o acompanhamento e liberar a edição por categoria.</p>
-    </div>
-    <div class="total-actions">
-      <input type="number" [(ngModel)]="totalBudgetInput" min="0" placeholder="75000">
-      <button type="button" class="primary" (click)="saveTotalBudget()">Salvar total</button>
-    </div>
-  </article>
+  <article class="onboarding-card">
+    <span class="onboarding-icon" aria-hidden="true">🐷</span>
+    <h2>Qual é o seu orçamento total para o casamento?</h2>
+    <p>Defina um valor inicial para desbloquear o acompanhamento por categoria.</p>
 
-  <article class="card setup-card" *ngIf="!hasBudgetStarted()">
-    <strong>Defina primeiro o orçamento total.</strong>
-    <p>As categorias permanecem preparadas localmente, mas a edição detalhada só é liberada após informar um valor total maior que zero.</p>
-  </article>
+    <label class="currency-label" for="budget-total-input">Orçamento total</label>
+    <input
+      id="budget-total-input"
+      type="text"
+      inputmode="numeric"
+      autocomplete="off"
+      placeholder="R$ 0,00"
+      [ngModel]="totalBudgetInput"
+      (ngModelChange)="updateTotalBudgetInput($event)">
 
-  <ng-container *ngIf="hasBudgetStarted()">
-  <article class="card totals-grid">
-    <div>
-      <span>Alocado</span>
-      <strong>{{ totals().allocated | currency:'BRL':'symbol':'1.0-2':'pt-BR' }}</strong>
-    </div>
-    <div>
-      <span>Gasto</span>
-      <strong>{{ totals().spent | currency:'BRL':'symbol':'1.0-2':'pt-BR' }}</strong>
-    </div>
-    <div>
-      <span>Orçamento total</span>
-      <strong>{{ (budget().totalBudget ?? 0) | currency:'BRL':'symbol':'1.0-2':'pt-BR' }}</strong>
-    </div>
+    <button type="button" class="primary full" [disabled]="!canStartBudget()" (click)="saveTotalBudget()">
+      Começar
+    </button>
   </article>
+</section>
 
-  <article class="budget-item" *ngFor="let item of budget().items">
-    <div class="budget-item__header">
-      <div>
-        <h3>{{ item.categoryName }}</h3>
-        <p>{{ item.categorySlug }}</p>
+<ng-template #budgetDashboard>
+  <section class="page-shell">
+    <header class="app-bar">
+      <a class="back-button" routerLink="/meu-casamento" aria-label="Voltar">←</a>
+      <h1>Gestor de Orçamento</h1>
+    </header>
+
+    <article class="summary-card">
+      <div class="summary-head">
+        <div>
+          <span class="summary-label">Orçamento Total</span>
+          <strong>{{ formatCurrency(budget().totalBudget) }}</strong>
+        </div>
+        <button type="button" class="icon-button" (click)="openTotalBudgetEditor()" aria-label="Editar orçamento total">✎</button>
       </div>
-      <button type="button" class="danger" (click)="deleteItem(item.id)">Excluir</button>
-    </div>
 
-    <div class="budget-grid">
-      <label>
-        <span>Valor alocado</span>
-        <input type="number" [ngModel]="getDraft(item).allocatedAmount" (ngModelChange)="getDraft(item).allocatedAmount = $event">
+      <div class="total-editor" *ngIf="isEditingTotalBudget">
+        <input
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="R$ 0,00"
+          [ngModel]="totalBudgetInput"
+          (ngModelChange)="updateTotalBudgetInput($event)">
+        <div class="editor-actions">
+          <button type="button" class="ghost" (click)="closeTotalBudgetEditor()">Cancelar</button>
+          <button type="button" class="primary" [disabled]="!canStartBudget()" (click)="saveTotalBudget()">Salvar</button>
+        </div>
+      </div>
+
+      <div class="totals-grid">
+        <div class="metric-card metric-card--forecast">
+          <span>Previsão</span>
+          <strong>{{ formatCurrency(totals().allocated) }}</strong>
+        </div>
+        <div class="metric-card metric-card--spent">
+          <span>Gasto</span>
+          <strong>{{ formatCurrency(totals().spent) }}</strong>
+        </div>
+        <div class="metric-card metric-card--available">
+          <span>Disponível</span>
+          <strong>{{ formatCurrency(totals().remaining) }}</strong>
+        </div>
+      </div>
+
+      <div class="progress-block">
+        <div class="progress-track">
+          <span class="progress-fill" [style.width.%]="totals().progress"></span>
+        </div>
+        <small>{{ totals().progress }}% utilizado</small>
+      </div>
+    </article>
+
+    <section class="categories-list">
+      <article class="category-card" *ngFor="let item of budget().items">
+        <header class="category-header">
+          <h2>{{ item.categoryName }}</h2>
+          <div class="category-actions">
+            <span [class]="statusClass(item.status)">{{ formatStatus(item.status) }}</span>
+            <button type="button" class="icon-button" (click)="openItemEditor(item)" aria-label="Editar categoria">✎</button>
+          </div>
+        </header>
+
+        <p class="category-values">{{ formatCurrency(item.spentAmount) }} / {{ formatCurrency(item.allocatedAmount) }}</p>
+
+        <div class="progress-block" *ngIf="showCategoryProgress(item)">
+          <div class="progress-track progress-track--small">
+            <span class="progress-fill" [style.width.%]="categoryProgress(item)"></span>
+          </div>
+          <small>{{ categoryProgress(item) }}% da categoria utilizado</small>
+        </div>
+
+        <a class="category-link" [routerLink]="buildCategoryLink(item.categorySlug)">
+          Pesquisar fornecedores nesta categoria →
+        </a>
+      </article>
+    </section>
+  </section>
+</ng-template>
+
+<section class="sheet-overlay" *ngIf="activeItemId" (click)="closeItemEditor()">
+  <article class="bottom-sheet" (click)="$event.stopPropagation()">
+    <header class="sheet-header">
+      <h3>{{ getActiveCategoryName() }}</h3>
+      <button type="button" class="icon-button" (click)="closeItemEditor()" aria-label="Fechar">×</button>
+    </header>
+
+    <div class="sheet-body">
+      <label class="floating-field">
+        <input
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder=" "
+          [ngModel]="formatDraftCurrency(activeDraft.allocatedAmount)"
+          (ngModelChange)="updateDraftCurrency('allocatedAmount', $event)">
+        <span>Valor Alocado</span>
       </label>
-      <label>
-        <span>Valor gasto</span>
-        <input type="number" [ngModel]="getDraft(item).spentAmount" (ngModelChange)="getDraft(item).spentAmount = $event">
+
+      <label class="floating-field">
+        <input
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder=" "
+          [ngModel]="formatDraftCurrency(activeDraft.spentAmount)"
+          (ngModelChange)="updateDraftCurrency('spentAmount', $event)">
+        <span>Valor Gasto</span>
       </label>
-      <label>
-        <span>Status</span>
-        <select [ngModel]="getDraft(item).status" (ngModelChange)="getDraft(item).status = $event">
+
+      <label class="floating-field">
+        <input
+          type="text"
+          placeholder=" "
+          [ngModel]="activeDraft.supplierName"
+          (ngModelChange)="updateDraftText('supplierName', $event)">
+        <span>Nome do Fornecedor (opcional)</span>
+      </label>
+
+      <label class="floating-field floating-field--select">
+        <select
+          [ngModel]="activeDraft.status"
+          (ngModelChange)="updateDraftStatus($event)">
           <option value="pending">Pendente</option>
           <option value="inProgress">Em andamento</option>
           <option value="contracted">Contratado</option>
           <option value="paid">Pago</option>
         </select>
+        <span>Status</span>
       </label>
-      <label>
-        <span>Fornecedor</span>
-        <input [ngModel]="getDraft(item).supplierName" (ngModelChange)="getDraft(item).supplierName = $event" placeholder="Opcional">
-      </label>
-      <label class="budget-grid__full">
-        <span>Observações</span>
-        <textarea rows="3" [ngModel]="getDraft(item).notes" (ngModelChange)="getDraft(item).notes = $event"></textarea>
+
+      <label class="floating-field floating-field--textarea">
+        <textarea
+          rows="3"
+          placeholder=" "
+          [ngModel]="activeDraft.notes"
+          (ngModelChange)="updateDraftText('notes', $event)"></textarea>
+        <span>Observações (opcional)</span>
       </label>
     </div>
 
-    <button type="button" class="primary" (click)="saveItem(item)">Salvar categoria</button>
+    <footer class="sheet-footer">
+      <button type="button" class="primary full" (click)="saveActiveItem()">Salvar</button>
+    </footer>
   </article>
-  </ng-container>
 </section>
+
+<div class="snackbar" *ngIf="snackbarMessage">{{ snackbarMessage }}</div>
 
 <app-meu-casamento-bottom-nav />

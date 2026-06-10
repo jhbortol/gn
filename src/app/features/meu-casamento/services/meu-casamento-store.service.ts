@@ -302,10 +302,23 @@ export class MeuCasamentoStoreService {
   }
 
   markBudgetSynced(remoteBudget: MeuCasamentoState['budget']): void {
+    const current = this.stateSignal();
+    const existingById = new Map(current.budget.items.map(item => [item.id, item]));
+
     this.patchState({
       budget: {
         ...remoteBudget,
-        items: remoteBudget.items.map(item => ({ ...item, syncState: 'synced' }))
+        items: remoteBudget.items.map(item => {
+          const existing = existingById.get(item.id);
+          return {
+            ...item,
+            categoryName: item.categoryName || existing?.categoryName || '',
+            categorySlug: item.categorySlug || existing?.categorySlug || '',
+            category: item.category || existing?.category || '',
+            categoryId: item.categoryId || existing?.categoryId || '',
+            syncState: 'synced'
+          };
+        })
       }
     });
   }

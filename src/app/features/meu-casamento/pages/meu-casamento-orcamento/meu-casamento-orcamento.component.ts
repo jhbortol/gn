@@ -208,13 +208,19 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
   }
 
   private formatCurrencyInput(value: string | number): string {
+    if (typeof value === 'number') {
+      return this.currencyFormatter.format(value);
+    }
     const digits = String(value ?? '').replace(/\D/g, '');
     if (!digits) return '';
     const cents = Number(digits) / 100;
     return this.currencyFormatter.format(cents);
   }
 
-  private parseCurrencyInput(value: string): number {
+  private parseCurrencyInput(value: string | number): number {
+    if (typeof value === 'number') {
+      return value;
+    }
     const digits = String(value ?? '').replace(/\D/g, '');
     if (!digits) return 0;
     return Number((Number(digits) / 100).toFixed(2));

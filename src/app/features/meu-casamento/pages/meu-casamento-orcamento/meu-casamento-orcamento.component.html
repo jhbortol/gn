@@ -16,10 +16,10 @@
       inputmode="numeric"
       autocomplete="off"
       placeholder="R$ 0,00"
-      [ngModel]="totalBudgetInput"
-      (ngModelChange)="updateTotalBudgetInput($event)">
+      [value]="totalBudgetInput"
+      (input)="updateTotalBudgetInput($any($event.target).value)">
 
-    <button type="button" class="primary full" [disabled]="!canStartBudget()" (click)="saveTotalBudget()">
+    <button type="button" class="primary full" [disabled]="!canStartBudget" (click)="saveTotalBudget()">
       Começar
     </button>
   </article>
@@ -47,11 +47,11 @@
           inputmode="numeric"
           autocomplete="off"
           placeholder="R$ 0,00"
-          [ngModel]="totalBudgetInput"
-          (ngModelChange)="updateTotalBudgetInput($event)">
+          [value]="totalBudgetInput"
+          (input)="updateTotalBudgetInput($any($event.target).value)">
         <div class="editor-actions">
           <button type="button" class="ghost" (click)="closeTotalBudgetEditor()">Cancelar</button>
-          <button type="button" class="primary" [disabled]="!canStartBudget()" (click)="saveTotalBudget()">Salvar</button>
+          <button type="button" class="primary" [disabled]="!canStartBudget" (click)="saveTotalBudget()">Salvar</button>
         </div>
       </div>
 
@@ -79,6 +79,9 @@
     </article>
 
     <section class="categories-list">
+      <div class="empty-state" *ngIf="budget().items.length === 0">
+        <p>Carregando categorias...</p>
+      </div>
       <article class="category-card" *ngFor="let item of budget().items">
         <header class="category-header">
           <h2>{{ item.categoryName }}</h2>

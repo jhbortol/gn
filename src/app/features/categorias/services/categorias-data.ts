@@ -133,13 +133,12 @@ export class CategoriasData {
   }
 
   getAll(cidadeSlug?: string): Observable<Categoria[]> {
-    const cacheKey = cidadeSlug ?? 'global';
+    const effectiveCidadeSlug = cidadeSlug ?? (this.cidadeService.getCidade() || 'piracicaba');
+    const cacheKey = effectiveCidadeSlug;
     if (this.cache$.has(cacheKey)) return this.cache$.get(cacheKey)!;
 
-    // Build URL - pass cidadeSlug as query param when available
-    const url = cidadeSlug
-      ? `${environment.API_BASE_URL}/public/categorias/vitrine?cidadeSlug=${cidadeSlug}`
-      : `${environment.API_BASE_URL}/public/categorias/vitrine`;
+    // Build URL using the effective city slug. Fallback to piracicaba when city is not set.
+    const url = `${environment.API_BASE_URL}/public/categorias/vitrine?cidadeSlug=${effectiveCidadeSlug}`;
 
     const obs$ = this.http.get<any>(url).pipe(
       map(response => {

@@ -97,12 +97,14 @@ export class MeuCasamentoStoreService {
 
     const current = this.stateSignal();
     const existingByCategory = new Map(current.budget.items.map(item => [item.categoryId || item.categorySlug, item]));
-    const mergedItems = categories.map(category => {
+    
+    // 1. Map all official categories (this ensures they exist)
+    const officialItems = categories.map(category => {
       const existing = existingByCategory.get(category.id) ?? existingByCategory.get(category.slug);
       if (existing) {
         return {
           ...existing,
-          category: existing.category || category.slug,
+          category: category.slug,
           categoryId: category.id,
           categoryName: category.nome,
           categorySlug: category.slug
@@ -125,12 +127,24 @@ export class MeuCasamentoStoreService {
       };
     });
 
+    // 2. Keep any existing items that were NOT in the official categories list (to avoid data loss)
+    const officialIds = new Set(categories.map(c => c.id));
+    const officialSlugs = new Set(categories.map(c => c.slug));
+    
+    const extraItems = current.budget.items.filter(item => 
+      !officialIds.has(item.categoryId) && 
+      !officialSlugs.has(item.categorySlug)
+    );
+
+    const mergedItems = [...officialItems, ...extraItems];
+
     this.patchState({
       budget: {
         ...current.budget,
         items: mergedItems
       }
     });
+
   }
 
   setBudgetTotal(totalBudget: number | null): void {

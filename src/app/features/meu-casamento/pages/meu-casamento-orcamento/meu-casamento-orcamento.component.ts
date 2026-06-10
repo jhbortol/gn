@@ -38,7 +38,9 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
 
   readonly budget = this.store.budget;
   readonly hasBudgetStarted = computed(() => (this.store.budget().totalBudget ?? 0) > 0);
-  readonly canStartBudget = computed(() => this.parseCurrencyInput(this.totalBudgetInput) > 0);
+  get canStartBudget(): boolean {
+    return this.parseCurrencyInput(this.totalBudgetInput) > 0;
+  }
   readonly totals = computed(() => {
     const items = this.store.budget().items;
     const allocated = items.reduce((sum, item) => sum + item.allocatedAmount, 0);

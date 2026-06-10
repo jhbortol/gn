@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { forkJoin, map, of, catchError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { CategoriasData } from '../../categorias/services/categorias-data';
+import { CidadeService } from '../../../core/cidade.service';
 import {
   BudgetItem,
   FavoriteItem,
@@ -34,6 +35,7 @@ interface PhoneRecoveryVerifyResponse {
 export class MeuCasamentoApiService {
   private readonly http = inject(HttpClient);
   private readonly categoriasData = inject(CategoriasData);
+  private readonly cidadeService = inject(CidadeService);
   private readonly baseUrl = environment.API_BASE_URL;
 
   getWeddingProfile(deviceId: string) {
@@ -43,7 +45,7 @@ export class MeuCasamentoApiService {
   saveWeddingProfile(deviceId: string, profile: WeddingProfile) {
     return this.http.post<WeddingProfile>(`${this.baseUrl}/users/${deviceId}/wedding-profile`, {
       brideFirstName: profile.brideFirstName,
-      groomFirstName: profile.groomFirstName,
+      groomFirstName: profile.brideFirstName,
       whatsappNumber: profile.whatsappNumber.replace(/\D/g, ''),
       weddingDate: profile.weddingDate,
       estimatedGuests: profile.estimatedGuests,
@@ -191,7 +193,8 @@ export class MeuCasamentoApiService {
   }
 
   getBudgetCategories() {
-    return this.categoriasData.getAll().pipe(
+    const cidadeSlug = this.cidadeService.getCidade() || undefined;
+    return this.categoriasData.getAll(cidadeSlug).pipe(
       map(categories => categories.map(category => ({
         id: category.id,
         nome: category.nome,

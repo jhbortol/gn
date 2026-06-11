@@ -11,6 +11,8 @@ import { MetaTagService } from '../../../core/meta-tag.service';
 import { forkJoin, map, switchMap, Observable, BehaviorSubject, of, combineLatest, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CidadeService } from '../../../core/cidade.service';
 import { environment } from '../../../../environments/environment';
+import { MeuCasamentoStoreService } from '../../meu-casamento/services/meu-casamento-store.service';
+import { MeuCasamentoSyncService } from '../../meu-casamento/services/meu-casamento-sync.service';
 
 @Component({
   selector: 'app-home-page',
@@ -33,6 +35,8 @@ export class HomePageComponent implements OnInit {
   private cidadeService = inject(CidadeService);
   private metaTagService = inject(MetaTagService);
   private router = inject(Router);
+  private weddingStore = inject(MeuCasamentoStoreService);
+  private weddingSync = inject(MeuCasamentoSyncService);
 
   get cidadeNome(): string {
     const c = this.cidadeService.getCidade();
@@ -90,7 +94,8 @@ export class HomePageComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    await this.weddingSync.init();
     const route = this.router.url.split('?')[0];
     this.metaTagService.applyMetadata(route);
   }
@@ -141,5 +146,29 @@ export class HomePageComponent implements OnInit {
       .map(value => ({ value, sort: Math.random() }))
       .sort((a, b) => a.sort - b.sort)
       .map(({ value }) => value);
+  }
+
+  isFavorite(fornecedorId: string): boolean {
+    return this.weddingStore.favorites().some(item => item.fornecedorId === fornecedorId);
+  }
+
+  async toggleFavorite(event: Event, fornecedor: FornecedorListDto): Promise<void> {
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (this.isFavorite(fornecedor.id)) {
+      this.weddingStore.removeFavorite(fornecedor.id);
+    } else {
+      this.weddingStore.saveFavorite({
+        fornecedorId: fornecedor.id,
+        fornecedorNome: fornecedor.nome,
+        fornecedorSlug: fornecedor.slug,
+        imagemUrl: fornecedor.primaryImage?.url || null,
+        categoriaNome: fornecedor.categoria?.nome || null,
+        nota: null
+      });
+    }
+
+    await this.weddingSync.syncPendingChanges();
   }
 }

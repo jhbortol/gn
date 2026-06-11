@@ -6,6 +6,8 @@ import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { CidadeService } from '../../../core/cidade.service';
 import { resolveImageUrl, addCacheBuster } from '../../../core/image-url.helper';
+import { MeuCasamentoStoreService } from '../../meu-casamento/services/meu-casamento-store.service';
+import { MeuCasamentoSyncService } from '../../meu-casamento/services/meu-casamento-sync.service';
 
 export interface DestaqueView {
   id: string;
@@ -35,10 +37,13 @@ export class DestaquesSemanaComponent implements OnInit {
   destaques$!: Observable<DestaqueView[]>;
 
   private cidadeService = inject(CidadeService);
+  private weddingStore = inject(MeuCasamentoStoreService);
+  private weddingSync = inject(MeuCasamentoSyncService);
 
   constructor(private fornecedoresData: FornecedoresData) {}
 
   ngOnInit(): void {
+    void this.weddingSync.init();
     const cidade = this.cidadeService.getCidade();
     this.destaques$ = this.fornecedoresData.getDestaques(1, this.limit * 3, cidade).pipe(
       map(list => {
@@ -122,4 +127,28 @@ export class DestaquesSemanaComponent implements OnInit {
 
   // TrackBy to ensure DOM stability per vendor
   trackById(_: number, d: DestaqueView): string { return d.id; }
+
+  isFavorite(fornecedorId: string): boolean {
+    return this.weddingStore.favorites().some(item => item.fornecedorId === fornecedorId);
+  }
+
+  async toggleFavorite(event: Event, destaque: DestaqueView): Promise<void> {
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (this.isFavorite(destaque.id)) {
+      this.weddingStore.removeFavorite(destaque.id);
+    } else {
+      this.weddingStore.saveFavorite({
+        fornecedorId: destaque.id,
+        fornecedorNome: destaque.nome || '',
+        fornecedorSlug: destaque.slug,
+        imagemUrl: destaque.imagem || null,
+        categoriaNome: destaque.categoria || null,
+        nota: null
+      });
+    }
+
+    await this.weddingSync.syncPendingChanges();
+  }
 }

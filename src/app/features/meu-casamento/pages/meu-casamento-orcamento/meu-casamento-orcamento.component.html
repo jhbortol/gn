@@ -1,6 +1,6 @@
 <section class="page-shell" *ngIf="!hasBudgetStarted(); else budgetDashboard">
   <header class="app-bar">
-    <a class="back-button" routerLink="/meu-casamento" aria-label="Voltar">←</a>
+    <button type="button" class="back-button" (click)="goBack()" aria-label="Voltar">←</button>
     <h1>Gestor de Orçamento</h1>
   </header>
 
@@ -28,7 +28,7 @@
 <ng-template #budgetDashboard>
   <section class="page-shell">
     <header class="app-bar">
-      <a class="back-button" routerLink="/meu-casamento" aria-label="Voltar">←</a>
+      <button type="button" class="back-button" (click)="goBack()" aria-label="Voltar">←</button>
       <h1>Gestor de Orçamento</h1>
     </header>
 

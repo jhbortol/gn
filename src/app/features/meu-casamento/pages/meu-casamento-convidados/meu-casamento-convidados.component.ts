@@ -29,10 +29,12 @@ export class MeuCasamentoConvidadosComponent implements OnInit {
   showFormModal = false;
   draft: GuestDraft = this.createEmptyDraft();
 
-  readonly guests = computed(() => this.store.guests()
-    .filter(guest => !this.search || guest.name.toLowerCase().includes(this.search.toLowerCase()))
-    .filter(guest => !this.groupFilter || guest.group === this.groupFilter)
-    .filter(guest => !this.statusFilter || guest.status === this.statusFilter));
+  guests(): GuestItem[] {
+    return this.store.guests()
+      .filter(guest => !this.search || guest.name.toLowerCase().includes(this.search.toLowerCase()))
+      .filter(guest => !this.groupFilter || guest.group === this.groupFilter)
+      .filter(guest => !this.statusFilter || guest.status === this.statusFilter);
+  }
 
   readonly stats = computed(() => {
     const guests = this.store.guests();

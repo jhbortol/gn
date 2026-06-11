@@ -20,7 +20,11 @@ export class MeusFavoritosComponent implements OnInit {
   private readonly cidadeService = inject(CidadeService);
 
   notesDraft: Record<string, string> = {};
-  readonly favorites = computed(() => this.store.favorites());
+  readonly favorites = computed(() => {
+    return [...this.store.favorites()].sort((a, b) => 
+      (a.fornecedorNome || '').localeCompare(b.fornecedorNome || '', 'pt-BR')
+    );
+  });
 
   async ngOnInit(): Promise<void> {
     await this.sync.init();

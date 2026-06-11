@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, signal, inject, Inject, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Meta, Title, DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
@@ -55,6 +55,12 @@ export class FornecedorPageComponent implements OnInit {
   private cidadeService = inject(CidadeService);
   private weddingStore = inject(MeuCasamentoStoreService);
   private weddingSync = inject(MeuCasamentoSyncService);
+  private location = inject(Location);
+
+  goBack(event: Event): void {
+    event.preventDefault();
+    this.location.back();
+  }
 
   constructor(
     private route: ActivatedRoute,

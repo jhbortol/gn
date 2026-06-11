@@ -126,6 +126,7 @@ export class MeuCasamentoApiService {
     return this.http.get<GuestItem[]>(`${this.baseUrl}/users/${deviceId}/guests`).pipe(
       map(guests => (guests ?? []).map(guest => ({
         ...guest,
+        group: this.normalizeGuestGroup(guest.group || (guest as any).groupName),
         phone: guest.phone ?? null,
         notes: guest.notes ?? null,
         syncState: 'synced' as const
@@ -216,5 +217,14 @@ export class MeuCasamentoApiService {
       notes: guest.notes,
       plusOnes: guest.plusOnes
     };
+  }
+
+  private normalizeGuestGroup(group: any): 'familia' | 'trabalho' | 'amigos' | 'outros' {
+    if (!group) return 'outros';
+    const g = String(group).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (g === 'familia' || g === 'family') return 'familia';
+    if (g === 'trabalho' || g === 'work') return 'trabalho';
+    if (g === 'amigos' || g === 'friends') return 'amigos';
+    return 'outros';
   }
 }

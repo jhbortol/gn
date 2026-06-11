@@ -1,5 +1,5 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.service';
@@ -21,6 +21,7 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
   private readonly store = inject(MeuCasamentoStoreService);
   private readonly sync = inject(MeuCasamentoSyncService);
   private readonly cidadeService = inject(CidadeService);
+  private readonly location = inject(Location);
   private readonly currencyFormatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
@@ -53,6 +54,10 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
       progress: totalBudget > 0 ? Math.min(100, Math.round((spent / totalBudget) * 100)) : 0
     };
   });
+
+  goBack(): void {
+    this.location.back();
+  }
 
   async ngOnInit(): Promise<void> {
     await this.sync.init();

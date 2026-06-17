@@ -4,5 +4,9 @@ export const environment = {
   INTERNAL_AUTH_EMAIL: 'jhbortol@gmail.com',
   INTERNAL_AUTH_PASSWORD: 'pesc01',
   FORNECEDOR_PUBLICADO: null as boolean | null,
-  PAINEL_URL: 'https://painel-dev.guianoivas.com'
+  PAINEL_URL: 'https://painel-dev.guianoivas.com',
+  GOOGLE_CLIENT_ID: 'YOUR_GOOGLE_CLIENT_ID', // TODO: preencher com o client ID real
+  APPLE_CLIENT_ID: 'YOUR_APPLE_CLIENT_ID', // TODO: preencher com o client ID real
+  APPLE_TEAM_ID: 'YOUR_APPLE_TEAM_ID', // TODO: preencher com o Apple Team ID
+  APPLE_REDIRECT_URI: 'https://yourdomain.com/apple-auth-callback', // TODO: ajustar para a URL de callback registrada
 };

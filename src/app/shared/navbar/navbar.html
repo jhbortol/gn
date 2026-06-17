@@ -22,13 +22,40 @@
 >
   PAINEL FORNECEDOR
 </a>
-<a
-  routerLink="/meu-casamento"
-  title="Organize seu casamento grátis"
-  class="px-4 py-2 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-md"
->
-  MEU CASAMENTO
-</a>
+
+<!-- Login / Profile Section -->
+<ng-container *ngIf="brideAuthService.isLoggedIn$ | async; else loginBtn">
+  <div class="relative">
+    <button (click)="toggleProfileDropdown()" class="flex items-center gap-2 text-gray-700 hover:text-rose-600 transition py-2 focus:outline-none">
+      <div class="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 font-bold uppercase overflow-hidden">
+        {{ brideAuthService.profile?.nome?.charAt(0) || 'N' }}
+      </div>
+      <span class="max-w-[100px] truncate">Olá, {{ brideAuthService.profile?.nome?.split(' ')?.[0] || 'Noiva' }}</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+    
+    <!-- Dropdown Menu -->
+    <div *ngIf="profileDropdownOpen()" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-200 z-50">
+      <a routerLink="/meu-casamento/perfil" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Meu Perfil</a>
+      <a routerLink="/meu-casamento" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Meu Casamento</a>
+      <button (click)="logoutBride()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sair</button>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #loginBtn>
+  <button (click)="openLoginModal()" class="hover:text-rose-600 transition py-2">ENTRAR</button>
+  <a
+    routerLink="/meu-casamento"
+    title="Organize seu casamento grátis"
+    class="px-4 py-2 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-md"
+  >
+    MEU CASAMENTO
+  </a>
+</ng-template>
+
 </div>
 <button (click)="toggleMobileMenu()" class="md:hidden text-gray-600 p-2 hover:bg-gray-100 rounded-lg transition-colors" aria-label="Abrir menu de navegação">
 <svg *ngIf="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -43,11 +70,32 @@
 <!-- Mobile Menu -->
 <div *ngIf="mobileMenuOpen" class="md:hidden bg-white border-t border-gray-200 shadow-lg">
 <div class="container mx-auto px-4 py-4 flex flex-col space-y-3">
-<a [routerLink]="buildUrl('/')" class="text-gray-700 hover:text-rose-600 font-semibold py-2">INÍCIO</a>
-<a [routerLink]="buildUrl('categorias')" class="text-gray-700 hover:text-rose-600 font-semibold py-2">CATEGORIAS</a>
-<a [routerLink]="buildUrl('blog')" class="text-gray-700 hover:text-rose-600 font-semibold py-2">BLOG</a>
-<a [routerLink]="buildUrl('anuncie')" class="text-gray-700 hover:text-rose-600 font-semibold py-2">ANUNCIE</a>
-<a [routerLink]="buildUrl('contato')" class="text-gray-700 hover:text-rose-600 font-semibold py-2">CONTATO</a>
+  
+<ng-container *ngIf="brideAuthService.isLoggedIn$ | async; else mobileLoginBtn">
+  <div class="flex items-center gap-3 py-3 border-b border-gray-100 mb-2">
+    <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 font-bold uppercase">
+      {{ brideAuthService.profile?.nome?.charAt(0) || 'N' }}
+    </div>
+    <div class="flex flex-col">
+      <span class="text-sm text-gray-500">Olá,</span>
+      <span class="font-semibold text-gray-800">{{ brideAuthService.profile?.nome || 'Noiva' }}</span>
+    </div>
+  </div>
+  <a routerLink="/meu-casamento" (click)="closeMobileMenu()" class="text-gray-700 hover:text-rose-600 font-semibold py-2 flex items-center gap-2">
+     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+     Meu Casamento
+  </a>
+</ng-container>
+
+<ng-template #mobileLoginBtn>
+  <button (click)="openLoginModal()" class="text-left text-gray-700 hover:text-rose-600 font-semibold py-2">ENTRAR</button>
+</ng-template>
+
+<a [routerLink]="buildUrl('/')" (click)="closeMobileMenu()" class="text-gray-700 hover:text-rose-600 font-semibold py-2">INÍCIO</a>
+<a [routerLink]="buildUrl('categorias')" (click)="closeMobileMenu()" class="text-gray-700 hover:text-rose-600 font-semibold py-2">CATEGORIAS</a>
+<a [routerLink]="buildUrl('blog')" (click)="closeMobileMenu()" class="text-gray-700 hover:text-rose-600 font-semibold py-2">BLOG</a>
+<a [routerLink]="buildUrl('anuncie')" (click)="closeMobileMenu()" class="text-gray-700 hover:text-rose-600 font-semibold py-2">ANUNCIE</a>
+<a [routerLink]="buildUrl('contato')" (click)="closeMobileMenu()" class="text-gray-700 hover:text-rose-600 font-semibold py-2">CONTATO</a>
 <a
   [href]="getPainelUrl()"
   target="_blank"
@@ -57,13 +105,24 @@
 >
   PAINEL FORNECEDOR
 </a>
-<a
-  routerLink="/meu-casamento"
-  title="Organize seu casamento grátis"
-  class="text-center w-full px-4 py-2 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-md font-semibold text-sm"
->
-  MEU CASAMENTO
-</a>
+
+<ng-container *ngIf="brideAuthService.isLoggedIn$ | async">
+  <button (click)="logoutBride()" class="text-left text-rose-600 font-semibold py-2 border-t border-gray-100 mt-2">SAIR</button>
+</ng-container>
+
+<ng-container *ngIf="!(brideAuthService.isLoggedIn$ | async)">
+  <a
+    routerLink="/meu-casamento"
+    title="Organize seu casamento grátis"
+    (click)="closeMobileMenu()"
+    class="text-center w-full px-4 py-2 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-md font-semibold text-sm mt-4"
+  >
+    MEU CASAMENTO
+  </a>
+</ng-container>
+
 </div>
 </div>
+
+<app-bride-login-modal *ngIf="showLoginModal()" (close)="closeLoginModal()"></app-bride-login-modal>
 </nav>

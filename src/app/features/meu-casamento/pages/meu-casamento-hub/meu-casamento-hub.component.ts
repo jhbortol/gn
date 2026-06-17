@@ -5,11 +5,13 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
 import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.service';
 import { MeuCasamentoBottomNavComponent } from '../../components/meu-casamento-bottom-nav/meu-casamento-bottom-nav.component';
+import { BrideAuthService } from '../../../../core/services/bride-auth.service';
+import { BrideLeadsHistoryComponent } from '../bride-leads-history/bride-leads-history.component';
 
 @Component({
   selector: 'app-meu-casamento-hub',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, MeuCasamentoBottomNavComponent],
+  imports: [CommonModule, FormsModule, RouterModule, MeuCasamentoBottomNavComponent, BrideLeadsHistoryComponent],
   templateUrl: './meu-casamento-hub.component.html',
   styleUrl: './meu-casamento-hub.component.css'
 })
@@ -18,6 +20,7 @@ export class MeuCasamentoHubComponent implements OnInit {
   private readonly sync = inject(MeuCasamentoSyncService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly brideAuthService = inject(BrideAuthService);
 
   readonly profile = this.store.profile;
   readonly backupCode = this.store.backupCode;
@@ -39,6 +42,17 @@ export class MeuCasamentoHubComponent implements OnInit {
     if (diffDays < 0) return null;
     if (diffDays === 0) return 'Hoje é o grande dia 💍';
     return `Faltam ${diffDays} dia${diffDays > 1 ? 's' : ''} para o casamento.`;
+  });
+
+  // Bride greeting
+  readonly isBrideLoggedIn = computed(() => !!this.brideAuthService.profile);
+  readonly brideGreeting = computed(() => {
+    const profile = this.brideAuthService.profile;
+    if (profile) {
+      const firstName = profile.nome?.split(' ')[0] || 'Noiva';
+      return `Bem-vinda, ${firstName}! 👰`;
+    }
+    return 'Organize seu casamento';
   });
 
   async ngOnInit(): Promise<void> {
@@ -74,5 +88,9 @@ export class MeuCasamentoHubComponent implements OnInit {
     }
 
     void this.router.navigateByUrl(path);
+  }
+
+  viewBrideProfile(): void {
+    void this.router.navigateByUrl('/meu-casamento/perfil');
   }
 }

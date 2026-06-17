@@ -1,8 +1,10 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, signal, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, signal, inject, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { LeadService } from '../../core/services/lead.service';
 import { CidadeService } from '../../core/cidade.service';
+import { BrideAuthService } from '../../core/services/bride-auth.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-lead-form',
@@ -86,7 +88,7 @@ import { CidadeService } from '../../core/cidade.service';
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LeadFormComponent {
+export class LeadFormComponent implements OnInit {
   @Input() fornecedorId!: string | number;
   /** When true, adjusts CTA text for the WhatsApp modal flow. */
   @Input() compact = false;
@@ -106,12 +108,34 @@ export class LeadFormComponent {
   successMessage = signal('');
   errorMessage = signal('');
   private cidadeService = inject(CidadeService);
+  private leadService = inject(LeadService);
+  private brideAuthService = inject(BrideAuthService);
+  private destroyRef = inject(DestroyRef);
+
+  constructor() { }
+
+  ngOnInit(): void {
+    // Pre-populate form if bride is logged in
+    this.brideAuthService.getBrideProfile()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(profile => {
+        if (profile) {
+          // Pre-fill name
+          if (profile.nome) {
+            this.form.get('clienteName')?.setValue(profile.nome, { emitEvent: false });
+          }
+          // Pre-fill phone
+          if (profile.telefone) {
+            const formattedPhone = this.formatPhoneValue(profile.telefone);
+            this.form.get('clientePhone')?.setValue(formattedPhone, { emitEvent: false });
+          }
+        }
+      });
+  }
 
   get termosUrl(): string {
     return this.cidadeService.buildUrl('institucional/termos');
   }
-
-  constructor(private leadService: LeadService) { }
 
   isFieldInvalid(fieldName: string): boolean {
     const field = this.form.get(fieldName);

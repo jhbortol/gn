@@ -8,5 +8,9 @@ export const environment = {
   // Version will be injected at build time by inject-version.js
   APP_VERSION: (typeof window !== 'undefined' && (window as any).__BUILD_VERSION__) || 'unknown',
   ENABLE_VERSION_CHECK: true,
-  VERSION_CHECK_INTERVAL_MS: 5 * 60 * 1000 // 5 minutes
+  VERSION_CHECK_INTERVAL_MS: 5 * 60 * 1000, // 5 minutes
+  GOOGLE_CLIENT_ID: 'YOUR_GOOGLE_CLIENT_ID', // TODO: preencher com o client ID real
+  APPLE_CLIENT_ID: 'YOUR_APPLE_CLIENT_ID', // TODO: preencher com o client ID real
+  APPLE_TEAM_ID: 'YOUR_APPLE_TEAM_ID', // TODO: preencher com o Apple Team ID
+  APPLE_REDIRECT_URI: 'https://yourdomain.com/apple-auth-callback', // TODO: ajustar para a URL de callback registrada
 };

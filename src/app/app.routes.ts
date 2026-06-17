@@ -3,6 +3,7 @@ import { CanMatchFn, Router, Routes } from '@angular/router';
 import { CidadeService } from './core/cidade.service';
 import { legacyRedirectGuard } from './core/legacy-redirect.guard';
 import { weddingToolsGuard } from './features/meu-casamento/wedding-tools.guard';
+import { brideAuthGuard } from './core/bride.guard';
 
 const ROTAS_RESERVADAS = new Set([
 'selecionar-cidade',
@@ -63,7 +64,13 @@ canActivate: [weddingToolsGuard],
 loadComponent: () => import('./features/meu-casamento/pages/meu-casamento-orcamento/meu-casamento-orcamento.component').then(m => m.MeuCasamentoOrcamentoComponent)
 },
 {
+path: 'meu-casamento/perfil',
+canActivate: [brideAuthGuard],
+loadComponent: () => import('./features/meu-casamento/pages/bride-profile/bride-profile.component').then(m => m.BrideProfileComponent)
+},
+{
 path: 'meus-favoritos',
+canActivate: [brideAuthGuard],
 loadComponent: () => import('./features/meu-casamento/pages/meus-favoritos/meus-favoritos.component').then(m => m.MeusFavoritosComponent)
 },
 {

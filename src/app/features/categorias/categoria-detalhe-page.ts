@@ -68,11 +68,11 @@ export class CategoriaDetalhePageComponent implements OnInit {
       map((params: any) => params.get('id') || '')
     );
 
-    // Buscar fornecedores da categoria e filtrar apenas públicos (planLevel >= 0)
+    // Buscar fornecedores da categoria e filtrar apenas públicos (planLevel > Zombie)
     // NÃO reordenar - a API já retorna na ordem correta por tier
     this.publicFornecedores$ = this.categoriaId$.pipe(
       switchMap((id: string) => this.fornecedores.getByCategoria(id)),
-      map(list => (list || []).filter(f => f.planLevel !== undefined && f.planLevel >= 0))
+      map(list => (list || []).filter(f => f.planLevel !== undefined && f.planLevel > PlanLevel.Zombie))
     );
 
     this.categoriaNome$ = this.categoriaId$.pipe(

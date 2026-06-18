@@ -52,6 +52,60 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
           </p>
         </div>
 
+        <!-- Email -->
+        <div *ngIf="!compact">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Seu Email <span class="text-red-600">*</span></label>
+          <input
+            type="email"
+            formControlName="clienteEmail"
+            placeholder="Digite seu email principal"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+            [class.border-red-500]="isFieldInvalid('clienteEmail')"
+          />
+          <p *ngIf="isFieldInvalid('clienteEmail')" class="text-red-500 text-xs mt-1">
+            Email válido é obrigatório
+          </p>
+        </div>
+
+        <!-- Data do Casamento -->
+        <div *ngIf="!compact">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Data do Casamento</label>
+          <input
+            type="date"
+            formControlName="eventDate"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+          />
+          <p class="text-xs text-gray-500 mt-1">Opcional</p>
+        </div>
+
+        <!-- Mensagem -->
+        <div *ngIf="!compact">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Mensagem</label>
+          <textarea
+            formControlName="message"
+            placeholder="Escreva detalhes sobre o seu pedido de orçamento..."
+            rows="4"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+          ></textarea>
+          <p class="text-xs text-gray-500 mt-1">Opcional</p>
+        </div>
+
+        <!-- Consentimento LGPD -->
+        <div *ngIf="!compact" class="flex items-start gap-2">
+          <input
+            type="checkbox"
+            id="lgpdConsent"
+            formControlName="lgpdConsent"
+            class="mt-1 h-4 w-4 rounded border-gray-300 text-rose-600 focus:ring-rose-500"
+          />
+          <label for="lgpdConsent" class="text-xs text-gray-600 select-none">
+            Autorizo o envio dos meus dados para o fornecedor receber e tratar de acordo com a política de privacidade. <span class="text-red-600">*</span>
+          </label>
+        </div>
+        <p *ngIf="!compact && isFieldInvalid('lgpdConsent')" class="text-red-500 text-xs mt-1">
+          Você precisa aceitar os termos de consentimento.
+        </p>
+
         <!-- Botão -->
         <button
           type="submit"
@@ -100,9 +154,9 @@ export class LeadFormComponent implements OnInit {
     clientePhone: new FormControl('', [
       Validators.required,
       Validators.minLength(10),
-      Validators.pattern(/^(\(\d{2}\)\s?)?\d{4,5}-?\d{4}$/)
+      Validators.pattern(/^(\(?\d{2}\)?\s?)?\d{4,5}-?\d{4}$/)
     ])
-  });
+  } as any);
 
   isSubmitting = signal(false);
   successMessage = signal('');
@@ -115,6 +169,13 @@ export class LeadFormComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    if (!this.compact) {
+      this.form.addControl('clienteEmail', new FormControl('', [Validators.required, Validators.email]));
+      this.form.addControl('eventDate', new FormControl(''));
+      this.form.addControl('message', new FormControl(''));
+      this.form.addControl('lgpdConsent', new FormControl(false, [Validators.requiredTrue]));
+    }
+
     // Pre-populate form if bride is logged in
     this.brideAuthService.getBrideProfile()
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -128,6 +189,15 @@ export class LeadFormComponent implements OnInit {
           if (profile.telefone) {
             const formattedPhone = this.formatPhoneValue(profile.telefone);
             this.form.get('clientePhone')?.setValue(formattedPhone, { emitEvent: false });
+          }
+          // Pre-fill email
+          if (profile.email) {
+            this.form.get('clienteEmail')?.setValue(profile.email, { emitEvent: false });
+          }
+          // Pre-fill eventDate
+          if (profile.dataCasamento) {
+            const dateOnly = profile.dataCasamento.split('T')[0];
+            this.form.get('eventDate')?.setValue(dateOnly, { emitEvent: false });
           }
         }
       });

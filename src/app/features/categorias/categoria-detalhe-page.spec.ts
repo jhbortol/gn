@@ -10,12 +10,14 @@ import { CategoriaDetalhePageComponent } from './categoria-detalhe-page';
 import { FornecedoresData, FornecedorListDto } from '../fornecedores/services/fornecedores-data';
 import { CategoriasData, Categoria } from './services/categorias-data';
 import { PlanLevel } from '../../core/models/tier-system.model';
+import { MeuCasamentoSyncService } from '../meu-casamento/services/meu-casamento-sync.service';
 
 describe('CategoriaDetalhePageComponent', () => {
     let component: CategoriaDetalhePageComponent;
     let fixture: ComponentFixture<CategoriaDetalhePageComponent>;
     let mockFornecedoresData: jasmine.SpyObj<FornecedoresData>;
     let mockCategoriasData: jasmine.SpyObj<CategoriasData>;
+    let mockWeddingSync: jasmine.SpyObj<MeuCasamentoSyncService>;
 
     const mockCategoria: Categoria = {
         id: 'cat-1',
@@ -81,6 +83,10 @@ describe('CategoriaDetalhePageComponent', () => {
     beforeEach(async () => {
         mockFornecedoresData = jasmine.createSpyObj('FornecedoresData', ['getByCategoria']);
         mockCategoriasData = jasmine.createSpyObj('CategoriasData', ['getBySlug']);
+        
+        mockWeddingSync = jasmine.createSpyObj('MeuCasamentoSyncService', ['init', 'syncPendingChanges']);
+        mockWeddingSync.init.and.returnValue(Promise.resolve());
+        mockWeddingSync.syncPendingChanges.and.returnValue(Promise.resolve());
 
         mockCategoriasData.getBySlug.and.returnValue(of(mockCategoria));
         mockFornecedoresData.getByCategoria.and.returnValue(of(mockFornecedoresOrdenados));
@@ -96,6 +102,7 @@ describe('CategoriaDetalhePageComponent', () => {
                 provideHttpClientTesting(),
                 { provide: FornecedoresData, useValue: mockFornecedoresData },
                 { provide: CategoriasData, useValue: mockCategoriasData },
+                { provide: MeuCasamentoSyncService, useValue: mockWeddingSync },
                 {
                     provide: ActivatedRoute,
                     useValue: {

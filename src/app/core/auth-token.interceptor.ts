@@ -18,7 +18,8 @@ export const authTokenInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, n
     '/public/fornecedores',
     '/public/leads',
     '/me/',
-    '/api/v1/account'
+    '/api/v1/account',
+    '/api/v1/noiva/'
   ];
 
   // Não anexar token em chamadas públicas

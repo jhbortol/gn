@@ -61,29 +61,15 @@ export class MeuCasamentoSyncService {
     }
   }
 
-  async restoreByDeviceId(deviceId: string): Promise<WeddingRestorePayload> {
-    const payload = await this.withRetry('restore', () => firstValueFrom(this.api.restoreAll(deviceId)));
-    this.store.replaceFromRestore(payload, deviceId);
-    await this.loadBudgetCategories();
-    return payload;
-  }
-
-  async restoreByWhatsapp(whatsappNumber: string, otp: string): Promise<{ deviceId: string }> {
-    const response = await firstValueFrom(this.api.verifyPhoneRecovery(whatsappNumber, otp));
-    await this.restoreByDeviceId(response.deviceId);
-    return { deviceId: response.deviceId };
-  }
-
   async requestDeleteAllData(): Promise<{ queued: boolean }> {
-    const deviceId = this.store.backupCode();
-    const intent = { deviceId, createdAt: new Date().toISOString() };
+    const intent = { createdAt: new Date().toISOString() };
 
     try {
       if (!navigator.onLine) {
         throw new Error('offline');
       }
 
-      await this.withRetry('delete-all', () => firstValueFrom(this.api.deleteAllData(deviceId)));
+      await this.withRetry('delete-all', () => firstValueFrom(this.api.deleteAllData()));
       this.store.clearPendingDeleteIntent();
       this.store.resetLocalData();
       return { queued: false };
@@ -101,11 +87,32 @@ export class MeuCasamentoSyncService {
     if (!isEmpty || !navigator.onLine) return;
 
     try {
-      const payload = await this.withRetry('hydrate-empty', () => firstValueFrom(this.api.restoreAll(state.deviceId)));
-      this.store.replaceFromRestore(payload, state.deviceId);
+      const payload = await this.withRetry('hydrate-empty', () => firstValueFrom(this.api.restoreAll()));
+      this.store.replaceFromRestore(payload);
       await this.loadBudgetCategories();
     } catch {
       // Ignore hydration failures on empty state.
+    }
+  }
+
+  async forceSyncFromServer(): Promise<void> {
+    if (!navigator.onLine) return;
+    try {
+      const payload = await this.withRetry('force-sync', () => firstValueFrom(this.api.restoreAll()));
+      this.store.replaceFromRestore(payload);
+      await this.loadBudgetCategories();
+    } catch (e) {
+      this.observability.logSyncFailure('force-sync', e);
+    }
+  }
+
+  async migrateLegacyData(oldDeviceId: string): Promise<void> {
+    if (!navigator.onLine) return;
+    try {
+      await this.withRetry('migrate', () => firstValueFrom(this.api.migrateLegacyData(oldDeviceId)));
+      await this.forceSyncFromServer();
+    } catch (e) {
+      this.observability.logSyncFailure('migrate', e);
     }
   }
 
@@ -113,37 +120,36 @@ export class MeuCasamentoSyncService {
     const intent = this.store.getPendingDeleteIntent();
     if (!intent || !navigator.onLine) return;
 
-    await this.withRetry('delete-intent', () => firstValueFrom(this.api.deleteAllData(intent.deviceId)));
+    await this.withRetry('delete-intent', () => firstValueFrom(this.api.deleteAllData()));
     this.store.clearPendingDeleteIntent();
   }
 
   private async processQueueItem(item: SyncQueueItem): Promise<void> {
-    const deviceId = this.store.backupCode();
     const state = this.store.state();
 
     switch (item.type) {
       case 'profileSync':
-        await this.withRetry('profile', () => firstValueFrom(this.api.saveWeddingProfile(deviceId, state.profile)));
+        await this.withRetry('profile', () => firstValueFrom(this.api.saveWeddingProfile(state.profile)));
         this.store.markQueueProcessed(item.type);
         break;
       case 'checklistSync':
-        await this.withRetry('checklist', () => firstValueFrom(this.api.syncChecklist(deviceId, state.checklist)));
+        await this.withRetry('checklist', () => firstValueFrom(this.api.syncChecklist(state.checklist)));
         this.store.markQueueProcessed(item.type);
         break;
       case 'budgetSync':
-        await this.syncBudget(deviceId);
+        await this.syncBudget();
         this.store.markQueueProcessed(item.type);
         break;
       case 'favoritesSync':
-        await this.syncFavorites(deviceId);
+        await this.syncFavorites();
         this.store.markQueueProcessed(item.type);
         break;
       case 'guestsSync':
-        await this.syncGuests(deviceId);
+        await this.syncGuests();
         this.store.markQueueProcessed(item.type);
         break;
       case 'deleteAllData':
-        await this.withRetry('delete-all', () => firstValueFrom(this.api.deleteAllData(deviceId)));
+        await this.withRetry('delete-all', () => firstValueFrom(this.api.deleteAllData()));
         this.store.markQueueProcessed(item.type);
         break;
       default:
@@ -151,59 +157,59 @@ export class MeuCasamentoSyncService {
     }
   }
 
-  private async syncBudget(deviceId: string): Promise<void> {
+  private async syncBudget(): Promise<void> {
     const budget = this.store.state().budget;
-    await this.withRetry('budget-total', () => firstValueFrom(this.api.updateBudgetTotal(deviceId, budget.totalBudget)));
+    await this.withRetry('budget-total', () => firstValueFrom(this.api.updateBudgetTotal(budget.totalBudget)));
 
     for (const item of budget.items) {
       if (item.syncState === 'deleted') {
-        await this.withRetry('budget-delete-item', () => firstValueFrom(this.api.deleteBudgetItem(deviceId, item.id)));
+        await this.withRetry('budget-delete-item', () => firstValueFrom(this.api.deleteBudgetItem(item.id)));
         continue;
       }
 
       if (item.syncState === 'created' || item.syncState === 'updated') {
-        await this.withRetry('budget-upsert-item', () => firstValueFrom(this.api.upsertBudgetItem(deviceId, item)));
+        await this.withRetry('budget-upsert-item', () => firstValueFrom(this.api.upsertBudgetItem(item)));
       }
     }
 
-    const remoteBudget = await this.withRetry('budget-refresh', () => firstValueFrom(this.api.getBudget(deviceId)));
+    const remoteBudget = await this.withRetry('budget-refresh', () => firstValueFrom(this.api.getBudget()));
     this.store.markBudgetSynced(remoteBudget);
   }
 
-  private async syncFavorites(deviceId: string): Promise<void> {
+  private async syncFavorites(): Promise<void> {
     const activeFavorites = this.store.state().favorites.filter(item => item.syncState !== 'deleted');
-    await this.withRetry('favorites', () => firstValueFrom(this.api.syncFavorites(deviceId, activeFavorites)));
+    await this.withRetry('favorites', () => firstValueFrom(this.api.syncFavorites(activeFavorites)));
 
     const deletedFavorites = this.store.state().favorites.filter(item => item.syncState === 'deleted');
     for (const item of deletedFavorites) {
-      await this.withRetry('favorites-delete-item', () => firstValueFrom(this.api.deleteFavorite(deviceId, item.fornecedorId)));
+      await this.withRetry('favorites-delete-item', () => firstValueFrom(this.api.deleteFavorite(item.fornecedorId)));
     }
 
     const updatedNotes = activeFavorites.filter(item => item.syncState === 'updated' && item.nota);
     for (const item of updatedNotes) {
-      await this.withRetry('favorites-note', () => firstValueFrom(this.api.updateFavoriteNote(deviceId, item.fornecedorId, item.nota)));
+      await this.withRetry('favorites-note', () => firstValueFrom(this.api.updateFavoriteNote(item.fornecedorId, item.nota)));
     }
 
-    const remoteFavorites = await this.withRetry('favorites-refresh', () => firstValueFrom(this.api.getFavorites(deviceId)));
+    const remoteFavorites = await this.withRetry('favorites-refresh', () => firstValueFrom(this.api.getFavorites()));
     this.store.markFavoritesSynced(remoteFavorites as FavoriteItem[]);
   }
 
-  private async syncGuests(deviceId: string): Promise<void> {
+  private async syncGuests(): Promise<void> {
     const guests = this.store.state().guests;
     for (const guest of guests) {
       if (guest.syncState === 'deleted') {
-        await this.withRetry('guests-delete-item', () => firstValueFrom(this.api.deleteGuest(deviceId, guest.id)));
+        await this.withRetry('guests-delete-item', () => firstValueFrom(this.api.deleteGuest(guest.id)));
         continue;
       }
 
       if (guest.syncState === 'created') {
-        await this.withRetry('guests-create-item', () => firstValueFrom(this.api.createGuest(deviceId, guest)));
+        await this.withRetry('guests-create-item', () => firstValueFrom(this.api.createGuest(guest)));
       } else if (guest.syncState === 'updated') {
-        await this.withRetry('guests-update-item', () => firstValueFrom(this.api.updateGuest(deviceId, guest)));
+        await this.withRetry('guests-update-item', () => firstValueFrom(this.api.updateGuest(guest)));
       }
     }
 
-    const remoteGuests = await this.withRetry('guests-refresh', () => firstValueFrom(this.api.getGuests(deviceId)));
+    const remoteGuests = await this.withRetry('guests-refresh', () => firstValueFrom(this.api.getGuests()));
     this.store.markGuestsSynced(remoteGuests as GuestItem[]);
   }
 

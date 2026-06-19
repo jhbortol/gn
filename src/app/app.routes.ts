@@ -46,21 +46,22 @@ loadComponent: () => import('./features/cidades/cidade-selector-page').then(m =>
 },
 {
 path: 'meu-casamento',
+canActivate: [brideAuthGuard],
 loadComponent: () => import('./features/meu-casamento/pages/meu-casamento-hub/meu-casamento-hub.component').then(m => m.MeuCasamentoHubComponent)
 },
 {
 path: 'meu-casamento/cronograma',
-canActivate: [weddingToolsGuard],
+canActivate: [brideAuthGuard, weddingToolsGuard],
 loadComponent: () => import('./features/meu-casamento/pages/meu-casamento-cronograma/meu-casamento-cronograma.component').then(m => m.MeuCasamentoCronogramaComponent)
 },
 {
 path: 'meu-casamento/convidados',
-canActivate: [weddingToolsGuard],
+canActivate: [brideAuthGuard, weddingToolsGuard],
 loadComponent: () => import('./features/meu-casamento/pages/meu-casamento-convidados/meu-casamento-convidados.component').then(m => m.MeuCasamentoConvidadosComponent)
 },
 {
 path: 'meu-casamento/orcamento',
-canActivate: [weddingToolsGuard],
+canActivate: [brideAuthGuard, weddingToolsGuard],
 loadComponent: () => import('./features/meu-casamento/pages/meu-casamento-orcamento/meu-casamento-orcamento.component').then(m => m.MeuCasamentoOrcamentoComponent)
 },
 {
@@ -74,15 +75,8 @@ canActivate: [brideAuthGuard],
 loadComponent: () => import('./features/meu-casamento/pages/meus-favoritos/meus-favoritos.component').then(m => m.MeusFavoritosComponent)
 },
 {
-path: 'restaurar',
-loadComponent: () => import('./features/meu-casamento/pages/restaurar-casamento/restaurar-casamento.component').then(m => m.RestaurarCasamentoComponent)
-},
-{
-path: 'restaurar/whatsapp',
-loadComponent: () => import('./features/meu-casamento/pages/restaurar-whatsapp/restaurar-whatsapp.component').then(m => m.RestaurarWhatsappComponent)
-},
-{
 path: 'meus-dados/remover',
+canActivate: [brideAuthGuard],
 loadComponent: () => import('./features/meu-casamento/pages/remover-meus-dados/remover-meus-dados.component').then(m => m.RemoverMeusDadosComponent)
 },
 {

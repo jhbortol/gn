@@ -98,7 +98,6 @@ export interface WeddingRestorePayload {
 }
 
 export interface PendingDeleteIntent {
-  deviceId: string;
   createdAt: string;
 }
 

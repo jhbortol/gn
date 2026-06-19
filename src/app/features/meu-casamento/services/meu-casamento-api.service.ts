@@ -13,22 +13,6 @@ import {
   CompletedTask
 } from '../meu-casamento.models';
 
-interface ExistsResponse {
-  exists: boolean;
-  hasData: boolean;
-}
-
-interface PhoneRecoveryResponse {
-  sent: boolean;
-  maskedNumber: string;
-  expiresInSeconds: number;
-}
-
-interface PhoneRecoveryVerifyResponse {
-  deviceId: string;
-  verified: boolean;
-}
-
 @Injectable({
   providedIn: 'root'
 })
@@ -38,12 +22,12 @@ export class MeuCasamentoApiService {
   private readonly cidadeService = inject(CidadeService);
   private readonly baseUrl = environment.API_BASE_URL;
 
-  getWeddingProfile(deviceId: string) {
-    return this.http.get<WeddingProfile>(`${this.baseUrl}/users/${deviceId}/wedding-profile`);
+  getWeddingProfile() {
+    return this.http.get<WeddingProfile>(`${this.baseUrl}/v1/meu-casamento/wedding-profile`);
   }
 
-  saveWeddingProfile(deviceId: string, profile: WeddingProfile) {
-    return this.http.post<WeddingProfile>(`${this.baseUrl}/users/${deviceId}/wedding-profile`, {
+  saveWeddingProfile(profile: WeddingProfile) {
+    return this.http.post<WeddingProfile>(`${this.baseUrl}/v1/meu-casamento/wedding-profile`, {
       brideFirstName: profile.brideFirstName,
       groomFirstName: profile.brideFirstName,
       whatsappNumber: profile.whatsappNumber.replace(/\D/g, ''),
@@ -53,17 +37,17 @@ export class MeuCasamentoApiService {
     });
   }
 
-  getChecklist(deviceId: string) {
-    return this.http.get<{ completedTasks: CompletedTask[] }>(`${this.baseUrl}/users/${deviceId}/checklist`)
+  getChecklist() {
+    return this.http.get<{ completedTasks: CompletedTask[] }>(`${this.baseUrl}/v1/meu-casamento/checklist`)
       .pipe(map(response => response.completedTasks ?? []));
   }
 
-  syncChecklist(deviceId: string, completedTasks: CompletedTask[]) {
-    return this.http.post(`${this.baseUrl}/users/${deviceId}/checklist/sync`, { completedTasks });
+  syncChecklist(completedTasks: CompletedTask[]) {
+    return this.http.post(`${this.baseUrl}/v1/meu-casamento/checklist/sync`, { completedTasks });
   }
 
-  getBudget(deviceId: string) {
-    return this.http.get<{ totalBudget: number | null; items: BudgetItem[]; updatedAt?: string | null }>(`${this.baseUrl}/users/${deviceId}/budget`)
+  getBudget() {
+    return this.http.get<{ totalBudget: number | null; items: BudgetItem[]; updatedAt?: string | null }>(`${this.baseUrl}/v1/meu-casamento/budget`)
       .pipe(
         map(response => ({
           totalBudget: response.totalBudget ?? null,
@@ -73,12 +57,12 @@ export class MeuCasamentoApiService {
       );
   }
 
-  updateBudgetTotal(deviceId: string, totalBudget: number | null) {
-    return this.http.patch(`${this.baseUrl}/users/${deviceId}/budget/total`, { totalBudget });
+  updateBudgetTotal(totalBudget: number | null) {
+    return this.http.patch(`${this.baseUrl}/v1/meu-casamento/budget/total`, { totalBudget });
   }
 
-  upsertBudgetItem(deviceId: string, item: BudgetItem) {
-    return this.http.patch(`${this.baseUrl}/users/${deviceId}/budget/items/${item.id}`, {
+  upsertBudgetItem(item: BudgetItem) {
+    return this.http.patch(`${this.baseUrl}/v1/meu-casamento/budget/items/${item.id}`, {
       id: item.id,
       category: item.category,
       categoryId: item.categoryId,
@@ -92,18 +76,18 @@ export class MeuCasamentoApiService {
     });
   }
 
-  deleteBudgetItem(deviceId: string, itemId: string) {
-    return this.http.delete(`${this.baseUrl}/users/${deviceId}/budget/items/${itemId}`);
+  deleteBudgetItem(itemId: string) {
+    return this.http.delete(`${this.baseUrl}/v1/meu-casamento/budget/items/${itemId}`);
   }
 
-  getFavorites(deviceId: string) {
-    return this.http.get<FavoriteItem[]>(`${this.baseUrl}/users/${deviceId}/favorites`).pipe(
+  getFavorites() {
+    return this.http.get<FavoriteItem[]>(`${this.baseUrl}/v1/meu-casamento/favorites`).pipe(
       map(items => (items ?? []).map(item => ({ ...item, syncState: 'synced' as const })))
     );
   }
 
-  syncFavorites(deviceId: string, favorites: FavoriteItem[]) {
-    return this.http.post(`${this.baseUrl}/users/${deviceId}/favorites`, favorites.map(item => ({
+  syncFavorites(favorites: FavoriteItem[]) {
+    return this.http.post(`${this.baseUrl}/v1/meu-casamento/favorites`, favorites.map(item => ({
       fornecedorId: item.fornecedorId,
       fornecedorNome: item.fornecedorNome,
       fornecedorSlug: item.fornecedorSlug,
@@ -114,16 +98,16 @@ export class MeuCasamentoApiService {
     })));
   }
 
-  deleteFavorite(deviceId: string, fornecedorId: string) {
-    return this.http.delete(`${this.baseUrl}/users/${deviceId}/favorites/${fornecedorId}`);
+  deleteFavorite(fornecedorId: string) {
+    return this.http.delete(`${this.baseUrl}/v1/meu-casamento/favorites/${fornecedorId}`);
   }
 
-  updateFavoriteNote(deviceId: string, fornecedorId: string, nota: string | null) {
-    return this.http.patch(`${this.baseUrl}/users/${deviceId}/favorites/${fornecedorId}/nota`, { nota });
+  updateFavoriteNote(fornecedorId: string, nota: string | null) {
+    return this.http.patch(`${this.baseUrl}/v1/meu-casamento/favorites/${fornecedorId}/nota`, { nota });
   }
 
-  getGuests(deviceId: string) {
-    return this.http.get<GuestItem[]>(`${this.baseUrl}/users/${deviceId}/guests`).pipe(
+  getGuests() {
+    return this.http.get<GuestItem[]>(`${this.baseUrl}/v1/meu-casamento/guests`).pipe(
       map(guests => (guests ?? []).map(guest => ({
         ...guest,
         group: this.normalizeGuestGroup(guest.group || (guest as any).groupName),
@@ -134,42 +118,29 @@ export class MeuCasamentoApiService {
     );
   }
 
-  createGuest(deviceId: string, guest: GuestItem) {
-    return this.http.post(`${this.baseUrl}/users/${deviceId}/guests`, this.mapGuestPayload(guest));
+  createGuest(guest: GuestItem) {
+    return this.http.post(`${this.baseUrl}/v1/meu-casamento/guests`, this.mapGuestPayload(guest));
   }
 
-  updateGuest(deviceId: string, guest: GuestItem) {
-    return this.http.put(`${this.baseUrl}/users/${deviceId}/guests/${guest.id}`, this.mapGuestPayload(guest));
+  updateGuest(guest: GuestItem) {
+    return this.http.put(`${this.baseUrl}/v1/meu-casamento/guests/${guest.id}`, this.mapGuestPayload(guest));
   }
 
-  deleteGuest(deviceId: string, guestId: string) {
-    return this.http.delete(`${this.baseUrl}/users/${deviceId}/guests/${guestId}`);
+  deleteGuest(guestId: string) {
+    return this.http.delete(`${this.baseUrl}/v1/meu-casamento/guests/${guestId}`);
   }
 
-  checkBackupCode(deviceId: string) {
-    return this.http.get<ExistsResponse>(`${this.baseUrl}/users/${deviceId}/exists`);
+  deleteAllData() {
+    return this.http.delete(`${this.baseUrl}/v1/meu-casamento/account`);
   }
 
-  sendPhoneRecovery(whatsappNumber: string) {
-    return this.http.post<PhoneRecoveryResponse>(`${this.baseUrl}/auth/phone-recovery`, {
-      whatsappNumber: whatsappNumber.replace(/\D/g, '')
-    });
+  migrateLegacyData(oldDeviceId: string) {
+    return this.http.post(`${this.baseUrl}/v1/meu-casamento/migrate`, { oldDeviceId });
   }
 
-  verifyPhoneRecovery(whatsappNumber: string, otp: string) {
-    return this.http.post<PhoneRecoveryVerifyResponse>(`${this.baseUrl}/auth/phone-recovery/verify`, {
-      whatsappNumber: whatsappNumber.replace(/\D/g, ''),
-      otp
-    });
-  }
-
-  deleteAllData(deviceId: string) {
-    return this.http.delete(`${this.baseUrl}/users/${deviceId}`);
-  }
-
-  restoreAll(deviceId: string) {
+  restoreAll() {
     return forkJoin({
-      profile: this.getWeddingProfile(deviceId).pipe(catchError(() => of({
+      profile: this.getWeddingProfile().pipe(catchError(() => of({
         brideFirstName: '',
         groomFirstName: null,
         whatsappNumber: '',
@@ -178,10 +149,10 @@ export class MeuCasamentoApiService {
         weddingStyle: null,
         updatedAt: null
       } as WeddingProfile))),
-      checklist: this.getChecklist(deviceId).pipe(catchError(() => of([]))),
-      budget: this.getBudget(deviceId).pipe(catchError(() => of({ totalBudget: null, items: [], updatedAt: null }))),
-      favorites: this.getFavorites(deviceId).pipe(catchError(() => of([]))),
-      guests: this.getGuests(deviceId).pipe(catchError(() => of([])))
+      checklist: this.getChecklist().pipe(catchError(() => of([]))),
+      budget: this.getBudget().pipe(catchError(() => of({ totalBudget: null, items: [], updatedAt: null }))),
+      favorites: this.getFavorites().pipe(catchError(() => of([]))),
+      guests: this.getGuests().pipe(catchError(() => of([])))
     }).pipe(
       map(response => ({
         profile: response.profile,

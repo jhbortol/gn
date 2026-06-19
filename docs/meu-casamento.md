@@ -4,12 +4,11 @@
 
 Documentar, de ponta a ponta, o módulo **Meu Casamento** para implementação no PWA, cobrindo:
 
-- funcionalidades e fluxos;
-- regras de negócio;
-- campos por tela;
-- contratos de API com exemplos de payload/response;
-- sincronização/offline;
-- critérios de aceite e checklist técnico para desenvolvimento.
+- Funcionalidades e fluxos baseados em conta de usuário.
+- Regras de negócio e segurança via JWT.
+- Campos por tela e contratos de API atualizados.
+- Sincronização em tempo real entre dispositivos.
+- Critérios de aceite para o sistema de login.
 
 ---
 
@@ -22,8 +21,8 @@ O módulo **Meu Casamento** no app atual inclui:
 3. **Lista de Convidados** (CRUD)
 4. **Orçamento** (total + categorias)
 5. **Favoritos** (fornecedores salvos + nota)
-6. **Restauração por código de backup**
-7. **Recuperação por WhatsApp (OTP)**
+6. **Login unificado (E-mail ou WhatsApp OTP)**
+7. **Sincronização multi-dispositivo**
 8. **Remoção total de dados (LGPD)**
 
 ---
@@ -35,7 +34,7 @@ O módulo **Meu Casamento** no app atual inclui:
 - `/meu-casamento/convidados`
 - `/meu-casamento/orcamento`
 - `/meus-favoritos`
-- `/restaurar`
+- `/login`
 - `/restaurar/whatsapp`
 - `/meus-dados/remover`
 
@@ -43,19 +42,17 @@ O módulo **Meu Casamento** no app atual inclui:
 
 ## 4) Regras de negócio globais
 
-1. **Desbloqueio de ferramentas**: Cronograma, Convidados e Orçamento só liberam quando:
+1. **Acesso Autenticado**: Todas as ferramentas exigem login. O desbloqueio de funcionalidades específicas ocorre quando:
    - `nome do casal` preenchido (`brideFirstName` no payload), e
-   - `whatsappNumber` preenchido.
+   - `whatsappNumber` validado via OTP.
 2. **Data do casamento**: não permite data passada (somente hoje+).
 3. **WhatsApp**: armazenar e enviar **apenas dígitos**.
-4. **Modelo de nome do casal**:
-   - no app atual, o campo principal de UI grava em `brideFirstName` (texto único, ex.: `Ana & Carlos`);
-   - `groomFirstName` permanece opcional/legado e normalmente segue `null`.
-5. **Código de backup**: deve ser UUID **v4** válido.
+4. **Identificação do Usuário**:
+   - O sistema utiliza o `userId` extraído do Token JWT para todas as operações.
+5. **Segurança**: Dados são privados e vinculados estritamente à conta da noiva.
 6. **Sincronização**:
-   - alterações locais devem persistir imediatamente;
-   - sync com API é assíncrono (retry em reconexão);
-   - restore sobrescreve estado local com API.
+   - Persistência em nuvem obrigatória.
+   - Cache local apenas para modo offline temporário.
 7. **Exclusão LGPD**:
    - remove dados no servidor e local;
    - operação irreversível.
@@ -243,14 +240,14 @@ Content-Type: application/json
 >
 > Observação: endpoints públicos podem não exigir Authorization, mas o módulo Meu Casamento deve operar com o mesmo padrão de autenticação do app.
 
-### 6.1 Perfil do casamento
+### 6.1 Perfil do casamento (Endpoints Protegidos)
 
-#### GET `/users/{deviceId}/wedding-profile`
+#### GET `/v1/meu-casamento/wedding-profile`
 
 Response 200:
 ```json
 {
-  "deviceId": "a3f8c2d1-7b4e-4f9a-8c2e-1d3f5a7b9e0c",
+  "token": "eyJhbGci...",
   "brideFirstName": "Ana & Carlos",
   "groomFirstName": null,
   "whatsappNumber": "19999999999",
@@ -261,7 +258,7 @@ Response 200:
 }
 ```
 
-#### POST `/users/{deviceId}/wedding-profile`
+#### POST `/v1/meu-casamento/wedding-profile`
 
 Request:
 ```json
@@ -279,12 +276,12 @@ Request:
 
 ### 6.2 Checklist
 
-#### GET `/users/{deviceId}/checklist`
+#### GET `/v1/meu-casamento/checklist`
 
 Response 200:
 ```json
 {
-  "deviceId": "a3f8c2d1-7b4e-4f9a-8c2e-1d3f5a7b9e0c",
+  "userId": "user-uuid-here",
   "completedTasks": [
     { "taskId": "task_001", "completedAt": "2026-03-15T10:00:00Z" }
   ],
@@ -292,7 +289,7 @@ Response 200:
 }
 ```
 
-#### POST `/users/{deviceId}/checklist/sync`
+#### POST `/v1/meu-casamento/checklist/sync`
 
 Request:
 ```json
@@ -317,7 +314,7 @@ Response 200:
 
 ### 6.3 Orçamento
 
-#### GET `/users/{deviceId}/budget`
+#### GET `/v1/meu-casamento/budget`
 
 Response 200:
 ```json
@@ -343,14 +340,14 @@ Response 200:
 }
 ```
 
-#### PATCH `/users/{deviceId}/budget/total`
+#### PATCH `/v1/meu-casamento/budget/total`
 
 Request:
 ```json
 { "totalBudget": 75000.0 }
 ```
 
-#### PATCH `/users/{deviceId}/budget/items/{itemId}`
+#### PATCH `/v1/meu-casamento/budget/items/{itemId}`
 
 Request:
 ```json
@@ -368,7 +365,7 @@ Request:
 }
 ```
 
-#### DELETE `/users/{deviceId}/budget/items/{itemId}`
+#### DELETE `/v1/meu-casamento/budget/items/{itemId}`
 
 Response: `204 No Content`
 
@@ -376,7 +373,7 @@ Response: `204 No Content`
 
 ### 6.4 Favoritos
 
-#### GET `/users/{deviceId}/favorites`
+#### GET `/v1/meu-casamento/favorites`
 
 Response 200:
 ```json
@@ -393,7 +390,7 @@ Response 200:
 ]
 ```
 
-#### POST `/users/{deviceId}/favorites`
+#### POST `/v1/meu-casamento/favorites`
 
 Request:
 ```json
@@ -410,11 +407,11 @@ Request:
 ]
 ```
 
-#### DELETE `/users/{deviceId}/favorites/{fornecedorId}`
+#### DELETE `/v1/meu-casamento/favorites/{fornecedorId}`
 
 Response: `204 No Content`
 
-#### PATCH `/users/{deviceId}/favorites/{fornecedorId}/nota` (endpoint disponível)
+#### PATCH `/v1/meu-casamento/favorites/{fornecedorId}/nota`
 
 Request:
 ```json
@@ -425,7 +422,7 @@ Request:
 
 ### 6.5 Convidados
 
-#### GET `/users/{deviceId}/guests`
+#### GET `/v1/meu-casamento/guests`
 
 > Regra de compatibilidade: `status` é o campo canônico.  
 > O campo `confirmed` é redundante/derivado e mantido apenas para compatibilidade com respostas legadas.
@@ -448,7 +445,7 @@ Response 200:
 ]
 ```
 
-#### POST `/users/{deviceId}/guests`
+#### POST `/v1/meu-casamento/guests`
 
 > Compatibilidade atual:
 > - `group` é o campo canônico para novos clientes;
@@ -474,7 +471,7 @@ Request:
 }
 ```
 
-#### PUT `/users/{deviceId}/guests/{guestId}`
+#### PUT `/v1/meu-casamento/guests/{guestId}`
 
 > Compatibilidade atual:
 > - `group` é o campo canônico para novos clientes;
@@ -500,7 +497,7 @@ Request:
 }
 ```
 
-#### DELETE `/users/{deviceId}/guests/{guestId}`
+#### DELETE `/v1/meu-casamento/guests/{guestId}`
 
 Response: `204 No Content`
 
@@ -550,7 +547,7 @@ Request:
 Response 200:
 ```json
 {
-  "deviceId": "a3f8c2d1-7b4e-4f9a-8c2e-1d3f5a7b9e0c",
+  "userId": "user-uuid-here",
   "verified": true
 }
 ```
@@ -559,7 +556,7 @@ Response 200:
 
 ### 6.8 LGPD — exclusão total
 
-#### DELETE `/users/{deviceId}`
+#### DELETE `/v1/meu-casamento/account`
 
 Response: `204 No Content`
 

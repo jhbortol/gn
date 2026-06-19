@@ -59,13 +59,13 @@ export class BrideAuthService {
   }
 
   loginWithGoogle(idToken: string): Observable<BrideAuthResponse> {
-    return this.http.post<BrideAuthResponse>(`${environment.API_BASE_URL}/v1/noiva/auth/google`, { idToken }).pipe(
+    return this.http.post<BrideAuthResponse>(`${environment.API_BASE_URL}/auth/noiva/google`, { idToken }).pipe(
       tap(resp => this.handleAuthResponse(resp))
     );
   }
 
   loginWithApple(payload: AppleLoginPayload): Observable<BrideAuthResponse> {
-    return this.http.post<BrideAuthResponse>(`${environment.API_BASE_URL}/v1/noiva/auth/apple`, payload).pipe(
+    return this.http.post<BrideAuthResponse>(`${environment.API_BASE_URL}/auth/noiva/apple`, payload).pipe(
       tap(resp => this.handleAuthResponse(resp))
     );
   }
@@ -81,7 +81,7 @@ export class BrideAuthService {
   }
 
   updateProfile(payload: Partial<BrideProfile>): Observable<BrideAuthResponse> {
-    return this.http.put<BrideAuthResponse>(`${environment.API_BASE_URL}/v1/noiva/profile`, payload).pipe(
+    return this.http.put<BrideAuthResponse>(`${environment.API_BASE_URL}/noiva/profile`, payload).pipe(
       tap(resp => this.handleAuthResponse(resp)),
       catchError(err => {
         console.error('[BrideAuth] Failed to update profile', err);
@@ -91,7 +91,7 @@ export class BrideAuthService {
   }
 
   sendVerificationEmail(): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${environment.API_BASE_URL}/v1/noiva/send-verification-email`, {}).pipe(
+    return this.http.post<{ message: string }>(`${environment.API_BASE_URL}/noiva/send-verification-email`, {}).pipe(
       catchError(err => {
         console.error('[BrideAuth] Failed to send verification email', err);
         return throwError(() => err);

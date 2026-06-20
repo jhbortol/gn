@@ -14,6 +14,7 @@ const angularJson = JSON.parse(fs.readFileSync(angularJsonPath, 'utf-8'));
 
 // Update prerender routes
 if (angularJson.projects['guia-noivas'].architect.prerender) {
+  angularJson.projects['guia-noivas'].architect.prerender.options.discoverRoutes = false;
   angularJson.projects['guia-noivas'].architect.prerender.options.routes = normalizedRoutes;
 }
 

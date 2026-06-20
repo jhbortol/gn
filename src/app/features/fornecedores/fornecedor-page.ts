@@ -121,7 +121,7 @@ export class FornecedorPageComponent implements OnInit {
         });
       }
     } catch (err) {
-      console.error('Error loading fornecedor:', err);
+      console.warn('Error loading fornecedor:', err);
       this.setNotFoundState();
     } finally {
       this.isLoading = false;

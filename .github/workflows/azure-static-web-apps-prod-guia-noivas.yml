@@ -46,6 +46,7 @@ jobs:
         run: node normalize-sitemap.js public/sitemap.xml
       - name: Build for Production
         run: npm run prerender:prod
+        timeout-minutes: 15
         env:
           BUILD_VERSION: ${{ env.BUILD_ID }}
           STRICT_VALIDATION: 'true'

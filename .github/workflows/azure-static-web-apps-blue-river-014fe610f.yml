@@ -37,6 +37,7 @@ jobs:
         run: node normalize-sitemap.js public/sitemap.xml
       - name: Build for Development
         run: npm run prerender
+        timeout-minutes: 15
         env:
           API_BASE_URL: "https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1"
           ENFORCE_API_HEALTH: "false"

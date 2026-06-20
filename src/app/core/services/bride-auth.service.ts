@@ -1,13 +1,14 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, tap, switchMap } from 'rxjs/operators';
+import { catchError, tap, switchMap, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { isPlatformBrowser } from '@angular/common';
 import { BrideAuthResponse, BrideProfile, AppleLoginPayload } from '../models/bride-auth.model';
 
 const BRIDE_TOKEN_KEY = 'bride_accessToken';
 const BRIDE_PROFILE_KEY = 'bride_profile';
+const BRIDE_EXPIRY_KEY = 'bride_token_expiry';
 
 @Injectable({ providedIn: 'root' })
 export class BrideAuthService {
@@ -26,10 +27,22 @@ export class BrideAuthService {
     try {
       const token = localStorage.getItem(BRIDE_TOKEN_KEY);
       const profileStr = localStorage.getItem(BRIDE_PROFILE_KEY);
+      const expiry = localStorage.getItem(BRIDE_EXPIRY_KEY);
 
       if (token && profileStr) {
-        this.token$.next(token);
-        this.profile$.next(JSON.parse(profileStr));
+        if (expiry) {
+          const expiryTime = parseInt(expiry, 10);
+          if (Date.now() < expiryTime) {
+            this.token$.next(token);
+            this.profile$.next(JSON.parse(profileStr));
+          } else {
+            console.warn('[BrideAuth] Restored token is expired; clearing session.');
+            this.logout();
+          }
+        } else {
+          this.token$.next(token);
+          this.profile$.next(JSON.parse(profileStr));
+        }
       }
     } catch (e) {
       console.warn('[BrideAuth] Failed to restore session', e);
@@ -37,16 +50,30 @@ export class BrideAuthService {
   }
 
   get token(): string | null {
+    if (this.isTokenExpired()) {
+      this.logout();
+      return null;
+    }
     return this.token$.value;
   }
 
   get isLoggedIn$(): Observable<boolean> {
-    return new Observable<boolean>(subscriber => {
-      this.token$.subscribe(token => subscriber.next(!!token));
-    });
+    return this.token$.pipe(
+      map(token => {
+        if (token && this.isTokenExpired()) {
+          setTimeout(() => this.logout(), 0);
+          return false;
+        }
+        return !!token;
+      })
+    );
   }
 
   get isLoggedIn(): boolean {
+    if (this.isTokenExpired()) {
+      this.logout();
+      return false;
+    }
     return !!this.token$.value;
   }
 
@@ -55,6 +82,10 @@ export class BrideAuthService {
   }
 
   get profile(): BrideProfile | null {
+      if (this.isTokenExpired()) {
+        this.logout();
+        return null;
+      }
       return this.profile$.value;
   }
 
@@ -77,6 +108,11 @@ export class BrideAuthService {
     if (this.canUseLocalStorage()) {
       localStorage.setItem(BRIDE_TOKEN_KEY, resp.accessToken);
       localStorage.setItem(BRIDE_PROFILE_KEY, JSON.stringify(resp.noiva));
+      if (resp.expiresIn) {
+        const expiryMs = resp.expiresIn * 1000;
+        const expiryTime = Date.now() + expiryMs;
+        localStorage.setItem(BRIDE_EXPIRY_KEY, expiryTime.toString());
+      }
     }
   }
 
@@ -106,7 +142,23 @@ export class BrideAuthService {
     if (this.canUseLocalStorage()) {
       localStorage.removeItem(BRIDE_TOKEN_KEY);
       localStorage.removeItem(BRIDE_PROFILE_KEY);
+      localStorage.removeItem(BRIDE_EXPIRY_KEY);
     }
+  }
+
+  isTokenExpired(): boolean {
+    if (!this.canUseLocalStorage()) return false;
+    try {
+      const expiry = localStorage.getItem(BRIDE_EXPIRY_KEY);
+      if (expiry) {
+        const expiryTime = parseInt(expiry, 10);
+        // Consider expired if within 10 seconds of expiration
+        return Date.now() >= (expiryTime - 10000);
+      }
+    } catch {
+      return false;
+    }
+    return false;
   }
 
   private canUseLocalStorage(): boolean {

@@ -1,6 +1,7 @@
-import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpEvent } from '@angular/common/http';
+import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { BrideAuthService } from './services/bride-auth.service';
 
 export const brideAuthInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
@@ -12,20 +13,31 @@ export const brideAuthInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, n
     return next(req);
   }
 
-  // Inject token if the route is specifically for bride
-  const isBrideRoute = req.url.includes('/v1/noiva/');
+  // Inject token if the route is specifically for bride or meu-casamento
+  const isBrideRoute = req.url.includes('/v1/noiva/') || req.url.includes('/v1/meu-casamento/');
   
   // Or if it's a contact request and we have a token (logged-in bride)
   const isContactRoute = req.url.includes('/public/fornecedores/') && req.url.includes('/contact');
 
+  let activeReq = req;
+
   if (token && (isBrideRoute || (isContactRoute && req.method === 'POST'))) {
-    const authReq = req.clone({
+    activeReq = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`
       }
     });
-    return next(authReq);
   }
 
-  return next(req);
+  return next(activeReq).pipe(
+    catchError((error) => {
+      if (error instanceof HttpErrorResponse && (error.status === 401 || error.status === 403)) {
+        if (isBrideRoute || isContactRoute) {
+          console.warn('[BrideAuthInterceptor] Unauthorized or Forbidden response on bride route, performing auto-logout');
+          brideAuthService.logout();
+        }
+      }
+      return throwError(() => error);
+    })
+  );
 };

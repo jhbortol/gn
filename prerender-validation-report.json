@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-03-07T00:01:13.016Z",
+  "timestamp": "2026-06-20T22:14:36.588Z",
   "coverage": 100,
-  "expectedRoutes": 76,
-  "presentRoutes": 76,
+  "expectedRoutes": 118,
+  "presentRoutes": 118,
   "missingRoutes": 0,
   "missing": [],
   "validations": {

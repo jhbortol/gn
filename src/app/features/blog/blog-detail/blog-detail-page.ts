@@ -65,7 +65,7 @@ export class BlogDetailPage implements OnInit {
       this.isLoading.set(false);
       this.setSEOMeta(post);
       this.addStructuredData(post);
-      this.blogData.incrementViews(post.id).subscribe();
+      this.blogData.incrementViews(post.id).subscribe({ error: (err) => console.warn('Could not increment views', err) });
       this.loadRelated(post.id);
       
       // Track blog view
@@ -87,6 +87,7 @@ export class BlogDetailPage implements OnInit {
 
   loadRelated(postId: string): void {
     this.blogData.getRelated(postId, 3).subscribe({
+      error: (err) => console.warn('Could not load related posts', err),
       next: (posts) => {
         this.relatedPosts.set(posts);
       }

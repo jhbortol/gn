@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../../core/api.service';
-import { Observable, map } from 'rxjs';
+import { Observable, map, catchError, of } from 'rxjs';
 
 export interface BlogPost {
   id: string;
@@ -99,6 +99,8 @@ export class BlogData {
 
   getRelated(postId: string, limit = 3): Observable<BlogPostListDto[]> {
     return this.api.get<{ data: any[] }>(`/blog/posts/${postId}/related`, { limit }).pipe(
+      catchError(() => of({ data: [] })),
+
       map(r => (r.data || []).map((src: any) => ({
         id: src.id || src.Id,
         title: src.title || src.Title,

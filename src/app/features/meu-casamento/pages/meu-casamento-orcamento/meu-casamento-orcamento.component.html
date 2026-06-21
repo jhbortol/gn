@@ -122,8 +122,8 @@
           inputmode="numeric"
           autocomplete="off"
           placeholder=" "
-          [ngModel]="formatDraftCurrency(activeDraft.allocatedAmount)"
-          (ngModelChange)="updateDraftCurrency('allocatedAmount', $event)">
+          [value]="activeDraft.allocatedAmount"
+          (input)="updateDraftCurrency('allocatedAmount', $any($event.target).value)">
         <span>Valor Alocado</span>
       </label>
 
@@ -133,8 +133,8 @@
           inputmode="numeric"
           autocomplete="off"
           placeholder=" "
-          [ngModel]="formatDraftCurrency(activeDraft.spentAmount)"
-          (ngModelChange)="updateDraftCurrency('spentAmount', $event)">
+          [value]="activeDraft.spentAmount"
+          (input)="updateDraftCurrency('spentAmount', $any($event.target).value)">
         <span>Valor Gasto</span>
       </label>
 

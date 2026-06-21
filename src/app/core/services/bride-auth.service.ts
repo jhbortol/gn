@@ -57,17 +57,15 @@ export class BrideAuthService {
     return this.token$.value;
   }
 
-  get isLoggedIn$(): Observable<boolean> {
-    return this.token$.pipe(
-      map(token => {
-        if (token && this.isTokenExpired()) {
-          setTimeout(() => this.logout(), 0);
-          return false;
-        }
-        return !!token;
-      })
-    );
-  }
+  public readonly isLoggedIn$: Observable<boolean> = this.token$.pipe(
+    map(token => {
+      if (token && this.isTokenExpired()) {
+        setTimeout(() => this.logout(), 0);
+        return false;
+      }
+      return !!token;
+    })
+  );
 
   get isLoggedIn(): boolean {
     if (this.isTokenExpired()) {

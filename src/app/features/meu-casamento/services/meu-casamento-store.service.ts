@@ -104,16 +104,18 @@ export class MeuCasamentoStoreService {
       if (existing) {
         return {
           ...existing,
-          category: category.slug,
+          category: category.nome,
           categoryId: category.id,
           categoryName: category.nome,
           categorySlug: category.slug
         };
       }
 
+      // New scaffold items use 'synced' so they are NOT auto-sent to the API.
+      // They only become 'updated' when the user explicitly edits them.
       return {
         id: this.generateUuid(),
-        category: category.slug,
+        category: category.nome,
         categoryId: category.id,
         categoryName: category.nome,
         categorySlug: category.slug,
@@ -123,7 +125,7 @@ export class MeuCasamentoStoreService {
         notes: null,
         status: 'pending' as const,
         updatedAt: null,
-        syncState: 'created' as const
+        syncState: 'synced' as const
       };
     });
 
@@ -136,7 +138,8 @@ export class MeuCasamentoStoreService {
       !officialSlugs.has(item.categorySlug)
     );
 
-    const mergedItems = [...officialItems, ...extraItems];
+    const mergedItems = [...officialItems, ...extraItems]
+      .sort((a, b) => a.categoryName.localeCompare(b.categoryName, 'pt-BR', { sensitivity: 'base' }));
 
     this.patchState({
       budget: {
@@ -165,7 +168,7 @@ export class MeuCasamentoStoreService {
     const existing = current.budget.items.find(entry => entry.id === item.id);
     const nextItem: BudgetItem = {
       id: item.id,
-      category: item.category ?? item.categorySlug,
+      category: item.category ?? item.categoryName ?? item.categorySlug,
       categoryId: item.categoryId,
       categoryName: item.categoryName,
       categorySlug: item.categorySlug,
@@ -178,10 +181,13 @@ export class MeuCasamentoStoreService {
       syncState: existing && existing.syncState !== 'created' ? 'updated' : existing?.syncState ?? 'created'
     };
 
+    const updatedItems = [...current.budget.items.filter(entry => entry.id !== nextItem.id), nextItem]
+      .sort((a, b) => a.categoryName.localeCompare(b.categoryName, 'pt-BR', { sensitivity: 'base' }));
+
     this.patchState({
       budget: {
         ...current.budget,
-        items: [...current.budget.items.filter(entry => entry.id !== nextItem.id), nextItem],
+        items: updatedItems,
         updatedAt: new Date().toISOString()
       },
       syncQueue: this.upsertQueue(current.syncQueue, 'budgetSync'),
@@ -303,22 +309,29 @@ export class MeuCasamentoStoreService {
 
   markBudgetSynced(remoteBudget: MeuCasamentoState['budget']): void {
     const current = this.stateSignal();
+    const remoteById = new Map(remoteBudget.items.map(item => [item.id, item]));
     const existingById = new Map(current.budget.items.map(item => [item.id, item]));
+
+    // Merge remote items with local category metadata
+    const syncedItems: BudgetItem[] = remoteBudget.items.map(item => {
+      const existing = existingById.get(item.id);
+      return {
+        ...item,
+        categoryName: item.categoryName || existing?.categoryName || '',
+        categorySlug: item.categorySlug || existing?.categorySlug || '',
+        category: item.category || existing?.category || '',
+        categoryId: item.categoryId || existing?.categoryId || '',
+        syncState: 'synced' as const
+      };
+    });
+
+    // Preserve local-only scaffold items (not yet on server) to avoid wiping them after sync
+    const localOnlyItems = current.budget.items.filter(item => !remoteById.has(item.id));
 
     this.patchState({
       budget: {
         ...remoteBudget,
-        items: remoteBudget.items.map(item => {
-          const existing = existingById.get(item.id);
-          return {
-            ...item,
-            categoryName: item.categoryName || existing?.categoryName || '',
-            categorySlug: item.categorySlug || existing?.categorySlug || '',
-            category: item.category || existing?.category || '',
-            categoryId: item.categoryId || existing?.categoryId || '',
-            syncState: 'synced'
-          };
-        })
+        items: [...syncedItems, ...localOnlyItems]
       }
     });
   }
@@ -420,7 +433,18 @@ export class MeuCasamentoStoreService {
         },
         budget: {
           totalBudget: parsed.budget?.totalBudget ?? null,
-          items: parsed.budget?.items ?? [],
+          items: (parsed.budget?.items ?? []).map(item => {
+            // Normalize scaffold items: if they have default zero values and were 'created',
+            // reset to 'synced' so they are not auto-synced to the API.
+            const isDefaultScaffold =
+              item.syncState === 'created' &&
+              item.allocatedAmount === 0 &&
+              item.spentAmount === 0 &&
+              !item.supplierName &&
+              !item.notes &&
+              item.status === 'pending';
+            return isDefaultScaffold ? { ...item, syncState: 'synced' as const } : item;
+          }),
           updatedAt: parsed.budget?.updatedAt ?? null
         }
       });
@@ -456,6 +480,23 @@ export class MeuCasamentoStoreService {
 
   private normalizeCurrency(value: number | string | null | undefined): number | null {
     if (value === null || value === undefined || value === '') return null;
+    // Handle formatted currency strings, e.g., "R$ 3.500,00" or "3.500,00"
+    if (typeof value === 'string') {
+      const cleaned = value.replace(/[^0-9.,]/g, '');
+      const lastComma = cleaned.lastIndexOf(',');
+      const lastDot = cleaned.lastIndexOf('.');
+      let normalizedStr: string;
+      if (lastComma > lastDot) {
+        // Comma is decimal separator: remove dots (thousands) and replace comma with dot
+        normalizedStr = cleaned.replace(/\./g, '').replace(',', '.');
+      } else {
+        // Dot is decimal separator or no comma: remove commas (thousands)
+        normalizedStr = cleaned.replace(/,/g, '');
+      }
+      const num = Number(normalizedStr);
+      return Number.isFinite(num) ? Number(num.toFixed(2)) : null;
+    }
+    // duplicate block removed
     const normalized = Number(String(value).replace(',', '.'));
     return Number.isFinite(normalized) ? Number(normalized.toFixed(2)) : null;
   }

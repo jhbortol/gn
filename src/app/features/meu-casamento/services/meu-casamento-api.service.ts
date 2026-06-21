@@ -29,7 +29,7 @@ export class MeuCasamentoApiService {
   saveWeddingProfile(profile: WeddingProfile) {
     return this.http.post<WeddingProfile>(`${this.baseUrl}/meu-casamento/wedding-profile`, {
       brideFirstName: profile.brideFirstName,
-      groomFirstName: profile.brideFirstName,
+      groomFirstName: profile.groomFirstName,
       whatsappNumber: profile.whatsappNumber.replace(/\D/g, ''),
       weddingDate: profile.weddingDate,
       estimatedGuests: profile.estimatedGuests,
@@ -62,16 +62,14 @@ export class MeuCasamentoApiService {
   }
 
   upsertBudgetItem(item: BudgetItem) {
+    const isValidUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(item.categoryId || '');
     return this.http.patch(`${this.baseUrl}/meu-casamento/budget/items/${item.id}`, {
-      id: item.id,
       category: item.category,
-      categoryId: item.categoryId,
-      categoryName: item.categoryName,
-      categorySlug: item.categorySlug,
+      categoryId: isValidUuid ? item.categoryId : null,
       allocatedAmount: item.allocatedAmount,
       spentAmount: item.spentAmount,
-      supplierName: item.supplierName,
-      notes: item.notes,
+      supplierName: item.supplierName || null,
+      notes: item.notes || null,
       status: item.status
     });
   }

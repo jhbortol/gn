@@ -6,6 +6,7 @@ import { MeuCasamentoObservabilityService } from './meu-casamento-observability.
 import { MeuCasamentoStoreService } from './meu-casamento-store.service';
 import { FavoriteItem, GuestItem, SyncQueueItem, WeddingRestorePayload } from '../meu-casamento.models';
 import { getWeddingRetryDelayMs, shouldRetryWeddingSync } from './meu-casamento-sync.utils';
+import { BrideAuthService } from '../../../core/services/bride-auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class MeuCasamentoSyncService {
     private readonly api: MeuCasamentoApiService,
     private readonly store: MeuCasamentoStoreService,
     private readonly observability: MeuCasamentoObservabilityService,
+    private readonly brideAuthService: BrideAuthService,
     @Inject(PLATFORM_ID) platformId: object
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -32,6 +34,38 @@ export class MeuCasamentoSyncService {
       void this.syncPendingChanges();
     });
 
+    let previousState: boolean | null = null;
+    this.brideAuthService.isLoggedIn$.subscribe(async (loggedIn) => {
+      const isFirst = previousState === null;
+      const transitionToLoggedOut = previousState === true && !loggedIn;
+      const transitionToLoggedIn = previousState === false && loggedIn;
+      previousState = loggedIn;
+
+      if (isFirst) {
+        if (loggedIn) {
+          console.log('[MeuCasamentoSync] Startup: User is logged in. Hydrating/syncing with server...');
+          void (async () => {
+            await this.syncPendingChanges();
+            await this.forceSyncFromServer();
+          })();
+        }
+        return;
+      }
+
+      if (transitionToLoggedIn) {
+        const deviceId = this.store.backupCode();
+        if (deviceId) {
+          console.log('[MeuCasamentoSync] User logged in. Migrating legacy data for deviceId:', deviceId);
+          void this.migrateLegacyData(deviceId);
+        } else {
+          void this.forceSyncFromServer();
+        }
+      } else if (transitionToLoggedOut) {
+        console.log('[MeuCasamentoSync] User logged out. Clearing local store data.');
+        this.store.resetLocalData();
+      }
+    });
+
     void this.processPendingDeleteIntent();
     void this.loadBudgetCategories();
     void this.syncPendingChanges();
@@ -43,7 +77,17 @@ export class MeuCasamentoSyncService {
   }
 
   async syncPendingChanges(): Promise<void> {
-    if (!this.isBrowser || !navigator.onLine || this.syncing) return;
+    if (!this.isBrowser || !navigator.onLine) return;
+
+    // If a sync is already in progress, wait for it to finish then retry
+    if (this.syncing) {
+      await this.waitForSyncToFinish();
+      // After previous sync finishes, check if there are still pending items
+      if (this.store.state().syncQueue.length > 0) {
+        await this.syncPendingChanges();
+      }
+      return;
+    }
 
     this.syncing = true;
     try {
@@ -59,6 +103,19 @@ export class MeuCasamentoSyncService {
     } finally {
       this.syncing = false;
     }
+  }
+
+  private waitForSyncToFinish(): Promise<void> {
+    return new Promise(resolve => {
+      const check = () => {
+        if (!this.syncing) {
+          resolve();
+        } else {
+          setTimeout(check, 100);
+        }
+      };
+      check();
+    });
   }
 
   async requestDeleteAllData(): Promise<{ queued: boolean }> {

@@ -8,7 +8,13 @@ import { BudgetItem } from '../../meu-casamento.models';
 import { MeuCasamentoBottomNavComponent } from '../../components/meu-casamento-bottom-nav/meu-casamento-bottom-nav.component';
 import { CidadeService } from '../../../../core/cidade.service';
 
-type BudgetDraft = Pick<BudgetItem, 'allocatedAmount' | 'spentAmount' | 'supplierName' | 'notes' | 'status'>;
+interface BudgetDraft {
+  allocatedAmount: string;
+  spentAmount: string;
+  supplierName: string | null;
+  notes: string | null;
+  status: BudgetItem['status'];
+}
 
 @Component({
   selector: 'app-meu-casamento-orcamento',
@@ -104,7 +110,7 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
   updateDraftCurrency(field: 'allocatedAmount' | 'spentAmount', value: string): void {
     this.activeDraft = {
       ...this.activeDraft,
-      [field]: this.parseCurrencyInput(value)
+      [field]: this.formatCurrencyInput(value)
     };
   }
 
@@ -128,8 +134,8 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
     if (!currentItem) return;
 
     const nextDraft: BudgetDraft = {
-      allocatedAmount: this.activeDraft.allocatedAmount ?? 0,
-      spentAmount: this.activeDraft.spentAmount ?? 0,
+      allocatedAmount: this.activeDraft.allocatedAmount,
+      spentAmount: this.activeDraft.spentAmount,
       supplierName: this.activeDraft.supplierName ?? null,
       notes: this.activeDraft.notes ?? null,
       status: this.activeDraft.status ?? 'pending'
@@ -143,10 +149,10 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
       categoryId: currentItem.categoryId,
       categoryName: currentItem.categoryName,
       categorySlug: currentItem.categorySlug,
-      allocatedAmount: nextDraft.allocatedAmount,
-      spentAmount: nextDraft.spentAmount,
-      supplierName: String(nextDraft.supplierName ?? ''),
-      notes: String(nextDraft.notes ?? ''),
+      allocatedAmount: this.parseCurrencyInput(nextDraft.allocatedAmount),
+      spentAmount: this.parseCurrencyInput(nextDraft.spentAmount),
+      supplierName: this.normalizeNullableString(nextDraft.supplierName),
+      notes: this.normalizeNullableString(nextDraft.notes),
       status: nextDraft.status
     });
 
@@ -158,8 +164,8 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
   getDraft(item: BudgetItem): BudgetDraft {
     if (!this.drafts[item.id]) {
       this.drafts[item.id] = {
-        allocatedAmount: item.allocatedAmount,
-        spentAmount: item.spentAmount,
+        allocatedAmount: this.formatCurrencyInput(item.allocatedAmount),
+        spentAmount: this.formatCurrencyInput(item.spentAmount),
         supplierName: item.supplierName,
         notes: item.notes,
         status: item.status
@@ -167,6 +173,12 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
     }
 
     return this.drafts[item.id];
+  }
+
+  private normalizeNullableString(value: string | null | undefined): string | null {
+    if (!value) return null;
+    const trimmed = String(value).trim();
+    return trimmed ? trimmed : null;
   }
 
   buildCategoryLink(categorySlug: string): string {
@@ -208,9 +220,7 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
     return Math.min(100, Math.round((item.spentAmount / item.allocatedAmount) * 100));
   }
 
-  formatDraftCurrency(value: number | null | undefined): string {
-    return this.formatCurrencyInput(value ?? 0);
-  }
+
 
   private formatCurrencyInput(value: string | number): string {
     if (typeof value === 'number') {
@@ -226,7 +236,9 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
     if (typeof value === 'number') {
       return value;
     }
-    const digits = String(value ?? '').replace(/\D/g, '');
+    // Remove thousand separators (dots) and decimal commas, then extract digits
+    const normalized = String(value ?? '').replace(/\./g, '').replace(/,/g, '');
+    const digits = normalized.replace(/\D/g, '');
     if (!digits) return 0;
     return Number((Number(digits) / 100).toFixed(2));
   }
@@ -244,8 +256,8 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
 
   private createDraft(): BudgetDraft {
     return {
-      allocatedAmount: 0,
-      spentAmount: 0,
+      allocatedAmount: '',
+      spentAmount: '',
       supplierName: null,
       notes: null,
       status: 'pending'

@@ -23,7 +23,6 @@ export class MeuCasamentoHubComponent implements OnInit {
   private readonly brideAuthService = inject(BrideAuthService);
 
   readonly profile = this.store.profile;
-  readonly backupCode = this.store.backupCode;
   readonly availableTools = this.store.availableTools;
   readonly error = computed(() => this.store.state().lastError);
   readonly blockedMessage = computed(() => this.route.snapshot.queryParamMap.has('desbloqueioPendente')
@@ -76,10 +75,6 @@ export class MeuCasamentoHubComponent implements OnInit {
     await this.sync.syncPendingChanges();
   }
 
-  async copyBackupCode(): Promise<void> {
-    if (typeof navigator === 'undefined' || !navigator.clipboard) return;
-    await navigator.clipboard.writeText(this.backupCode());
-  }
 
   navigate(path: string): void {
     if (!this.availableTools() && ['/meu-casamento/cronograma', '/meu-casamento/convidados', '/meu-casamento/orcamento'].includes(path)) {

@@ -46,14 +46,16 @@
 </ng-container>
 
 <ng-template #loginBtn>
-  <button (click)="openLoginModal()" class="hover:text-rose-600 transition py-2">ENTRAR</button>
-  <a
-    routerLink="/meu-casamento"
-    title="Organize seu casamento grátis"
-    class="px-4 py-2 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-md"
-  >
-    MEU CASAMENTO
-  </a>
+  <div class="relative group">
+    <button (click)="openLoginModal()" class="px-4 py-2 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-md font-semibold text-sm tracking-wide focus:outline-none">
+      MEU CASAMENTO
+    </button>
+    <!-- Tooltip -->
+    <div class="absolute top-full left-1/2 -translate-x-1/2 mt-2 hidden group-hover:block bg-gray-900 text-white text-xs py-1.5 px-3 rounded shadow-lg whitespace-nowrap z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+      Organize seu casamento grátis
+      <div class="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-gray-900"></div>
+    </div>
+  </div>
 </ng-template>
 
 </div>
@@ -71,7 +73,7 @@
 <div *ngIf="mobileMenuOpen" class="md:hidden bg-white border-t border-gray-200 shadow-lg">
 <div class="container mx-auto px-4 py-4 flex flex-col space-y-3">
   
-<ng-container *ngIf="brideAuthService.isLoggedIn$ | async; else mobileLoginBtn">
+<ng-container *ngIf="brideAuthService.isLoggedIn$ | async">
   <div class="flex items-center gap-3 py-3 border-b border-gray-100 mb-2">
     <div class="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 font-bold uppercase">
       {{ brideAuthService.profile?.nome?.charAt(0) || 'N' }}
@@ -86,10 +88,6 @@
      Meu Casamento
   </a>
 </ng-container>
-
-<ng-template #mobileLoginBtn>
-  <button (click)="openLoginModal()" class="text-left text-gray-700 hover:text-rose-600 font-semibold py-2">ENTRAR</button>
-</ng-template>
 
 <a [routerLink]="buildUrl('/')" (click)="closeMobileMenu()" class="text-gray-700 hover:text-rose-600 font-semibold py-2">INÍCIO</a>
 <a [routerLink]="buildUrl('categorias')" (click)="closeMobileMenu()" class="text-gray-700 hover:text-rose-600 font-semibold py-2">CATEGORIAS</a>
@@ -111,14 +109,12 @@
 </ng-container>
 
 <ng-container *ngIf="!(brideAuthService.isLoggedIn$ | async)">
-  <a
-    routerLink="/meu-casamento"
-    title="Organize seu casamento grátis"
-    (click)="closeMobileMenu()"
-    class="text-center w-full px-4 py-2 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-md font-semibold text-sm mt-4"
+  <button
+    (click)="openLoginModal(); closeMobileMenu()"
+    class="text-center w-full px-4 py-2 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-md font-semibold text-sm mt-4 focus:outline-none"
   >
     MEU CASAMENTO
-  </a>
+  </button>
 </ng-container>
 
 </div>

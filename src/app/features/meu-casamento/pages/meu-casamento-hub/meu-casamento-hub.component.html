@@ -3,7 +3,6 @@
     <div>
       <p class="wedding-eyebrow">Meu Casamento</p>
       <h1>{{ brideGreeting() }}</h1>
-      <p class="wedding-subtitle">Salvamos localmente na hora e sincronizamos com a API quando a conexão volta.</p>
       
       <!-- Bride Profile Quick Link -->
       <div *ngIf="isBrideLoggedIn()" class="bride-profile-link mt-4">
@@ -59,12 +58,10 @@
 
       <div class="wedding-actions">
         <button type="button" class="primary" (click)="saveNow()">Salvar dados</button>
-        <button type="button" class="secondary" (click)="copyBackupCode()">Copiar código de backup</button>
       </div>
 
       <p *ngIf="blockedMessage()" class="wedding-warning">{{ blockedMessage() }}</p>
       <p *ngIf="error()" class="wedding-error">{{ error() }}</p>
-      <p class="wedding-helper">Código de backup atual: <strong>{{ backupCode() }}</strong></p>
     </article>
 
     <aside class="wedding-card wedding-card--tools">
@@ -163,8 +160,6 @@
       </div>
 
       <div class="tool-links">
-        <a routerLink="/restaurar">Restaurar por código</a>
-        <a routerLink="/restaurar/whatsapp">Recuperar por WhatsApp</a>
         <a routerLink="/meus-dados/remover">Remover meus dados</a>
       </div>
     </aside>

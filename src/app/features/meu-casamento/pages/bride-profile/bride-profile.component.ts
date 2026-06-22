@@ -111,33 +111,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
               <p class="text-xs text-gray-500 mt-1">Email não pode ser alterado</p>
             </div>
 
-            <!-- Telefone -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">WhatsApp</label>
-              <input
-                type="tel"
-                formControlName="telefone"
-                placeholder="(11) 98765-4321"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
-                [class.border-red-500]="isFieldInvalid('telefone')"
-                (input)="onPhoneInput($event)"
-                (blur)="onPhoneBlur($event)"
-              />
-              <p *ngIf="isFieldInvalid('telefone')" class="text-red-500 text-xs mt-1">
-                WhatsApp válido (mínimo 10 dígitos)
-              </p>
-            </div>
 
-            <!-- Data de Casamento -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Data do Casamento</label>
-              <input
-                type="date"
-                formControlName="dataCasamento"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
-              />
-              <p class="text-xs text-gray-500 mt-1">Opcional</p>
-            </div>
 
             <!-- Form Actions -->
             <div class="flex gap-3 pt-4 border-t border-gray-200">
@@ -191,9 +165,7 @@ export class BrideProfileComponent implements OnInit {
   profile = signal<BrideProfile | null>(null);
 
   profileForm = new FormGroup({
-    nome: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    telefone: new FormControl('', [Validators.minLength(10)]),
-    dataCasamento: new FormControl('')
+    nome: new FormControl('', [Validators.required, Validators.minLength(3)])
   });
 
   private originalProfile: Partial<BrideProfile> = {};
@@ -225,9 +197,7 @@ export class BrideProfileComponent implements OnInit {
 
   private populateForm(profile: BrideProfile): void {
     this.profileForm.patchValue({
-      nome: profile.nome,
-      telefone: profile.telefone || '',
-      dataCasamento: profile.dataCasamento || ''
+      nome: profile.nome
     }, { emitEvent: false });
     this.profileForm.markAsPristine();
   }
@@ -237,34 +207,7 @@ export class BrideProfileComponent implements OnInit {
     return !!(field && field.invalid && (field.dirty || field.touched));
   }
 
-  onPhoneInput(event: Event): void {
-    const input = event.target as HTMLInputElement | null;
-    if (!input) return;
-    const masked = this.formatPhoneValue(input.value);
-    input.value = masked;
-    this.profileForm.get('telefone')?.setValue(masked, { emitEvent: false });
-  }
 
-  onPhoneBlur(event: FocusEvent): void {
-    const input = event.target as HTMLInputElement | null;
-    if (!input) return;
-    const masked = this.formatPhoneValue(input.value);
-    input.value = masked;
-    this.profileForm.get('telefone')?.setValue(masked, { emitEvent: false });
-  }
-
-  private formatPhoneValue(rawValue: string): string {
-    let digits = rawValue.replace(/\D/g, '');
-    if (digits.length > 11) digits = digits.slice(0, 11);
-    if (digits.length <= 2) return digits;
-    if (digits.length <= 6) {
-      return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
-    }
-    if (digits.length <= 10) {
-      return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
-    }
-    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
-  }
 
   onSubmit(): void {
     if (!this.profileForm.valid) {
@@ -277,9 +220,7 @@ export class BrideProfileComponent implements OnInit {
     this.errorMessage.set('');
 
     const payload: Partial<BrideProfile> = {
-      nome: this.profileForm.value.nome || undefined,
-      telefone: this.profileForm.value.telefone || undefined,
-      dataCasamento: this.profileForm.value.dataCasamento || undefined
+      nome: this.profileForm.value.nome || undefined
     };
 
     this.brideAuthService.updateProfile(payload)

@@ -80,5 +80,7 @@ export class NavbarComponent {
   logoutBride() {
     this.brideAuthService.logout();
     this.profileDropdownOpen.set(false);
+    const cidade = this.cidadeService.getCidade() || 'selecionar-cidade';
+    void this.router.navigate(['/', cidade]);
   }
 }

@@ -7,6 +7,7 @@ import { MeuCasamentoStoreService } from './meu-casamento-store.service';
 import { FavoriteItem, GuestItem, SyncQueueItem, WeddingRestorePayload } from '../meu-casamento.models';
 import { getWeddingRetryDelayMs, shouldRetryWeddingSync } from './meu-casamento-sync.utils';
 import { BrideAuthService } from '../../../core/services/bride-auth.service';
+import { ToastService } from '../../../shared/services/toast.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,7 @@ export class MeuCasamentoSyncService {
     private readonly store: MeuCasamentoStoreService,
     private readonly observability: MeuCasamentoObservabilityService,
     private readonly brideAuthService: BrideAuthService,
+    private readonly toastService: ToastService,
     @Inject(PLATFORM_ID) platformId: object
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -53,13 +55,16 @@ export class MeuCasamentoSyncService {
       }
 
       if (transitionToLoggedIn) {
-        const deviceId = this.store.backupCode();
-        if (deviceId) {
-          console.log('[MeuCasamentoSync] User logged in. Migrating legacy data for deviceId:', deviceId);
-          void this.migrateLegacyData(deviceId);
-        } else {
-          void this.forceSyncFromServer();
-        }
+        void (async () => {
+          const toastId = this.toastService.show('Sincronizando dados', 'info', 0);
+          const success = await this.forceSyncFromServer();
+          this.toastService.remove(toastId);
+          if (success) {
+            this.toastService.success('Sincronização concluída');
+          } else {
+            this.toastService.error('Não foi possível sincronizar os dados.');
+          }
+        })();
       } else if (transitionToLoggedOut) {
         console.log('[MeuCasamentoSync] User logged out. Clearing local store data.');
         this.store.resetLocalData();
@@ -152,26 +157,19 @@ export class MeuCasamentoSyncService {
     }
   }
 
-  async forceSyncFromServer(): Promise<void> {
-    if (!navigator.onLine) return;
+  async forceSyncFromServer(): Promise<boolean> {
+    if (!navigator.onLine) return false;
     try {
       const payload = await this.withRetry('force-sync', () => firstValueFrom(this.api.restoreAll()));
       this.store.replaceFromRestore(payload);
       await this.loadBudgetCategories();
+      return true;
     } catch (e) {
       this.observability.logSyncFailure('force-sync', e);
+      return false;
     }
   }
 
-  async migrateLegacyData(oldDeviceId: string): Promise<void> {
-    if (!navigator.onLine) return;
-    try {
-      await this.withRetry('migrate', () => firstValueFrom(this.api.migrateLegacyData(oldDeviceId)));
-      await this.forceSyncFromServer();
-    } catch (e) {
-      this.observability.logSyncFailure('migrate', e);
-    }
-  }
 
   private async processPendingDeleteIntent(): Promise<void> {
     const intent = this.store.getPendingDeleteIntent();

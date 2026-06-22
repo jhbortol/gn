@@ -6,7 +6,4 @@ export const environment = {
   FORNECEDOR_PUBLICADO: null as boolean | null,
   PAINEL_URL: 'https://painel-dev.guianoivas.com',
   GOOGLE_CLIENT_ID: '814099948560-4v7i0v35d67tqfvjgvla56b0e7sm8jcq.apps.googleusercontent.com', // TODO: preencher com o client ID real
-  APPLE_CLIENT_ID: 'YOUR_APPLE_CLIENT_ID', // TODO: preencher com o client ID real
-  APPLE_TEAM_ID: 'YOUR_APPLE_TEAM_ID', // TODO: preencher com o Apple Team ID
-  APPLE_REDIRECT_URI: 'https://yourdomain.com/apple-auth-callback', // TODO: ajustar para a URL de callback registrada
 };

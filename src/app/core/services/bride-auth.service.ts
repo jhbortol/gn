@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, tap, switchMap, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { isPlatformBrowser } from '@angular/common';
-import { BrideAuthResponse, BrideProfile, AppleLoginPayload } from '../models/bride-auth.model';
+import { BrideAuthResponse, BrideProfile } from '../models/bride-auth.model';
 
 const BRIDE_TOKEN_KEY = 'bride_accessToken';
 const BRIDE_PROFILE_KEY = 'bride_profile';
@@ -93,11 +93,19 @@ export class BrideAuthService {
     );
   }
 
-  loginWithApple(payload: AppleLoginPayload): Observable<BrideAuthResponse> {
-    return this.http.post<BrideAuthResponse>(`${environment.API_BASE_URL}/auth/noiva/apple`, payload).pipe(
+  loginWithEmail(payload: any): Observable<BrideAuthResponse> {
+    return this.http.post<BrideAuthResponse>(`${environment.API_BASE_URL}/auth/noiva/signin`, payload).pipe(
       tap(resp => this.handleAuthResponse(resp))
     );
   }
+
+  registerWithEmail(payload: any): Observable<BrideAuthResponse> {
+    return this.http.post<BrideAuthResponse>(`${environment.API_BASE_URL}/auth/noiva/signup`, payload).pipe(
+      tap(resp => this.handleAuthResponse(resp))
+    );
+  }
+
+
 
   private handleAuthResponse(resp: BrideAuthResponse): void {
     this.token$.next(resp.accessToken);

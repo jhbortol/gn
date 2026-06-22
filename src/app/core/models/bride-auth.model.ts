@@ -1,8 +1,3 @@
-export interface AppleLoginPayload {
-  idToken: string;
-  firstName?: string; // Vem apenas no primeiro login da Apple
-  lastName?: string;  // Vem apenas no primeiro login da Apple
-}
 
 export interface BrideProfile {
   id: string;

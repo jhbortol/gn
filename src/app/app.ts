@@ -8,11 +8,12 @@ import { SeoBlockerService } from './core/seo-blocker.service';
 import { MetaTagService } from './core/meta-tag.service';
 import { isPlatformBrowser } from '@angular/common';
 import { DestaquePopupComponent } from './shared/components/destaque-popup/destaque-popup.component';
+import { ToastContainerComponent } from './shared/components/toast-container.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, FooterComponent, DestaquePopupComponent],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent, DestaquePopupComponent, ToastContainerComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })

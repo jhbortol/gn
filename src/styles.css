@@ -7,3 +7,20 @@
         @apply outline-none ring-2 ring-rose-500 ring-offset-2;
     }
 }
+
+@layer utilities {
+    .animate-slide-up {
+        animation: slideUp 0.4s ease-out forwards;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

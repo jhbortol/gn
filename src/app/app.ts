@@ -9,11 +9,12 @@ import { MetaTagService } from './core/meta-tag.service';
 import { isPlatformBrowser } from '@angular/common';
 import { DestaquePopupComponent } from './shared/components/destaque-popup/destaque-popup.component';
 import { ToastContainerComponent } from './shared/components/toast-container.component';
+import { AppInstallBannerComponent } from './shared/components/app-install-banner/app-install-banner.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, FooterComponent, DestaquePopupComponent, ToastContainerComponent],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent, DestaquePopupComponent, ToastContainerComponent, AppInstallBannerComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })

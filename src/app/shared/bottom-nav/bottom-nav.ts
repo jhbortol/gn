@@ -27,7 +27,7 @@ export class BottomNavComponent {
   });
 
   handleNav(event: Event, path: string) {
-    if (!this.authService.isLoggedIn()) {
+    if (!this.authService.isLoggedIn) {
       event.preventDefault();
       event.stopPropagation();
       this.loginModalService.open();

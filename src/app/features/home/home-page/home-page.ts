@@ -13,6 +13,8 @@ import { CidadeService } from '../../../core/cidade.service';
 import { environment } from '../../../../environments/environment';
 import { MeuCasamentoStoreService } from '../../meu-casamento/services/meu-casamento-store.service';
 import { MeuCasamentoSyncService } from '../../meu-casamento/services/meu-casamento-sync.service';
+import { BrideAuthService } from '../../../core/services/bride-auth.service';
+import { BrideLoginModalService } from '../../../core/services/bride-login-modal.service';
 
 @Component({
   selector: 'app-home-page',
@@ -37,6 +39,8 @@ export class HomePageComponent implements OnInit {
   private router = inject(Router);
   private weddingStore = inject(MeuCasamentoStoreService);
   private weddingSync = inject(MeuCasamentoSyncService);
+  private authService = inject(BrideAuthService);
+  private loginModalService = inject(BrideLoginModalService);
 
   get cidadeNome(): string {
     const c = this.cidadeService.getCidade();
@@ -156,6 +160,11 @@ export class HomePageComponent implements OnInit {
     event.stopPropagation();
     event.preventDefault();
 
+    if (!this.authService.isLoggedIn) {
+      this.loginModalService.open();
+      return;
+    }
+
     if (this.isFavorite(fornecedor.id)) {
       this.weddingStore.removeFavorite(fornecedor.id);
     } else {
@@ -170,5 +179,13 @@ export class HomePageComponent implements OnInit {
     }
 
     await this.weddingSync.syncPendingChanges();
+  }
+
+  handleToolClick(event: Event, path: string) {
+    if (!this.authService.isLoggedIn) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.loginModalService.open();
+    }
   }
 }

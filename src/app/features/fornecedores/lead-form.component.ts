@@ -118,7 +118,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         <!-- Disclaimer termos -->
         <p class="text-center" style="font-size:10px; color:#9ca3af;">
           Ao enviar, você concorda com os
-          <a [href]="termosUrl" class="underline hover:text-gray-600">Termos de Uso e Isenção de Responsabilidade</a>
+          <a [href]="termosUrl" class="underline hover:text-gray-600">Termos de Uso e Política de Privacidade</a>
           do Guia Noivas.
         </p>
 

@@ -27,10 +27,10 @@ export class TermosPageComponent implements OnInit {
     const route = this.router.url.split('?')[0];
     const cidade = this.cidadeService.getCidade();
     const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
-    this.title.setTitle(`Termos de Uso | Guia Noivas ${nomeFormatado}`);
+    this.title.setTitle(`Termos de Uso e Política de Privacidade e Dados | Guia Noivas ${nomeFormatado}`);
     this.metaTagService.applyMetadata(route, {
-      title: `Termos de Uso | Guia Noivas ${nomeFormatado}`,
-      description: `Termos de uso e política de responsabilidade do Guia Noivas ${nomeFormatado}. Saiba como nossa plataforma funciona e quais são seus direitos e deveres.`
+      title: `Termos de Uso e Política de Privacidade e Dados | Guia Noivas ${nomeFormatado}`,
+      description: `Termos de uso e política de privacidade e dados do Guia Noivas ${nomeFormatado}. Saiba como nossa plataforma funciona e quais são seus direitos e deveres.`
     });
   }
 }

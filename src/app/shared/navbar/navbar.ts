@@ -7,14 +7,14 @@ import { environment } from '../../../environments/environment';
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BrideAuthService } from '../../core/services/bride-auth.service';
-import { BrideLoginModalComponent } from '../bride-login-modal/bride-login-modal.component';
+import { BrideLoginModalService } from '../../core/services/bride-login-modal.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.css'],
-  imports: [CommonModule, IconComponent, RouterModule, BrideLoginModalComponent]
+  imports: [CommonModule, IconComponent, RouterModule]
 })
 export class NavbarComponent {
   @Output() goHome = new EventEmitter<void>();
@@ -25,9 +25,9 @@ export class NavbarComponent {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
   public brideAuthService = inject(BrideAuthService);
+  private loginModalService = inject(BrideLoginModalService);
 
   mobileMenuOpen = false;
-  showLoginModal = signal(false);
   profileDropdownOpen = signal(false);
 
   readonly cidadeAtualNome = computed(() => {
@@ -65,12 +65,8 @@ export class NavbarComponent {
   }
   
   openLoginModal() {
-    this.showLoginModal.set(true);
+    this.loginModalService.open();
     this.closeMobileMenu();
-  }
-
-  closeLoginModal() {
-    this.showLoginModal.set(false);
   }
   
   toggleProfileDropdown() {

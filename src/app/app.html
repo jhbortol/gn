@@ -11,3 +11,7 @@
 <app-destaque-popup></app-destaque-popup>
 <app-toast-container></app-toast-container>
 <app-install-banner></app-install-banner>
+
+@if (loginModalService.isOpen()) {
+  <app-bride-login-modal (close)="loginModalService.close()"></app-bride-login-modal>
+}

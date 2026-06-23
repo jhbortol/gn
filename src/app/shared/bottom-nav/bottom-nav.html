@@ -1,0 +1,48 @@
+<div class="fixed bottom-0 left-0 right-0 z-[100] px-4 pb-6 pointer-events-none md:flex md:justify-center">
+  <div class="bg-white/80 backdrop-blur-lg border border-rose-100 shadow-2xl rounded-2xl p-2 flex items-center justify-around md:justify-center md:gap-8 pointer-events-auto max-w-lg mx-auto md:px-8">
+    <!-- Home -->
+    <a [routerLink]="homeUrl()"
+       routerLinkActive="text-rose-600 bg-rose-50"
+       [routerLinkActiveOptions]="{exact: true}"
+       class="flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all text-gray-500 hover:text-rose-500">
+      <app-icon name="home" [size]="20"></app-icon>
+      <span class="text-[9px] font-bold uppercase tracking-tight">Início</span>
+    </a>
+
+    <!-- Checklist -->
+    <a routerLink="/meu-casamento/cronograma"
+       routerLinkActive="text-rose-600 bg-rose-50"
+       (click)="handleNav($event, '/meu-casamento/cronograma')"
+       class="flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all text-gray-500 hover:text-rose-500">
+      <app-icon name="checklist" [size]="20"></app-icon>
+      <span class="text-[9px] font-bold uppercase tracking-tight">Checklist</span>
+    </a>
+
+    <!-- Guests -->
+    <a routerLink="/meu-casamento/convidados"
+       routerLinkActive="text-rose-600 bg-rose-50"
+       (click)="handleNav($event, '/meu-casamento/convidados')"
+       class="flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all text-gray-500 hover:text-rose-500">
+      <app-icon name="users" [size]="20"></app-icon>
+      <span class="text-[9px] font-bold uppercase tracking-tight">Convidados</span>
+    </a>
+
+    <!-- Budget -->
+    <a routerLink="/meu-casamento/orcamento"
+       routerLinkActive="text-rose-600 bg-rose-50"
+       (click)="handleNav($event, '/meu-casamento/orcamento')"
+       class="flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all text-gray-500 hover:text-rose-500">
+      <app-icon name="budget" [size]="20"></app-icon>
+      <span class="text-[9px] font-bold uppercase tracking-tight">Orçamento</span>
+    </a>
+
+    <!-- Favorites -->
+    <a routerLink="/meus-favoritos"
+       routerLinkActive="text-rose-600 bg-rose-50"
+       (click)="handleNav($event, '/meus-favoritos')"
+       class="flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all text-gray-500 hover:text-rose-500">
+      <app-icon name="heart" [size]="20"></app-icon>
+      <span class="text-[9px] font-bold uppercase tracking-tight">Favoritos</span>
+    </a>
+  </div>
+</div>

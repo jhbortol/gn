@@ -1,0 +1,8 @@
+
+> guia-noivas@1.0.0 build
+> node scripts/inject-env.js && ng build && node inject-version.js
+
+Env injector: no changes for /app/src/environments/environment.ts
+Env injector: no changes for /app/src/environments/environment.prod.ts
+Env injection complete.
+sh: 1: ng: not found

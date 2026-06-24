@@ -20,6 +20,11 @@ export class BottomNavComponent {
   private router = inject(Router);
 
   isLoggedIn$ = this.authService.isLoggedIn$;
+  isCollapsed = false;
+
+  toggleCollapse() {
+    this.isCollapsed = !this.isCollapsed;
+  }
 
 
 

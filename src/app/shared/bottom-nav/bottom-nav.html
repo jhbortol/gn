@@ -1,5 +1,16 @@
-<div class="fixed bottom-0 left-0 right-0 z-[100] px-4 pb-6 pointer-events-none md:flex md:justify-center">
-  <div class="bg-white/80 backdrop-blur-lg border border-rose-100 shadow-2xl rounded-2xl p-2 flex items-center justify-around md:justify-center md:gap-8 pointer-events-auto max-w-lg mx-auto md:px-8">
+<div class="fixed bottom-0 left-0 right-0 z-[100] px-4 pb-6 pointer-events-none md:flex md:justify-center transition-transform duration-300 ease-in-out" [class.translate-y-full]="isCollapsed" [class.pb-0]="isCollapsed">
+  <div class="relative bg-white/80 backdrop-blur-lg border border-rose-100 shadow-2xl rounded-2xl p-2 flex items-center justify-around md:justify-center md:gap-8 pointer-events-auto max-w-lg mx-auto md:px-8">
+
+    <!-- Toggle Button -->
+    <button class="absolute -top-10 right-2 w-10 h-10 bg-white/90 backdrop-blur border border-rose-100 rounded-t-xl flex items-center justify-center text-rose-600 shadow-sm pointer-events-auto transition-transform hover:bg-white" (click)="toggleCollapse()" [attr.aria-label]="isCollapsed ? 'Expandir menu' : 'Recolher menu'">
+      <svg *ngIf="!isCollapsed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+        <path d="M12 16L6 10H18L12 16Z"></path>
+      </svg>
+      <svg *ngIf="isCollapsed" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+        <path d="M12 8L18 14H6L12 8Z"></path>
+      </svg>
+    </button>
+
     <!-- Home -->
     <a routerLink="/meu-casamento"
        routerLinkActive="text-rose-600 bg-rose-50"

@@ -1,4 +1,4 @@
-<div *ngIf="isVisible" class="fixed bottom-0 left-0 right-0 z-[9999] bg-white border-t border-rose-100 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] p-4 flex items-center justify-between gap-4 animate-slide-up">
+<div *ngIf="isVisible" class="fixed top-4 right-4 z-[9999] bg-white rounded-2xl border border-rose-100 shadow-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in sm:max-w-sm max-w-[calc(100vw-2rem)]">
 
     <div class="flex items-center gap-3 flex-1">
         <img src="/logo.png" alt="Logo" class="w-10 h-10 rounded-xl shadow-sm hidden sm:block">
@@ -8,7 +8,7 @@
         </div>
     </div>
 
-    <div class="flex items-center gap-3 shrink-0">
+    <div class="flex items-center gap-3 shrink-0 self-end sm:self-auto w-full sm:w-auto justify-end">
         <button (click)="installApp()" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold py-2 px-4 rounded-full transition-colors shadow-md">
             Instalar
         </button>

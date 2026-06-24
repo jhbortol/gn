@@ -39,7 +39,7 @@ export class HomePageComponent implements OnInit {
   private router = inject(Router);
   private weddingStore = inject(MeuCasamentoStoreService);
   private weddingSync = inject(MeuCasamentoSyncService);
-  private authService = inject(BrideAuthService);
+  public authService = inject(BrideAuthService);
   private loginModalService = inject(BrideLoginModalService);
 
   get cidadeNome(): string {

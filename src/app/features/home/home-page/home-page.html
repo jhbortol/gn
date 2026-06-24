@@ -22,53 +22,61 @@
 	</div>
 
 	<!-- Lead Magnet: Meu Casamento Tools -->
-	<section class="relative z-20 -mt-8 md:-mt-12 mb-8 container mx-auto px-4">
-		<div class="bg-white rounded-3xl shadow-xl border border-rose-100 p-6 md:p-8">
-			<div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
-				<div class="text-center md:text-left">
-					<h2 class="text-2xl md:text-3xl font-serif font-bold text-gray-800 mb-2">Planeje seu Casamento Grátis</h2>
-					<p class="text-gray-600">As ferramentas essenciais para organizar o seu grande dia em um só lugar.</p>
+	<section class="relative z-20 -mt-6 md:-mt-8 mb-6 container mx-auto px-4">
+		<div class="bg-white rounded-2xl shadow-lg border border-rose-100/60 p-4 md:p-5">
+			<div class="flex flex-row items-center justify-between gap-4 mb-4 md:mb-5">
+				<div>
+					<h2 class="text-lg md:text-xl font-serif font-bold text-gray-800 leading-tight">Planeje seu Casamento Grátis</h2>
+					<p class="hidden sm:block text-xs md:text-sm text-gray-500 mt-0.5">As ferramentas essenciais para organizar o seu grande dia em um só lugar.</p>
 				</div>
-				<a [routerLink]="buildUrl('/meu-casamento')" (click)="handleToolClick($event, '/meu-casamento')" class="whitespace-nowrap px-8 py-3 bg-rose-600 text-white rounded-full font-bold hover:bg-rose-700 transition shadow-lg shadow-rose-200">
+				<a [routerLink]="buildUrl('/meu-casamento')" (click)="handleToolClick($event, '/meu-casamento')" class="whitespace-nowrap px-4 py-1.5 md:px-5 md:py-2 text-xs md:text-sm bg-rose-600 text-white rounded-full font-bold hover:bg-rose-700 transition shadow-md shadow-rose-100">
 					COMEÇAR AGORA
 				</a>
 			</div>
 
-			<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+			<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
 				<!-- Checklist Tool -->
-				<a routerLink="/meu-casamento/cronograma" (click)="handleToolClick($event, '/meu-casamento/cronograma')" class="group flex flex-col items-center text-center p-4 md:p-6 rounded-2xl bg-rose-50 hover:bg-rose-100 transition-all duration-300 transform hover:-translate-y-1">
-					<div class="w-12 h-12 md:w-16 md:h-16 flex items-center justify-center bg-white rounded-2xl shadow-sm text-rose-600 mb-4 group-hover:scale-110 transition-transform">
-						<app-icon name="checklist" [size]="32"></app-icon>
+				<a routerLink="/meu-casamento/cronograma" (click)="handleToolClick($event, '/meu-casamento/cronograma')" class="group flex flex-row items-start gap-2.5 p-2.5 md:p-3.5 rounded-xl bg-rose-50/50 hover:bg-rose-50 border border-rose-100/30 hover:border-rose-100 transition-all duration-300 transform hover:-translate-y-0.5 shadow-sm hover:shadow-md">
+					<div class="w-8 h-8 md:w-10 md:h-10 flex-shrink-0 flex items-center justify-center bg-white rounded-lg shadow-sm text-rose-600 mt-0.5 group-hover:scale-105 transition-transform">
+						<app-icon name="checklist" [size]="20"></app-icon>
 					</div>
-					<h3 class="font-bold text-gray-800 mb-1">Checklist</h3>
-					<p class="text-xs text-gray-500">Cronograma completo de tarefas</p>
+					<div class="text-left min-w-0 flex-1">
+						<h3 class="font-bold text-gray-800 text-xs md:text-sm leading-tight group-hover:text-rose-700 transition-colors">Checklist</h3>
+						<p class="text-[10px] md:text-xs text-gray-500 font-normal leading-tight mt-0.5">Organize suas tarefas passo a passo</p>
+					</div>
 				</a>
 
 				<!-- Guests Tool -->
-				<a routerLink="/meu-casamento/convidados" (click)="handleToolClick($event, '/meu-casamento/convidados')" class="group flex flex-col items-center text-center p-4 md:p-6 rounded-2xl bg-blue-50 hover:bg-blue-100 transition-all duration-300 transform hover:-translate-y-1">
-					<div class="w-12 h-12 md:w-16 md:h-16 flex items-center justify-center bg-white rounded-2xl shadow-sm text-blue-600 mb-4 group-hover:scale-110 transition-transform">
-						<app-icon name="users" [size]="32"></app-icon>
+				<a routerLink="/meu-casamento/convidados" (click)="handleToolClick($event, '/meu-casamento/convidados')" class="group flex flex-row items-start gap-2.5 p-2.5 md:p-3.5 rounded-xl bg-blue-50/50 hover:bg-blue-50 border border-blue-100/30 hover:border-blue-100 transition-all duration-300 transform hover:-translate-y-0.5 shadow-sm hover:shadow-md">
+					<div class="w-8 h-8 md:w-10 md:h-10 flex-shrink-0 flex items-center justify-center bg-white rounded-lg shadow-sm text-blue-600 mt-0.5 group-hover:scale-105 transition-transform">
+						<app-icon name="users" [size]="20"></app-icon>
 					</div>
-					<h3 class="font-bold text-gray-800 mb-1">Convidados</h3>
-					<p class="text-xs text-gray-500">Gerencie sua lista e RSVP</p>
+					<div class="text-left min-w-0 flex-1">
+						<h3 class="font-bold text-gray-800 text-xs md:text-sm leading-tight group-hover:text-blue-700 transition-colors">Convidados</h3>
+						<p class="text-[10px] md:text-xs text-gray-500 font-normal leading-tight mt-0.5">Lista completa com RSVP online</p>
+					</div>
 				</a>
 
 				<!-- Budget Tool -->
-				<a routerLink="/meu-casamento/orcamento" (click)="handleToolClick($event, '/meu-casamento/orcamento')" class="group flex flex-col items-center text-center p-4 md:p-6 rounded-2xl bg-green-50 hover:bg-green-100 transition-all duration-300 transform hover:-translate-y-1">
-					<div class="w-12 h-12 md:w-16 md:h-16 flex items-center justify-center bg-white rounded-2xl shadow-sm text-green-600 mb-4 group-hover:scale-110 transition-transform">
-						<app-icon name="budget" [size]="32"></app-icon>
+				<a routerLink="/meu-casamento/orcamento" (click)="handleToolClick($event, '/meu-casamento/orcamento')" class="group flex flex-row items-start gap-2.5 p-2.5 md:p-3.5 rounded-xl bg-green-50/50 hover:bg-green-50 border border-green-100/30 hover:border-green-100 transition-all duration-300 transform hover:-translate-y-0.5 shadow-sm hover:shadow-md">
+					<div class="w-8 h-8 md:w-10 md:h-10 flex-shrink-0 flex items-center justify-center bg-white rounded-lg shadow-sm text-green-600 mt-0.5 group-hover:scale-105 transition-transform">
+						<app-icon name="budget" [size]="20"></app-icon>
 					</div>
-					<h3 class="font-bold text-gray-800 mb-1">Orçamento</h3>
-					<p class="text-xs text-gray-500">Controle financeiro total</p>
+					<div class="text-left min-w-0 flex-1">
+						<h3 class="font-bold text-gray-800 text-xs md:text-sm leading-tight group-hover:text-green-700 transition-colors">Orçamento</h3>
+						<p class="text-[10px] md:text-xs text-gray-500 font-normal leading-tight mt-0.5">Controle de gastos e pagamentos</p>
+					</div>
 				</a>
 
 				<!-- Favorites Tool -->
-				<a routerLink="/meus-favoritos" (click)="handleToolClick($event, '/meus-favoritos')" class="group flex flex-col items-center text-center p-4 md:p-6 rounded-2xl bg-amber-50 hover:bg-amber-100 transition-all duration-300 transform hover:-translate-y-1">
-					<div class="w-12 h-12 md:w-16 md:h-16 flex items-center justify-center bg-white rounded-2xl shadow-sm text-amber-600 mb-4 group-hover:scale-110 transition-transform">
-						<app-icon name="heart" [size]="32" className="fill-amber-600"></app-icon>
+				<a routerLink="/meus-favoritos" (click)="handleToolClick($event, '/meus-favoritos')" class="group flex flex-row items-start gap-2.5 p-2.5 md:p-3.5 rounded-xl bg-amber-50/50 hover:bg-amber-50 border border-amber-100/30 hover:border-amber-100 transition-all duration-300 transform hover:-translate-y-0.5 shadow-sm hover:shadow-md">
+					<div class="w-8 h-8 md:w-10 md:h-10 flex-shrink-0 flex items-center justify-center bg-white rounded-lg shadow-sm text-amber-600 mt-0.5 group-hover:scale-105 transition-transform">
+						<app-icon name="heart" [size]="20" className="fill-amber-600"></app-icon>
 					</div>
-					<h3 class="font-bold text-gray-800 mb-1">Favoritos</h3>
-					<p class="text-xs text-gray-500">Guarde seus fornecedores</p>
+					<div class="text-left min-w-0 flex-1">
+						<h3 class="font-bold text-gray-800 text-xs md:text-sm leading-tight group-hover:text-amber-700 transition-colors">Favoritos</h3>
+						<p class="text-[10px] md:text-xs text-gray-500 font-normal leading-tight mt-0.5">Guarde seus fornecedores favoritos</p>
+					</div>
 				</a>
 			</div>
 		</div>

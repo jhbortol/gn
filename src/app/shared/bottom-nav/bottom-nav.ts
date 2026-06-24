@@ -21,10 +21,7 @@ export class BottomNavComponent {
 
   isLoggedIn$ = this.authService.isLoggedIn$;
 
-  readonly homeUrl = computed(() => {
-    const cidade = this.cidadeService.cidadeAtual();
-    return cidade ? `/${cidade}` : '/selecionar-cidade';
-  });
+
 
   handleNav(event: Event, path: string) {
     if (!this.authService.isLoggedIn) {

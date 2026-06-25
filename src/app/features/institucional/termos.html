@@ -4,35 +4,16 @@
 
   <p class="text-gray-700 mb-4">Bem-vindo ao Guia de Noivas {{ cidadeNome }}. Ao acessar e utilizar o nosso site, aplicativo ou ferramentas (como calculadoras e organizadores), você concorda com os termos descritos abaixo. Se não concordar com qualquer parte destes termos, recomendamos que não utilize a nossa plataforma.</p>
 
-  <h2 class="text-lg font-semibold mt-6 mb-2">1. NATUREZA DO SERVIÇO</h2>
-  <p class="text-gray-700 mb-4">O Guia de Noivas {{ cidadeNome }} atua como um catálogo regional de serviços, publicidade e como uma plataforma de inteligência de consumo. Nosso objetivo é facilitar a pesquisa e o contato inicial com profissionais do setor de eventos, bem como auxiliar no planejamento financeiro e logístico dos usuários (noivas e contratantes) através de nossas ferramentas interativas.</p>
-
-  <h2 class="text-lg font-semibold mt-6 mb-2">2. ISENÇÃO DE RESPONSABILIDADE (CLÁUSULA MANDATÓRIA)</h2>
-  <div class="text-gray-700 mb-4">
-    <p><strong>Não comercializa serviços:</strong> Não realizamos vendas, agenciamento ou intermediamos pagamentos de qualquer natureza referentes a serviços de casamento.</p>
-    <p class="mt-2"><strong>Não garante execução:</strong> A presença de um fornecedor em nosso catálogo (identificado ou não pelo selo "Fornecedor Guia 2026") atesta apenas a existência de um cadastro publicitário ativo. Não garantimos, sob nenhuma hipótese, a qualidade, pontualidade, entrega ou solvência financeira dos anunciantes.</p>
-    <p class="mt-2"><strong>Responsabilidade exclusiva:</strong> A negociação, contratação e resolução de eventuais disputas são de responsabilidade total e exclusiva do Usuário e do Fornecedor Contratado. O Guia de Noivas {{ cidadeNome }} exime-se de qualquer responsabilidade solidária por danos materiais ou morais decorrentes dessas relações.</p>
+  <div *ngIf="isLoading()" class="py-12 flex flex-col items-center justify-center space-y-4">
+    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-rose-600"></div>
+    <p class="text-gray-500">Carregando termos...</p>
   </div>
 
-  <h2 class="text-lg font-semibold mt-6 mb-2">3. O SELO "FORNECEDOR GUIA 2026"</h2>
-  <p class="text-gray-700 mb-4">A utilização do selo "Fornecedor Guia 2026" por terceiros indica apenas que o profissional é um anunciante registrado em nosso banco de dados para o ano vigente. Este selo não constitui um certificado de qualidade técnica, "prêmio" ou garantia de satisfação.</p>
+  <div *ngIf="error()" class="py-12 text-center text-red-600">
+    <p>{{ error() }}</p>
+  </div>
 
-  <h2 class="text-lg font-semibold mt-6 mb-2">4. PROPRIEDADE INTELECTUAL</h2>
-  <p class="text-gray-700 mb-4">Todo o conteúdo editorial, layout e marca "Guia de Noivas {{ cidadeNome }}" são de propriedade exclusiva da nossa empresa. As imagens e textos presentes nos perfis dos fornecedores são de responsabilidade dos mesmos, que nos concedem licença de uso para fins de divulgação.</p>
-
-  <h2 class="text-lg font-semibold mt-6 mb-2">5. ALTERAÇÕES NOS TERMOS</h2>
-  <p class="text-gray-700 mb-4">Reservamo-nos o direito de alterar estes termos a qualquer momento para refletir mudanças na legislação ou em nosso modelo de negócio. O uso contínuo do site ou aplicativo após tais alterações constitui a aceitação dos novos termos.</p>
-
-  <h2 class="text-lg font-semibold mt-6 mb-2">6. POLÍTICA DE DADOS, INTELIGÊNCIA DE MERCADO E COMPARTILHAMENTO</h2>
-  <div class="text-gray-700 mb-4">
-    <p>Ao utilizar nossas ferramentas de gestão (incluindo, mas não se limitando a calculadoras financeiras, checklists e simuladores), você concorda com o tratamento de seus dados pessoais conforme as regras da Lei Geral de Proteção de Dados (Lei nº 13.709/2018):</p>
-    <ul class="list-disc ml-6 mt-2 space-y-2">
-      <li><strong>Coleta e Finalidade:</strong> Coletamos dados como orçamento estimado, data do evento e informações de contato com a finalidade de otimizar a sua experiência de planejamento e oferecer, de forma personalizada, propostas de produtos e serviços de nossos parceiros selecionados nos setores imobiliário, financeiro (bancos, crédito e consórcios) e de varejo.</li>
-      <li><strong>Compartilhamento e Consentimento:</strong> Seus dados pessoais (perfil financeiro e contatos) serão compartilhados com empresas parceiras apenas mediante o seu consentimento expresso, concedido por meio de marcação de campo específico (checkbox) no momento do cadastro ou uso da ferramenta.</li>
-      <li><strong>Transparência e Anonimização:</strong> Comprometemo-nos a priorizar o compartilhamento de dados anonimizados para relatórios estatísticos de mercado. Dados identificáveis apenas serão cedidos aos nossos parceiros quando estritamente necessários para o envio das ofertas personalizadas autorizadas por você.</li>
-      <li><strong>Trilha de Auditoria:</strong> Para garantir a conformidade com a LGPD, nosso sistema registra o histórico do seu consentimento, incluindo o momento do aceite, endereço IP e dispositivo utilizado, para fins de segurança e auditoria legal.</li>
-      <li><strong>Responsabilidade dos Parceiros:</strong> Embora facilitemos o contato com instituições financeiras e imobiliárias, não somos responsáveis, em nenhuma hipótese, por negociações, aprovações de crédito, propostas de venda de imóveis ou contratos firmados entre você e nossos parceiros comerciais. A relação contratual é de responsabilidade exclusiva entre o usuário e o parceiro.</li>
-      <li><strong>Revogação:</strong> Você tem o direito de revogar este consentimento a qualquer momento através dos nossos canais de atendimento ou configurações da plataforma, sem que isso afete a legalidade do tratamento realizado anteriormente.</li>
-    </ul>
+  <div *ngIf="!isLoading() && !error() && termoContent()" class="prose max-w-none text-gray-700 font-sans whitespace-pre-wrap">
+    {{ termoContent() }}
   </div>
 </section>

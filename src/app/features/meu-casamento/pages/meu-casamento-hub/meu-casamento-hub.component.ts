@@ -1,4 +1,5 @@
-import { Component, OnInit, computed, inject } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -7,11 +8,13 @@ import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.ser
 import { MeuCasamentoBottomNavComponent } from '../../components/meu-casamento-bottom-nav/meu-casamento-bottom-nav.component';
 import { BrideAuthService } from '../../../../core/services/bride-auth.service';
 import { BrideLeadsHistoryComponent } from '../bride-leads-history/bride-leads-history.component';
+import { TermoAceiteModalComponent } from '../../../../shared/components/termo-aceite-modal/termo-aceite-modal.component';
+import { TermoAdesao } from '../../../../core/models/bride-auth.model';
 
 @Component({
   selector: 'app-meu-casamento-hub',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, MeuCasamentoBottomNavComponent, BrideLeadsHistoryComponent],
+  imports: [CommonModule, FormsModule, RouterModule, MeuCasamentoBottomNavComponent, BrideLeadsHistoryComponent, TermoAceiteModalComponent],
   templateUrl: './meu-casamento-hub.component.html',
   styleUrl: './meu-casamento-hub.component.css'
 })
@@ -21,6 +24,17 @@ export class MeuCasamentoHubComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly brideAuthService = inject(BrideAuthService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  lgpdConsentido = signal(false);
+  isLgpdSaving = signal(false);
+  successMessage = signal('');
+  errorMessage = signal('');
+  
+  isTermoModalOpen = signal(false);
+  termoAdesao = signal<TermoAdesao | null>(null);
+  termoLoading = signal(false);
+  termoError = signal<string | null>(null);
 
   readonly profile = this.store.profile;
   readonly availableTools = this.store.availableTools;
@@ -87,5 +101,91 @@ export class MeuCasamentoHubComponent implements OnInit {
 
   viewBrideProfile(): void {
     void this.router.navigateByUrl('/meu-casamento/perfil');
+  }
+
+  onLgpdConsentChange(event: Event): void {
+    const checkbox = event.target as HTMLInputElement;
+    const isChecked = checkbox.checked;
+
+    if (!isChecked) {
+      const confirmRevoke = confirm('Tem certeza que deseja sair da Lista VIP e revogar seu consentimento? Algumas ferramentas podem ficar indisponíveis.');
+      if (!confirmRevoke) {
+        checkbox.checked = true; // revert
+        return;
+      }
+    }
+
+    this.isLgpdSaving.set(true);
+    this.successMessage.set('');
+    this.errorMessage.set('');
+
+    if (this.termoAdesao()) {
+      this.doRegisterConsent(isChecked, checkbox);
+    } else {
+      // Fetch in background if checked directly
+      this.brideAuthService.getTermoAdesao()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (termo) => {
+            this.termoAdesao.set(termo);
+            this.doRegisterConsent(isChecked, checkbox);
+          },
+          error: (err) => {
+            this.isLgpdSaving.set(false);
+            checkbox.checked = !isChecked; // revert
+            this.errorMessage.set('Erro ao buscar o termo de adesão.');
+          }
+        });
+    }
+  }
+
+  private doRegisterConsent(isChecked: boolean, checkbox: HTMLInputElement): void {
+    const urlOrigem = window.location.href;
+    const termo = this.termoAdesao();
+    const hash = termo?.hash;
+    const versao = termo?.versao;
+
+    this.brideAuthService.registerLgpdConsent(isChecked, urlOrigem, hash, versao)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.isLgpdSaving.set(false);
+          this.lgpdConsentido.set(isChecked);
+          this.successMessage.set('Preferência atualizada com sucesso! (Protocolo: ' + response.ProtocoloAceite + ')');
+          
+          setTimeout(() => {
+            this.successMessage.set('');
+          }, 5000);
+        },
+        error: (err) => {
+          this.isLgpdSaving.set(false);
+          checkbox.checked = !isChecked; // revert on error
+          const errorMsg = err?.error?.message || 'Erro ao atualizar preferência. Tente novamente.';
+          this.errorMessage.set(errorMsg);
+        }
+      });
+  }
+
+  openTermosPopup(): void {
+    this.isTermoModalOpen.set(true);
+    this.loadTermos();
+  }
+
+  loadTermos(): void {
+    if (this.termoAdesao()) return;
+    this.termoLoading.set(true);
+    this.termoError.set(null);
+    this.brideAuthService.getTermoAdesao()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (termo) => {
+          this.termoAdesao.set(termo);
+          this.termoLoading.set(false);
+        },
+        error: (err) => {
+          this.termoError.set('Erro ao carregar os termos. Tente novamente.');
+          this.termoLoading.set(false);
+        }
+      });
   }
 }

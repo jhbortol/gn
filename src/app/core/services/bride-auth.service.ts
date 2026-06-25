@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, tap, switchMap, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { isPlatformBrowser } from '@angular/common';
-import { BrideAuthResponse, BrideProfile } from '../models/bride-auth.model';
+import { BrideAuthResponse, BrideProfile, TermoAdesao } from '../models/bride-auth.model';
 
 const BRIDE_TOKEN_KEY = 'bride_accessToken';
 const BRIDE_PROFILE_KEY = 'bride_profile';
@@ -136,6 +136,28 @@ export class BrideAuthService {
     return this.http.post<{ message: string }>(`${environment.API_BASE_URL}/noiva/send-verification-email`, {}).pipe(
       catchError(err => {
         console.error('[BrideAuth] Failed to send verification email', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  registerLgpdConsent(consentido: boolean, urlOrigem: string, termoHash?: string, termoVersao?: string): Observable<{ ProtocoloAceite: string, Status: string }> {
+    const payload: any = { consentido, urlOrigem };
+    if (termoHash) payload.termoHash = termoHash;
+    if (termoVersao) payload.termoVersao = termoVersao;
+
+    return this.http.post<{ ProtocoloAceite: string, Status: string }>(`${environment.API_BASE_URL}/noiva/consent`, payload).pipe(
+      catchError(err => {
+        console.error('[BrideAuth] Failed to register LGPD consent', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  getTermoAdesao(): Observable<TermoAdesao> {
+    return this.http.get<TermoAdesao>(`${environment.API_BASE_URL}/noiva/contratos/termo-adesao`).pipe(
+      catchError(err => {
+        console.error('[BrideAuth] Failed to fetch termo adesao', err);
         return throwError(() => err);
       })
     );

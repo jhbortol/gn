@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { BrideAuthService } from '../../../../core/services/bride-auth.service';
-import { BrideProfile } from '../../../../core/models/bride-auth.model';
+import { BrideProfile, TermoAdesao } from '../../../../core/models/bride-auth.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TermoAceiteModalComponent } from '../../../../shared/components/termo-aceite-modal/termo-aceite-modal.component';
 
 @Component({
   selector: 'app-bride-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TermoAceiteModalComponent],
   template: `
     <div class="min-h-screen bg-gray-50 pt-20 pb-8">
       <div class="container mx-auto px-4 max-w-2xl">
@@ -111,6 +112,28 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
               <p class="text-xs text-gray-500 mt-1">Email não pode ser alterado</p>
             </div>
 
+            <!-- LGPD Consent -->
+            <div class="flex items-start gap-3 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+              <div class="flex items-center h-5 mt-0.5">
+                <input
+                  id="lgpd-consent"
+                  type="checkbox"
+                  [checked]="lgpdConsentido()"
+                  (change)="onLgpdConsentChange($event)"
+                  [disabled]="isLgpdSaving()"
+                  class="w-4 h-4 text-rose-600 bg-white border-gray-300 rounded focus:ring-rose-500 focus:ring-2 disabled:opacity-50 cursor-pointer"
+                />
+              </div>
+              <div class="text-sm">
+                <label for="lgpd-consent" class="font-medium text-gray-700 cursor-pointer">
+                  Opcional: Quero entrar na "Lista VIP" do Guia para receber condições exclusivas e com desconto em financiamento, consórcio e móveis planejados para o meu novo lar.
+                </label>
+                <p class="text-gray-500 mt-1">
+                  (Ao marcar, você aceita nossa <a href="javascript:void(0)" (click)="openTermosPopup()" class="text-rose-600 hover:underline font-medium">Política de Dados</a>).
+                </p>
+              </div>
+            </div>
+
 
 
             <!-- Form Actions -->
@@ -135,6 +158,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         </div>
       </div>
     </div>
+    
+    <app-termo-aceite-modal 
+      *ngIf="isTermoModalOpen()" 
+      [content]="termoAdesao()?.texto || null"
+      [isLoading]="termoLoading()"
+      [error]="termoError()"
+      (close)="isTermoModalOpen.set(false)"
+      (onRetry)="loadTermos()"
+    ></app-termo-aceite-modal>
   `,
   styles: [`
     :host {
@@ -163,6 +195,14 @@ export class BrideProfileComponent implements OnInit {
   successMessage = signal('');
   errorMessage = signal('');
   profile = signal<BrideProfile | null>(null);
+  
+  lgpdConsentido = signal(false);
+  isLgpdSaving = signal(false);
+
+  isTermoModalOpen = signal(false);
+  termoAdesao = signal<TermoAdesao | null>(null);
+  termoLoading = signal(false);
+  termoError = signal<string | null>(null);
 
   profileForm = new FormGroup({
     nome: new FormControl('', [Validators.required, Validators.minLength(3)])
@@ -269,6 +309,92 @@ export class BrideProfileComponent implements OnInit {
           this.isVerificationEmailSending.set(false);
           const errorMsg = err?.error?.message || 'Erro ao enviar email de verificação. Tente novamente.';
           this.errorMessage.set(errorMsg);
+        }
+      });
+  }
+
+  onLgpdConsentChange(event: Event): void {
+    const checkbox = event.target as HTMLInputElement;
+    const isChecked = checkbox.checked;
+
+    if (!isChecked) {
+      const confirmRevoke = confirm('Tem certeza que deseja sair da Lista VIP e revogar seu consentimento? Algumas ferramentas podem ficar indisponíveis.');
+      if (!confirmRevoke) {
+        checkbox.checked = true; // revert
+        return;
+      }
+    }
+
+    this.isLgpdSaving.set(true);
+    this.successMessage.set('');
+    this.errorMessage.set('');
+
+    if (this.termoAdesao()) {
+      this.doRegisterConsent(isChecked, checkbox);
+    } else {
+      // Fetch in background if checked directly
+      this.brideAuthService.getTermoAdesao()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (termo) => {
+            this.termoAdesao.set(termo);
+            this.doRegisterConsent(isChecked, checkbox);
+          },
+          error: (err) => {
+            this.isLgpdSaving.set(false);
+            checkbox.checked = !isChecked; // revert
+            this.errorMessage.set('Erro ao buscar o termo de adesão.');
+          }
+        });
+    }
+  }
+
+  private doRegisterConsent(isChecked: boolean, checkbox: HTMLInputElement): void {
+    const urlOrigem = window.location.href;
+    const termo = this.termoAdesao();
+    const hash = termo?.hash;
+    const versao = termo?.versao;
+
+    this.brideAuthService.registerLgpdConsent(isChecked, urlOrigem, hash, versao)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.isLgpdSaving.set(false);
+          this.lgpdConsentido.set(isChecked);
+          this.successMessage.set('Preferência atualizada com sucesso! (Protocolo: ' + response.ProtocoloAceite + ')');
+          
+          setTimeout(() => {
+            this.successMessage.set('');
+          }, 5000);
+        },
+        error: (err) => {
+          this.isLgpdSaving.set(false);
+          checkbox.checked = !isChecked; // revert on error
+          const errorMsg = err?.error?.message || 'Erro ao atualizar preferência. Tente novamente.';
+          this.errorMessage.set(errorMsg);
+        }
+      });
+  }
+
+  openTermosPopup(): void {
+    this.isTermoModalOpen.set(true);
+    this.loadTermos();
+  }
+
+  loadTermos(): void {
+    if (this.termoAdesao()) return;
+    this.termoLoading.set(true);
+    this.termoError.set(null);
+    this.brideAuthService.getTermoAdesao()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (termo) => {
+          this.termoAdesao.set(termo);
+          this.termoLoading.set(false);
+        },
+        error: (err) => {
+          this.termoError.set('Erro ao carregar os termos. Tente novamente.');
+          this.termoLoading.set(false);
         }
       });
   }

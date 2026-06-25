@@ -21,3 +21,9 @@ export interface ContactPayload {
   eventDate: string;
   message: string;
 }
+
+export interface TermoAdesao {
+  hash: string;
+  versao: string;
+  texto: string;
+}

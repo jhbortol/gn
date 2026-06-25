@@ -60,6 +60,32 @@
         <button type="button" class="primary" (click)="saveNow()">Salvar dados</button>
       </div>
 
+      <!-- LGPD Consent -->
+      <div class="wedding-field mt-6">
+        <div class="flex items-start gap-3 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+          <div class="flex items-center h-5 mt-0.5">
+            <input
+              id="lgpd-consent-hub"
+              type="checkbox"
+              [checked]="lgpdConsentido()"
+              (change)="onLgpdConsentChange($event)"
+              [disabled]="isLgpdSaving()"
+              class="w-4 h-4 text-rose-600 bg-white border-gray-300 rounded focus:ring-rose-500 focus:ring-2 disabled:opacity-50 cursor-pointer"
+            />
+          </div>
+          <div class="text-sm">
+            <label for="lgpd-consent-hub" class="font-medium text-gray-700 cursor-pointer">
+              Opcional: Quero entrar na "Lista VIP" do Guia para receber condições exclusivas e com desconto em financiamento, consórcio e móveis planejados para o meu novo lar.
+            </label>
+            <p class="text-gray-500 mt-1">
+              (Ao marcar, você aceita nossa <a href="javascript:void(0)" (click)="openTermosPopup()" class="text-rose-600 hover:underline font-medium">Política de Dados</a>).
+            </p>
+          </div>
+        </div>
+        <p *ngIf="successMessage()" class="text-green-600 text-sm mt-2">{{ successMessage() }}</p>
+        <p *ngIf="errorMessage()" class="text-red-600 text-sm mt-2">{{ errorMessage() }}</p>
+      </div>
+
       <p *ngIf="blockedMessage()" class="wedding-warning">{{ blockedMessage() }}</p>
       <p *ngIf="error()" class="wedding-error">{{ error() }}</p>
     </article>
@@ -172,3 +198,12 @@
 </section>
 
 <app-meu-casamento-bottom-nav />
+
+<app-termo-aceite-modal 
+  *ngIf="isTermoModalOpen()" 
+  [content]="termoAdesao()?.texto || null"
+  [isLoading]="termoLoading()"
+  [error]="termoError()"
+  (close)="isTermoModalOpen.set(false)"
+  (onRetry)="loadTermos()"
+></app-termo-aceite-modal>

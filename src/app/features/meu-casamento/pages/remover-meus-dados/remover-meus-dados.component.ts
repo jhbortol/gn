@@ -2,12 +2,12 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
-import { MeuCasamentoBottomNavComponent } from '../../components/meu-casamento-bottom-nav/meu-casamento-bottom-nav.component';
+
 
 @Component({
   selector: 'app-remover-meus-dados',
   standalone: true,
-  imports: [CommonModule, FormsModule, MeuCasamentoBottomNavComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './remover-meus-dados.component.html',
   styleUrl: './remover-meus-dados.component.css'
 })

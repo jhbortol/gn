@@ -141,12 +141,12 @@ export class BrideAuthService {
     );
   }
 
-  registerLgpdConsent(consentido: boolean, urlOrigem: string, termoHash?: string, termoVersao?: string): Observable<{ ProtocoloAceite: string, Status: string }> {
+  registerLgpdConsent(consentido: boolean, urlOrigem: string, termoHash?: string, termoVersao?: string): Observable<{ protocoloAceite: string, status: string }> {
     const payload: any = { consentido, urlOrigem };
     if (termoHash) payload.termoHash = termoHash;
     if (termoVersao) payload.termoVersao = termoVersao;
 
-    return this.http.post<{ ProtocoloAceite: string, Status: string }>(`${environment.API_BASE_URL}/noiva/consent`, payload).pipe(
+    return this.http.post<{ protocoloAceite: string, status: string }>(`${environment.API_BASE_URL}/noiva/consent`, payload).pipe(
       catchError(err => {
         console.error('[BrideAuth] Failed to register LGPD consent', err);
         return throwError(() => err);

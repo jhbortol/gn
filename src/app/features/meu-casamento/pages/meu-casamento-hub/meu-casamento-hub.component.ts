@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
 import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.service';
-import { MeuCasamentoBottomNavComponent } from '../../components/meu-casamento-bottom-nav/meu-casamento-bottom-nav.component';
+
 import { BrideAuthService } from '../../../../core/services/bride-auth.service';
 import { BrideLeadsHistoryComponent } from '../bride-leads-history/bride-leads-history.component';
 import { TermoAceiteModalComponent } from '../../../../shared/components/termo-aceite-modal/termo-aceite-modal.component';
@@ -14,7 +14,7 @@ import { TermoAdesao } from '../../../../core/models/bride-auth.model';
 @Component({
   selector: 'app-meu-casamento-hub',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, MeuCasamentoBottomNavComponent, BrideLeadsHistoryComponent, TermoAceiteModalComponent],
+  imports: [CommonModule, FormsModule, RouterModule, BrideLeadsHistoryComponent, TermoAceiteModalComponent],
   templateUrl: './meu-casamento-hub.component.html',
   styleUrl: './meu-casamento-hub.component.css'
 })
@@ -151,7 +151,7 @@ export class MeuCasamentoHubComponent implements OnInit {
         next: (response) => {
           this.isLgpdSaving.set(false);
           this.lgpdConsentido.set(isChecked);
-          this.successMessage.set('Preferência atualizada com sucesso! (Protocolo: ' + response.ProtocoloAceite + ')');
+          this.successMessage.set('Preferência atualizada com sucesso! (Protocolo: ' + response.protocoloAceite + ')');
           
           setTimeout(() => {
             this.successMessage.set('');

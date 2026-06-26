@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.service';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
 import { GuestItem } from '../../meu-casamento.models';
-import { MeuCasamentoBottomNavComponent } from '../../components/meu-casamento-bottom-nav/meu-casamento-bottom-nav.component';
+
 
 type GuestDraft = Pick<GuestItem, 'id' | 'name' | 'group' | 'status' | 'plusOnes'> & {
   phone: string;
@@ -14,7 +14,7 @@ type GuestDraft = Pick<GuestItem, 'id' | 'name' | 'group' | 'status' | 'plusOnes
 @Component({
   selector: 'app-meu-casamento-convidados',
   standalone: true,
-  imports: [CommonModule, FormsModule, MeuCasamentoBottomNavComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './meu-casamento-convidados.component.html',
   styleUrl: './meu-casamento-convidados.component.css'
 })

@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.service';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
 import { BudgetItem } from '../../meu-casamento.models';
-import { MeuCasamentoBottomNavComponent } from '../../components/meu-casamento-bottom-nav/meu-casamento-bottom-nav.component';
+
 import { CidadeService } from '../../../../core/cidade.service';
 
 interface BudgetDraft {
@@ -19,7 +19,7 @@ interface BudgetDraft {
 @Component({
   selector: 'app-meu-casamento-orcamento',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, MeuCasamentoBottomNavComponent],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './meu-casamento-orcamento.component.html',
   styleUrl: './meu-casamento-orcamento.component.css'
 })

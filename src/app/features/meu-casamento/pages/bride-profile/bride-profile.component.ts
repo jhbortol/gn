@@ -361,7 +361,7 @@ export class BrideProfileComponent implements OnInit {
         next: (response) => {
           this.isLgpdSaving.set(false);
           this.lgpdConsentido.set(isChecked);
-          this.successMessage.set('Preferência atualizada com sucesso! (Protocolo: ' + response.ProtocoloAceite + ')');
+          this.successMessage.set('Preferência atualizada com sucesso! (Protocolo: ' + response.protocoloAceite + ')');
           
           setTimeout(() => {
             this.successMessage.set('');

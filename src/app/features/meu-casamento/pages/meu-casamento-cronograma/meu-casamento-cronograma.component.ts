@@ -4,7 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.service';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
 import { ChecklistTaskDefinition, WEDDING_CHECKLIST_TASKS } from '../../meu-casamento.models';
-import { MeuCasamentoBottomNavComponent } from '../../components/meu-casamento-bottom-nav/meu-casamento-bottom-nav.component';
+
 import { CidadeService } from '../../../../core/cidade.service';
 
 interface CronogramaGroup {
@@ -29,7 +29,7 @@ const PT_MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set'
 @Component({
   selector: 'app-meu-casamento-cronograma',
   standalone: true,
-  imports: [CommonModule, RouterModule, MeuCasamentoBottomNavComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './meu-casamento-cronograma.component.html',
   styleUrl: './meu-casamento-cronograma.component.css'
 })

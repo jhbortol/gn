@@ -220,6 +220,13 @@ export class CategoriaDetalhePageComponent implements OnInit {
    * Abre o modal de captura de lead para não-Vitrine (formulário de contato)
    */
   openContactLeadModal(fornecedor: FornecedorListDto): void {
+    // Tracking do clique no botão de contato
+    this.tracking.trackContactClick('website', {
+      vendorId: fornecedor.id || '',
+      vendorName: fornecedor.nome || '',
+      vendorCategory: fornecedor.categoria?.nome || ''
+    });
+
     this.selectedFornecedorForModal.set(fornecedor);
     this.pendingWhatsAppUrl.set('');
     this.isVitrineModal.set(false);
@@ -243,12 +250,18 @@ export class CategoriaDetalhePageComponent implements OnInit {
     this.showContactModal.set(false);
     const url = this.pendingWhatsAppUrl();
     const fornecedor = this.selectedFornecedorForModal();
-    if (url && fornecedor) {
-      this.tracking.trackWhatsAppIntent('after_lead_form', {
-        vendorId: fornecedor.id || '',
-        vendorName: fornecedor.nome || '',
-        vendorCategory: fornecedor.categoria?.nome || ''
-      });
+    
+    if (fornecedor) {
+      // Registrar que o lead de contato foi enviado
+      this.tracking.trackFormSubmit('contact', { vendorId: fornecedor.id });
+      
+      if (url) {
+        this.tracking.trackWhatsAppIntent('after_lead_form', {
+          vendorId: fornecedor.id || '',
+          vendorName: fornecedor.nome || '',
+          vendorCategory: fornecedor.categoria?.nome || ''
+        });
+      }
     }
     if (url && typeof window !== 'undefined') {
       window.open(url, '_blank', 'noopener,noreferrer');

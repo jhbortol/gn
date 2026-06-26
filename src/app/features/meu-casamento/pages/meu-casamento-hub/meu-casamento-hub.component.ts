@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
 import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.service';
+import { TrackingService } from '../../../../core/tracking.service';
 
 import { BrideAuthService } from '../../../../core/services/bride-auth.service';
 import { BrideLeadsHistoryComponent } from '../bride-leads-history/bride-leads-history.component';
@@ -25,6 +26,7 @@ export class MeuCasamentoHubComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly brideAuthService = inject(BrideAuthService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly trackingService = inject(TrackingService);
 
   lgpdConsentido = signal(false);
   isLgpdSaving = signal(false);
@@ -96,6 +98,7 @@ export class MeuCasamentoHubComponent implements OnInit {
       return;
     }
 
+    this.trackingService.trackHubAction('navigate_module', { module: path });
     void this.router.navigateByUrl(path);
   }
 
@@ -151,6 +154,7 @@ export class MeuCasamentoHubComponent implements OnInit {
         next: (response) => {
           this.isLgpdSaving.set(false);
           this.lgpdConsentido.set(isChecked);
+          this.trackingService.trackHubAction('lgpd_consent_change', { consent: isChecked });
           this.successMessage.set('Preferência atualizada com sucesso! (Protocolo: ' + response.protocoloAceite + ')');
           
           setTimeout(() => {

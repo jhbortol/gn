@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrideAuthService } from '../../core/services/bride-auth.service';
+import { TrackingService } from '../../core/tracking.service';
 import { SocialAuthService, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
@@ -231,6 +232,7 @@ export class BrideLoginModalComponent implements OnInit {
 
   private authService = inject(BrideAuthService);
   private socialAuthService = inject(SocialAuthService);
+  private trackingService = inject(TrackingService);
 
   ngOnInit() {
     this.socialAuthService.authState.subscribe((user) => {
@@ -259,6 +261,7 @@ export class BrideLoginModalComponent implements OnInit {
     this.authService.loginWithGoogle(idToken).subscribe({
       next: () => {
         this.isLoading = false;
+        this.trackingService.trackBrideLogin('google');
         this.loginSuccess.emit();
         this.closeModal();
       },
@@ -280,6 +283,7 @@ export class BrideLoginModalComponent implements OnInit {
     this.authService.loginWithEmail({ email: this.loginEmail, senha: this.loginSenha }).subscribe({
       next: () => {
         this.isLoading = false;
+        this.trackingService.trackBrideLogin('email');
         this.loginSuccess.emit();
         this.closeModal();
       },
@@ -310,6 +314,7 @@ export class BrideLoginModalComponent implements OnInit {
     this.authService.registerWithEmail(payload).subscribe({
       next: () => {
         this.isLoading = false;
+        this.trackingService.trackBrideRegister('email');
         this.loginSuccess.emit();
         this.closeModal();
       },

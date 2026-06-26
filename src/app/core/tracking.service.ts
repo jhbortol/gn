@@ -496,6 +496,51 @@ export class TrackingService {
   }
 
   /**
+   * Rastreia login de noiva
+   */
+  trackBrideLogin(method: 'google' | 'email') {
+    if (typeof window !== 'undefined' && (window as any).dataLayer) {
+      (window as any).dataLayer.push({
+        event: 'login',
+        method: method
+      });
+    }
+    
+    if (this.hasMetaPixel()) {
+      this.trackMetaEvent('Login', { method });
+    }
+  }
+
+  /**
+   * Rastreia cadastro de noiva
+   */
+  trackBrideRegister(method: 'email' | 'google') {
+    if (typeof window !== 'undefined' && (window as any).dataLayer) {
+      (window as any).dataLayer.push({
+        event: 'sign_up',
+        method: method
+      });
+    }
+
+    if (this.hasMetaPixel()) {
+      this.trackMetaEvent('CompleteRegistration', { content_name: 'Bride Signup', method });
+    }
+  }
+
+  /**
+   * Rastreia ações no Hub Meu Casamento
+   */
+  trackHubAction(actionName: string, details?: any) {
+    if (typeof window !== 'undefined' && (window as any).dataLayer) {
+      (window as any).dataLayer.push({
+        event: 'hub_interaction',
+        action_name: actionName,
+        ...details
+      });
+    }
+  }
+
+  /**
    * Rastreia visualização de página (SPA pageview) para Google Analytics via GTM
    */
   trackPageView(pagePath: string, pageTitle?: string) {

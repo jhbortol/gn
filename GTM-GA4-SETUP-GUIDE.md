@@ -51,7 +51,7 @@ Por fim, vamos criar as tags que disparam os Acionadores e enviam as Variáveis 
 1. No menu lateral esquerdo, clique em **Tags**.
 2. Clique em **Nova**.
 3. Em **Configuração da Tag**, selecione **Google Analytics: Evento do GA4**.
-4. Em **ID da Medição**, insira o seu ID (ex: `G-XXXXXXXXXX`) ou selecione a sua Tag de Configuração.
+4. Em **ID da Medição**, insira o seu ID (ex: `G-XXXXXXXXXX`) ou selecione a sua Tag de Configuração. G-W5VV70FNKL
 5. Em **Nome do evento**, digite `login`.
 6. Expanda **Parâmetros do evento** e clique em **Adicionar linha**:
    - **Parâmetro:** `method`
@@ -63,7 +63,7 @@ Por fim, vamos criar as tags que disparam os Acionadores e enviam as Variáveis 
 ### Tag 2: Cadastro de Noiva
 1. Crie uma nova Tag.
 2. **Configuração da Tag:** Google Analytics: Evento do GA4.
-3. **ID da Medição:** Seu ID do GA4.
+3. **ID da Medição:** Seu ID do GA4. G-W5VV70FNKL
 4. **Nome do evento:** `sign_up`
 5. **Parâmetros do evento:**
    - Parâmetro: `method` | Valor: `{{dlv - method}}`
@@ -74,7 +74,7 @@ Por fim, vamos criar as tags que disparam os Acionadores e enviam as Variáveis 
 ### Tag 3: Interações no Hub (Meu Casamento)
 1. Crie uma nova Tag.
 2. **Configuração da Tag:** Google Analytics: Evento do GA4.
-3. **ID da Medição:** Seu ID do GA4.
+3. **ID da Medição:** Seu ID do GA4. G-W5VV70FNKL
 4. **Nome do evento:** `hub_interaction`
 5. **Parâmetros do evento** (adicione 3 linhas):
    - Parâmetro: `action_name` | Valor: `{{dlv - action_name}}`

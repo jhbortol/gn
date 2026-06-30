@@ -5,6 +5,7 @@ import { IconComponent } from '../icon/icon';
 import { BrideAuthService } from '../../core/services/bride-auth.service';
 import { BrideLoginModalService } from '../../core/services/bride-login-modal.service';
 import { CidadeService } from '../../core/cidade.service';
+import { MeuCasamentoSyncService } from '../../features/meu-casamento/services/meu-casamento-sync.service';
 
 @Component({
   selector: 'app-bottom-nav',
@@ -18,6 +19,7 @@ export class BottomNavComponent {
   private loginModalService = inject(BrideLoginModalService);
   private cidadeService = inject(CidadeService);
   private router = inject(Router);
+  private syncService = inject(MeuCasamentoSyncService);
 
   isLoggedIn$ = this.authService.isLoggedIn$;
   isCollapsed = false;
@@ -33,6 +35,8 @@ export class BottomNavComponent {
       event.preventDefault();
       event.stopPropagation();
       this.loginModalService.open();
+    } else {
+      void this.syncService.syncPendingChanges();
     }
   }
 }

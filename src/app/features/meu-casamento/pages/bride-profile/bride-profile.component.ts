@@ -6,6 +6,7 @@ import { BrideAuthService } from '../../../../core/services/bride-auth.service';
 import { BrideProfile, TermoAdesao } from '../../../../core/models/bride-auth.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TermoAceiteModalComponent } from '../../../../shared/components/termo-aceite-modal/termo-aceite-modal.component';
+import { MeuCasamentoApiService } from '../../services/meu-casamento-api.service';
 
 @Component({
   selector: 'app-bride-profile',
@@ -188,6 +189,7 @@ export class BrideProfileComponent implements OnInit {
   private readonly brideAuthService = inject(BrideAuthService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly meuCasamentoApiService = inject(MeuCasamentoApiService);
 
   isLoading = signal(false);
   isSaving = signal(false);
@@ -212,6 +214,22 @@ export class BrideProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProfile();
+    this.loadWeddingProfileConsent();
+  }
+
+  private loadWeddingProfileConsent(): void {
+    this.meuCasamentoApiService.getWeddingProfile()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (profile) => {
+          if (profile && typeof profile.vipConsent === 'boolean') {
+            this.lgpdConsentido.set(profile.vipConsent);
+          }
+        },
+        error: (err) => {
+          console.warn('Failed to load wedding profile consent', err);
+        }
+      });
   }
 
   private loadProfile(): void {

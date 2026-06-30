@@ -8,6 +8,7 @@ export interface WeddingProfile {
   estimatedGuests: number | null;
   weddingStyle: string | null;
   updatedAt?: string | null;
+  vipConsent?: boolean;
 }
 
 export interface CompletedTask {

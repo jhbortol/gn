@@ -170,6 +170,30 @@ export class MeuCasamentoSyncService {
     }
   }
 
+  async syncFeatureFromServer(path: string): Promise<void> {
+    if (!navigator.onLine) return;
+    try {
+      if (path.includes('cronograma')) {
+        const checklist = await this.withRetry('checklist-refresh', () => firstValueFrom(this.api.getChecklist()));
+        this.store.hydrateRemoteChecklist(checklist);
+      } else if (path.includes('orcamento')) {
+        const budget = await this.withRetry('budget-refresh', () => firstValueFrom(this.api.getBudget()));
+        this.store.markBudgetSynced(budget);
+      } else if (path.includes('convidados')) {
+        const guests = await this.withRetry('guests-refresh', () => firstValueFrom(this.api.getGuests()));
+        this.store.markGuestsSynced(guests);
+      } else if (path.includes('favoritos')) {
+        const favorites = await this.withRetry('favorites-refresh', () => firstValueFrom(this.api.getFavorites()));
+        this.store.markFavoritesSynced(favorites);
+      } else if (path.endsWith('/meu-casamento')) {
+        const profile = await this.withRetry('profile-refresh', () => firstValueFrom(this.api.getWeddingProfile()));
+        this.store.hydrateRemoteProfile(profile);
+      }
+    } catch (e) {
+      this.observability.logSyncFailure('feature-refresh', e);
+    }
+  }
+
 
   private async processPendingDeleteIntent(): Promise<void> {
     const intent = this.store.getPendingDeleteIntent();

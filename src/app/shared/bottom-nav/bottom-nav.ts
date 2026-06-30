@@ -36,10 +36,10 @@ export class BottomNavComponent {
       event.stopPropagation();
       this.loginModalService.open();
     } else {
-      console.log(`[BottomNav] Navegando para ${path} - Iniciando sincronização completa (push + pull)...`);
+      console.log(`[BottomNav] Navegando para ${path} - Iniciando sincronização da funcionalidade (push + pull local)...`);
       void (async () => {
         await this.syncService.syncPendingChanges();
-        await this.syncService.forceSyncFromServer();
+        await this.syncService.syncFeatureFromServer(path);
       })();
     }
   }

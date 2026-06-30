@@ -37,7 +37,6 @@ export class AuthTokenService {
 
   private restoreToken(): void {
     if (!this.canUseSessionStorage()) {
-      console.warn('[AUTH] sessionStorage not available; skipping token restore');
       return;
     }
 
@@ -92,7 +91,6 @@ export class AuthTokenService {
 
   private storeToken(token: string, expiresIn?: number): void {
     if (!this.canUseSessionStorage()) {
-      console.warn('[AUTH] sessionStorage not available; skipping token store');
       return;
     }
 

@@ -18,9 +18,18 @@ const redirectsMap = new Map([
 const urlsetOpenMatch = xml.match(/<urlset[^>]*>/i);
 const urlsetCloseMatch = xml.match(/<\/urlset>/i);
 
-if (!urlsetOpenMatch || !urlsetCloseMatch) {
+const isSelfClosing = urlsetOpenMatch && urlsetOpenMatch[0].trim().endsWith('/>');
+
+if (!urlsetOpenMatch || (!urlsetCloseMatch && !isSelfClosing)) {
   console.error('❌ Invalid sitemap.xml format: missing <urlset> root');
   process.exit(1);
+}
+
+let openTag = urlsetOpenMatch[0];
+let closeTag = urlsetCloseMatch ? urlsetCloseMatch[0] : '</urlset>';
+
+if (isSelfClosing) {
+  openTag = openTag.replace(/\/\s*>$/, '>');
 }
 
 const urlBlocks = xml.match(/<url>[\s\S]*?<\/url>/gi) || [];
@@ -56,7 +65,8 @@ for (const block of urlBlocks) {
   normalizedBlocks.push(updatedBlock);
 }
 
-const normalizedXml = `${urlsetOpenMatch[0]}\n${normalizedBlocks.join('\n')}\n${urlsetCloseMatch[0]}\n`;
+const normalizedBlocksJoined = normalizedBlocks.length > 0 ? `${normalizedBlocks.join('\n')}\n` : '';
+const normalizedXml = `${openTag}\n${normalizedBlocksJoined}${closeTag}\n`;
 
 fs.writeFileSync(filePath, normalizedXml, 'utf8');
 

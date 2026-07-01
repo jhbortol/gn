@@ -8,5 +8,6 @@ export const environment = {
   // Version will be injected at build time by inject-version.js
   APP_VERSION: (typeof window !== 'undefined' && (window as any).__BUILD_VERSION__) || 'unknown',
   ENABLE_VERSION_CHECK: true,
-  VERSION_CHECK_INTERVAL_MS: 5 * 60 * 1000 // 5 minutes
+  VERSION_CHECK_INTERVAL_MS: 5 * 60 * 1000, // 5 minutes
+  GOOGLE_CLIENT_ID: '814099948560-4v7i0v35d67tqfvjgvla56b0e7sm8jcq.apps.googleusercontent.com', // TODO: preencher com o client ID real
 };

@@ -1,14 +1,14 @@
 <section class="container mx-auto px-4 py-8">
   <!-- Breadcrumb -->
   <div class="mb-4">
-    <a [routerLink]="buildUrl('/')"
+    <a [routerLink]="buildUrl('/')" (click)="goBack($event)"
       class="text-sm text-gray-600 hover:text-rose-600 transition-colors flex items-center"
-      aria-label="Voltar para página inicial">
+      aria-label="Voltar">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24"
         stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
-      Voltar para Home
+      Voltar
     </a>
   </div>
 
@@ -50,6 +50,26 @@
           [ngSrc]="resolveImage(fornecedor.primaryImage?.url || fornecedor.imagens?.[0]?.url, 'assets/fornecedores/placeholder.jpg')"
           loading="lazy" decoding="async" width="300" height="220" [alt]="fornecedor.nome"
           class="w-full h-full object-cover" />
+        <!-- Heart Favorite Icon Button -->
+        <button
+          type="button"
+          (click)="toggleFavorite($event, fornecedor)"
+          class="absolute top-2 right-2 z-20 p-2 rounded-full bg-white/85 hover:bg-white backdrop-blur-sm shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-110 active:scale-95 flex items-center justify-center border border-gray-100"
+          [attr.aria-label]="isFavorite(fornecedor.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            [class.text-rose-500]="isFavorite(fornecedor.id)"
+            [class.text-gray-400]="!isFavorite(fornecedor.id)"
+            [attr.fill]="isFavorite(fornecedor.id) ? 'currentColor' : 'none'"
+            class="w-4 h-4 transition-colors duration-300"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </button>
         <!-- Vitrine Badge (planLevel === 1) -->
         <span *ngIf="fornecedor.planLevel === 1"
           class="absolute top-2 left-2 text-[10px] bg-amber-500 text-white px-2 py-1 rounded font-bold shadow-sm uppercase flex items-center gap-1 z-20">

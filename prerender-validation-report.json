@@ -1,10 +1,13 @@
 {
-  "timestamp": "2026-05-31T00:01:15.086Z",
-  "coverage": 100,
-  "expectedRoutes": 120,
-  "presentRoutes": 120,
-  "missingRoutes": 0,
-  "missing": [],
+  "timestamp": "2026-06-24T16:39:52.945Z",
+  "coverage": 98.30508474576271,
+  "expectedRoutes": 118,
+  "presentRoutes": 116,
+  "missingRoutes": 2,
+  "missing": [
+    "/piracicaba/blog/como-escolher-espaco-casamento",
+    "/piracicaba/categorias/celebrante"
+  ],
   "validations": {
     "sitemap": false,
     "robots": true,

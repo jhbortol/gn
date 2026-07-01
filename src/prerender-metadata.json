@@ -90,6 +90,13 @@
     "canonical": "https://guianoivas.com/piracicaba/midia-kit",
     "robots": "noindex, follow"
   },
+  "/piracicaba/blog/muito-alem-do-papel-o-convite-que-encanta-antes-do-sim": {
+    "title": "Muito Além do Papel: O Convite que Encanta Antes do \"Sim\" - Guia Noivas Piracicaba",
+    "description": "",
+    "image": null,
+    "canonical": "https://guianoivas.com/piracicaba/blog/muito-alem-do-papel-o-convite-que-encanta-antes-do-sim",
+    "robots": "index, follow"
+  },
   "/piracicaba/blog/como-escolher-espaco-casamento": {
     "title": "Como Escolher o Espaço Ideal para Casamento em Piracicaba - Guia Noivas Piracicaba",
     "description": "",
@@ -160,15 +167,15 @@
     "canonical": "https://guianoivas.com/piracicaba/blog/musica-cerimonia-dicas",
     "robots": "index, follow"
   },
-  "/piracicaba/fornecedores/floricultura-cravo-e-canela": {
-    "title": "Floricultura Cravo e Canela - Decoração em Piracicaba | Guia Noivas",
-    "description": "Meu nome é Diego Araújo, sou decorador de eventos com mais de duas décadas de dedicação e amor pelo que faço. Ao longo dos anos, tive o privilégio de trans",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/11/7a7bb58b839b4b5ab345de77f2922bf4_1.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/floricultura-cravo-e-canela",
+  "/piracicaba/fornecedores/lilian-campos": {
+    "title": "Lilian Campos MakeUp - Maquiagem em Piracicaba | Guia Noivas",
+    "description": "Apaixonada pelo universo feminino, pelo mundo da beleza, por maquiagem e estética e pelo empoderamento que traz a nós mulheres. Renunciei o funcionalismo p",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/11/32ebcca203754a16b0f5b9bb3be17be7_1.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/lilian-campos",
     "robots": "index, follow",
-    "category": "Decoração",
+    "category": "Maquiagem",
     "city": "Piracicaba",
-    "keywords": "Floricultura Cravo e Canela, Decoração, Piracicaba, casamento, fornecedor"
+    "keywords": "Lilian Campos MakeUp, Maquiagem, Piracicaba, casamento, fornecedor"
   },
   "/piracicaba/fornecedores/atelier-karina": {
     "title": "Atelier Karina - Imagens Sacras em Piracicaba | Guia Noivas",
@@ -200,15 +207,15 @@
     "city": "Piracicaba-SP",
     "keywords": "Du Caricaturas , Entretenimento, Piracicaba-SP, casamento, fornecedor"
   },
-  "/piracicaba/fornecedores/mari-custorio-spa-pes": {
-    "title": "Mari Custodio - SPA dos pés - Experiências em Itatiba | Guia Noivas",
-    "description": "Aqui está o texto extraído da imagem:\nA Mari Custódio oferece experiências de bem-estar inesquecíveis com o Spa dos Pés para noivas e convidados — um momen",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/a7c73f0ee7c343e9bbb1df64f229ff1d_1.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/mari-custorio-spa-pes",
+  "/piracicaba/fornecedores/soraiamartins-cerimonialista": {
+    "title": "Soraia Martins  Cerimonialista - Cerimonial em Piracicaba | Guia Noivas",
+    "description": "Tem profissionais que trabalham com planilhas, e tem profissionais que trabalham com o coração. A Soraia Martins faz os dois com maestria. ❤️✨\nBasta olhar ",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/3789e866d76e4a3c96ae9be5df3634dc_5.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/soraiamartins-cerimonialista",
     "robots": "index, follow",
-    "category": "Experiências",
-    "city": "Itatiba",
-    "keywords": "Mari Custodio - SPA dos pés, Experiências, Itatiba, casamento, fornecedor"
+    "category": "Cerimonial",
+    "city": "Piracicaba",
+    "keywords": "Soraia Martins  Cerimonialista, Cerimonial, Piracicaba, casamento, fornecedor"
   },
   "/piracicaba/fornecedores/atelie-deby-mya": {
     "title": "Ateliê Deby & Myá - Dia da Noiva em Piracicaba | Guia Noivas",
@@ -230,25 +237,45 @@
     "city": "Piracicaba",
     "keywords": "Spazio Sognare, Espaços, Piracicaba, casamento, fornecedor"
   },
-  "/piracicaba/fornecedores/mundo-a-bordo-br": {
-    "title": "Mundo a Bordo Br - Lua de Mel em Piracicaba | Guia Noivas",
-    "description": "Mais do que emitir passagens, a Mundo a Bordo é especialista em desenhar a recompensa que vocês merecem após meses de planejamento. Seja num café da manhã ",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/0143387d895e4fb39db8677a459a75bd_1.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/mundo-a-bordo-br",
+  "/piracicaba/fornecedores/es-producoes-e-eventos": {
+    "title": "ES PRODUCOES E EVENTOS - Produção e Organização em Piracicaba | Guia Noivas",
+    "description": "Na ES Produções e Eventos, acreditamos que cada celebração é única e deve ser lembrada para sempre. Transformamos sonhos em experiências reais, cuidando de",
+    "image": "https://stguianoivasprod.blob.core.windows.net/media/fornecedores/01f73861-39a3-4cc4-8865-9d66e80df1a4/8f32c138b5434e87beed37c4575e5311.webp",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/es-producoes-e-eventos",
     "robots": "index, follow",
-    "category": "Lua de Mel",
+    "category": "Produção e Organização",
     "city": "Piracicaba",
-    "keywords": "Mundo a Bordo Br, Lua de Mel, Piracicaba, casamento, fornecedor"
+    "keywords": "ES PRODUCOES E EVENTOS, Produção e Organização, Piracicaba, casamento, fornecedor"
   },
-  "/piracicaba/fornecedores/verascar-limousines": {
-    "title": "Verascar Limousines - Veiculos em Piracicaba | Guia Noivas",
-    "description": "Especialistas em transformar o trajeto em experiência, a Vera's Car oferece o icônico Chrysler 300C — sinônimo mundial de elegância. Com interior climatiza",
-    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/2c49489facb8448998c2cf6415910f74_2.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/verascar-limousines",
+  "/piracicaba/fornecedores/angela-oliveira-assessoria-e-cerimonial": {
+    "title": "Angela Oliveira Assessoria e Cerimonial - Cerimonial em Piracicaba | Guia Noivas",
+    "description": "Bem-vindo ao Angela Oliveira Cerimonial!\nSou a Angela, atuo como especialista em organização e coordenação de eventos a 14 anos. Minha trajetória nesse uni",
+    "image": "https://gnmedias.blob.core.windows.net/media/media/2025/12/a6763fabada54e03ac427bb0df5a4023_1.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/angela-oliveira-assessoria-e-cerimonial",
     "robots": "index, follow",
-    "category": "Veiculos",
+    "category": "Cerimonial",
     "city": "Piracicaba",
-    "keywords": "Verascar Limousines, Veiculos, Piracicaba, casamento, fornecedor"
+    "keywords": "Angela Oliveira Assessoria e Cerimonial, Cerimonial, Piracicaba, casamento, fornecedor"
+  },
+  "/piracicaba/fornecedores/adriana-vitti-cerimonialista": {
+    "title": "Adriana Vitti Cerimonialista - Cerimonial em Piracicaba | Guia Noivas",
+    "description": "Com mais de 18 anos de atuação no mercado de casamentos, Adriana Vitti é sinônimo de excelência em cerimonial e assessoria, reconhecida por conduzir celebr",
+    "image": "https://gnmedias.blob.core.windows.net/media/fornecedores/f16c4451-9bfb-47b5-945a-00816d470428/8a005a560d7e42c38e81ee3f5619c1b4.jpg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/adriana-vitti-cerimonialista",
+    "robots": "index, follow",
+    "category": "Cerimonial",
+    "city": "Piracicaba",
+    "keywords": "Adriana Vitti Cerimonialista, Cerimonial, Piracicaba, casamento, fornecedor"
+  },
+  "/piracicaba/fornecedores/giravideo360": {
+    "title": "Giravideo Entretenimento  - Cabines & Totens em Piracicaba | Guia Noivas",
+    "description": "Se você busca entretenimento de qualidade e que vai impactar seus convidados, aqui é a melhor escolha.\nEmpresa séria com lindos equipamentos de alta tecnol",
+    "image": "https://gnmedias.blob.core.windows.net/media/fornecedores/8b0a2ca4-871a-4439-96d9-1a1791efb7ef/87a6402a22c546d09b97d10804f86180.jpeg",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/giravideo360",
+    "robots": "index, follow",
+    "category": "Cabines & Totens",
+    "city": "Piracicaba",
+    "keywords": "Giravideo Entretenimento , Cabines & Totens, Piracicaba, casamento, fornecedor"
   },
   "/piracicaba/fornecedores/marcia-delabio-buffet": {
     "title": "Marcia Delabio Buffet - Buffet em Piracicaba | Guia Noivas",
@@ -406,9 +433,9 @@
     "image": "https://stguianoivasprod.blob.core.windows.net/media/fornecedores/a8708799-77a5-4c67-9431-a140e826d483/3c230a864bbb4bf484f353b4a0ce8720.webp",
     "canonical": "https://guianoivas.com/piracicaba/fornecedores/lilas-convites-co",
     "robots": "index, follow",
-    "category": "Convites e Papelaria",
+    "category": "Maquiagem",
     "city": "Piracicaba",
-    "keywords": "Lilas Convites & Co. , Convites e Papelaria, Piracicaba, casamento, fornecedor"
+    "keywords": "Studio Diana Danelon, Maquiagem, Piracicaba, casamento, fornecedor"
   },
   "/piracicaba/fornecedores/lilian-campos": {
     "title": "Lilian Campos MakeUp - Maquiagem em Piracicaba | Guia Noivas",
@@ -476,7 +503,7 @@
     "image": "https://gnmedias.blob.core.windows.net/media/media/2025/11/2496e5c7b00c47a0bf76c4709bf3f77e_1.jpeg",
     "canonical": "https://guianoivas.com/piracicaba/fornecedores/toccare-musica-para-eventos",
     "robots": "index, follow",
-    "category": "Música",
+    "category": "Doces Finos",
     "city": "Piracicaba",
     "keywords": "Toccare Música para Eventos, Música, Piracicaba, casamento, fornecedor"
   },
@@ -530,15 +557,15 @@
     "city": "Piracicaba",
     "keywords": "Bordado Zen, Alianças e Acessórios, Piracicaba, casamento, fornecedor"
   },
-  "/piracicaba/fornecedores/adriana-vitti-cerimonialista": {
-    "title": "Adriana Vitti Cerimonialista - Cerimonial em Piracicaba | Guia Noivas",
-    "description": "Com mais de 18 anos de atuação no mercado de casamentos, Adriana Vitti é sinônimo de excelência em cerimonial e assessoria, reconhecida por conduzir celebr",
-    "image": "https://gnmedias.blob.core.windows.net/media/fornecedores/f16c4451-9bfb-47b5-945a-00816d470428/8a005a560d7e42c38e81ee3f5619c1b4.jpg",
-    "canonical": "https://guianoivas.com/piracicaba/fornecedores/adriana-vitti-cerimonialista",
+  "/piracicaba/fornecedores/lr-cerimonial": {
+    "title": "LR Cerimonial | Eventos intimistas - Cerimonial em Piracicaba | Guia Noivas",
+    "description": "Especializada em eventos intimistas de até 80 convidados, atuo com cerimonial e assessoria para mini weddings, recepções, workshops, aniversários e suporte",
+    "image": "https://stguianoivasprod.blob.core.windows.net/media/fornecedores/2d58e44f-ea36-4289-88ad-ef485ffb453e/b5db0f6d8c6741b88bc535ea0181e99a.webp",
+    "canonical": "https://guianoivas.com/piracicaba/fornecedores/lr-cerimonial",
     "robots": "index, follow",
     "category": "Cerimonial",
     "city": "Piracicaba",
-    "keywords": "Adriana Vitti Cerimonialista, Cerimonial, Piracicaba, casamento, fornecedor"
+    "keywords": "LR Cerimonial | Eventos intimistas, Cerimonial, Piracicaba, casamento, fornecedor"
   },
   "/piracicaba/fornecedores/es-producoes-e-eventos": {
     "title": "ES PRODUCOES E EVENTOS - Produção e Organização em Piracicaba | Guia Noivas",
@@ -881,8 +908,8 @@
     "keywords": "Floricultura Sempre Victoria, Decoração, Piracicaba, casamento, fornecedor"
   },
   "/piracicaba/fornecedores/sabriane-oliveira-decoracoes": {
-    "title": "Sabriane Oliveira Decorações  - Decoração em Piracicaba  | Guia Noivas",
-    "description": "Conheça Sabriane Oliveira Decorações , especialista em Decoração em Piracicaba . Entre em contato e solicite um orçamento.",
+    "title": "Sabriane Oliveira Decorações  - Decoração em Piracicaba | Guia Noivas",
+    "description": "Conheça Sabriane Oliveira Decorações , especialista em Decoração em Piracicaba. Entre em contato e solicite um orçamento.",
     "image": "https://stguianoivasprod.blob.core.windows.net/media/fornecedores/fc787964-961f-4a6c-825f-3c4ad6bab052/66d0ebcfe340458798e7fbcf18212986.webp",
     "canonical": "https://guianoivas.com/piracicaba/fornecedores/sabriane-oliveira-decoracoes",
     "robots": "index, follow",

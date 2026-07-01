@@ -5,13 +5,32 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 min-h-[450px]">
         <div *ngFor="let destaque of destaques; trackBy: trackById" 
              class="bg-white rounded-2xl shadow-md hover:shadow-2xl border border-gray-100 flex flex-col transition-all duration-300 hover:-translate-y-2 overflow-hidden group h-full">
-          <div class="h-48 overflow-hidden" style="aspect-ratio:300/220;">
-              <img [src]="destaque.imagem" loading="lazy" decoding="async" width="300" height="220"
-                [alt]="destaque.nome" 
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                (load)="onImgLoad($event, destaque)"
-                (error)="onImgError($event, destaque)" />
-          </div>
+           <div class="relative h-48 overflow-hidden" style="aspect-ratio:300/220;">
+               <img [src]="destaque.imagem" loading="lazy" decoding="async" width="300" height="220"
+                 [alt]="destaque.nome" 
+                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                 (load)="onImgLoad($event, destaque)"
+                 (error)="onImgError($event, destaque)" />
+               <button
+                 type="button"
+                 (click)="toggleFavorite($event, destaque)"
+                 class="absolute top-2 right-2 z-20 p-2 rounded-full bg-white/85 hover:bg-white backdrop-blur-sm shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-110 active:scale-95 flex items-center justify-center border border-gray-100"
+                 [attr.aria-label]="isFavorite(destaque.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
+               >
+                 <svg
+                   xmlns="http://www.w3.org/2000/svg"
+                   [class.text-rose-500]="isFavorite(destaque.id)"
+                   [class.text-gray-400]="!isFavorite(destaque.id)"
+                   [attr.fill]="isFavorite(destaque.id) ? 'currentColor' : 'none'"
+                   class="w-4 h-4 transition-colors duration-300"
+                   viewBox="0 0 24 24"
+                   stroke="currentColor"
+                   stroke-width="2"
+                 >
+                   <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                 </svg>
+               </button>
+           </div>
           <div class="p-5 flex flex-col flex-1">
             <span class="bg-rose-500 text-white font-bold text-xs px-3 py-1 rounded-full w-fit mb-3">{{ destaque.categoria }}</span>
             <h3 class="font-serif font-bold text-xl text-gray-900 mb-2">{{ destaque.nome }}</h3>
@@ -32,12 +51,12 @@
         </div>
       </div>
       </ng-container>
+      <ng-template #empty>
+        <div class="text-center py-12 text-gray-400">
+          <p class="text-lg">Nenhum destaque disponível no momento.</p>
+        </div>
+      </ng-template>
     </ng-container>
-    <ng-template #empty>
-      <div class="text-center py-12 text-gray-400">
-        <p class="text-lg">Nenhum destaque disponível no momento.</p>
-      </div>
-    </ng-template>
     <ng-template #loading>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 min-h-[450px]">
         <div *ngFor="let i of [1,2,3,4]" class="bg-white rounded-2xl border border-gray-100 p-5 animate-pulse h-full flex flex-col">

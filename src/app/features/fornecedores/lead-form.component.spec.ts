@@ -67,15 +67,15 @@ describe('LeadFormComponent', () => {
             control?.setValue('(11)99999-9999');
             expect(control?.valid).toBeTrue();
 
-            control?.setValue('999999999');
+            control?.setValue('11999999999');
             expect(control?.valid).toBeTrue();
         });
 
-        it('should NOT have email, message, eventDate or lgpd fields', () => {
-            expect(component.form.get('clienteEmail')).toBeNull();
-            expect(component.form.get('message')).toBeNull();
-            expect(component.form.get('eventDate')).toBeNull();
-            expect(component.form.get('lgpdConsent')).toBeNull();
+        it('should have email, message, eventDate and lgpd fields when NOT in compact mode', () => {
+            expect(component.form.get('clienteEmail')).not.toBeNull();
+            expect(component.form.get('message')).not.toBeNull();
+            expect(component.form.get('eventDate')).not.toBeNull();
+            expect(component.form.get('lgpdConsent')).not.toBeNull();
         });
     });
 
@@ -84,7 +84,9 @@ describe('LeadFormComponent', () => {
             // Fill form with valid data
             component.form.patchValue({
                 clienteName: 'Maria Silva',
-                clientePhone: '(11) 99999-8888'
+                clientePhone: '(11) 99999-8888',
+                clienteEmail: 'maria@example.com',
+                lgpdConsent: true
             });
         });
 
@@ -137,9 +139,17 @@ describe('LeadFormComponent', () => {
         it('should be valid with only name and phone in compact mode', () => {
             compactComponent.form.patchValue({
                 clienteName: 'Maria Silva',
+                compact: true,
                 clientePhone: '(11) 99999-8888'
             });
             expect(compactComponent.form.valid).toBeTrue();
+        });
+
+        it('should NOT have email, message, eventDate or lgpd fields in compact mode', () => {
+            expect(compactComponent.form.get('clienteEmail')).toBeNull();
+            expect(compactComponent.form.get('message')).toBeNull();
+            expect(compactComponent.form.get('eventDate')).toBeNull();
+            expect(compactComponent.form.get('lgpdConsent')).toBeNull();
         });
 
         it('should use WhatsApp-specific CTA text in compact mode', () => {

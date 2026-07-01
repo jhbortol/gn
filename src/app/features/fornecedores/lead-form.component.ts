@@ -1,7 +1,10 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, signal, inject, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { LeadService } from '../../core/services/lead.service';
+import { CidadeService } from '../../core/cidade.service';
+import { BrideAuthService } from '../../core/services/bride-auth.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-lead-form',
@@ -49,6 +52,60 @@ import { LeadService } from '../../core/services/lead.service';
           </p>
         </div>
 
+        <!-- Email -->
+        <div *ngIf="!compact">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Seu Email <span class="text-red-600">*</span></label>
+          <input
+            type="email"
+            formControlName="clienteEmail"
+            placeholder="Digite seu email principal"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+            [class.border-red-500]="isFieldInvalid('clienteEmail')"
+          />
+          <p *ngIf="isFieldInvalid('clienteEmail')" class="text-red-500 text-xs mt-1">
+            Email válido é obrigatório
+          </p>
+        </div>
+
+        <!-- Data do Casamento -->
+        <div *ngIf="!compact">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Data do Casamento</label>
+          <input
+            type="date"
+            formControlName="eventDate"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+          />
+          <p class="text-xs text-gray-500 mt-1">Opcional</p>
+        </div>
+
+        <!-- Mensagem -->
+        <div *ngIf="!compact">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Mensagem</label>
+          <textarea
+            formControlName="message"
+            placeholder="Escreva detalhes sobre o seu pedido de orçamento..."
+            rows="4"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all"
+          ></textarea>
+          <p class="text-xs text-gray-500 mt-1">Opcional</p>
+        </div>
+
+        <!-- Consentimento LGPD -->
+        <div *ngIf="!compact" class="flex items-start gap-2">
+          <input
+            type="checkbox"
+            id="lgpdConsent"
+            formControlName="lgpdConsent"
+            class="mt-1 h-4 w-4 rounded border-gray-300 text-rose-600 focus:ring-rose-500"
+          />
+          <label for="lgpdConsent" class="text-xs text-gray-600 select-none">
+            Autorizo o envio dos meus dados para o fornecedor receber e tratar de acordo com a política de privacidade. <span class="text-red-600">*</span>
+          </label>
+        </div>
+        <p *ngIf="!compact && isFieldInvalid('lgpdConsent')" class="text-red-500 text-xs mt-1">
+          Você precisa aceitar os termos de consentimento.
+        </p>
+
         <!-- Botão -->
         <button
           type="submit"
@@ -61,7 +118,7 @@ import { LeadService } from '../../core/services/lead.service';
         <!-- Disclaimer termos -->
         <p class="text-center" style="font-size:10px; color:#9ca3af;">
           Ao enviar, você concorda com os
-          <a href="/piracicaba/institucional/termos" class="underline hover:text-gray-600">Termos de Uso e Isenção de Responsabilidade</a>
+          <a [href]="termosUrl" class="underline hover:text-gray-600">Termos de Uso e Política de Privacidade</a>
           do Guia Noivas.
         </p>
 
@@ -85,7 +142,7 @@ import { LeadService } from '../../core/services/lead.service';
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LeadFormComponent {
+export class LeadFormComponent implements OnInit {
   @Input() fornecedorId!: string | number;
   /** When true, adjusts CTA text for the WhatsApp modal flow. */
   @Input() compact = false;
@@ -97,15 +154,58 @@ export class LeadFormComponent {
     clientePhone: new FormControl('', [
       Validators.required,
       Validators.minLength(10),
-      Validators.pattern(/^(\(\d{2}\)\s?)?\d{4,5}-?\d{4}$/)
+      Validators.pattern(/^(\(?\d{2}\)?\s?)?\d{4,5}-?\d{4}$/)
     ])
-  });
+  } as any);
 
   isSubmitting = signal(false);
   successMessage = signal('');
   errorMessage = signal('');
+  private cidadeService = inject(CidadeService);
+  private leadService = inject(LeadService);
+  private brideAuthService = inject(BrideAuthService);
+  private destroyRef = inject(DestroyRef);
 
-  constructor(private leadService: LeadService) { }
+  constructor() { }
+
+  ngOnInit(): void {
+    if (!this.compact) {
+      this.form.addControl('clienteEmail', new FormControl('', [Validators.required, Validators.email]));
+      this.form.addControl('eventDate', new FormControl(''));
+      this.form.addControl('message', new FormControl(''));
+      this.form.addControl('lgpdConsent', new FormControl(false, [Validators.requiredTrue]));
+    }
+
+    // Pre-populate form if bride is logged in
+    this.brideAuthService.getBrideProfile()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(profile => {
+        if (profile) {
+          // Pre-fill name
+          if (profile.nome) {
+            this.form.get('clienteName')?.setValue(profile.nome, { emitEvent: false });
+          }
+          // Pre-fill phone
+          if (profile.telefone) {
+            const formattedPhone = this.formatPhoneValue(profile.telefone);
+            this.form.get('clientePhone')?.setValue(formattedPhone, { emitEvent: false });
+          }
+          // Pre-fill email
+          if (profile.email) {
+            this.form.get('clienteEmail')?.setValue(profile.email, { emitEvent: false });
+          }
+          // Pre-fill eventDate
+          if (profile.dataCasamento) {
+            const dateOnly = profile.dataCasamento.split('T')[0];
+            this.form.get('eventDate')?.setValue(dateOnly, { emitEvent: false });
+          }
+        }
+      });
+  }
+
+  get termosUrl(): string {
+    return this.cidadeService.buildUrl('institucional/termos');
+  }
 
   isFieldInvalid(fieldName: string): boolean {
     const field = this.form.get(fieldName);

@@ -1,15 +1,18 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, signal, inject, Inject, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Meta, Title, DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FornecedoresData, Fornecedor } from './services/fornecedores-data';
 import { TrackingService } from '../../core/tracking.service';
 import { MetaTagService } from '../../core/meta-tag.service';
+import { CidadeService } from '../../core/cidade.service';
 import { Observable, firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { LeadFormComponent } from './lead-form.component';
 import { CompetitorAdsComponent } from './competitor-ads.component';
 import { PlanLevel } from '../../core/models/tier-system.model';
+import { MeuCasamentoStoreService } from '../meu-casamento/services/meu-casamento-store.service';
+import { MeuCasamentoSyncService } from '../meu-casamento/services/meu-casamento-sync.service';
 
 @Component({
   selector: 'app-fornecedor-page',
@@ -49,6 +52,16 @@ export class FornecedorPageComponent implements OnInit {
     return this.fornecedor?.id || '';
   }
 
+  private cidadeService = inject(CidadeService);
+  private weddingStore = inject(MeuCasamentoStoreService);
+  private weddingSync = inject(MeuCasamentoSyncService);
+  private location = inject(Location);
+
+  goBack(event: Event): void {
+    event.preventDefault();
+    this.location.back();
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -63,6 +76,7 @@ export class FornecedorPageComponent implements OnInit {
   ) { }
 
   async ngOnInit(): Promise<void> {
+    await this.weddingSync.init();
     const identifier = this.route.snapshot.params['id']; // pode ser GUID ou slug
     this.isPreviewMode = this.route.snapshot.queryParams['preview'] === 'true';
 
@@ -107,7 +121,7 @@ export class FornecedorPageComponent implements OnInit {
         });
       }
     } catch (err) {
-      console.error('Error loading fornecedor:', err);
+      console.warn('Error loading fornecedor:', err);
       this.setNotFoundState();
     } finally {
       this.isLoading = false;
@@ -360,17 +374,28 @@ export class FornecedorPageComponent implements OnInit {
    * Atualiza meta tags dinâmicas para SEO
    */
   private updateSeoMetaTags(fornecedor: Fornecedor): void {
-    const currentUrl = `https://guianoivas.com${this.router.url.split('?')[0]}`;
+    const cidade = this.cidadeService.getCidade();
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+    const cidadeFornecedor = fornecedor.cidadePrincipal?.nome || fornecedor.cidade || nomeFormatado;
+
+    // Canonical aponta para a cidade principal do fornecedor (evita conteúdo duplicado
+    // quando o mesmo perfil é acessado via uma cidade secundária).
+    const canonicalCidade = fornecedor.cidadePrincipal?.slug || cidade;
+    const currentPath = this.router.url.split('?')[0];
+    // Replace the city segment in the path with the canonical city
+    const canonicalPath = currentPath.replace(/^\/[^/]+\//, `/${canonicalCidade}/`);
+    const canonicalUrl = `https://guianoivas.com${canonicalPath}`;
+    this.metaTagService.setCanonical(canonicalUrl);
 
     // Título da página: "Nome - Categoria em Cidade"
-    const pageTitle = `${fornecedor.nome} - ${fornecedor.categoria || 'Fornecedor'} em ${fornecedor.cidade || 'Piracicaba'}`;
+    const pageTitle = `${fornecedor.nome} - ${fornecedor.categoria || 'Fornecedor'} em ${cidadeFornecedor}`;
     this.title.setTitle(pageTitle);
 
     // Meta description: primeiros 155 caracteres da bio/descrição (distinto do H1)
     const rawDescription = fornecedor.descricao?.trim();
     const description = rawDescription
       ? rawDescription.substring(0, 155)
-      : `Veja o perfil de ${fornecedor.nome}, ${fornecedor.categoria || 'fornecedor'} para casamentos em ${fornecedor.cidade || 'Piracicaba'}. Orçamentos e contato no Guia Noivas.`;
+      : `Veja o perfil de ${fornecedor.nome}, ${fornecedor.categoria || 'fornecedor'} para casamentos em ${cidadeFornecedor}. Orçamentos e contato no Guia Noivas.`;
     this.meta.updateTag({ name: 'description', content: description });
 
     // Open Graph image para compartilhamento social
@@ -384,13 +409,12 @@ export class FornecedorPageComponent implements OnInit {
     this.meta.updateTag({ property: 'og:title', content: pageTitle });
     this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:type', content: 'business.business' });
-    this.meta.updateTag({ property: 'og:url', content: currentUrl });
-    this.meta.updateTag({ property: 'og:site_name', content: 'Guia Noivas Piracicaba' });
+    this.meta.updateTag({ property: 'og:site_name', content: `Guia Noivas ${nomeFormatado}` });
     this.meta.updateTag({ property: 'og:locale', content: 'pt_BR' });
 
     // Twitter Card
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
-    this.meta.updateTag({ name: 'twitter:site', content: '@guianoivaspiracicaba' });
+    this.meta.updateTag({ name: 'twitter:site', content: `@guianoivas${cidade.replace(/-/g, '')}` });
     this.meta.updateTag({ name: 'twitter:title', content: pageTitle });
     this.meta.updateTag({ name: 'twitter:description', content: description });
     if (ogImage) {
@@ -399,10 +423,12 @@ export class FornecedorPageComponent implements OnInit {
   }
 
   private updateNotFoundMetaTags(): void {
-    const pageTitle = 'Fornecedor não encontrado - Guia Noivas Piracicaba';
+    const cidade = this.cidadeService.getCidade();
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+    const pageTitle = `Fornecedor não encontrado - Guia Noivas ${nomeFormatado}`;
     this.title.setTitle(pageTitle);
 
-    const description = 'O perfil que você está procurando não está disponível ou ainda não foi publicado no Guia Noivas Piracicaba.';
+    const description = `O perfil que você está procurando não está disponível ou ainda não foi publicado no Guia Noivas ${nomeFormatado}.`;
     this.meta.updateTag({ name: 'description', content: description });
 
     // Open Graph para página 404
@@ -445,7 +471,9 @@ export class FornecedorPageComponent implements OnInit {
       return '#';
     }
 
-    const message = 'Te achei no Guia Noivas Piracicaba, e quero mais informações';
+    const cidade = this.cidadeService.getCidade();
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+    const message = `Te achei no Guia Noivas ${nomeFormatado}, e quero mais informações`;
     const encodedMessage = encodeURIComponent(message);
 
     // Priorizar URL do backend, mas garantir a mensagem se for link do WhatsApp
@@ -499,6 +527,30 @@ export class FornecedorPageComponent implements OnInit {
       relativeTo: this.route,
       queryParams: { fornecedorId: this.fornecedor.id }
     });
+  }
+
+  isFavorite(): boolean {
+    if (!this.fornecedor) return false;
+    return this.weddingStore.favorites().some(item => item.fornecedorId === this.fornecedor!.id);
+  }
+
+  async toggleFavorite(): Promise<void> {
+    if (!this.fornecedor) return;
+
+    if (this.isFavorite()) {
+      this.weddingStore.removeFavorite(this.fornecedor.id);
+    } else {
+      this.weddingStore.saveFavorite({
+        fornecedorId: this.fornecedor.id,
+        fornecedorNome: this.fornecedor.nome,
+        fornecedorSlug: this.fornecedor.slug,
+        imagemUrl: this.fornecedor.primaryImage?.url || this.fornecedor.coverPictureUrl || null,
+        categoriaNome: this.fornecedor.categoria || null,
+        nota: null
+      });
+    }
+
+    await this.weddingSync.syncPendingChanges();
   }
 
 }

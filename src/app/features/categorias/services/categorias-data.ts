@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
-import { Observable, of, shareReplay, tap } from 'rxjs';
+import { Observable, of, shareReplay } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { resolveImageUrl } from '../../../core/image-url.helper';
+import { CidadeService } from '../../../core/cidade.service';
 
 export interface VitrineSupplier {
   id: string;
@@ -31,7 +32,9 @@ export interface Categoria {
   providedIn: 'root',
 })
 export class CategoriasData {
-  private cache$?: Observable<Categoria[]>;
+  // Cache por cidade: 'global' para sem cidade, ou slug da cidade
+  private cache$ = new Map<string, Observable<Categoria[]>>();
+
   // Fallback local (estrutura antiga - remover após backend estável)
   private fallback: Categoria[] = [
     {
@@ -84,74 +87,85 @@ export class CategoriasData {
     }
   ];
 
-  getAll(): Observable<Categoria[]> {
-    if (this.cache$) return this.cache$;
+  private mapCategoria(src: any): Categoria {
+    const id = src.id || src.Id;
+    const nome = src.nome || src.Nome || '';
 
-    this.cache$ = this.http.get<any>(`${environment.API_BASE_URL}/public/categorias/vitrine`).pipe(
+    // slugs may come with spaces or uppercase; normalize to lowercase hyphenated
+    const slugSource = src.slug || src.Slug || id || nome;
+    const slug = String(slugSource)
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .replace(/[^\w\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .toLowerCase();
+
+    const descricao = src.descricao ?? src.Descricao ?? null;
+    const imageId = src.imageId || src.ImageId || null;
+    const imageUrl = src.imageUrl || src.ImageUrl || null;
+    const thumbnailUrl = src.thumbnailUrl || src.ThumbnailUrl || null;
+    const icon = src.icon || src.Icon || null;
+    const totalSuppliers = src.totalSuppliers ?? src.TotalSuppliers ?? null;
+
+    // Map vitrineSuppliers
+    const vitrineSuppliers = (src.vitrineSuppliers || src.VitrineSuppliers || []).map((s: any) => ({
+      id: s.id || s.Id,
+      nome: s.nome || s.Nome || '',
+      slug: s.slug || s.Slug || '',
+      cidade: s.cidade || s.Cidade || null,
+      rating: s.rating ?? s.Rating ?? null,
+      primaryImageUrl: s.primaryImageUrl || s.PrimaryImageUrl ? resolveImageUrl(s.primaryImageUrl || s.PrimaryImageUrl) : null
+    }));
+
+    return {
+      id,
+      nome,
+      slug,
+      descricao,
+      imageId,
+      imageUrl: thumbnailUrl ? resolveImageUrl(thumbnailUrl) : (imageUrl ? resolveImageUrl(imageUrl) : null),
+      icon,
+      thumbnailUrl: thumbnailUrl ? resolveImageUrl(thumbnailUrl) : null,
+      totalSuppliers,
+      vitrineSuppliers
+    } as Categoria;
+  }
+
+  getAll(cidadeSlug?: string): Observable<Categoria[]> {
+    const effectiveCidadeSlug = cidadeSlug ?? (this.cidadeService.getCidade() || 'piracicaba');
+    const cacheKey = effectiveCidadeSlug;
+    if (this.cache$.has(cacheKey)) return this.cache$.get(cacheKey)!;
+
+    // Build URL using the effective city slug. Fallback to piracicaba when city is not set.
+    const url = `${environment.API_BASE_URL}/public/categorias/vitrine?cidadeSlug=${effectiveCidadeSlug}`;
+
+    const obs$ = this.http.get<any>(url).pipe(
       map(response => {
         // backend may return array directly or { data: [...] }
         const rawList = Array.isArray(response) ? response : (response?.data || []);
-
-        return (rawList || []).map((src: any) => {
-          const id = src.id || src.Id;
-          const nome = src.nome || src.Nome || '';
-
-          // slugs may come with spaces or uppercase; normalize to lowercase hyphenated
-          const slugSource = src.slug || src.Slug || id || nome;
-          const slug = String(slugSource)
-            .normalize('NFD')
-            .replace(/\p{Diacritic}/gu, '')
-            .replace(/[^\w\s-]/g, '')
-            .trim()
-            .replace(/\s+/g, '-')
-            .toLowerCase();
-
-          const descricao = src.descricao ?? src.Descricao ?? null;
-          const imageId = src.imageId || src.ImageId || null;
-          const imageUrl = src.imageUrl || src.ImageUrl || null;
-          const thumbnailUrl = src.thumbnailUrl || src.ThumbnailUrl || null;
-          const icon = src.icon || src.Icon || null;
-          const totalSuppliers = src.totalSuppliers ?? src.TotalSuppliers ?? null;
-          
-          // Map vitrineSuppliers
-          const vitrineSuppliers = (src.vitrineSuppliers || src.VitrineSuppliers || []).map((s: any) => ({
-            id: s.id || s.Id,
-            nome: s.nome || s.Nome || '',
-            slug: s.slug || s.Slug || '',
-            cidade: s.cidade || s.Cidade || null,
-            rating: s.rating ?? s.Rating ?? null,
-            primaryImageUrl: s.primaryImageUrl || s.PrimaryImageUrl ? resolveImageUrl(s.primaryImageUrl || s.PrimaryImageUrl) : null
-          }));
-
-          return {
-            id,
-            nome,
-            slug,
-            descricao,
-            imageId,
-            imageUrl: thumbnailUrl ? resolveImageUrl(thumbnailUrl) : (imageUrl ? resolveImageUrl(imageUrl) : null),
-            icon,
-            thumbnailUrl: thumbnailUrl ? resolveImageUrl(thumbnailUrl) : null,
-            totalSuppliers,
-            vitrineSuppliers
-          } as Categoria;
-        });
+        return (rawList || []).map((src: any) => this.mapCategoria(src));
       }),
       catchError(() => of(this.fallback)),
       shareReplay(1) // Keep the result for subsequent calls
     );
 
-    return this.cache$;
+    this.cache$.set(cacheKey, obs$);
+    return obs$;
   }
 
   /**
    * Clears the internal cache, forcing the next getAll() to fetch from network.
    */
-  clearCache(): void {
-    this.cache$ = undefined;
+  clearCache(cidadeSlug?: string): void {
+    if (cidadeSlug) {
+      this.cache$.delete(cidadeSlug);
+    } else {
+      this.cache$.clear();
+    }
   }
 
-  getBySlug(slug: string): Observable<Categoria | undefined> {
+  getBySlug(slug: string, cidadeSlug?: string): Observable<Categoria | undefined> {
     const wanted = String(slug)
       .normalize('NFD')
       .replace(/\p{Diacritic}/gu, '')
@@ -160,10 +174,13 @@ export class CategoriasData {
       .replace(/\s+/g, '-')
       .toLowerCase();
 
-    return this.getAll().pipe(
+    return this.getAll(cidadeSlug).pipe(
       map(categorias => categorias.find(c => c.slug === wanted || c.id === slug))
     );
   }
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private cidadeService: CidadeService) {
+    // Limpar cache ao trocar de cidade para garantir dados frescos da nova cidade
+    this.cidadeService.cidadeMudou$.subscribe(() => this.cache$.clear());
+  }
 }

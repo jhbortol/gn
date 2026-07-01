@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, inject, DestroyRef } from '@angular/core';
+import { Component, Output, EventEmitter, inject, DestroyRef, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon/icon';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
@@ -6,6 +6,8 @@ import { CidadeService } from '../../core/cidade.service';
 import { environment } from '../../../environments/environment';
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { BrideAuthService } from '../../core/services/bride-auth.service';
+import { BrideLoginModalService } from '../../core/services/bride-login-modal.service';
 
 @Component({
   selector: 'app-navbar',
@@ -18,11 +20,21 @@ export class NavbarComponent {
   @Output() goHome = new EventEmitter<void>();
   @Output() navigateTo = new EventEmitter<string>();
   @Output() scrollToCategories = new EventEmitter<void>();
-  
+
   private cidadeService = inject(CidadeService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
+  public brideAuthService = inject(BrideAuthService);
+  private loginModalService = inject(BrideLoginModalService);
+
   mobileMenuOpen = false;
+  profileDropdownOpen = signal(false);
+
+  readonly cidadeAtualNome = computed(() => {
+    const cidade = this.cidadeService.cidadeAtual();
+    // Se não há cidade selecionada (página de seleção), não mostra o nome
+    return cidade ? this.cidadeService.getCidadeNome(cidade) : '';
+  });
 
   constructor() {
     this.router.events
@@ -30,7 +42,10 @@ export class NavbarComponent {
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe(() => this.closeMobileMenu());
+      .subscribe(() => {
+         this.closeMobileMenu();
+         this.profileDropdownOpen.set(false);
+      });
   }
 
   toggleMobileMenu() {
@@ -48,8 +63,20 @@ export class NavbarComponent {
   getPainelUrl(): string {
     return environment.PAINEL_URL;
   }
-
-  openPainel(): void {
-    window.open(environment.PAINEL_URL, '_blank');
+  
+  openLoginModal() {
+    this.loginModalService.open();
+    this.closeMobileMenu();
+  }
+  
+  toggleProfileDropdown() {
+    this.profileDropdownOpen.update(v => !v);
+  }
+  
+  logoutBride() {
+    this.brideAuthService.logout();
+    this.profileDropdownOpen.set(false);
+    const cidade = this.cidadeService.getCidade() || 'selecionar-cidade';
+    void this.router.navigate(['/', cidade]);
   }
 }

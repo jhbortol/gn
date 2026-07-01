@@ -18,12 +18,19 @@ export class SobreNosPageComponent implements OnInit {
   private title = inject(Title);
   private cidadeService = inject(CidadeService);
 
+  get cidadeNome(): string {
+    const c = this.cidadeService.getCidade();
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  }
+
   ngOnInit(): void {
     const route = this.router.url.split('?')[0];
-    this.title.setTitle('Sobre o Guia Noivas Piracicaba | Nossa História');
+    const cidade = this.cidadeService.getCidade();
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
+    this.title.setTitle(`Sobre o Guia Noivas ${nomeFormatado} | Nossa História`);
     this.metaTagService.applyMetadata(route, {
-      title: 'Sobre o Guia Noivas Piracicaba | Nossa História',
-      description: 'Conheça o Guia Noivas Piracicaba: o catálogo regional especializado em casamentos que conecta noivas aos melhores fornecedores de Piracicaba e região.'
+      title: `Sobre o Guia Noivas ${nomeFormatado} | Nossa História`,
+      description: `Conheça o Guia Noivas ${nomeFormatado}: o catálogo regional especializado em casamentos que conecta noivas aos melhores fornecedores de ${nomeFormatado} e região.`
     });
   }
 

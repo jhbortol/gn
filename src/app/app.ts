@@ -8,11 +8,16 @@ import { SeoBlockerService } from './core/seo-blocker.service';
 import { MetaTagService } from './core/meta-tag.service';
 import { isPlatformBrowser } from '@angular/common';
 import { DestaquePopupComponent } from './shared/components/destaque-popup/destaque-popup.component';
+import { ToastContainerComponent } from './shared/components/toast-container.component';
+import { AppInstallBannerComponent } from './shared/components/app-install-banner/app-install-banner.component';
+import { BrideLoginModalService } from './core/services/bride-login-modal.service';
+import { BrideLoginModalComponent } from './shared/bride-login-modal/bride-login-modal.component';
+import { BottomNavComponent } from './shared/bottom-nav/bottom-nav';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, FooterComponent, DestaquePopupComponent],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent, DestaquePopupComponent, ToastContainerComponent, AppInstallBannerComponent, BrideLoginModalComponent, BottomNavComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
@@ -24,6 +29,7 @@ export class App implements AfterViewInit {
   private tracking = inject(TrackingService);
   private seoBlocker = inject(SeoBlockerService);
   private metaTagService = inject(MetaTagService);
+  public loginModalService = inject(BrideLoginModalService);
   private isBrowser: boolean;
 
   constructor(@Inject(PLATFORM_ID) platformId: object) {
@@ -36,9 +42,10 @@ export class App implements AfterViewInit {
         const hideNavbar = ev.url.includes('/midia-kit');
         const hideFooter = ev.url.includes('/midia-kit');
         const currentRoute = (ev.urlAfterRedirects || ev.url || '/').split('?')[0].split('#')[0];
+        const isCidadeSelector = currentRoute === '/' || currentRoute === '/selecionar-cidade';
 
-        this.showNavbar.set(!hideNavbar);
-        this.showFooter.set(!hideFooter);
+        this.showNavbar.set(!hideNavbar && !isCidadeSelector);
+        this.showFooter.set(!hideFooter && !isCidadeSelector);
 
         this.metaTagService.applyMetadata(currentRoute);
         

@@ -11,6 +11,10 @@ import { MetaTagService } from '../../../core/meta-tag.service';
 import { forkJoin, map, switchMap, Observable, BehaviorSubject, of, combineLatest, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CidadeService } from '../../../core/cidade.service';
 import { environment } from '../../../../environments/environment';
+import { MeuCasamentoStoreService } from '../../meu-casamento/services/meu-casamento-store.service';
+import { MeuCasamentoSyncService } from '../../meu-casamento/services/meu-casamento-sync.service';
+import { BrideAuthService } from '../../../core/services/bride-auth.service';
+import { BrideLoginModalService } from '../../../core/services/bride-login-modal.service';
 
 @Component({
   selector: 'app-home-page',
@@ -33,9 +37,28 @@ export class HomePageComponent implements OnInit {
   private cidadeService = inject(CidadeService);
   private metaTagService = inject(MetaTagService);
   private router = inject(Router);
+  private weddingStore = inject(MeuCasamentoStoreService);
+  private weddingSync = inject(MeuCasamentoSyncService);
+  public authService = inject(BrideAuthService);
+  private loginModalService = inject(BrideLoginModalService);
+
+  get cidadeNome(): string {
+    const c = this.cidadeService.getCidade();
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  }
+
+  get instagramHandle(): string {
+    return `guianoivas${this.cidadeService.getCidade().replace(/-/g, '')}`;
+  }
+
+  get instagramUrl(): string {
+    return `https://www.instagram.com/${this.instagramHandle}/`;
+  }
 
   constructor(private categoriasData: CategoriasData, private fornecedoresData: FornecedoresData, private tracking: TrackingService) {
-    this.categorias$ = this.categoriasData.getAll().pipe(
+    const cidade = this.cidadeService.getCidade();
+
+    this.categorias$ = this.categoriasData.getAll(cidade).pipe(
       map(cats => cats.slice().sort((a, b) => (a.nome || '').localeCompare(b.nome || '')))
     );
     this.fornecedoresBusca$ = this.buscaTerm$.pipe(
@@ -44,7 +67,7 @@ export class HomePageComponent implements OnInit {
       distinctUntilChanged(),
       switchMap(term => {
         if (term.length > 0) {
-          return this.fornecedoresData.search(term).pipe(
+          return this.fornecedoresData.search(term, 1, 12, undefined, cidade).pipe(
             map(results => {
               // Track search
               this.tracking.trackSearch(term, results.length);
@@ -75,7 +98,8 @@ export class HomePageComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    await this.weddingSync.init();
     const route = this.router.url.split('?')[0];
     this.metaTagService.applyMetadata(route);
   }
@@ -126,5 +150,42 @@ export class HomePageComponent implements OnInit {
       .map(value => ({ value, sort: Math.random() }))
       .sort((a, b) => a.sort - b.sort)
       .map(({ value }) => value);
+  }
+
+  isFavorite(fornecedorId: string): boolean {
+    return this.weddingStore.favorites().some(item => item.fornecedorId === fornecedorId);
+  }
+
+  async toggleFavorite(event: Event, fornecedor: FornecedorListDto): Promise<void> {
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (!this.authService.isLoggedIn) {
+      this.loginModalService.open();
+      return;
+    }
+
+    if (this.isFavorite(fornecedor.id)) {
+      this.weddingStore.removeFavorite(fornecedor.id);
+    } else {
+      this.weddingStore.saveFavorite({
+        fornecedorId: fornecedor.id,
+        fornecedorNome: fornecedor.nome,
+        fornecedorSlug: fornecedor.slug,
+        imagemUrl: fornecedor.primaryImage?.url || null,
+        categoriaNome: fornecedor.categoria?.nome || null,
+        nota: null
+      });
+    }
+
+    await this.weddingSync.syncPendingChanges();
+  }
+
+  handleToolClick(event: Event, path: string) {
+    if (!this.authService.isLoggedIn) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.loginModalService.open();
+    }
   }
 }

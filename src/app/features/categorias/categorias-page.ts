@@ -33,13 +33,20 @@ export class CategoriasPageComponent implements OnInit {
   private router = inject(Router);
   private title = inject(Title);
 
+  get cidadeNome(): string {
+    const c = this.cidadeService.getCidade();
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  }
+
   constructor(
     private categoriasData: CategoriasData,
     private fornecedoresData: FornecedoresData,
     private tracking: TrackingService
   ) {
+    const cidade = this.cidadeService.getCidade();
+
     // Categorias já vêm com os fornecedores vitrine incluídos do endpoint /public/categorias/vitrine
-    this.categorias$ = this.categoriasData.getAll().pipe(
+    this.categorias$ = this.categoriasData.getAll(cidade).pipe(
       map(cats => this.sortCategoriesAlphabetically(cats))
     );
 
@@ -72,11 +79,13 @@ export class CategoriasPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const cidade = this.cidadeService.getCidade();
+    const nomeFormatado = cidade.charAt(0).toUpperCase() + cidade.slice(1);
     const route = this.router.url.split('?')[0];
-    this.title.setTitle('Categorias de Fornecedores para Casamento em Piracicaba | Guia Noivas');
+    this.title.setTitle(`Categorias de Fornecedores para Casamento em ${nomeFormatado} | Guia Noivas`);
     this.metaTagService.applyMetadata(route, {
-      title: 'Categorias de Fornecedores para Casamento em Piracicaba | Guia Noivas',
-      description: 'Explore todas as categorias de fornecedores para casamentos em Piracicaba: buffet, fotografia, decoração, vestidos e muito mais. Encontre o profissional ideal no Guia Noivas.'
+      title: `Categorias de Fornecedores para Casamento em ${nomeFormatado} | Guia Noivas`,
+      description: `Explore todas as categorias de fornecedores para casamentos em ${nomeFormatado}: buffet, fotografia, decoração, vestidos e muito mais. Encontre o profissional ideal no Guia Noivas.`
     });
   }
 

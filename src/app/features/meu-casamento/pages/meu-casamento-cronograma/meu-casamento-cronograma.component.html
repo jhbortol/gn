@@ -1,0 +1,66 @@
+<div class="cronograma-page">
+
+  <!-- ── App Bar ─────────────────────────────────────────── -->
+  <header class="app-bar">
+    <button class="back-btn" (click)="goBack()" aria-label="Voltar">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <h1 class="app-bar-title">Cronograma do Casamento</h1>
+  </header>
+
+  <!-- ── Scrollable content ─────────────────────────────── -->
+  <main class="content">
+
+    <p class="global-progress">
+      {{ completedCount() }} de {{ totalTasks }} tarefas concluídas
+    </p>
+
+    <ng-container *ngFor="let group of groups()">
+
+      <!-- Section header -->
+      <div class="section-header">
+        <span class="section-label">{{ group.title }}</span>
+        <span class="section-counter">{{ group.completed }}/{{ group.total }}</span>
+      </div>
+
+      <!-- Task cards -->
+      <div class="task-card" *ngFor="let task of group.tasks"
+           [class.task-card--done]="isCompleted(task.id)">
+        <div class="task-main">
+          <span class="task-label" [class.task-label--done]="isCompleted(task.id)">
+            {{ task.label }}
+          </span>
+          <button class="task-checkbox"
+                  [class.task-checkbox--checked]="isCompleted(task.id)"
+                  (click)="toggleTask(task.id, !isCompleted(task.id))"
+                  [attr.aria-checked]="isCompleted(task.id)"
+                  role="checkbox"
+                  [attr.aria-label]="'Marcar tarefa: ' + task.label">
+            <svg *ngIf="isCompleted(task.id)" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </button>
+        </div>
+        <button *ngIf="task.ctaLabel" class="cta-pill" (click)="navigateToCta(task)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+          {{ task.ctaLabel }}
+        </button>
+      </div>
+
+    </ng-container>
+
+    <!-- bottom padding so last card isn't hidden behind nav -->
+    <div class="content-spacer"></div>
+  </main>
+
+
+</div>

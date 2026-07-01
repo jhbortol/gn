@@ -18,6 +18,18 @@
 
 
 <section class="container mx-auto px-4 py-10">
+  <!-- Breadcrumb -->
+  <div class="mb-4">
+    <a href="#" (click)="goBack($event)"
+      class="text-sm text-gray-600 hover:text-rose-600 transition-colors flex items-center inline-flex"
+      aria-label="Voltar">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Voltar
+    </a>
+  </div>
   <div *ngIf="isLoading" class="fornecedor-loading-placeholder" aria-live="polite" aria-busy="true">
     <div class="fornecedor-loading-card"></div>
     <div class="fornecedor-loading-card"></div>
@@ -226,6 +238,12 @@
         <h2 class="font-serif font-bold text-xl text-gray-900 mb-6">
           {{ fornecedor.planLevel === PlanLevel.Vitrine ? 'Solicitar Orçamento' : 'Entrar em Contato' }}
         </h2>
+        <button
+          type="button"
+          (click)="toggleFavorite()"
+          class="mb-4 inline-flex items-center justify-center gap-2 border border-rose-200 bg-rose-50 text-rose-700 rounded-lg py-3 px-4 font-semibold transition-all duration-300 shadow-sm hover:bg-rose-100 w-full">
+          {{ isFavorite() ? 'Remover dos favoritos' : 'Salvar em favoritos' }}
+        </button>
         <div class="flex flex-col gap-3 mb-6">
           <button *ngIf="fornecedor.planLevel !== PlanLevel.Vitrine && showLeadForm()"
             type="button" (click)="scrollToLeadForm()"

@@ -1,0 +1,229 @@
+<section class="wedding-shell">
+  <header class="wedding-hero">
+    <div>
+      <p class="wedding-eyebrow">Meu Casamento</p>
+      <h1>{{ brideGreeting() }}</h1>
+
+      <!-- Bride Profile Quick Link -->
+      <div *ngIf="isBrideLoggedIn()" class="bride-profile-link mt-4">
+        <button (click)="viewBrideProfile()"
+          class="text-rose-600 hover:text-rose-700 font-semibold text-sm flex items-center gap-2 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Gerenciar perfil
+        </button>
+      </div>
+    </div>
+    <div class="wedding-countdown" *ngIf="countdownText()">{{ countdownText() }}</div>
+  </header>
+
+  <div class="wedding-grid">
+    <article class="wedding-card">
+      <div class="wedding-card__header">
+        <div>
+          <h2>Dados do casal</h2>
+          <p>Nome do casal e WhatsApp liberam cronograma, convidados e orçamento.</p>
+        </div>
+        <span class="wedding-badge" [class.wedding-badge--ok]="availableTools()">{{ availableTools() ? 'Ferramentas
+          liberadas' : 'Ferramentas bloqueadas' }}</span>
+      </div>
+
+      <label class="wedding-field">
+        <span>Nome do casal</span>
+        <input type="text" [ngModel]="profile().brideFirstName" (ngModelChange)="updateText('brideFirstName', $event)"
+          placeholder="Ex.: Ana & Carlos">
+      </label>
+
+      <div class="wedding-field-grid">
+        <label class="wedding-field">
+          <span>Nº convidados estimados</span>
+          <input type="number" [ngModel]="profile().estimatedGuests" (ngModelChange)="updateGuests($event)" min="0"
+            max="9999" placeholder="150">
+        </label>
+
+        <label class="wedding-field">
+          <span>Nº WhatsApp</span>
+          <input type="tel" [ngModel]="profile().whatsappNumber" (ngModelChange)="updateText('whatsappNumber', $event)"
+            placeholder="19999999999">
+        </label>
+      </div>
+
+      <div class="wedding-field-grid">
+        <label class="wedding-field">
+          <span>Data do casamento</span>
+          <input type="date" [ngModel]="profile().weddingDate" (ngModelChange)="updateDate($event)">
+        </label>
+
+        <label class="wedding-field">
+          <span>Estilo do casamento</span>
+          <input type="text" [ngModel]="profile().weddingStyle" (ngModelChange)="updateText('weddingStyle', $event)"
+            placeholder="Clássico, rústico, etc.">
+        </label>
+      </div>
+
+
+
+      <!-- LGPD Consent -->
+      <div class="wedding-field mt-6">
+        <div class="flex items-start gap-3 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+          <div class="flex items-center h-5 mt-0.5">
+            <input id="lgpd-consent-hub" type="checkbox" [checked]="lgpdConsentido()"
+              (change)="onLgpdConsentChange($event)" [disabled]="isLgpdSaving()"
+              class="w-4 h-4 text-rose-600 bg-white border-gray-300 rounded focus:ring-rose-500 focus:ring-2 disabled:opacity-50 cursor-pointer" />
+          </div>
+          <div class="text-sm">
+            <label for="lgpd-consent-hub" class="font-medium text-gray-700 cursor-pointer">
+              Opcional: Quero entrar na "Lista VIP" do Guia para receber condições exclusivas e com desconto em
+              financiamento, consórcio e móveis planejados para o meu novo lar.
+            </label>
+            <p class="text-gray-500 mt-1">
+              (Ao marcar, você aceita nossa <a href="javascript:void(0)" (click)="openTermosPopup()"
+                class="text-rose-600 hover:underline font-medium">Política de Dados</a>).
+            </p>
+          </div>
+        </div>
+        <p *ngIf="successMessage()" class="text-green-600 text-sm mt-2">{{ successMessage() }}</p>
+        <p *ngIf="errorMessage()" class="text-red-600 text-sm mt-2">{{ errorMessage() }}</p>
+      </div>
+
+      <div class="wedding-actions">
+        <button type="button" class="primary" (click)="saveNow()">Salvar dados</button>
+      </div>
+
+      <p *ngIf="blockedMessage()" class="wedding-warning">{{ blockedMessage() }}</p>
+      <p *ngIf="error()" class="wedding-error">{{ error() }}</p>
+    </article>
+
+    <aside class="wedding-card wedding-card--tools">
+      <h2>Ferramentas</h2>
+      <div class="tool-list">
+        <button type="button" class="tool-item group" [disabled]="!availableTools()"
+          (click)="navigate('/meu-casamento/cronograma')">
+          <div class="tool-item__icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <div class="tool-item__content">
+            <div class="tool-item__title-row">
+              <strong>Cronograma</strong>
+              <span *ngIf="!availableTools()" class="lock-badge" title="Preencha os dados do casal para liberar">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                  stroke="currentColor" class="w-3.5 h-3.5">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </span>
+            </div>
+            <span>Checklist regressivo com progresso.</span>
+          </div>
+          <div class="tool-item__arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </button>
+
+        <button type="button" class="tool-item group" [disabled]="!availableTools()"
+          (click)="navigate('/meu-casamento/convidados')">
+          <div class="tool-item__icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+          <div class="tool-item__content">
+            <div class="tool-item__title-row">
+              <strong>Convidados</strong>
+              <span *ngIf="!availableTools()" class="lock-badge" title="Preencha os dados do casal para liberar">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                  stroke="currentColor" class="w-3.5 h-3.5">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </span>
+            </div>
+            <span>Gerencie sua lista de convidados.</span>
+          </div>
+          <div class="tool-item__arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </button>
+
+        <button type="button" class="tool-item group" [disabled]="!availableTools()"
+          (click)="navigate('/meu-casamento/orcamento')">
+          <div class="tool-item__icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="tool-item__content">
+            <div class="tool-item__title-row">
+              <strong>Orçamento</strong>
+              <span *ngIf="!availableTools()" class="lock-badge" title="Preencha os dados do casal para liberar">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                  stroke="currentColor" class="w-3.5 h-3.5">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </span>
+            </div>
+            <span>Acompanhamento financeiro e custos.</span>
+          </div>
+          <div class="tool-item__arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </button>
+
+        <button type="button" class="tool-item group" (click)="navigate('/meus-favoritos')">
+          <div class="tool-item__icon-wrapper tool-item__icon-wrapper--favorite">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"
+              class="w-5 h-5 text-rose-500">
+              <path
+                d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+            </svg>
+          </div>
+          <div class="tool-item__content">
+            <div class="tool-item__title-row">
+              <strong>Favoritos</strong>
+            </div>
+            <span>Fornecedores que você salvou.</span>
+          </div>
+          <div class="tool-item__arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </button>
+      </div>
+
+      <div class="tool-links">
+        <a routerLink="/meus-dados/remover">Remover meus dados</a>
+      </div>
+    </aside>
+
+    <!-- Bride Leads History (if logged in) -->
+    <article class="wedding-card" *ngIf="isBrideLoggedIn()">
+      <app-bride-leads-history></app-bride-leads-history>
+    </article>
+  </div>
+</section>
+
+
+<app-termo-aceite-modal *ngIf="isTermoModalOpen()" [content]="termoAdesao()?.texto || null" [isLoading]="termoLoading()"
+  [error]="termoError()" (close)="isTermoModalOpen.set(false)" (onRetry)="loadTermos()"></app-termo-aceite-modal>

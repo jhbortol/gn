@@ -1,5 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, PLATFORM_ID } from '@angular/core';
+import { CommonModule, NgOptimizedImage, isPlatformBrowser } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { Meta, Title, DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BlogData, BlogPost, BlogPostListDto } from '../services/blog-data';
@@ -36,6 +36,7 @@ export class BlogDetailPage implements OnInit {
   private tracking = inject(TrackingService);
   private metaTagService = inject(MetaTagService);
   private sanitizer = inject(DomSanitizer);
+  private platformId = inject(PLATFORM_ID);
 
   ngOnInit(): void {
     // Try to apply prerendered metadata first
@@ -65,15 +66,18 @@ export class BlogDetailPage implements OnInit {
       this.isLoading.set(false);
       this.setSEOMeta(post);
       this.addStructuredData(post);
-      this.blogData.incrementViews(post.id).subscribe();
-      this.loadRelated(post.id);
       
-      // Track blog view
-      this.tracking.trackMetaEvent('ViewContent', {
-        content_type: 'blog_post',
-        content_name: post.title,
-        content_id: post.id
-      });
+      if (isPlatformBrowser(this.platformId)) {
+        this.blogData.incrementViews(post.id).subscribe({ error: (err) => console.warn('Could not increment views', err) });
+        this.loadRelated(post.id);
+        
+        // Track blog view
+        this.tracking.trackMetaEvent('ViewContent', {
+          content_type: 'blog_post',
+          content_name: post.title,
+          content_id: post.id
+        });
+      }
     } catch (error) {
       console.error('Error loading blog post:', error);
       this.isLoading.set(false);
@@ -87,6 +91,7 @@ export class BlogDetailPage implements OnInit {
 
   loadRelated(postId: string): void {
     this.blogData.getRelated(postId, 3).subscribe({
+      error: (err) => console.warn('Could not load related posts', err),
       next: (posts) => {
         this.relatedPosts.set(posts);
       }
@@ -109,7 +114,7 @@ export class BlogDetailPage implements OnInit {
     this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:type', content: 'article' });
     this.meta.updateTag({ property: 'og:url', content: currentUrl });
-    this.meta.updateTag({ property: 'og:site_name', content: 'Guia Noivas Piracicaba' });
+    this.meta.updateTag({ property: 'og:site_name', content: `Guia Noivas ${this.cidadeService.getCidade().charAt(0).toUpperCase() + this.cidadeService.getCidade().slice(1)}` });
     this.meta.updateTag({ property: 'og:locale', content: 'pt_BR' });
     if (post.featuredImage) {
       this.meta.updateTag({ property: 'og:image', content: post.featuredImage });
@@ -118,7 +123,7 @@ export class BlogDetailPage implements OnInit {
 
     // Twitter Card
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
-    this.meta.updateTag({ name: 'twitter:site', content: '@guianoivaspiracicaba' });
+    this.meta.updateTag({ name: 'twitter:site', content: `@guianoivas${this.cidadeService.getCidade()}` });
     this.meta.updateTag({ name: 'twitter:title', content: post.title });
     this.meta.updateTag({ name: 'twitter:description', content: description });
     if (post.featuredImage) {
@@ -152,7 +157,7 @@ export class BlogDetailPage implements OnInit {
       },
       'publisher': {
         '@type': 'Organization',
-        'name': 'Guia Noivas Piracicaba',
+        'name': `Guia Noivas ${this.cidadeService.getCidade().charAt(0).toUpperCase() + this.cidadeService.getCidade().slice(1)}`,
         'logo': {
           '@type': 'ImageObject',
           'url': 'https://guianoivas.com/assets/logo.png'

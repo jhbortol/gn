@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -22,6 +22,12 @@ export class FooterComponent {
   isSubmitting = signal(false);
   successMessage = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
+
+  readonly cidadeAtualNome = computed(() => {
+    const cidade = this.cidadeService.cidadeAtual();
+    // Se não há cidade selecionada (página de seleção), não mostra o nome
+    return cidade ? this.cidadeService.getCidadeNome(cidade) : '';
+  });
 
   buildUrl(path: string | string[]): string | string[] {
     if (Array.isArray(path)) {

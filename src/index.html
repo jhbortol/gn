@@ -4,11 +4,11 @@
   <!-- Content Security Policy to prevent XSS and data exfiltration -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.googleadservices.com https://www.clarity.ms https://scripts.clarity.ms https://connect.facebook.net https://www.facebook.com;
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.googleadservices.com https://www.clarity.ms https://scripts.clarity.ms https://connect.facebook.net https://www.facebook.com https://accounts.google.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' data: https:;
     font-src 'self' data: https://fonts.gstatic.com;
-    connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.clarity.ms https://scripts.clarity.ms https://z.clarity.ms https://y.clarity.ms https://b.clarity.ms https://*.guianoivas.com https://*.guianoivas.com.br https://guia-noivas.somee.com https://*.azurewebsites.net https://connect.facebook.net https://www.facebook.com https://formspree.io https://api.formspree.io https://api.bigdatacloud.net https://checkip.amazonaws.com;
+    connect-src 'self' ws://localhost:* ws://127.0.0.1:* wss://localhost:* wss://127.0.0.1:* https://www.googletagmanager.com https://www.google-analytics.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.clarity.ms https://scripts.clarity.ms https://z.clarity.ms https://y.clarity.ms https://b.clarity.ms https://*.guianoivas.com https://*.guianoivas.com.br https://guia-noivas.somee.com https://*.azurewebsites.net https://connect.facebook.net https://www.facebook.com https://formspree.io https://api.formspree.io https://api.bigdatacloud.net https://checkip.amazonaws.com;
     base-uri 'self';
     form-action 'self' https://formspree.io;
   ">
@@ -33,7 +33,7 @@
     /* Layout stability additions */
     .navbar-fixed{min-height:64px;}
     /* Stabilize navbar layout: explicit height, alignment, containment to avoid shifts */
-    .navbar-fixed{height:64px;display:flex;align-items:center;contain:layout paint;}
+    .navbar-fixed{height:64px;display:flex;align-items:center;contain:layout;}
     .navbar-fixed a{line-height:1;}
     .navbar-brand{display:flex;align-items:center;gap:0.5rem;}
     .navbar-menu{display:flex;align-items:center;gap:2rem;}
@@ -92,9 +92,15 @@
   <meta name="description" content="Guia Noivas Piracicaba: fornecedores verificados, inspirações e tabela de preços para organizar seu casamento com segurança.">
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#be123c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23881337'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E">
   <!-- Google tag (gtag.js) - Google Ads: AW-18077793493 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18077793493"></script>
+  <!-- Google Identity Services (GSI) for Sign-In With Google -->
+  <script async src="https://accounts.google.com/gsi/client" crossorigin></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}

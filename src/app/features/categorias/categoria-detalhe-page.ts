@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit, signal } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule, NgOptimizedImage, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Meta, Title } from '@angular/platform-browser';
 import { FornecedoresData, FornecedorListDto } from '../../features/fornecedores/services/fornecedores-data';
@@ -12,6 +12,8 @@ import { environment } from '../../../environments/environment';
 import { LeadFormComponent } from '../fornecedores/lead-form.component';
 import { PlanLevel } from '../../core/models/tier-system.model';
 import { TrackingService } from '../../core/tracking.service';
+import { MeuCasamentoStoreService } from '../meu-casamento/services/meu-casamento-store.service';
+import { MeuCasamentoSyncService } from '../meu-casamento/services/meu-casamento-sync.service';
 
 @Component({
   selector: 'app-categoria-detalhe-page',
@@ -43,6 +45,14 @@ export class CategoriaDetalhePageComponent implements OnInit {
   isVitrineModal = signal(false);
 
   private cidadeService = inject(CidadeService);
+  private weddingStore = inject(MeuCasamentoStoreService);
+  private weddingSync = inject(MeuCasamentoSyncService);
+  private location = inject(Location);
+
+  goBack(event: Event): void {
+    event.preventDefault();
+    this.location.back();
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -58,15 +68,15 @@ export class CategoriaDetalhePageComponent implements OnInit {
       map((params: any) => params.get('id') || '')
     );
 
-    // Buscar fornecedores da categoria e filtrar apenas públicos (planLevel >= 0)
+    // Buscar fornecedores da categoria e filtrar apenas públicos (planLevel > Zombie)
     // NÃO reordenar - a API já retorna na ordem correta por tier
     this.publicFornecedores$ = this.categoriaId$.pipe(
       switchMap((id: string) => this.fornecedores.getByCategoria(id)),
-      map(list => (list || []).filter(f => f.planLevel !== undefined && f.planLevel >= 0))
+      map(list => (list || []).filter(f => f.planLevel !== undefined && f.planLevel > PlanLevel.Zombie))
     );
 
     this.categoriaNome$ = this.categoriaId$.pipe(
-      switchMap((slug: string) => this.categorias.getBySlug(slug)),
+      switchMap((slug: string) => this.categorias.getBySlug(slug, this.cidadeService.getCidade())),
       map(categoria => categoria?.nome || '')
     );
 
@@ -80,6 +90,7 @@ export class CategoriaDetalhePageComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    await this.weddingSync.init();
     // Wait for the categoria ID to be loaded and apply meta tags
     try {
       const categoriaSlug = await firstValueFrom(
@@ -91,7 +102,7 @@ export class CategoriaDetalhePageComponent implements OnInit {
       if (categoriaSlug) {
         // Fetch categoria data to get title, description, and image
         const categoria = await firstValueFrom(
-          this.categorias.getBySlug(categoriaSlug)
+          this.categorias.getBySlug(categoriaSlug, this.cidadeService.getCidade())
         );
         
         if (categoria) {
@@ -209,6 +220,13 @@ export class CategoriaDetalhePageComponent implements OnInit {
    * Abre o modal de captura de lead para não-Vitrine (formulário de contato)
    */
   openContactLeadModal(fornecedor: FornecedorListDto): void {
+    // Tracking do clique no botão de contato
+    this.tracking.trackContactClick('website', {
+      vendorId: fornecedor.id || '',
+      vendorName: fornecedor.nome || '',
+      vendorCategory: fornecedor.categoria?.nome || ''
+    });
+
     this.selectedFornecedorForModal.set(fornecedor);
     this.pendingWhatsAppUrl.set('');
     this.isVitrineModal.set(false);
@@ -232,12 +250,18 @@ export class CategoriaDetalhePageComponent implements OnInit {
     this.showContactModal.set(false);
     const url = this.pendingWhatsAppUrl();
     const fornecedor = this.selectedFornecedorForModal();
-    if (url && fornecedor) {
-      this.tracking.trackWhatsAppIntent('after_lead_form', {
-        vendorId: fornecedor.id || '',
-        vendorName: fornecedor.nome || '',
-        vendorCategory: fornecedor.categoria?.nome || ''
-      });
+    
+    if (fornecedor) {
+      // Registrar que o lead de contato foi enviado
+      this.tracking.trackFormSubmit('contact', { vendorId: fornecedor.id });
+      
+      if (url) {
+        this.tracking.trackWhatsAppIntent('after_lead_form', {
+          vendorId: fornecedor.id || '',
+          vendorName: fornecedor.nome || '',
+          vendorCategory: fornecedor.categoria?.nome || ''
+        });
+      }
     }
     if (url && typeof window !== 'undefined') {
       window.open(url, '_blank', 'noopener,noreferrer');
@@ -277,5 +301,29 @@ export class CategoriaDetalhePageComponent implements OnInit {
     // Mock - ajustar quando backend fornecer tags/especialidades
     const specialties = ['DOCUMENTAL', 'ARTÍSTICO', 'DRONE'];
     return specialties.slice(0, 3);
+  }
+
+  isFavorite(fornecedorId: string): boolean {
+    return this.weddingStore.favorites().some(item => item.fornecedorId === fornecedorId);
+  }
+
+  async toggleFavorite(event: Event, fornecedor: FornecedorListDto): Promise<void> {
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (this.isFavorite(fornecedor.id)) {
+      this.weddingStore.removeFavorite(fornecedor.id);
+    } else {
+      this.weddingStore.saveFavorite({
+        fornecedorId: fornecedor.id,
+        fornecedorNome: fornecedor.nome,
+        fornecedorSlug: fornecedor.slug,
+        imagemUrl: fornecedor.primaryImage?.url || null,
+        categoriaNome: fornecedor.categoria?.nome || null,
+        nota: null
+      });
+    }
+
+    await this.weddingSync.syncPendingChanges();
   }
 }

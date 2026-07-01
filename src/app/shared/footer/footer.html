@@ -2,7 +2,7 @@
   <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
     <div aria-label="Guia Noivas">
       <p class="font-bold text-lg mb-2">Guia Noivas</p>
-      <p class="text-sm">Seu portal de fornecedores para casamentos em Piracicaba.</p>
+      <p class="text-sm">Seu portal de fornecedores para casamentos{{ cidadeAtualNome() ? ' em ' + cidadeAtualNome() : '' }}.</p>
     </div>
     <div aria-label="Categorias">
       <p class="font-bold text-lg mb-2">Categorias</p>
@@ -19,7 +19,7 @@
       <ul class="text-sm space-y-1">
         <li><a [routerLink]="buildUrl(['institucional', 'sobre'])" class="hover:underline">Sobre Nós</a></li>
         <li><a [routerLink]="buildUrl('contato')" class="hover:underline">Contato</a></li>
-        <li><a [routerLink]="buildUrl(['institucional', 'termos'])" class="hover:underline">Termos de Uso e Isenção de Responsabilidade</a></li>
+        <li><a [routerLink]="buildUrl(['institucional', 'termos'])" class="hover:underline">Termos de Uso e Política de Privacidade</a></li>
       </ul>
     </div>
     <div aria-label="Newsletter">

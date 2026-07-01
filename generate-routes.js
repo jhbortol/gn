@@ -182,13 +182,18 @@ function validateApiDataCompleteness({ blogPosts, fornecedores, categorias }) {
 }
 
 async function getBlogPosts() {
+  const strict = process.env.ENFORCE_API_COMPLETENESS === 'true';
   try {
     const response = await fetchWithRetry(`${API_BASE_URL}/blog?page=1&pageSize=100`);
     const data = await response.json();
     return data.data || [];
   } catch (error) {
-    console.error('❌ CRITICAL: Failed to fetch blog posts for prerendering:', error.message);
-    throw error; // Fail build if blog posts cannot be fetched
+    if (strict) {
+      console.error('❌ CRITICAL: Failed to fetch blog posts for prerendering:', error.message);
+      throw error; // Fail build in strict mode only
+    }
+    console.warn('⚠️  Failed to fetch blog posts (non-fatal in dev mode):', error.message);
+    return [];
   }
 }
 
@@ -242,8 +247,12 @@ async function getFornecedoresData() {
     
     return allFornecedores;
   } catch (error) {
-    console.error('❌ CRITICAL: Failed to fetch suppliers for prerendering:', error.message);
-    throw error; // Fail build if suppliers cannot be fetched
+    if (process.env.ENFORCE_API_COMPLETENESS === 'true') {
+      console.error('❌ CRITICAL: Failed to fetch suppliers for prerendering:', error.message);
+      throw error; // Fail build in strict mode only
+    }
+    console.warn('⚠️  Failed to fetch fornecedores (non-fatal in dev mode):', error.message);
+    return [];
   }
 }
 
@@ -274,6 +283,7 @@ async function getFornecedoresPrerenderParams() {
 }
 
 async function getCategoriasData() {
+  const strict = process.env.ENFORCE_API_COMPLETENESS === 'true';
   try {
     const response = await fetchWithRetry(`${API_BASE_URL}/public/categorias`);
     const data = await response.json();
@@ -282,166 +292,226 @@ async function getCategoriasData() {
     console.log(`✅ Fetched ${categorias.length} categorias`);
     return categorias;
   } catch (error) {
-    console.error('❌ CRITICAL: Failed to fetch categories for prerendering:', error.message);
-    throw error; // Fail build if categories cannot be fetched
+    if (strict) {
+      console.error('❌ CRITICAL: Failed to fetch categories for prerendering:', error.message);
+      throw error; // Fail build in strict mode only
+    }
+    console.warn('⚠️  Failed to fetch categories (non-fatal in dev mode):', error.message);
+    return [];
+  }
+}
+
+async function getCidadesData() {
+  try {
+    const response = await fetchWithRetry(`${API_BASE_URL}/public/cidades`);
+    const data = await response.json();
+    const cidades = Array.isArray(data) ? data : (data?.data || []);
+    const slugs = cidades
+      .map(c => (c.slug || c.Slug || '').toLowerCase())
+      .filter(Boolean);
+    console.log(`✅ Fetched ${slugs.length} cidades:`, slugs.join(', '));
+    return slugs.length > 0 ? slugs : ['piracicaba'];
+  } catch (error) {
+    console.warn('⚠️  Failed to fetch cidades, using fallback [piracicaba]:', error.message);
+    return ['piracicaba'];
   }
 }
 
 async function generateRoutes() {
-  const staticRouteMetadata = {
-    '/piracicaba': {
-      title: 'Guia Noivas Piracicaba - Fornecedores para Casamentos',
-      description: 'Encontre os melhores fornecedores para seu casamento em Piracicaba. Fotógrafos, buffets, vestidos e muito mais.',
-      image: null,
-      canonical: 'https://guianoivas.com/piracicaba',
-      robots: 'index, follow'
-    },
-    '/piracicaba/categorias': {
-      title: 'Categorias de Fornecedores - Guia Noivas Piracicaba',
-      description: 'Navegue por todas as categorias de fornecedores para casamento em Piracicaba.',
-      image: null,
-      canonical: 'https://guianoivas.com/piracicaba/categorias',
-      robots: 'index, follow'
-    },
-    '/piracicaba/blog': {
-      title: 'Blog - Dicas para seu Casamento | Guia Noivas Piracicaba',
-      description: 'Artigos, dicas e inspirações para planejar o casamento dos seus sonhos em Piracicaba.',
-      image: null,
-      canonical: 'https://guianoivas.com/piracicaba/blog',
-      robots: 'index, follow'
-    },
-    '/piracicaba/fornecedores': {
-      title: 'Fornecedores de Casamento em Piracicaba | Guia Noivas',
-      description: 'Explore fornecedores de casamento em Piracicaba e encontre opções por categoria para cada etapa do seu evento.',
-      image: null,
-      canonical: 'https://guianoivas.com/piracicaba/fornecedores',
-      robots: 'index, follow'
-    },
-    '/piracicaba/anuncie': {
-      title: 'Anuncie - Guia Noivas Piracicaba',
-      description: 'Seja um fornecedor parceiro do Guia Noivas Piracicaba. Saiba como anunciar seus serviços.',
-      image: null,
-      canonical: 'https://guianoivas.com/piracicaba/anuncie',
-      robots: 'index, follow'
-    },
-    '/piracicaba/contato': {
-      title: 'Contato - Guia Noivas Piracicaba',
-      description: 'Fale com o Guia Noivas Piracicaba. Tire dúvidas, envie sugestões ou solicite informações sobre fornecedores.',
-      image: null,
-      canonical: 'https://guianoivas.com/piracicaba/contato',
-      robots: 'index, follow'
-    },
-    '/piracicaba/institucional': {
-      title: 'Institucional - Guia Noivas Piracicaba',
-      description: 'Conheça a história, missão e valores do Guia Noivas Piracicaba.',
-      image: null,
-      canonical: 'https://guianoivas.com/piracicaba/institucional/sobre',
-      robots: 'index, follow'
-    },
-    '/piracicaba/institucional/sobre': {
-      title: 'Sobre - Guia Noivas Piracicaba',
-      description: 'Conheça a história, missão e valores do Guia Noivas Piracicaba.',
-      image: null,
-      canonical: 'https://guianoivas.com/piracicaba/institucional/sobre',
-      robots: 'index, follow'
-    },
-    '/piracicaba/institucional/termos': {
-      title: 'Termos de Uso - Guia Noivas Piracicaba',
-      description: 'Leia os termos de uso e políticas do Guia Noivas Piracicaba.',
-      image: null,
-      canonical: 'https://guianoivas.com/piracicaba/institucional/termos',
-      robots: 'index, follow'
-    },
-    '/piracicaba/guia-precos': {
-      title: 'Guia de Preços Piracicaba - Quanto custa casar? | Guia Noivas Piracicaba',
-      description: 'Descubra os preços dos principais serviços de casamento em Piracicaba. Planeje seu orçamento com o Guia Noivas.',
-      image: null,
-      canonical: 'https://guianoivas.com/piracicaba/guia-precos',
-      robots: 'index, follow'
-    },
-    '/piracicaba/guia-custos': {
-      title: 'Guia de Custos do Casamento em Piracicaba | Guia Noivas',
-      description: 'Entenda os custos médios de casamento em Piracicaba e organize seu orçamento com mais clareza.',
-      image: null,
-      canonical: 'https://guianoivas.com/piracicaba/guia-precos',
-      robots: 'noindex, follow'
-    },
-    '/piracicaba/indicado': {
-      title: 'Começar a Planejar Casamento em Piracicaba | Guia Noivas',
-      description: 'Comece a organizar seu casamento em Piracicaba com orientações práticas e fornecedores verificados.',
-      image: null,
-      canonical: 'https://guianoivas.com/piracicaba/guia-precos',
-      robots: 'noindex, follow'
-    },
-    '/piracicaba/midia-kit': {
-      title: 'Mídia Kit - Guia Noivas Piracicaba',
-      description: 'Acesse o mídia kit oficial do Guia Noivas Piracicaba.',
-      image: null,
-      canonical: 'https://guianoivas.com/piracicaba/midia-kit',
-      robots: 'noindex, follow'
-    }
-  };
+  // Static pages per city (generated dynamically based on available cities)
+  const staticPagePaths = [
+    '',
+    '/categorias',
+    '/fornecedores',
+    '/blog',
+    '/anuncie',
+    '/contato',
+    '/institucional',
+    '/institucional/sobre',
+    '/institucional/termos',
+    '/guia-precos',
+    '/guia-custos',
+    '/indicado',
+    '/midia-kit',
+  ];
 
-  const staticRoutes = Object.keys(staticRouteMetadata);
+  function buildStaticRouteMetadata(cidadeSlug, cidadeNome) {
+    const base = `https://guianoivas.com/${cidadeSlug}`;
+    const n = cidadeNome;
+    return {
+      [`/${cidadeSlug}`]: {
+        title: `Guia Noivas ${n} - Fornecedores para Casamentos`,
+        description: `Encontre os melhores fornecedores para seu casamento em ${n}. Fotógrafos, buffets, vestidos e muito mais.`,
+        image: null,
+        canonical: `${base}`,
+        robots: 'index, follow'
+      },
+      [`/${cidadeSlug}/categorias`]: {
+        title: `Categorias de Fornecedores - Guia Noivas ${n}`,
+        description: `Navegue por todas as categorias de fornecedores para casamento em ${n}.`,
+        image: null,
+        canonical: `${base}/categorias`,
+        robots: 'index, follow'
+      },
+      [`/${cidadeSlug}/blog`]: {
+        title: `Blog - Dicas para seu Casamento | Guia Noivas ${n}`,
+        description: `Artigos, dicas e inspirações para planejar o casamento dos seus sonhos em ${n}.`,
+        image: null,
+        canonical: `${base}/blog`,
+        robots: 'index, follow'
+      },
+      [`/${cidadeSlug}/fornecedores`]: {
+        title: `Fornecedores de Casamento em ${n} | Guia Noivas`,
+        description: `Explore fornecedores de casamento em ${n} e encontre opções por categoria para cada etapa do seu evento.`,
+        image: null,
+        canonical: `${base}/fornecedores`,
+        robots: 'index, follow'
+      },
+      [`/${cidadeSlug}/anuncie`]: {
+        title: `Anuncie - Guia Noivas ${n}`,
+        description: `Seja um fornecedor parceiro do Guia Noivas ${n}. Saiba como anunciar seus serviços.`,
+        image: null,
+        canonical: `${base}/anuncie`,
+        robots: 'index, follow'
+      },
+      [`/${cidadeSlug}/contato`]: {
+        title: `Contato - Guia Noivas ${n}`,
+        description: `Fale com o Guia Noivas ${n}. Tire dúvidas, envie sugestões ou solicite informações sobre fornecedores.`,
+        image: null,
+        canonical: `${base}/contato`,
+        robots: 'index, follow'
+      },
+      [`/${cidadeSlug}/institucional`]: {
+        title: `Institucional - Guia Noivas ${n}`,
+        description: `Conheça a história, missão e valores do Guia Noivas ${n}.`,
+        image: null,
+        canonical: `${base}/institucional/sobre`,
+        robots: 'index, follow'
+      },
+      [`/${cidadeSlug}/institucional/sobre`]: {
+        title: `Sobre - Guia Noivas ${n}`,
+        description: `Conheça a história, missão e valores do Guia Noivas ${n}.`,
+        image: null,
+        canonical: `${base}/institucional/sobre`,
+        robots: 'index, follow'
+      },
+      [`/${cidadeSlug}/institucional/termos`]: {
+        title: `Termos de Uso - Guia Noivas ${n}`,
+        description: `Leia os termos de uso e políticas do Guia Noivas ${n}.`,
+        image: null,
+        canonical: `${base}/institucional/termos`,
+        robots: 'index, follow'
+      },
+      [`/${cidadeSlug}/guia-precos`]: {
+        title: `Guia de Preços ${n} - Quanto custa casar? | Guia Noivas ${n}`,
+        description: `Descubra os preços dos principais serviços de casamento em ${n}. Planeje seu orçamento com o Guia Noivas.`,
+        image: null,
+        canonical: `${base}/guia-precos`,
+        robots: 'index, follow'
+      },
+      [`/${cidadeSlug}/guia-custos`]: {
+        title: `Guia de Custos do Casamento em ${n} | Guia Noivas`,
+        description: `Entenda os custos médios de casamento em ${n} e organize seu orçamento com mais clareza.`,
+        image: null,
+        canonical: `${base}/guia-precos`,
+        robots: 'noindex, follow'
+      },
+      [`/${cidadeSlug}/indicado`]: {
+        title: `Começar a Planejar Casamento em ${n} | Guia Noivas`,
+        description: `Comece a organizar seu casamento em ${n} com orientações práticas e fornecedores verificados.`,
+        image: null,
+        canonical: `${base}/guia-precos`,
+        robots: 'noindex, follow'
+      },
+      [`/${cidadeSlug}/midia-kit`]: {
+        title: `Mídia Kit - Guia Noivas ${n}`,
+        description: `Acesse o mídia kit oficial do Guia Noivas ${n}.`,
+        image: null,
+        canonical: `${base}/midia-kit`,
+        robots: 'noindex, follow'
+      }
+    };
+  }
 
-  console.log('🚀 Starting route generation with enriched metadata...\n');
+  console.log('🚀 Starting route generation with enriched metadata (multi-cidades)...\n');
   
   try {
     await validateApiHealth();
 
     // Fetch all data
     console.log('📡 Fetching data from API...');
-    const blogPosts = await getBlogPosts();
-    const fornecedores = await getFornecedoresData();
-    const categorias = await getCategoriasData();
+    const [blogPosts, fornecedores, categorias, cidades] = await Promise.all([
+      getBlogPosts(),
+      getFornecedoresData(),
+      getCategoriasData(),
+      getCidadesData()
+    ]);
     validateApiDataCompleteness({ blogPosts, fornecedores, categorias });
     
     console.log('\n📊 Data Summary:');
     console.log(`  - Blog posts: ${blogPosts.length}`);
     console.log(`  - Fornecedores: ${fornecedores.length}`);
-    console.log(`  - Categorias: ${categorias.length}\n`);
+    console.log(`  - Categorias: ${categorias.length}`);
+    console.log(`  - Cidades: ${cidades.join(', ')}\n`);
 
-    // Generate blog routes with metadata
-    console.log('📝 Generating blog routes...');
-    const blogRoutes = blogPosts
-      .map(post => ({
-          route: `/piracicaba/blog/${getBlogSlug(post)}`,
-        title: `${post.titulo || post.Titulo || post.title || 'Blog Post'} - Guia Noivas Piracicaba`,
-        description: (post.descricao || post.Descricao || post.description || post.titulo || '').substring(0, 155),
-        image: post.imagemDestaque?.url || post.ImgDestaque?.Url || post.imagemUrl || null
-      }))
-      .filter(b => b.route && b.route.length > 0);
+    // Build cidade nome map (capitalize first letter of each word)
+    const cidadeNomeMap = {};
+    cidades.forEach(slug => {
+      cidadeNomeMap[slug] = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    });
 
-    // Generate fornecedor routes with ENRICHED metadata
-    console.log('🏢 Generating fornecedor routes with enriched metadata...');
+    // Generate static routes metadata for ALL cities
+    let staticRouteMetadata = {};
+    cidades.forEach(slug => {
+      Object.assign(staticRouteMetadata, buildStaticRouteMetadata(slug, cidadeNomeMap[slug]));
+    });
+
+    const staticRoutes = Object.keys(staticRouteMetadata);
+
+    // Generate blog routes with metadata — one entry per city
+    console.log('📝 Generating blog routes (all cities)...');
+    const blogRoutes = cidades.flatMap(cidadeSlug =>
+      blogPosts
+        .map(post => ({
+          route: `/${cidadeSlug}/blog/${getBlogSlug(post)}`,
+          title: `${post.titulo || post.Titulo || post.title || 'Blog Post'} - Guia Noivas ${cidadeNomeMap[cidadeSlug]}`,
+          description: (post.descricao || post.Descricao || post.description || post.titulo || '').substring(0, 155),
+          image: post.imagemDestaque?.url || post.ImgDestaque?.Url || post.imagemUrl || null
+        }))
+        .filter(b => b.route && b.route.length > 0)
+    );
+
+    // Generate fornecedor routes — use cidadePrincipal.slug when available, else first city
+    console.log('🏢 Generating fornecedor routes with enriched metadata (multi-cidades)...');
     const fornecedorRoutes = fornecedores
       .map(f => {
-        const nome = f.nome || f.Nome || 'Fornecedor';
+        const nome = f.nome || f.Nome || f.nomeFantasia || f.NomeFantasia || 'Fornecedor';
         const categoria = f.categoria?.nome || f.Categoria?.Nome || 'Fornecedor';
-        const cidade = f.cidade || f.Cidade || 'Piracicaba';
-        const descricao = f.descricao || f.Descricao || f.nome || f.Nome || '';
+        const cidadePrincipalSlug = (f.cidadePrincipal?.slug || f.CidadePrincipal?.Slug || '').toLowerCase();
+        const cidadeSlug = cidadePrincipalSlug && cidades.includes(cidadePrincipalSlug)
+          ? cidadePrincipalSlug
+          : (cidades[0] ?? 'piracicaba');
+        const cidadeNome = cidadeNomeMap[cidadeSlug] || cidadeSlug;
+        const descricao = f.descricao || f.Descricao || nome;
         
-        // Extract best description (prioritize actual description over name)
         let metaDescription = descricao.substring(0, 155);
         if (metaDescription.length < 50) {
-          metaDescription = `Conheça ${nome}, especialista em ${categoria} em ${cidade}. Entre em contato e solicite um orçamento.`;
+          metaDescription = `Conheça ${nome}, especialista em ${categoria} em ${cidadeNome}. Entre em contato e solicite um orçamento.`;
         }
         
-        // Get best image
         const coverImage = f.coverPictureUrl || f.CoverPictureUrl;
         const primaryImage = f.primaryImage?.url || f.PrimaryImage?.Url;
         const firstImage = f.imagens?.[0]?.url || f.Imagens?.[0]?.Url;
         const image = coverImage || primaryImage || firstImage || null;
         
         return {
-          route: `/piracicaba/fornecedores/${getEntityIdentifier(f)}`,
-          title: `${nome} - ${categoria} em ${cidade} | Guia Noivas`,
+          route: `/${cidadeSlug}/fornecedores/${getEntityIdentifier(f)}`,
+          title: `${nome} - ${categoria} em ${cidadeNome} | Guia Noivas`,
           description: metaDescription,
-          image: image,
-          // Additional metadata for future use
+          image,
           category: categoria,
-          city: cidade,
-          keywords: `${nome}, ${categoria}, ${cidade}, casamento, fornecedor`
+          city: cidadeNome,
+          keywords: `${nome}, ${categoria}, ${cidadeNome}, casamento, fornecedor`
         };
       })
       .filter(f => f.route && f.route.length > 0);
@@ -457,25 +527,28 @@ async function generateRoutes() {
         .toLowerCase();
     };
 
-    console.log('📂 Generating categoria routes...');
-    const categoriaRoutes = categorias
-      .map(c => {
-        const nome = c.nome || c.Nome || 'Categoria';
-        const descricao = c.descricao || c.Descricao || c.nome || c.Nome || '';
-        
-        let metaDescription = descricao.substring(0, 155);
-        if (metaDescription.length < 50) {
-          metaDescription = `Encontre os melhores fornecedores de ${nome} em Piracicaba. Compare preços e serviços para seu casamento.`;
-        }
-        
-        return {
-          route: `/piracicaba/categorias/${normalizarSlug(getEntityIdentifier(c))}`,
-          title: `${nome} - Fornecedores em Piracicaba | Guia Noivas`,
-          description: metaDescription,
-          image: c.imageUrl || c.ImageUrl || c.thumbnailUrl || c.ThumbnailUrl || null
-        };
-      })
-      .filter(c => c.route && c.route.length > 0);
+    console.log('📂 Generating categoria routes (all cities)...');
+    const categoriaRoutes = cidades.flatMap(cidadeSlug =>
+      categorias
+        .map(c => {
+          const nome = c.nome || c.Nome || 'Categoria';
+          const cidadeNome = cidadeNomeMap[cidadeSlug] || cidadeSlug;
+          const descricao = c.descricao || c.Descricao || nome;
+          
+          let metaDescription = descricao.substring(0, 155);
+          if (metaDescription.length < 50) {
+            metaDescription = `Encontre os melhores fornecedores de ${nome} em ${cidadeNome}. Compare preços e serviços para seu casamento.`;
+          }
+          
+          return {
+            route: `/${cidadeSlug}/categorias/${normalizarSlug(getEntityIdentifier(c))}`,
+            title: `${nome} - Fornecedores em ${cidadeNome} | Guia Noivas`,
+            description: metaDescription,
+            image: c.imageUrl || c.ImageUrl || c.thumbnailUrl || c.ThumbnailUrl || null
+          };
+        })
+        .filter(c => c.route && c.route.length > 0)
+    );
 
     // Build routes array (just paths for angular)
     const dynamicRoutes = [
@@ -518,10 +591,10 @@ async function generateRoutes() {
     console.log('\n✅ GENERATION COMPLETE!');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log(`📄 Routes generated: ${allRoutes.length}`);
-    console.log(`   - Static: ${staticRoutes.length}`);
-    console.log(`   - Blog: ${blogRoutes.length}`);
+    console.log(`   - Static: ${staticRoutes.length} (${cidades.length} cities × ${staticPagePaths.length} pages)`);
+    console.log(`   - Blog: ${blogRoutes.length} (${blogPosts.length} posts × ${cidades.length} cities)`);
     console.log(`   - Fornecedores: ${fornecedorRoutes.length}`);
-    console.log(`   - Categorias: ${categoriaRoutes.length}`);
+    console.log(`   - Categorias: ${categoriaRoutes.length} (${categorias.length} cats × ${cidades.length} cities)`);
     console.log(`📋 Metadata entries: ${Object.keys(metadata).length}`);
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
     

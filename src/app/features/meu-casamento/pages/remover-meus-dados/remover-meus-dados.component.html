@@ -1,0 +1,16 @@
+<section class="page-shell card">
+  <p class="page-eyebrow">LGPD</p>
+  <h1>Remover meus dados</h1>
+  <p>Esta ação apaga dados locais e remotos do módulo Meu Casamento e não pode ser desfeita.</p>
+
+  <label class="checkbox-row">
+    <input type="checkbox" [(ngModel)]="confirmed">
+    <span>Confirmo que entendo a irreversibilidade da exclusão total.</span>
+  </label>
+
+  <button type="button" class="danger" [disabled]="loading" (click)="deleteAll()">{{ loading ? 'Excluindo...' : 'Excluir todos os meus dados' }}</button>
+
+  <p *ngIf="message" class="success">{{ message }}</p>
+  <p *ngIf="error" class="error">{{ error }}</p>
+</section>
+

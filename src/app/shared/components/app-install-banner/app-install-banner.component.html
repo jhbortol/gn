@@ -1,0 +1,57 @@
+<div *ngIf="isVisible" class="fixed top-4 right-4 z-[9999] bg-white rounded-2xl border border-rose-100 shadow-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in sm:max-w-sm max-w-[calc(100vw-2rem)]">
+
+    <div class="flex items-center gap-3 flex-1">
+        <img src="/logo.png" alt="Logo" class="w-10 h-10 rounded-xl shadow-sm hidden sm:block">
+        <div>
+            <h4 class="font-bold text-rose-800 text-sm">Guia Noivas</h4>
+            <p class="text-xs text-gray-600 line-clamp-2">Organize seu casamento de forma fácil! Instale nosso App e gerencie convidados, tarefas e orçamento na palma da mão.</p>
+        </div>
+    </div>
+
+    <div class="flex items-center gap-3 shrink-0 self-end sm:self-auto w-full sm:w-auto justify-end">
+        <button (click)="installApp()" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold py-2 px-4 rounded-full transition-colors shadow-md">
+            Instalar
+        </button>
+        <button (click)="dismissBanner()" class="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="Fechar">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- iOS Tooltip / Modal Overlay -->
+    <div *ngIf="showIosTooltip" class="fixed inset-0 z-[10000] bg-black/60 flex items-end justify-center sm:items-center sm:p-4" (click)="closeIosTooltip()">
+        <div class="bg-white w-full sm:w-[400px] rounded-t-3xl sm:rounded-3xl p-6 pb-10 shadow-2xl relative animate-slide-up" (click)="$event.stopPropagation()">
+            <button (click)="closeIosTooltip()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-2 bg-gray-100 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="text-center mb-6 mt-2">
+                <div class="bg-rose-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-rose-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Instalar App no iOS</h3>
+                <p class="text-gray-600">Siga estes 2 passos rápidos para adicionar o app à sua tela inicial:</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
+                    <div class="bg-white shadow w-8 h-8 rounded-full flex items-center justify-center font-bold text-rose-600 shrink-0">1</div>
+                    <p class="text-sm text-gray-700">Toque no ícone <strong>Compartilhar</strong> na barra inferior do Safari.</p>
+                </div>
+                <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
+                    <div class="bg-white shadow w-8 h-8 rounded-full flex items-center justify-center font-bold text-rose-600 shrink-0">2</div>
+                    <p class="text-sm text-gray-700">Role para baixo e selecione <strong>Adicionar à Tela de Início</strong>.</p>
+                </div>
+            </div>
+
+            <button (click)="closeIosTooltip()" class="w-full mt-6 bg-rose-600 text-white font-bold py-3 rounded-xl hover:bg-rose-700 transition-colors">
+                Entendi
+            </button>
+        </div>
+    </div>
+</div>

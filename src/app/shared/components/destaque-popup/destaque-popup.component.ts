@@ -19,6 +19,7 @@ import { DestaqueSemana } from '../../../core/models/destaque-semana.model';
 
 const SESSION_KEY = 'destaque_popup_shown';
 const POPUP_DELAY_MS = 15000;
+const POPUP_INSTANT_DELAY_MS = 800;
 
 @Component({
   selector: 'app-destaque-popup',
@@ -214,7 +215,9 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    if (sessionStorage.getItem(SESSION_KEY)) return;
+
+    const instant = this.shouldShowInstantPopup();
+    if (!instant && sessionStorage.getItem(SESSION_KEY)) return;
 
     const cidade = this.cidadeService.getCidade();
     // Se não há cidade selecionada (página de seleção), não tenta carregar destaque
@@ -225,7 +228,7 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
       this.destaque.set(d);
 
       // Load supplier details to get WhatsApp URL, name, etc.
-      this.fornecedoresData.getById(d.fornecedorSlug, false, cidade).subscribe({
+      this.fornecedoresData.getById(d.fornecedorSlug, false, this.cidadeService.getCidade()).subscribe({
         next: f => {
           // Map Fornecedor → FornecedorListDto-compatible shape
           const listDto: FornecedorListDto = {
@@ -249,7 +252,7 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
           };
           this.fornecedor.set(listDto);
           this.cdr.markForCheck();
-          this.schedulePopup();
+          this.schedulePopup(instant);
         },
         error: () => {
           this.loadError.set(true);
@@ -263,11 +266,24 @@ export class DestaquePopupComponent implements OnInit, OnDestroy {
     if (this.timer) clearTimeout(this.timer);
   }
 
-  private schedulePopup(): void {
+  private shouldShowInstantPopup(): boolean {
+    const query = new URLSearchParams(window.location.search);
+
+    for (const [key, value] of query.entries()) {
+      if (key.trim() !== 'destaque') continue;
+
+      const normalizedValue = value.trim().toLowerCase();
+      return normalizedValue === '' || normalizedValue === '1' || normalizedValue === 'true';
+    }
+
+    return false;
+  }
+
+  private schedulePopup(instant = false): void {
     this.timer = setTimeout(() => {
       this.visible.set(true);
       this.cdr.markForCheck();
-    }, POPUP_DELAY_MS);
+    }, instant ? POPUP_INSTANT_DELAY_MS : POPUP_DELAY_MS);
   }
 
   close(): void {

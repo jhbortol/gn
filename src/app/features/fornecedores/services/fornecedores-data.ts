@@ -123,10 +123,7 @@ export class FornecedoresData {
     private transferState: TransferState,
     private cidadeService: CidadeService,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {
-    // Limpar cache de destaques ao trocar de cidade
-    this.cidadeService.cidadeMudou$.subscribe(() => this.highlightsCache.clear());
-  }
+  ) {}
 
   search(term: string, page = 1, pageSize = 12, destaque?: boolean, cidadeSlug?: string): Observable<FornecedorListDto[]> {
     const trimmed = (term || '').trim();
@@ -292,8 +289,29 @@ export class FornecedoresData {
         return highlights.length > 0 ? highlights : list;
       }),
       catchError(err => {
-        console.error('[DESTAQUES] API error:', err);
-        return of([]);
+        console.warn('[DESTAQUES] novo endpoint /public/{cidade}/fornecedores falhou, tentando endpoint legado:', err);
+        // Fallback para endpoint legado
+        const legacyParams: any = { page, pageSize, destaque: true };
+        if (environment.FORNECEDOR_PUBLICADO !== null) {
+          legacyParams.publicado = environment.FORNECEDOR_PUBLICADO;
+        }
+        return this.api.get<any>(`/fornecedores/ativos`, legacyParams).pipe(
+          map(r => {
+            let list: any[] = [];
+            if (Array.isArray(r)) list = r;
+            else if (r && Array.isArray(r.data)) list = r.data;
+            else if (r && Array.isArray(r.items)) list = r.items;
+            return list.map((src: any) => this._mapToFornecedorListDto(src));
+          }),
+          map(list => {
+            const highlights = list.filter(f => f.destaque);
+            return highlights.length > 0 ? highlights : list;
+          }),
+          catchError(err2 => {
+            console.error('[DESTAQUES] ambos endpoints falharam:', err2);
+            return of([]);
+          })
+        );
       }),
       shareReplay(1)
     );
@@ -604,7 +622,7 @@ export class FornecedoresData {
 
     if (isGuid) return fetchByCidade(categoriaSlugOrId);
 
-    return this.categoriasData.getBySlug(categoriaSlugOrId, cidade).pipe(
+    return this.categoriasData.getBySlug(categoriaSlugOrId).pipe(
       switchMap(cat => cat ? fetchByCidade(cat.id) : of([]))
     );
   }
@@ -621,13 +639,28 @@ export class FornecedoresData {
           const list = Array.isArray(r) ? r : (r.data || r.Data || r.items || r.Items || []);
           return list.map((src: any) => this._mapToFornecedorListDto(src));
         }),
-        catchError(() => this.getByCategoria(categoriaId, cidade).pipe(map(list => list.filter((f: any) => f.destaque))))
+        catchError(err => {
+          console.warn('[DESTAQUES BY CATEGORIA] novo endpoint /public/{cidade}/fornecedores falhou, tentando endpoint legado:', err);
+          // Fallback para endpoint legado
+          const legacyParams: any = { page: 1, pageSize: 24, destaque: true };
+          if (environment.FORNECEDOR_PUBLICADO !== null) legacyParams.publicado = environment.FORNECEDOR_PUBLICADO;
+          return this.api.get<any>(`/fornecedores/ativos/categoria/${categoriaId}`, legacyParams).pipe(
+            map(r => {
+              const list = Array.isArray(r) ? r : (r.data || r.Data || r.items || r.Items || []);
+              return list.map((src: any) => this._mapToFornecedorListDto(src));
+            }),
+            catchError(err2 => {
+              console.warn('[DESTAQUES BY CATEGORIA] ambos endpoints falharam, filtrando localmente:', err2);
+              return this.getByCategoria(categoriaId, cidade).pipe(map(list => list.filter((f: any) => f.destaque)));
+            })
+          );
+        })
       );
     };
 
     if (isGuid) return fetchByCidade(categoriaSlugOrId);
 
-    return this.categoriasData.getBySlug(categoriaSlugOrId, cidade).pipe(
+    return this.categoriasData.getBySlug(categoriaSlugOrId).pipe(
       switchMap(cat => cat ? fetchByCidade(cat.id) : of([]))
     );
   }

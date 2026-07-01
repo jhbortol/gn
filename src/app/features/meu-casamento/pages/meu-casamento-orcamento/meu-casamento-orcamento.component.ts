@@ -197,7 +197,7 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
   formatStatus(status: BudgetItem['status']): string {
     if (status === 'contracted') return 'Contratado';
     if (status === 'paid') return 'Pago';
-    if (status === 'inProgress') return 'Em andamento';
+    if (status === 'inProgress') return 'Em negociação';
     return 'Pendente';
   }
 

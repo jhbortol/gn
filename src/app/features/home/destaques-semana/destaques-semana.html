@@ -50,22 +50,13 @@
           </div>
         </div>
       </div>
-          </div>
-        </div>
-      </div>
       </ng-container>
+      <ng-template #empty>
+        <div class="text-center py-12 text-gray-400">
+          <p class="text-lg">Nenhum destaque disponível no momento.</p>
+        </div>
+      </ng-template>
     </ng-container>
-    <ng-template #empty>
-      <div class="text-center py-12 text-gray-400">
-        <p class="text-lg">Nenhum destaque disponível no momento.</p>
-      </div>
-    </ng-template>
-    </ng-container>
-    <ng-template #empty>
-      <div class="text-center py-12 text-gray-400">
-        <p class="text-lg">Nenhum destaque disponível no momento.</p>
-      </div>
-    </ng-template>
     <ng-template #loading>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 min-h-[450px]">
         <div *ngFor="let i of [1,2,3,4]" class="bg-white rounded-2xl border border-gray-100 p-5 animate-pulse h-full flex flex-col">

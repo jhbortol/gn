@@ -11,6 +11,7 @@ import { BrideAuthService } from '../../../../core/services/bride-auth.service';
 import { BrideLeadsHistoryComponent } from '../bride-leads-history/bride-leads-history.component';
 import { TermoAceiteModalComponent } from '../../../../shared/components/termo-aceite-modal/termo-aceite-modal.component';
 import { TermoAdesao } from '../../../../core/models/bride-auth.model';
+import { ToastService } from '../../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-meu-casamento-hub',
@@ -27,6 +28,7 @@ export class MeuCasamentoHubComponent implements OnInit {
   private readonly brideAuthService = inject(BrideAuthService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly trackingService = inject(TrackingService);
+  private readonly toastService = inject(ToastService);
 
   lgpdConsentido = signal(false);
   isLgpdSaving = signal(false);
@@ -94,6 +96,7 @@ export class MeuCasamentoHubComponent implements OnInit {
 
   navigate(path: string): void {
     if (!this.availableTools() && ['/meu-casamento/cronograma', '/meu-casamento/convidados', '/meu-casamento/orcamento'].includes(path)) {
+      this.toastService.error('Preencha nome do casal e WhatsApp para liberar esta ferramenta.');
       void this.router.navigate(['/meu-casamento'], { queryParams: { desbloqueioPendente: '1' } });
       return;
     }

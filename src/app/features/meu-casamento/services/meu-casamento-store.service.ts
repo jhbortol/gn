@@ -37,7 +37,7 @@ export class MeuCasamentoStoreService {
   readonly backupCode = computed(() => this.stateSignal().deviceId);
   readonly availableTools = computed(() => {
     const profile = this.stateSignal().profile;
-    return !!profile.brideFirstName.trim() && !!profile.whatsappNumber.trim();
+    return !!(profile?.brideFirstName || '').trim() && !!(profile?.whatsappNumber || '').trim();
   });
 
   constructor(@Inject(PLATFORM_ID) platformId: object) {

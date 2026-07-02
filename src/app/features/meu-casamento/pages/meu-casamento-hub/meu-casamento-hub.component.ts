@@ -1,5 +1,5 @@
 import { Component, OnInit, computed, inject, signal, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -43,9 +43,14 @@ export class MeuCasamentoHubComponent implements OnInit {
   readonly profile = this.store.profile;
   readonly availableTools = this.store.availableTools;
   readonly error = computed(() => this.store.state().lastError);
-  readonly blockedMessage = computed(() => this.route.snapshot.queryParamMap.has('desbloqueioPendente')
-    ? 'Preencha nome do casal e WhatsApp para liberar cronograma, convidados e orçamento.'
-    : null);
+  private readonly queryParams = toSignal(this.route.queryParams);
+
+  readonly blockedMessage = computed(() => {
+    const params = this.queryParams();
+    return params && params['desbloqueioPendente'] === '1'
+      ? 'Preencha nome do casal e WhatsApp para liberar cronograma, convidados e orçamento.'
+      : null;
+  });
   readonly countdownText = computed(() => {
     const date = this.store.profile().weddingDate;
     if (!date) return null;

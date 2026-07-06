@@ -200,9 +200,9 @@ import { IconComponent } from '../icon/icon';
             </div>
           </div>
 
-          <div class="mt-8 text-center" *ngIf="showContinueWithoutLogin">
+          <div class="mt-8 text-center" *ngIf="options?.showContinueWithoutLogin || showContinueWithoutLogin">
             <button (click)="continueWithoutLogin()" class="text-rose-600 hover:text-rose-700 font-medium underline text-xs transition">
-              Continuar sem logar
+              Agora não, continuar olhando.
             </button>
           </div>
         </div>
@@ -214,6 +214,7 @@ import { IconComponent } from '../icon/icon';
 export class BrideLoginModalComponent implements OnInit {
   @Input() message?: string;
   @Input() showContinueWithoutLogin = false;
+  @Input() options: any = {};
   
   @Output() close = new EventEmitter<void>();
   @Output() continue = new EventEmitter<void>();
@@ -247,11 +248,15 @@ export class BrideLoginModalComponent implements OnInit {
     this.errorMessage = '';
   }
 
-  closeModal() {
+  closeModal(fromSuccess = false) {
+    if (!fromSuccess) {
+      this.trackingService.trackHubAction('fechou_popup_login');
+    }
     this.close.emit();
   }
 
   continueWithoutLogin() {
+    this.trackingService.trackHubAction('fechou_popup_login');
     this.continue.emit();
   }
 
@@ -263,7 +268,7 @@ export class BrideLoginModalComponent implements OnInit {
         this.isLoading = false;
         this.trackingService.trackBrideLogin('google');
         this.loginSuccess.emit();
-        this.closeModal();
+        this.closeModal(true);
       },
       error: (err) => {
         console.error('Google login failed', err);
@@ -285,7 +290,7 @@ export class BrideLoginModalComponent implements OnInit {
         this.isLoading = false;
         this.trackingService.trackBrideLogin('email');
         this.loginSuccess.emit();
-        this.closeModal();
+        this.closeModal(true);
       },
       error: (err) => {
         console.error('Email login failed', err);
@@ -316,7 +321,7 @@ export class BrideLoginModalComponent implements OnInit {
         this.isLoading = false;
         this.trackingService.trackBrideRegister('email');
         this.loginSuccess.emit();
-        this.closeModal();
+        this.closeModal(true);
       },
       error: (err) => {
         console.error('Email registration failed', err);

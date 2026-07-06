@@ -46,22 +46,18 @@ loadComponent: () => import('./features/cidades/cidade-selector-page').then(m =>
 },
 {
 path: 'meu-casamento',
-canActivate: [brideAuthGuard],
 loadComponent: () => import('./features/meu-casamento/pages/meu-casamento-hub/meu-casamento-hub.component').then(m => m.MeuCasamentoHubComponent)
 },
 {
 path: 'meu-casamento/cronograma',
-canActivate: [brideAuthGuard, weddingToolsGuard],
 loadComponent: () => import('./features/meu-casamento/pages/meu-casamento-cronograma/meu-casamento-cronograma.component').then(m => m.MeuCasamentoCronogramaComponent)
 },
 {
 path: 'meu-casamento/convidados',
-canActivate: [brideAuthGuard, weddingToolsGuard],
 loadComponent: () => import('./features/meu-casamento/pages/meu-casamento-convidados/meu-casamento-convidados.component').then(m => m.MeuCasamentoConvidadosComponent)
 },
 {
 path: 'meu-casamento/orcamento',
-canActivate: [brideAuthGuard, weddingToolsGuard],
 loadComponent: () => import('./features/meu-casamento/pages/meu-casamento-orcamento/meu-casamento-orcamento.component').then(m => m.MeuCasamentoOrcamentoComponent)
 },
 {
@@ -71,7 +67,6 @@ loadComponent: () => import('./features/meu-casamento/pages/bride-profile/bride-
 },
 {
 path: 'meus-favoritos',
-canActivate: [brideAuthGuard],
 loadComponent: () => import('./features/meu-casamento/pages/meus-favoritos/meus-favoritos.component').then(m => m.MeusFavoritosComponent)
 },
 {

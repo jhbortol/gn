@@ -100,11 +100,7 @@ export class MeuCasamentoHubComponent implements OnInit {
 
 
   navigate(path: string): void {
-    if (!this.availableTools() && ['/meu-casamento/cronograma', '/meu-casamento/convidados', '/meu-casamento/orcamento'].includes(path)) {
-      this.toastService.error('Preencha nome do casal e WhatsApp para liberar esta ferramenta.');
-      void this.router.navigate(['/meu-casamento'], { queryParams: { desbloqueioPendente: '1' } });
-      return;
-    }
+
 
     this.trackingService.trackHubAction('navigate_module', { module: path });
     void this.router.navigateByUrl(path);

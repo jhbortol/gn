@@ -24,6 +24,12 @@ import { IconComponent } from '../icon/icon';
             </svg>
           </button>
 
+          <!-- Header (Title & Message) -->
+          <div *ngIf="options?.title || options?.message || message" class="mb-2 mt-4 text-center px-4">
+            <h3 *ngIf="options?.title" class="text-lg font-serif font-bold text-rose-800 mb-1">{{ options?.title }}</h3>
+            <p *ngIf="options?.message || message" class="text-sm text-gray-600">{{ options?.message || message }}</p>
+          </div>
+
           <div class="w-full">
             <!-- Tabs -->
             <div class="flex border-b border-gray-100 mb-6 mt-2">

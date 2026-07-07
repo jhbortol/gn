@@ -268,6 +268,9 @@ export class BrideLoginModalComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         this.trackingService.trackBrideLogin('google');
+        if (this.options?.isDegustacaoLimit) {
+          this.trackingService.trackHubAction('converteu_apos_degustacao');
+        }
         this.loginSuccess.emit();
         this.closeModal(true);
       },
@@ -290,6 +293,9 @@ export class BrideLoginModalComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         this.trackingService.trackBrideLogin('email');
+        if (this.options?.isDegustacaoLimit) {
+          this.trackingService.trackHubAction('converteu_apos_degustacao');
+        }
         this.loginSuccess.emit();
         this.closeModal(true);
       },
@@ -321,6 +327,9 @@ export class BrideLoginModalComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         this.trackingService.trackBrideRegister('email');
+        if (this.options?.isDegustacaoLimit) {
+          this.trackingService.trackHubAction('converteu_apos_degustacao');
+        }
         this.loginSuccess.emit();
         this.closeModal(true);
       },

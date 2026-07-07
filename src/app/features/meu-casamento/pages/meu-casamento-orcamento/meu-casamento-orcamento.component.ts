@@ -7,6 +7,7 @@ import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.servi
 import { BudgetItem } from '../../meu-casamento.models';
 import { BrideAuthService } from '../../../../core/services/bride-auth.service';
 import { BrideLoginModalService } from '../../../../core/services/bride-login-modal.service';
+import { TrackingService } from '../../../../core/tracking.service';
 
 import { CidadeService } from '../../../../core/cidade.service';
 
@@ -30,6 +31,7 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
   private readonly sync = inject(MeuCasamentoSyncService);
   private readonly auth = inject(BrideAuthService);
   private readonly loginModal = inject(BrideLoginModalService);
+  private readonly tracking = inject(TrackingService);
   private readonly cidadeService = inject(CidadeService);
   private readonly location = inject(Location);
   private readonly currencyFormatter = new Intl.NumberFormat('pt-BR', {
@@ -144,11 +146,17 @@ export class MeuCasamentoOrcamentoComponent implements OnInit {
     const nextSpent = this.parseCurrencyInput(this.activeDraft.spentAmount);
     const willBeActive = nextAllocated > 0 || nextSpent > 0;
 
+    if (!currentIsActive && willBeActive && !this.auth.isLoggedIn) {
+      this.tracking.trackHubAction('iniciou_degustacao');
+    }
+
     if (!currentIsActive && willBeActive && !this.auth.isLoggedIn && itemsWithValues >= 2) {
+      this.tracking.trackHubAction('atingiu_limite_anonimo');
       const loggedIn = await this.loginModal.open({
         title: 'Controle total do seu investimento! 💰',
         message: 'Para garantir que você não perca os dados do seu orçamento caso saia desta tela, crie sua conta gratuita em 5 segundos. É rápido e você salva tudo na nuvem!',
-        showContinueWithoutLogin: true
+        showContinueWithoutLogin: true,
+        isDegustacaoLimit: true
       });
       if (!loggedIn) {
         return;

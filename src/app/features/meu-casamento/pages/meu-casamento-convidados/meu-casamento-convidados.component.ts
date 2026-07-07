@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.service';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
 import { GuestItem } from '../../meu-casamento.models';
+import { BrideAuthService } from '../../../../core/services/bride-auth.service';
+import { BrideLoginModalService } from '../../../../core/services/bride-login-modal.service';
 
 
 type GuestDraft = Pick<GuestItem, 'id' | 'name' | 'group' | 'status' | 'plusOnes'> & {
@@ -21,6 +23,8 @@ type GuestDraft = Pick<GuestItem, 'id' | 'name' | 'group' | 'status' | 'plusOnes
 export class MeuCasamentoConvidadosComponent implements OnInit {
   private readonly store = inject(MeuCasamentoStoreService);
   private readonly sync = inject(MeuCasamentoSyncService);
+  private readonly auth = inject(BrideAuthService);
+  private readonly loginModal = inject(BrideLoginModalService);
 
   search = '';
   groupFilter = '';
@@ -67,6 +71,17 @@ export class MeuCasamentoConvidadosComponent implements OnInit {
 
   async saveGuest(): Promise<void> {
     if (!this.draft.name.trim()) return;
+
+    if (!this.editingId && !this.auth.isLoggedIn && this.store.guests().length >= 2) {
+      const loggedIn = await this.loginModal.open({
+        title: 'Sua lista está ficando incrível! 💖',
+        message: 'Para garantir que você não perca nenhum dado caso saia desta tela, crie sua conta gratuita em 5 segundos. É rápido e você salva tudo na nuvem!',
+        showContinueWithoutLogin: true
+      });
+      if (!loggedIn) {
+        return;
+      }
+    }
 
     const id = this.editingId ?? crypto.randomUUID();
     this.store.saveGuest({

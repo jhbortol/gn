@@ -31,11 +31,7 @@ export class BottomNavComponent {
 
 
   handleNav(event: Event, path: string) {
-    if (!this.authService.isLoggedIn) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.loginModalService.open();
-    } else {
+    if (this.authService.isLoggedIn) {
       console.log(`[BottomNav] Navegando para ${path} - Iniciando sincronização da funcionalidade (push + pull local)...`);
       void (async () => {
         await this.syncService.syncPendingChanges();

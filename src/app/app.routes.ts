@@ -62,7 +62,6 @@ loadComponent: () => import('./features/meu-casamento/pages/meu-casamento-orcame
 },
 {
 path: 'meu-casamento/perfil',
-canActivate: [brideAuthGuard],
 loadComponent: () => import('./features/meu-casamento/pages/bride-profile/bride-profile.component').then(m => m.BrideProfileComponent)
 },
 {

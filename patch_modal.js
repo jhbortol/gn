@@ -1,42 +1,23 @@
 const fs = require('fs');
-const file = 'src/app/shared/bride-login-modal/bride-login-modal.component.ts';
-let code = fs.readFileSync(file, 'utf8');
+const path = './src/app/shared/bride-login-modal/bride-login-modal.component.ts';
 
-code = code.replace(
-  /<h3 class="text-lg md:text-xl font-serif font-bold text-rose-800">Organize seu Casamento<\/h3>/,
-  '<h3 class="text-lg md:text-xl font-serif font-bold text-rose-800">{{ options?.title || \'Organize seu Casamento\' }}</h3>'
+let content = fs.readFileSync(path, 'utf8');
+
+// 1. Change the main container classes
+content = content.replace(
+  '<div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex overflow-hidden relative z-50">',
+  '<div class="bg-white w-full max-w-md max-h-[90vh] rounded-2xl shadow-2xl flex overflow-y-auto relative z-50">'
 );
 
-code = code.replace(
-  /<p class="text-xs text-rose-700\/80 mb-6 leading-relaxed">\s*Tenha acesso a todas as ferramentas essenciais gratuitas para planejar o seu grande dia com tranquilidade:\s*<\/p>/,
-  `<p class="text-xs text-rose-700/80 mb-6 leading-relaxed">
-            {{ options?.message || 'Tenha acesso a todas as ferramentas essenciais gratuitas para planejar o seu grande dia com tranquilidade:' }}
-          </p>`
+// 2. Remove the Left Panel (we use a regex to match from <!-- Left Panel: ... to the end of the div, before <!-- Right Panel:)
+const leftPanelRegex = /<!-- Left Panel:[\s\S]*?<!-- Right Panel:/;
+content = content.replace(leftPanelRegex, '<!-- Right Panel:');
+
+// 3. Update the Right Panel classes (remove w-full md:w-1/2 p-6 md:p-8, replace with w-full p-6 md:p-8)
+content = content.replace(
+  '<div class="w-full md:w-1/2 p-6 md:p-8">',
+  '<div class="w-full p-6 md:p-8">'
 );
 
-code = code.replace(
-  /@Output\(\) close = new EventEmitter<void>\(\);/,
-  '@Output() close = new EventEmitter<boolean>();'
-);
-
-code = code.replace(
-  /closeModal\(fromSuccess = false\) \{\s*if \(\!fromSuccess\) \{\s*this\.trackingService\.trackHubAction\('fechou_popup_login'\);\s*\}\s*this\.close\.emit\(\);\s*\}/,
-  `closeModal(fromSuccess = false) {
-    if (!fromSuccess) {
-      this.trackingService.trackHubAction('fechou_popup_login');
-    }
-    this.close.emit(fromSuccess);
-  }`
-);
-
-code = code.replace(
-  /continueWithoutLogin\(\) \{\s*this\.trackingService\.trackHubAction\('fechou_popup_login'\);\s*this\.continue\.emit\(\);\s*\}/,
-  `continueWithoutLogin() {
-    this.trackingService.trackHubAction('fechou_popup_login');
-    this.continue.emit();
-    this.close.emit(false);
-  }`
-);
-
-fs.writeFileSync(file, code);
-console.log('Updated component');
+fs.writeFileSync(path, content);
+console.log('Patched bride-login-modal.component.ts');

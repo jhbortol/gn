@@ -1,51 +1,18 @@
 const fs = require('fs');
-const file = 'src/app/features/meu-casamento/pages/meu-casamento-convidados/meu-casamento-convidados.component.ts';
-let code = fs.readFileSync(file, 'utf8');
 
-// Imports adicionais
-code = code.replace(
-  /import \{ GuestItem \} from '\.\.\/\.\.\/meu-casamento\.models';/,
-  `import { GuestItem } from '../../meu-casamento.models';\nimport { BrideAuthService } from '../../../../core/services/bride-auth.service';\nimport { BrideLoginModalService } from '../../../../core/services/bride-login-modal.service';`
+const file = 'src/app/features/meu-casamento/pages/meu-casamento-convidados/meu-casamento-convidados.component.css';
+let content = fs.readFileSync(file, 'utf8');
+
+// The .form-modal has padding? No, let's look at the HTML structure to see where padding is needed
+// The .modal-overlay has padding: 1rem;
+// The .form-modal is the container.
+// We want the modal itself to have space at the bottom or the actions-row to have bottom padding.
+
+content = content.replace(
+  '.form-modal {\n  width: min(760px, 100%);\n  max-height: calc(100vh - 2rem);\n  overflow: auto;\n}',
+  '.form-modal {\n  width: min(760px, 100%);\n  max-height: calc(100vh - 2rem);\n  overflow: auto;\n  padding-bottom: 5rem;\n}'
 );
 
-// Injecao
-code = code.replace(
-  /private readonly sync = inject\(MeuCasamentoSyncService\);/,
-  `private readonly sync = inject(MeuCasamentoSyncService);\n  private readonly auth = inject(BrideAuthService);\n  private readonly loginModal = inject(BrideLoginModalService);`
-);
 
-// Modificando saveGuest
-code = code.replace(
-  /async saveGuest\(\): Promise<void> \{[\s\S]*?await this\.sync\.syncPendingChanges\(\);\n\s*\}/,
-  `async saveGuest(): Promise<void> {
-    if (!this.draft.name.trim()) return;
-
-    if (!this.editingId && !this.auth.isLoggedIn && this.store.guests().length >= 2) {
-      const loggedIn = await this.loginModal.open({
-        title: 'Sua lista está ficando incrível! 💖',
-        message: 'Para garantir que você não perca nenhum dado caso saia desta tela, crie sua conta gratuita em 5 segundos. É rápido e você salva tudo na nuvem!',
-        showContinueWithoutLogin: true
-      });
-      if (!loggedIn) {
-        return;
-      }
-    }
-
-    const id = this.editingId ?? crypto.randomUUID();
-    this.store.saveGuest({
-      id,
-      name: this.draft.name,
-      group: this.draft.group,
-      status: this.draft.status,
-      plusOnes: this.draft.plusOnes,
-      phone: this.draft.phone,
-      notes: this.draft.notes
-    });
-    this.resetDraft();
-    this.showFormModal = false;
-    await this.sync.syncPendingChanges();
-  }`
-);
-
-fs.writeFileSync(file, code);
-console.log('Updated convidados');
+fs.writeFileSync(file, content);
+console.log('Convidados patched.');

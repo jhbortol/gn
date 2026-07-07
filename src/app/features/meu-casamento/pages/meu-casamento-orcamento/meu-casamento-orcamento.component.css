@@ -356,7 +356,7 @@ button {
 
 .sheet-footer {
   margin-top: 0.85rem;
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0));
 }
 
 .snackbar {

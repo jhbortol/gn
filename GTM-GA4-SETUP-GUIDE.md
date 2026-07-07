@@ -86,7 +86,51 @@ Por fim, vamos criar as tags que disparam os Acionadores e enviam as Variáveis 
 
 ---
 
-## Passo 4: Testar e Publicar
+## Passo 4: Eventos Específicos de Degustação Anônima (GTM + Meta)
+
+Nós implementamos 4 novos gatilhos para rastrear o comportamento de usuários anônimos ao utilizarem as ferramentas, antes e depois de esbarrarem no limite de uso. Esses gatilhos usam o evento padrão `hub_interaction` que configuramos no Passo 3, sendo diferenciados pelo parâmetro `action_name`.
+
+Os quatro novos gatilhos (`action_name`) são:
+- `iniciou_degustacao`: Quando o usuário anônimo usa a ferramenta pela primeira vez.
+- `atingiu_limite_anonimo`: Quando o usuário tenta usar a ferramenta além do limite sem logar.
+- `fechou_popup_login`: Quando o usuário decide não criar conta ao atingir o limite.
+- `converteu_apos_degustacao`: Quando o usuário efetivamente cria a conta após atingir o limite.
+
+Como a Tag do GA4 do Passo 3 já captura o evento `hub_interaction` e o seu respectivo `action_name` dinamicamente via `{{dlv - action_name}}`, **os eventos já aparecerão no seu GA4 sem configuração adicional!**
+
+Se você desejar que esses eventos disparem Pixels Customizados da Meta através do GTM, siga as instruções abaixo:
+
+### 1. Criar Acionadores Específicos para a Meta (GTM)
+Para a Meta, você pode querer acionamentos separados para cada etapa do funil de degustação.
+1. No menu lateral, clique em **Acionadores** (Triggers) > **Novo**.
+2. **Tipo de Acionador:** Evento Personalizado (Custom Event)
+3. **Nome do Evento:** `hub_interaction`
+4. Selecione **Alguns eventos personalizados** (Some Custom Events).
+5. Defina a regra: `dlv - action_name` **é igual a** `iniciou_degustacao`.
+6. **Nome:** `Evento - Meta - Iniciou Degustação`. Salve.
+7. Repita para os outros três gatilhos, alterando a regra (`atingiu_limite_anonimo`, `fechou_popup_login`, `converteu_apos_degustacao`) e o nome do Acionador.
+
+### 2. Criar Tags da Meta (GTM)
+1. No menu lateral esquerdo, clique em **Tags** > **Nova**.
+2. Escolha **HTML Personalizado** (Custom HTML).
+3. Insira o script do Pixel do Facebook customizado, por exemplo, para o gatilho "Converteu":
+```html
+<script>
+  if (typeof fbq === 'function') {
+    // Você pode usar trackCustom para um evento personalizado
+    fbq('trackCustom', 'ConverteuAposDegustacao');
+    // Ou disparar um evento padrão da Meta como CompleteRegistration
+    // fbq('track', 'CompleteRegistration', { content_name: 'Conversão Pós-Degustação' });
+  }
+</script>
+```
+4. Em **Acionamento**, selecione o gatilho correspondente (`Evento - Meta - Converteu Após Degustação`).
+5. **Nome:** `Meta Pixel - Converteu Pós Degustação`. Salve.
+6. Crie Tags HTML semelhantes para os outros eventos, ajustando o nome do evento no `fbq('trackCustom', 'NomeDoEvento')`.
+
+---
+
+## Passo 5: Testar e Publicar
 
 1. No GTM, clique no botão **Visualizar** (Preview) no canto superior direito.
 2. Insira o URL do seu site. Uma nova aba se abrirá com seu site conectado ao GTM.

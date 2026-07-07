@@ -117,6 +117,7 @@
 
 .form-grid {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.6rem;
 }
 
 label,
@@ -124,6 +125,11 @@ label,
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+}
+
+.form-grid label {
+  gap: 0.2rem;
+  font-size: 0.9rem;
 }
 
 input,
@@ -139,6 +145,12 @@ select {
   padding: 0.8rem 0.9rem;
   color: #333333;
   background: #ffffff;
+}
+
+.form-grid input,
+.form-grid select {
+  padding: 0.5rem 0.6rem;
+  font-size: 0.9rem;
 }
 
 .select-field select,
@@ -286,7 +298,16 @@ button.primary {
   width: min(760px, 100%);
   max-height: calc(100vh - 2rem);
   overflow: auto;
-  padding-bottom: 5rem;
+  padding: 1.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.form-modal .actions-row {
+  margin-top: 1rem;
+}
+
+.form-modal button.primary {
+  padding: 0.6rem 1.2rem;
 }
 
 .modal-header {

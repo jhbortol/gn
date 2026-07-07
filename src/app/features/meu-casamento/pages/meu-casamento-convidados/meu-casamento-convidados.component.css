@@ -286,6 +286,7 @@ button.primary {
   width: min(760px, 100%);
   max-height: calc(100vh - 2rem);
   overflow: auto;
+  padding-bottom: 5rem;
 }
 
 .modal-header {

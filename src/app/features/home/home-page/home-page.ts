@@ -160,11 +160,6 @@ export class HomePageComponent implements OnInit {
     event.stopPropagation();
     event.preventDefault();
 
-    if (!this.authService.isLoggedIn) {
-      this.loginModalService.open();
-      return;
-    }
-
     if (this.isFavorite(fornecedor.id)) {
       this.weddingStore.removeFavorite(fornecedor.id);
     } else {
@@ -182,10 +177,7 @@ export class HomePageComponent implements OnInit {
   }
 
   handleToolClick(event: Event, path: string) {
-    if (!this.authService.isLoggedIn) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.loginModalService.open();
-    }
+    // Navigate freely without requiring immediate login
+    // Login limits are handled within the specific tool components
   }
 }

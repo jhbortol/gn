@@ -13,58 +13,10 @@ import { IconComponent } from '../icon/icon';
   imports: [CommonModule, GoogleSigninButtonModule, IconComponent, FormsModule],
   template: `
     <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col md:flex-row animate-in zoom-in-95 duration-200">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto flex flex-col animate-in zoom-in-95 duration-200">
         
-        <!-- Left Side: Features List -->
-        <div class="md:w-1/2 bg-gradient-to-br from-rose-50 to-pink-50 p-6 md:p-8 flex flex-col justify-center border-b md:border-b-0 md:border-r border-rose-100/50">
-          <div class="flex items-center gap-2 mb-4">
-            <app-icon name="heart" [size]="20" className="fill-rose-600 text-rose-600"></app-icon>
-            <h3 class="text-lg md:text-xl font-serif font-bold text-rose-800">{{ options?.title || 'Organize seu Casamento' }}</h3>
-          </div>
-          <p class="text-xs text-rose-700/80 mb-6 leading-relaxed">
-            {{ options?.message || 'Tenha acesso a todas as ferramentas essenciais gratuitas para planejar o seu grande dia com tranquilidade:' }}
-          </p>
-          <ul class="space-y-4 text-sm text-gray-700">
-            <li class="flex items-start gap-3">
-              <span class="text-rose-500 mt-0.5 text-base">📅</span>
-              <div>
-                <strong class="text-rose-950 font-semibold block leading-tight">Cronograma de Tarefas</strong>
-                <span class="text-xs text-gray-500">Checklist completo para não esquecer nada</span>
-              </div>
-            </li>
-            <li class="flex items-start gap-3">
-              <span class="text-rose-500 mt-0.5 text-base">💰</span>
-              <div>
-                <strong class="text-rose-950 font-semibold block leading-tight">Controle Financeiro</strong>
-                <span class="text-xs text-gray-500">Gerencie seu orçamento e pagamentos</span>
-              </div>
-            </li>
-            <li class="flex items-start gap-3">
-              <span class="text-rose-500 mt-0.5 text-base">👥</span>
-              <div>
-                <strong class="text-rose-950 font-semibold block leading-tight">Lista de Convidados</strong>
-                <span class="text-xs text-gray-500">Organize a lista de presença e RSVP</span>
-              </div>
-            </li>
-            <li class="flex items-start gap-3">
-              <span class="text-rose-500 mt-0.5 text-base">💖</span>
-              <div>
-                <strong class="text-rose-950 font-semibold block leading-tight">Fornecedores Favoritos</strong>
-                <span class="text-xs text-gray-500">Guarde e compare seus prediletos</span>
-              </div>
-            </li>
-            <li class="flex items-start gap-3">
-              <span class="text-rose-500 mt-0.5 text-base">📩</span>
-              <div>
-                <strong class="text-rose-950 font-semibold block leading-tight">Histórico de Orçamentos</strong>
-                <span class="text-xs text-gray-500">Acompanhe todas as suas propostas</span>
-              </div>
-            </li>
-          </ul>
-        </div>
-
         <!-- Right Side: Login/Register Forms -->
-        <div class="md:w-1/2 p-6 flex flex-col justify-between relative min-h-[450px]">
+        <div class="w-full p-6 flex flex-col justify-between relative min-h-[450px]">
           <!-- Close Button -->
           <button (click)="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition rounded-full p-1 hover:bg-gray-100 focus:outline-none z-10">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

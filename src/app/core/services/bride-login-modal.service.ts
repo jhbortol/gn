@@ -4,6 +4,7 @@ export interface BrideLoginModalOptions {
   title?: string;
   message?: string;
   showContinueWithoutLogin?: boolean;
+  isDegustacaoLimit?: boolean;
 }
 
 @Injectable({

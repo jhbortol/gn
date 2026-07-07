@@ -6,6 +6,7 @@ import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.servi
 import { GuestItem } from '../../meu-casamento.models';
 import { BrideAuthService } from '../../../../core/services/bride-auth.service';
 import { BrideLoginModalService } from '../../../../core/services/bride-login-modal.service';
+import { TrackingService } from '../../../../core/tracking.service';
 
 
 type GuestDraft = Pick<GuestItem, 'id' | 'name' | 'group' | 'status' | 'plusOnes'> & {
@@ -25,6 +26,7 @@ export class MeuCasamentoConvidadosComponent implements OnInit {
   private readonly sync = inject(MeuCasamentoSyncService);
   private readonly auth = inject(BrideAuthService);
   private readonly loginModal = inject(BrideLoginModalService);
+  private readonly tracking = inject(TrackingService);
 
   search = '';
   groupFilter = '';
@@ -72,11 +74,17 @@ export class MeuCasamentoConvidadosComponent implements OnInit {
   async saveGuest(): Promise<void> {
     if (!this.draft.name.trim()) return;
 
+    if (!this.editingId && !this.auth.isLoggedIn) {
+      this.tracking.trackHubAction('iniciou_degustacao');
+    }
+
     if (!this.editingId && !this.auth.isLoggedIn && this.store.guests().length >= 2) {
+      this.tracking.trackHubAction('atingiu_limite_anonimo');
       const loggedIn = await this.loginModal.open({
         title: 'Sua lista está ficando incrível! 💖',
         message: 'Para garantir que você não perca nenhum dado caso saia desta tela, crie sua conta gratuita em 5 segundos. É rápido e você salva tudo na nuvem!',
-        showContinueWithoutLogin: true
+        showContinueWithoutLogin: true,
+        isDegustacaoLimit: true
       });
       if (!loggedIn) {
         return;

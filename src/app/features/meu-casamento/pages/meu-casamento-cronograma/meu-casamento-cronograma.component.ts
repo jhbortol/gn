@@ -6,6 +6,7 @@ import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.servi
 import { ChecklistTaskDefinition, WEDDING_CHECKLIST_TASKS } from '../../meu-casamento.models';
 import { BrideAuthService } from '../../../../core/services/bride-auth.service';
 import { BrideLoginModalService } from '../../../../core/services/bride-login-modal.service';
+import { TrackingService } from '../../../../core/tracking.service';
 
 import { CidadeService } from '../../../../core/cidade.service';
 
@@ -43,6 +44,7 @@ export class MeuCasamentoCronogramaComponent implements OnInit {
   private readonly cidade   = inject(CidadeService);
   private readonly auth     = inject(BrideAuthService);
   private readonly loginModal = inject(BrideLoginModalService);
+  private readonly tracking = inject(TrackingService);
 
   readonly totalTasks = WEDDING_CHECKLIST_TASKS.length;
 
@@ -77,11 +79,17 @@ export class MeuCasamentoCronogramaComponent implements OnInit {
   }
 
   async toggleTask(taskId: string, checked: boolean): Promise<void> {
+    if (checked && !this.auth.isLoggedIn) {
+      this.tracking.trackHubAction('iniciou_degustacao');
+    }
+
     if (checked && !this.auth.isLoggedIn && this.completedCount() >= 2) {
+      this.tracking.trackHubAction('atingiu_limite_anonimo');
       const loggedIn = await this.loginModal.open({
         title: 'Seu cronograma está ganhando forma! 💖',
         message: 'Para garantir que você não perca seu progresso caso saia desta tela, crie sua conta gratuita em 5 segundos. É rápido e você salva tudo na nuvem!',
-        showContinueWithoutLogin: true
+        showContinueWithoutLogin: true,
+        isDegustacaoLimit: true
       });
       if (!loggedIn) {
         return;

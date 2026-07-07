@@ -18,5 +18,5 @@
 <app-install-banner></app-install-banner>
 
 @if (loginModalService.isOpen()) {
-  <app-bride-login-modal (close)="loginModalService.close()"></app-bride-login-modal>
+  <app-bride-login-modal [options]="loginModalService.getOptions() || {}" (close)="loginModalService.close($event)"></app-bride-login-modal>
 }

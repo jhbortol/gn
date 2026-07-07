@@ -4,6 +4,8 @@ import { Router, RouterModule } from '@angular/router';
 import { MeuCasamentoStoreService } from '../../services/meu-casamento-store.service';
 import { MeuCasamentoSyncService } from '../../services/meu-casamento-sync.service';
 import { ChecklistTaskDefinition, WEDDING_CHECKLIST_TASKS } from '../../meu-casamento.models';
+import { BrideAuthService } from '../../../../core/services/bride-auth.service';
+import { BrideLoginModalService } from '../../../../core/services/bride-login-modal.service';
 
 import { CidadeService } from '../../../../core/cidade.service';
 
@@ -39,6 +41,8 @@ export class MeuCasamentoCronogramaComponent implements OnInit {
   private readonly location = inject(Location);
   private readonly router   = inject(Router);
   private readonly cidade   = inject(CidadeService);
+  private readonly auth     = inject(BrideAuthService);
+  private readonly loginModal = inject(BrideLoginModalService);
 
   readonly totalTasks = WEDDING_CHECKLIST_TASKS.length;
 
@@ -73,6 +77,16 @@ export class MeuCasamentoCronogramaComponent implements OnInit {
   }
 
   async toggleTask(taskId: string, checked: boolean): Promise<void> {
+    if (checked && !this.auth.isLoggedIn && this.completedCount() >= 2) {
+      const loggedIn = await this.loginModal.open({
+        title: 'Seu cronograma está ganhando forma! 💖',
+        message: 'Para garantir que você não perca seu progresso caso saia desta tela, crie sua conta gratuita em 5 segundos. É rápido e você salva tudo na nuvem!',
+        showContinueWithoutLogin: true
+      });
+      if (!loggedIn) {
+        return;
+      }
+    }
     this.store.setChecklistTask(taskId, checked);
     await this.sync.syncPendingChanges();
   }

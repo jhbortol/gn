@@ -1,0 +1,1892 @@
+
+> guia-noivas@1.0.0 prerender
+> node scripts/inject-env.js && node generate-routes.js && node update-prerender-routes.js && ng run guia-noivas:prerender && node inject-version.js && node validate-prerender.js
+
+[dotenv@17.3.1] injecting env (1) from .env -- tip: 🛡️ auth for agents: https://vestauth.com
+Env injector: no changes for /app/src/environments/environment.ts
+Env injector: no changes for /app/src/environments/environment.prod.ts
+Env injection complete.
+🚀 Starting route generation with enriched metadata (multi-cidades)...
+
+[Attempt 1/2] Failed to fetch https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1/health: HTTP 404: Not Found
+Retrying in 1000ms...
+[Attempt 2/2] Failed to fetch https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1/health: HTTP 404: Not Found
+⚠️  API health endpoint not found (https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1/health). Trying next health endpoint...
+[Attempt 1/2] Failed to fetch https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1/health/ready: HTTP 404: Not Found
+Retrying in 1000ms...
+[Attempt 2/2] Failed to fetch https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1/health/ready: HTTP 404: Not Found
+⚠️  API health endpoint not found (https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1/health/ready). Trying next health endpoint...
+[Attempt 1/2] Failed to fetch https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1/health/live: HTTP 404: Not Found
+Retrying in 1000ms...
+[Attempt 2/2] Failed to fetch https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1/health/live: HTTP 404: Not Found
+⚠️  API health endpoint not found (https://funcguianoivasprod-e7b7atdxh8dbcnd4.brazilsouth-01.azurewebsites.net/api/v1/health/live). Trying next health endpoint...
+⚠️  All API health endpoints returned 404 (not found). Continuing with data fetch validation checks.
+📡 Fetching cidades from API...
+✅ Fetched 1 cidades: piracicaba
+📡 Fetching remaining data from API...
+📦 Fetching fornecedores from API...
+✅ Fetched 23 categorias for cidade piracicaba
+  ✓ Page 1: 71 fornecedores
+✅ Total fornecedores fetched: 71 across 1 pages
+
+📊 Data Summary:
+  - Blog posts: 11
+  - Fornecedores: 71
+  - Categorias: 23
+  - Cidades: piracicaba
+
+📝 Generating blog routes (all cities)...
+🏢 Generating fornecedor routes with enriched metadata (multi-cidades)...
+📂 Generating categoria routes (all cities)...
+
+✅ GENERATION COMPLETE!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📄 Routes generated: 118
+   - Static: 13 (1 cities × 13 pages)
+   - Blog: 11 (11 posts × 1 cities)
+   - Fornecedores: 71
+   - Categorias: 23 (23 cats × 1 cities)
+📋 Metadata entries: 118
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️  4 fornecedores without cover image (will use default OG image)
+✅ Files written:
+   - /app/src/prerender-routes.json
+   - /app/src/prerender-metadata.json
+
+Updated angular.json with 118 prerender routes
+- Generating browser application bundles (phase: setup)...
+- Generating server application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+✔ Server application bundle generation complete.
+✔ Server application bundle generation complete.
+
+Initial chunk files | Names                                                                                    |  Raw size
+main.js             | main                                                                                     |   5.55 MB |
+
+                    | Initial total                                                                            |   5.55 MB
+
+Lazy chunk files    | Names                                                                                    |  Raw size
+774.js              | fornecedor-page                                                                          | 144.11 kB |
+331.js              | removal-request-removal-request-page                                                     | 125.32 kB |
+38.js               | claim-profile-page-claim-profile-page                                                    | 112.37 kB |
+546.js              | features-comecar-comecar-page                                                            |  99.83 kB |
+16.js               | features-meu-casamento-pages-meu-casamento-hub-meu-casamento-hub-component               |  92.66 kB |
+233.js              | features-privacy-privacy-module                                                          |  92.45 kB |
+240.js              | features-home-home-page-home-page                                                        |  85.89 kB |
+528.js              | features-meu-casamento-pages-meu-casamento-orcamento-meu-casamento-orcamento-component   |  76.59 kB |
+317.js              | features-meu-casamento-pages-meu-casamento-convidados-meu-casamento-convidados-component |  65.10 kB |
+178.js              | features-guia-custos-guia-custos-page                                                    |  58.64 kB |
+698.js              | features-anuncie-anuncie-page                                                            |  46.31 kB |
+619.js              | blog-detail-blog-detail-page                                                             |  44.78 kB |
+929.js              | xhr2                                                                                     |  44.58 kB |
+104.js              | features-meu-casamento-pages-bride-profile-bride-profile-component                       |  44.56 kB |
+360.js              | features-meu-casamento-pages-meu-casamento-cronograma-meu-casamento-cronograma-component |  41.56 kB |
+549.js              | features-guia-precos-guia-precos-module                                                  |  36.49 kB |
+691.js              | blog-list-blog-list-page                                                                 |  29.57 kB |
+114.js              | features-meu-casamento-pages-meus-favoritos-meus-favoritos-component                     |  19.62 kB |
+593.js              | features-contato-contato-module                                                          |  17.73 kB |
+77.js               | fornecedores-list-page                                                                   |  17.03 kB |
+859.js              | features-meu-casamento-pages-remover-meus-dados-remover-meus-dados-component             |  13.13 kB |
+8.js                | sobre-nos                                                                                |  12.93 kB |
+990.js              | termos                                                                                   |  10.25 kB |
+335.js              | features-cidades-cidade-selector-page                                                    |   8.26 kB |
+527.js              | features-privacy-privacy-policy-page-privacy-policy-page                                 |   7.85 kB |
+297.js              | features-institucional-institucional-module                                              |   4.18 kB |
+65.js               | features-fornecedores-fornecedores-module                                                |   1.73 kB |
+427.js              | features-categorias-categorias-module                                                    |   1.69 kB |
+742.js              | features-midia-kit-midia-kit-page                                                        |   1.61 kB |
+671.js              | features-blog-blog-module                                                                |   1.58 kB |
+
+Build at: 2026-07-07T16:35:10.696Z - Hash: f16429b02c73d2bb - Time: 22745ms
+
+Warning: /app/src/server.ts is part of the TypeScript compilation but it's unused.
+Add only entry points to the 'files' or 'include' properties in your tsconfig.
+
+
+✔ Browser application bundle generation complete.
+- Copying assets...
+✔ Copying assets complete.
+- Generating index html...
+✔ Index html generation complete.
+
+
+
+32 unchanged chunks
+
+Build at: 2026-07-07T16:35:11.272Z - Hash: 98517e56f9ad4728 - Time: 18602ms
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+[DESTAQUES] nenhum fornecedor com destaque=true encontrado na lista
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+ERROR ReferenceError: window is not defined
+    at MidiaKitPage.ngOnInit (/app/dist/guia-noivas/server/742.js:26:7)
+    at callHookInternal (/app/dist/guia-noivas/server/main.js:80493:10)
+    at callHook (/app/dist/guia-noivas/server/main.js:80517:7)
+    at callHooks (/app/dist/guia-noivas/server/main.js:80477:9)
+    at executeInitAndCheckHooks (/app/dist/guia-noivas/server/main.js:80432:5)
+    at refreshView (/app/dist/guia-noivas/server/main.js:90124:11)
+    at detectChangesInView (/app/dist/guia-noivas/server/main.js:90322:5)
+    at detectChangesInViewIfAttached (/app/dist/guia-noivas/server/main.js:90284:3)
+    at detectChangesInEmbeddedViews (/app/dist/guia-noivas/server/main.js:90242:7)
+    at refreshView (/app/dist/guia-noivas/server/main.js:90138:5)
+Angular is running in development mode.
+Angular is running in development mode.
+Error loading blog post: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/blog/muito-alem-do-papel-o-convite-que-encanta-antes-do-sim',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/blog/muito-alem-do-papel-o-convite-que-encanta-antes-do-sim: 404 Not Found',
+  error: { error: 'Blog post not found' }
+}
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/box-foto-cabine',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/box-foto-cabine: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/pitstop-cabines',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/pitstop-cabines: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/fortimariadocarmo2-gmail-com',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/fortimariadocarmo2-gmail-com: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/es-producoes-e-eventos',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/es-producoes-e-eventos: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/galatas-eventos',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/galatas-eventos: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/aline-bortoleto-doces',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/aline-bortoleto-doces: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/spazio-sognare',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/spazio-sognare: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/espaco-catavento',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/espaco-catavento: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/rarita-convites-co',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/rarita-convites-co: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/atelie-deby-mya',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/atelie-deby-mya: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/studio-diana-danelon',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/studio-diana-danelon: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/du-caricaturas',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/du-caricaturas: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/espaco-haras-piracicaba',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/espaco-haras-piracicaba: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/trufas-e-doces-confeitaria',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/trufas-e-doces-confeitaria: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/lolies-doces-finos',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/lolies-doces-finos: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/lr-cerimonial',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/lr-cerimonial: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/ponto-oito-buffet',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/ponto-oito-buffet: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/a-querencia',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/a-querencia: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/espaco-terra',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/espaco-terra: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/sim-eventos',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/sim-eventos: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/wow-drinks-bartender',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/wow-drinks-bartender: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/golden-hall',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/golden-hall: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/bruna-reis-beauty',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/bruna-reis-beauty: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/mansao-atenas',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/mansao-atenas: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/patricia-ubices',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/patricia-ubices: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/espaco-seringueira',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/espaco-seringueira: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/fazenda-villa-cafeeira',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/fazenda-villa-cafeeira: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/zara-buffet',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/zara-buffet: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/mba-casamentos',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/mba-casamentos: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/la-belle-jour-eventos',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/la-belle-jour-eventos: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/palacete-monte-alegre',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/palacete-monte-alegre: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/vana-storymaker',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/vana-storymaker: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/mariana-soares',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/mariana-soares: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/alessandra-cardoso-decoracao',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/alessandra-cardoso-decoracao: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/casa-lucca',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/casa-lucca: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/buffet-dondelli',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/buffet-dondelli: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/joseli-moro-celebrante',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/joseli-moro-celebrante: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/rodrigo-sanches-drone',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/rodrigo-sanches-drone: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/espaco-villa-felicita',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/espaco-villa-felicita: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/celebrante-ismael-silva',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/celebrante-ismael-silva: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/floricultura-sempre-victoria',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/floricultura-sempre-victoria: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/sabriane-oliveira-decoracoes',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/sabriane-oliveira-decoracoes: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Error loading fornecedor: HttpErrorResponse {
+  headers: HttpHeaders {
+    headers: Map(8) {
+      'access-control-allow-credentials' => [Array],
+      'access-control-allow-headers' => [Array],
+      'access-control-allow-methods' => [Array],
+      'access-control-allow-origin' => [Array],
+      'content-type' => [Array],
+      'date' => [Array],
+      'request-context' => [Array],
+      'transfer-encoding' => [Array]
+    },
+    normalizedNames: Map(8) {
+      'access-control-allow-credentials' => 'access-control-allow-credentials',
+      'access-control-allow-headers' => 'access-control-allow-headers',
+      'access-control-allow-methods' => 'access-control-allow-methods',
+      'access-control-allow-origin' => 'access-control-allow-origin',
+      'content-type' => 'content-type',
+      'date' => 'date',
+      'request-context' => 'request-context',
+      'transfer-encoding' => 'transfer-encoding'
+    },
+    lazyInit: undefined,
+    lazyUpdate: null
+  },
+  status: 404,
+  statusText: 'Not Found',
+  url: 'https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/sr-joias',
+  ok: false,
+  type: undefined,
+  name: 'HttpErrorResponse',
+  message: 'Http failure response for https://func-guianoivas-dev-deczg2affxb9f7f7.brazilsouth-01.azurewebsites.net/api/v1/public/fornecedores/slug/sr-joias: 404 Not Found',
+  error: { message: 'Fornecedor não encontrado ou inativo' }
+}
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+Angular is running in development mode.
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+- Prerendering 118 route(s) to /app/dist/guia-noivas/browser...
+✔ Prerendering routes to /app/dist/guia-noivas/browser complete.
+✅ Version injected successfully!
+   Build ID: bf6efe3-1783442154814
+   Timestamp: 2026-07-07T16:35:54.814Z
+   Injected into 119 of 119 HTML files
+🔍 Validating prerendered content...
+
+📋 Expected routes: 118
+📄 Generated HTML files: 119
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 VALIDATION RESULTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Present: 118/118
+❌ Missing: 0/118
+📈 Coverage: 100.00%
+
+🔍 Additional validations...
+⚠️  WARNING: sitemap.xml not found in build output
+✅ robots.txt present
+✅ robots.txt allows indexing
+✅ prerender-metadata.json: 118 entries
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ VALIDATION PASSED
+   Coverage: 100.00%
+   All 118 expected routes are pre-rendered
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 Validation report saved: /app/prerender-validation-report.json

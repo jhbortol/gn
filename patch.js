@@ -1,4 +1,8 @@
-import { Injectable, signal } from '@angular/core';
+const fs = require('fs');
+const file = 'src/app/core/services/bride-login-modal.service.ts';
+let code = fs.readFileSync(file, 'utf8');
+
+const replacement = `import { Injectable, signal } from '@angular/core';
 
 export interface BrideLoginModalOptions {
   title?: string;
@@ -39,4 +43,7 @@ export class BrideLoginModalService {
       this.resolveFn = null;
     }
   }
-}
+}`;
+
+fs.writeFileSync(file, replacement);
+console.log('Updated service');

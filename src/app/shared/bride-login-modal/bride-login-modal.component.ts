@@ -19,10 +19,10 @@ import { IconComponent } from '../icon/icon';
         <div class="md:w-1/2 bg-gradient-to-br from-rose-50 to-pink-50 p-6 md:p-8 flex flex-col justify-center border-b md:border-b-0 md:border-r border-rose-100/50">
           <div class="flex items-center gap-2 mb-4">
             <app-icon name="heart" [size]="20" className="fill-rose-600 text-rose-600"></app-icon>
-            <h3 class="text-lg md:text-xl font-serif font-bold text-rose-800">Organize seu Casamento</h3>
+            <h3 class="text-lg md:text-xl font-serif font-bold text-rose-800">{{ options?.title || 'Organize seu Casamento' }}</h3>
           </div>
           <p class="text-xs text-rose-700/80 mb-6 leading-relaxed">
-            Tenha acesso a todas as ferramentas essenciais gratuitas para planejar o seu grande dia com tranquilidade:
+            {{ options?.message || 'Tenha acesso a todas as ferramentas essenciais gratuitas para planejar o seu grande dia com tranquilidade:' }}
           </p>
           <ul class="space-y-4 text-sm text-gray-700">
             <li class="flex items-start gap-3">
@@ -216,7 +216,7 @@ export class BrideLoginModalComponent implements OnInit {
   @Input() showContinueWithoutLogin = false;
   @Input() options: any = {};
   
-  @Output() close = new EventEmitter<void>();
+  @Output() close = new EventEmitter<boolean>();
   @Output() continue = new EventEmitter<void>();
   @Output() loginSuccess = new EventEmitter<void>();
 
@@ -252,12 +252,13 @@ export class BrideLoginModalComponent implements OnInit {
     if (!fromSuccess) {
       this.trackingService.trackHubAction('fechou_popup_login');
     }
-    this.close.emit();
+    this.close.emit(fromSuccess);
   }
 
   continueWithoutLogin() {
     this.trackingService.trackHubAction('fechou_popup_login');
     this.continue.emit();
+    this.close.emit(false);
   }
 
   private processGoogleLogin(idToken: string) {

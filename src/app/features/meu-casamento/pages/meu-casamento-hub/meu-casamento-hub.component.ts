@@ -12,11 +12,12 @@ import { BrideLeadsHistoryComponent } from '../bride-leads-history/bride-leads-h
 import { TermoAceiteModalComponent } from '../../../../shared/components/termo-aceite-modal/termo-aceite-modal.component';
 import { TermoAdesao } from '../../../../core/models/bride-auth.model';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { DestaquesSemanaComponent } from '../../../home/destaques-semana/destaques-semana';
 
 @Component({
   selector: 'app-meu-casamento-hub',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, BrideLeadsHistoryComponent, TermoAceiteModalComponent],
+  imports: [CommonModule, FormsModule, RouterModule, BrideLeadsHistoryComponent, TermoAceiteModalComponent, DestaquesSemanaComponent],
   templateUrl: './meu-casamento-hub.component.html',
   styleUrl: './meu-casamento-hub.component.css'
 })

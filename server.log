@@ -7,7 +7,7 @@
 
 Initial chunk files   | Names                                                                                    |  Raw size
 main.js               | main                                                                                     |   3.83 MB |
-styles.css, styles.js | styles                                                                                   | 192.18 kB |
+styles.css, styles.js | styles                                                                                   | 192.31 kB |
 runtime.js            | runtime                                                                                  |  12.93 kB |
 
                       | Initial total                                                                            |   4.04 MB
@@ -17,19 +17,20 @@ Lazy chunk files      | Names                                                   
 654.js                | removal-request-removal-request-page                                                     | 121.66 kB |
 587.js                | claim-profile-page-claim-profile-page                                                    | 112.36 kB |
 207.js                | features-comecar-comecar-page                                                            |  95.46 kB |
-165.js                | features-home-home-page-home-page                                                        |  86.36 kB |
 386.js                | features-categorias-categorias-module                                                    |  84.65 kB |
-695.js                | features-meu-casamento-pages-meu-casamento-hub-meu-casamento-hub-component               |  83.34 kB |
+695.js                | features-meu-casamento-pages-meu-casamento-hub-meu-casamento-hub-component               |  84.45 kB |
 212.js                | features-privacy-privacy-module                                                          |  81.61 kB |
-751.js                | features-meu-casamento-pages-meu-casamento-orcamento-meu-casamento-orcamento-component   |  76.63 kB |
-737.js                | features-meu-casamento-pages-meu-casamento-convidados-meu-casamento-convidados-component |  65.13 kB |
+751.js                | features-meu-casamento-pages-meu-casamento-orcamento-meu-casamento-orcamento-component   |  77.22 kB |
+737.js                | features-meu-casamento-pages-meu-casamento-convidados-meu-casamento-convidados-component |  67.78 kB |
+165.js                | features-home-home-page-home-page                                                        |  62.99 kB |
 647.js                | features-guia-custos-guia-custos-page                                                    |  58.67 kB |
+655.js                | features-meu-casamento-pages-meu-casamento-cronograma-meu-casamento-cronograma-component |  42.11 kB |
 476.js                | features-anuncie-anuncie-page                                                            |  41.79 kB |
-655.js                | features-meu-casamento-pages-meu-casamento-cronograma-meu-casamento-cronograma-component |  41.60 kB |
 852.js                | blog-detail-blog-detail-page                                                             |  39.22 kB |
 568.js                | features-guia-precos-guia-precos-module                                                  |  36.78 kB |
 671.js                | features-meu-casamento-pages-bride-profile-bride-profile-component                       |  35.23 kB |
 common.js             | common                                                                                   |  34.67 kB |
+49.js                 | features-meu-casamento-pages-meu-casamento-hub-meu-casamento-hub-component               |  28.00 kB |
 220.js                | blog-list-blog-list-page                                                                 |  24.14 kB |
 837.js                | features-meu-casamento-pages-meus-favoritos-meus-favoritos-component                     |  19.65 kB |
 332.js                | features-contato-contato-module                                                          |  18.38 kB |
@@ -43,9 +44,18 @@ common.js             | common                                                  
 988.js                | features-institucional-institucional-module                                              |   4.83 kB |
 139.js                | features-midia-kit-midia-kit-page                                                        |   1.64 kB |
 
-Build at: 2026-07-07T16:38:52.093Z - Hash: e4495aff23bc6839 - Time: 20378ms
+Build at: 2026-07-08T15:15:02.551Z - Hash: e933eafdee27a948 - Time: 12298ms
+
+Warning: [96msrc/app/shared/bride-login-modal/bride-login-modal.component.ts[0m:[93m13[0m:[93m53[0m - [93mwarning[0m[90m NG8113: [0mIconComponent is not used within the template of BrideLoginModalComponent
+
+[7m13[0m   imports: [CommonModule, GoogleSigninButtonModule, IconComponent, FormsModule],
+[7m  [0m [93m                                                    ~~~~~~~~~~~~~[0m
+
+
+
 
 ** Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/ **
 
 
 ✔ Compiled successfully.
+Terminated

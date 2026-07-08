@@ -33,6 +33,9 @@ export class DestaquesSemanaComponent implements OnInit {
   @Input() category?: string | undefined;
   @Input() exclude: string[] = [];
   @Input() limit = 4;
+  @Input() showViewMoreCard = false;
+  @Input() viewMoreLink = '/';
+  @Input() transparentBg = false;
   @Output() displayed = new EventEmitter<string[]>();
 
   destaques$!: Observable<DestaqueView[]>;
@@ -63,10 +66,11 @@ export class DestaquesSemanaComponent implements OnInit {
         }
 
         // Randomize order to show different highlights on each page load
+        const targetLimit = this.showViewMoreCard ? Math.max(1, this.limit - 1) : this.limit;
         const shuffled = filtered.sort(() => Math.random() - 0.5);
         
         const result = shuffled
-          .slice(0, this.limit)
+          .slice(0, targetLimit)
           .map(f => ({
             id: f.id,
             slug: f.slug,

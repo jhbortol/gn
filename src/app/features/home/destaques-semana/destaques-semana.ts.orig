@@ -36,7 +36,6 @@ export class DestaquesSemanaComponent implements OnInit {
   @Input() showViewMoreCard = false;
   @Input() viewMoreLink = '/';
   @Input() transparentBg = false;
-  @Input() isMeuCasamento = false;
   @Output() displayed = new EventEmitter<string[]>();
 
   destaques$!: Observable<DestaqueView[]>;
@@ -61,7 +60,7 @@ export class DestaquesSemanaComponent implements OnInit {
           .filter(f => f.planLevel === PlanLevel.Vitrine)
           .filter(f => !this.category || (f.categoria?.nome || '').toLowerCase() === this.category!.toLowerCase())
           .filter(f => !this.exclude?.length || !this.exclude.includes(f.id));
-        
+
         if (filtered.length === 0) {
           console.warn('[DESTAQUES] nenhum fornecedor Vitrine com destaque encontrado. Total na lista:', list.length);
         }
@@ -69,7 +68,7 @@ export class DestaquesSemanaComponent implements OnInit {
         // Randomize order to show different highlights on each page load
         const targetLimit = this.showViewMoreCard ? Math.max(1, this.limit - 1) : this.limit;
         const shuffled = filtered.sort(() => Math.random() - 0.5);
-        
+
         const result = shuffled
           .slice(0, targetLimit)
           .map(f => ({

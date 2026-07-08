@@ -1,0 +1,26 @@
+--- src/app/features/home/destaques-semana/destaques-semana.html
++++ src/app/features/home/destaques-semana/destaques-semana.html
+@@ -6,5 +6,6 @@
+       <div class="flex overflow-x-auto md:grid md:grid-cols-4 gap-6 min-h-[450px] snap-x snap-mandatory hide-scrollbar pb-4 md:pb-0">
+         <div *ngFor="let destaque of destaques; trackBy: trackById"
+-             class="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 bg-white rounded-2xl shadow-md hover:shadow-2xl border border-gray-100 flex flex-col transition-all duration-300 md:hover:-translate-y-2 overflow-hidden group h-full">
++             [ngClass]="{'w-[75vw]': isMeuCasamento, 'min-w-[85vw]': !isMeuCasamento}"
++             class="md:min-w-0 snap-center flex-shrink-0 bg-white rounded-2xl shadow-md hover:shadow-2xl border border-gray-100 flex flex-col transition-all duration-300 md:hover:-translate-y-2 overflow-hidden group h-full">
+            <div class="relative h-48 overflow-hidden" style="aspect-ratio:300/220;">
+                <img [src]="destaque.imagem" loading="lazy" decoding="async" width="300" height="220"
+@@ -48,10 +49,12 @@
+         </div>
+         <!-- View More CTA Card -->
+-        <div *ngIf="showViewMoreCard" class="min-w-[85vw] md:min-w-0 snap-center flex-shrink-0 bg-gradient-to-br from-rose-50 to-white rounded-2xl shadow-md hover:shadow-2xl border border-rose-100 flex flex-col transition-all duration-300 md:hover:-translate-y-2 overflow-hidden group h-full justify-center items-center p-6 text-center">
++        <div *ngIf="showViewMoreCard"
++             [ngClass]="{'w-[75vw]': isMeuCasamento, 'min-w-[85vw]': !isMeuCasamento}"
++             class="md:min-w-0 snap-center flex-shrink-0 bg-gradient-to-br from-rose-50 to-white rounded-2xl shadow-md hover:shadow-2xl border border-rose-100 flex flex-col transition-all duration-300 md:hover:-translate-y-2 overflow-hidden group h-full justify-center items-center p-6 text-center">
+           <div class="w-16 h-16 rounded-full bg-rose-100 flex items-center justify-center text-rose-500 mb-6 group-hover:scale-110 group-hover:bg-rose-500 group-hover:text-white transition-all duration-300">
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+             </svg>
+           </div>
+-          <h3 class="font-serif font-bold text-xl text-gray-900 mb-3">Não encontrou o que procurava?</h3>
++          <h3 *ngIf="!isMeuCasamento" class="font-serif font-bold text-xl text-gray-900 mb-3">Não encontrou o que procurava?</h3>
+           <p class="text-gray-500 text-sm mb-8">Descubra milhares de profissionais para o seu casamento em nosso portal.</p>
+           <a [routerLink]="viewMoreLink" class="px-8 py-3 bg-rose-600 text-white rounded-lg font-semibold hover:bg-rose-700 transition-colors shadow-md hover:shadow-lg w-full">

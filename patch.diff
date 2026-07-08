@@ -1,0 +1,10 @@
+--- src/app/features/home/destaques-semana/destaques-semana.ts
++++ src/app/features/home/destaques-semana/destaques-semana.ts
+@@ -34,6 +34,7 @@
+   @Input() showViewMoreCard = false;
+   @Input() viewMoreLink = '/';
+   @Input() transparentBg = false;
++  @Input() isMeuCasamento = false;
+   @Output() displayed = new EventEmitter<string[]>();
+
+   destaques$!: Observable<DestaqueView[]>;

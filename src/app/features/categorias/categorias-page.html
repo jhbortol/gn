@@ -65,7 +65,7 @@
       <div class="p-4 flex flex-col flex-1">
         <h3 class="font-serif font-bold text-xl text-rose-700 mb-1">{{ categoria.nome }}</h3>
         <p class="text-xs text-gray-500 mb-3">
-          {{ categoria.totalSuppliers || getSupplierCountFromVitrine(categoria.vitrineSuppliers) }} fornecedores disponíveis
+          {{ categoria.totalSuppliers || getSupplierCountFromVitrine(categoria.vitrineSuppliers) }} {{(categoria.totalSuppliers || getSupplierCountFromVitrine(categoria.vitrineSuppliers)) === 1 ? 'fornecedor disponível' : 'fornecedores disponíveis'}}
         </p>
           <a [routerLink]="buildUrl(['categorias', categoria.slug])" 
             class="mt-auto block px-4 py-2 border border-rose-400 text-rose-600 bg-white rounded-lg font-semibold hover:bg-rose-50 transition-all duration-300 text-center text-sm shadow-sm hover:shadow-md">

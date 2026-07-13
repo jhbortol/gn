@@ -32,7 +32,7 @@ export interface DestaqueView {
 export class DestaquesSemanaComponent implements OnInit {
   @Input() category?: string | undefined;
   @Input() exclude: string[] = [];
-  @Input() limit = 4;
+  @Input() limit = 10;
   @Input() showViewMoreCard = false;
   @Input() viewMoreLink = '/';
   @Input() transparentBg = false;

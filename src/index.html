@@ -54,9 +54,9 @@
     /* Avoid image shifting */
     img{display:block;}
     /* Category cards fixed height to align skeleton vs final */
-    .cat-card,.cat-card-skeleton{height:200px;display:flex;flex-direction:column;}
+    .cat-card,.cat-card-skeleton{min-height:200px;display:flex;flex-direction:column;height:100%;}
     .cat-card .img-wrap,.cat-card-skeleton .img-wrap{height:128px;flex:0 0 auto;}
-    .cat-card .text-wrap,.cat-card-skeleton .text-wrap{flex:1 1 auto;display:flex;flex-direction:column;justify-content:flex-start;}
+    .cat-card .text-wrap,.cat-card-skeleton .text-wrap{flex:1 1 auto;display:flex;flex-direction:column;justify-content:space-between;}
       /* Navbar skeleton styling */
       #nav-skeleton{position:fixed;top:0;left:0;width:100%;height:64px;display:flex;align-items:center;z-index:49;background:#ffffff;border-bottom:1px solid #e5e7eb;font-family:'Playfair Display',serif;}
       #nav-skeleton .inner{width:100%;max-width:1200px;margin:0 auto;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;}

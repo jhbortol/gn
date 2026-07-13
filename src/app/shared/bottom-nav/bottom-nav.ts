@@ -1,5 +1,5 @@
-import { Component, inject, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, computed, HostListener, PLATFORM_ID, Inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { IconComponent } from '../icon/icon';
 import { BrideAuthService } from '../../core/services/bride-auth.service';
@@ -23,9 +23,27 @@ export class BottomNavComponent {
 
   isLoggedIn$ = this.authService.isLoggedIn$;
   isCollapsed = false;
+  private lastScrollPosition = 0;
+  private isBrowser: boolean;
 
-  toggleCollapse() {
-    this.isCollapsed = !this.isCollapsed;
+  constructor(@Inject(PLATFORM_ID) platformId: object) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    if (!this.isBrowser) return;
+
+    const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+    // Only hide after scrolling down a bit (e.g., 50px) to avoid hiding at the very top
+    if (currentScrollPosition > 50 && currentScrollPosition > this.lastScrollPosition) {
+      this.isCollapsed = true;
+    } else {
+      this.isCollapsed = false;
+    }
+
+    this.lastScrollPosition = Math.max(0, currentScrollPosition);
   }
 
 

@@ -146,7 +146,7 @@
 		<app-destaques-semana></app-destaques-semana>
 
 	<!-- Categories Section -->
-	<section class="py-16 container mx-auto px-4">
+	<section class="pt-16 pb-24 container mx-auto px-4">
 		<h2 class="text-3xl font-serif font-bold text-gray-800 text-center mb-2">Navegue por Categorias</h2>
 		<p class="text-gray-500 text-center mb-10">Encontre os melhores profissionais de {{ cidadeNome }}</p>
 		<div *ngIf="categorias$ | async as cats; else catsLoading" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 categorias-grid">
@@ -162,8 +162,8 @@
 							<p class="text-[11px] text-gray-400 font-medium" *ngIf="cat.totalSuppliers">{{cat.totalSuppliers}} profissionais</p>
 							<p class="text-xs text-gray-500 mt-1" *ngIf="cat.descricao">{{cat.descricao}}</p>
 						</div>
-						<div class="mt-2 px-4 py-1.5 bg-rose-50 text-rose-600 text-xs font-semibold rounded-full w-max border border-rose-100 group-hover:bg-rose-600 group-hover:text-white transition-colors duration-300">
-							Ver fornecedores
+						<div class="mt-2 px-4 py-1.5 bg-rose-600 text-white text-xs font-semibold rounded-full w-max border border-rose-600 transition-colors duration-300">
+							Ver Todos &rarr;
 						</div>
 					</div>
 				</a>
@@ -183,19 +183,4 @@
 		</ng-template>
 	</section>
 
-	<a
-		[href]="instagramUrl"
-		target="_blank"
-		rel="noopener noreferrer"
-		class="instagram-popup"
-		[attr.aria-label]="'Abrir Instagram do Guia Noivas ' + cidadeNome"
-		[attr.title]="'Siga @' + instagramHandle"
-	>
-		<span class="instagram-popup__badge">Instagram</span>
-		<span class="instagram-popup__button" aria-hidden="true">
-			<svg viewBox="0 0 24 24" class="instagram-popup__icon" xmlns="http://www.w3.org/2000/svg">
-				<path fill="currentColor" d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2Zm8.5 1.75h-8.5A4 4 0 0 0 3.75 7.75v8.5a4 4 0 0 0 4 4h8.5a4 4 0 0 0 4-4v-8.5a4 4 0 0 0-4-4Zm-4.25 3.5a4.75 4.75 0 1 1 0 9.5 4.75 4.75 0 0 1 0-9.5Zm0 1.75a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.25-2a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z"/>
-			</svg>
-		</span>
-	</a>
 </div>

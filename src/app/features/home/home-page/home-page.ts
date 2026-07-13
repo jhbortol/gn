@@ -47,13 +47,6 @@ export class HomePageComponent implements OnInit {
     return c.charAt(0).toUpperCase() + c.slice(1);
   }
 
-  get instagramHandle(): string {
-    return `guianoivas${this.cidadeService.getCidade().replace(/-/g, '')}`;
-  }
-
-  get instagramUrl(): string {
-    return `https://www.instagram.com/${this.instagramHandle}/`;
-  }
 
   constructor(private categoriasData: CategoriasData, private fornecedoresData: FornecedoresData, private tracking: TrackingService) {
     const cidade = this.cidadeService.getCidade();

@@ -145,21 +145,6 @@
 		<!-- Destaques da Semana -->
 		<app-destaques-semana></app-destaques-semana>
 
-	<!-- Guia de Preços CTA Banner -->
-	<section class="py-12 bg-gradient-to-r from-purple-600 to-pink-600">
-		<div class="container mx-auto px-4">
-			<div class="flex flex-col md:flex-row items-center justify-between gap-6">
-				<div class="text-white text-center md:text-left flex-1">
-					<h2 class="text-2xl md:text-3xl font-bold mb-2">Não sabe quanto guardar de dinheiro?</h2>
-					<p class="text-lg text-white/90">Baixe o Guia de Preços de {{ cidadeNome }} 2026</p>
-				</div>
-				<a [routerLink]="buildUrl('guia-precos')" class="bg-white text-purple-600 px-8 py-4 rounded-full font-bold hover:bg-purple-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-					Baixar Grátis
-				</a>
-			</div>
-		</div>
-	</section>
-
 	<!-- Categories Section -->
 	<section class="py-16 container mx-auto px-4">
 		<h2 class="text-3xl font-serif font-bold text-gray-800 text-center mb-2">Navegue por Categorias</h2>
@@ -171,10 +156,15 @@
 						<img [ngSrc]="resolveImage(cat.imageUrl, 'assets/categorias/placeholder.jpg')" [alt]="cat.nome" loading="lazy" decoding="async" width="400" height="300" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
 						<div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent"></div>
 					</div>
-					<div class="p-4 text-center flex flex-col gap-1">
-						<h3 class="font-bold text-gray-800 group-hover:text-rose-600 transition-colors">{{cat.nome}}</h3>
-						<p class="text-xs text-gray-500" *ngIf="cat.descricao">{{cat.descricao}}</p>
-						<span class="text-xs text-gray-400">Ver fornecedores</span>
+					<div class="p-4 text-center flex flex-col items-center justify-between flex-1 gap-2">
+						<div class="flex flex-col gap-1 w-full">
+							<h3 class="font-bold text-gray-800 group-hover:text-rose-600 transition-colors">{{cat.nome}}</h3>
+							<p class="text-[11px] text-gray-400 font-medium" *ngIf="cat.totalSuppliers">{{cat.totalSuppliers}} profissionais</p>
+							<p class="text-xs text-gray-500 mt-1" *ngIf="cat.descricao">{{cat.descricao}}</p>
+						</div>
+						<div class="mt-2 px-4 py-1.5 bg-rose-50 text-rose-600 text-xs font-semibold rounded-full w-max border border-rose-100 group-hover:bg-rose-600 group-hover:text-white transition-colors duration-300">
+							Ver fornecedores
+						</div>
 					</div>
 				</a>
 			</ng-container>

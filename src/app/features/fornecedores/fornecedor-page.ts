@@ -10,6 +10,7 @@ import { Observable, firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { LeadFormComponent } from './lead-form.component';
 import { CompetitorAdsComponent } from './competitor-ads.component';
+import { CrossSellingComponent } from './cross-selling.component';
 import { PlanLevel } from '../../core/models/tier-system.model';
 import { MeuCasamentoStoreService } from '../meu-casamento/services/meu-casamento-store.service';
 import { MeuCasamentoSyncService } from '../meu-casamento/services/meu-casamento-sync.service';
@@ -23,7 +24,8 @@ import { MeuCasamentoSyncService } from '../meu-casamento/services/meu-casamento
     CommonModule,
     RouterModule,
     LeadFormComponent,
-    CompetitorAdsComponent
+    CompetitorAdsComponent,
+    CrossSellingComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

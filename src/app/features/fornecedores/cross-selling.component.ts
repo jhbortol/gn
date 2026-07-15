@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FornecedoresData, FornecedorListDto } from './services/fornecedores-data';
 import { firstValueFrom } from 'rxjs';
+import { CidadeService } from '../../core/cidade.service';
 
 @Component({
   selector: 'app-cross-selling',
@@ -53,7 +54,7 @@ import { firstValueFrom } from 'rxjs';
             </h4>
 
             <div class="mt-auto">
-              <a [routerLink]="['/fornecedores', vendor.slug || vendor.id]"
+              <a [routerLink]="buildUrl(['fornecedores', vendor.slug || vendor.id])"
                  class="inline-flex items-center justify-center w-full gap-2 bg-gray-50 hover:bg-rose-50 text-gray-700 hover:text-rose-600 border border-gray-200 hover:border-rose-200 rounded-lg py-2 px-4 font-semibold text-sm transition-all duration-200">
                 Ver Perfil
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -85,6 +86,7 @@ export class CrossSellingComponent implements OnInit {
 
   recommendedVendors = signal<FornecedorListDto[]>([]);
   private fornecedoresData = inject(FornecedoresData);
+  private cidadeService = inject(CidadeService);
 
   async ngOnInit() {
     try {
@@ -147,5 +149,11 @@ export class CrossSellingComponent implements OnInit {
     } catch (error) {
       console.error('Error fetching cross-selling vendors:', error);
     }
+  }
+
+  buildUrl(path: (string | undefined)[]): string {
+    const validSegments = path.filter(Boolean) as string[];
+    const fullPath = validSegments.join('/');
+    return this.cidadeService.buildUrl(fullPath);
   }
 }

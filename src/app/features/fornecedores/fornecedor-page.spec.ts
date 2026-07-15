@@ -80,6 +80,7 @@ describe('FornecedorPageComponent', () => {
                 {
                     provide: ActivatedRoute,
                     useValue: {
+                        params: of(paramsMock),
                         snapshot: {
                             params: paramsMock,
                             queryParams: queryParamsMock

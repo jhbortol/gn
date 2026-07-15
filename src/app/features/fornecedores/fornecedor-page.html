@@ -232,15 +232,6 @@
       <!-- NOVO: Competitor Ads (se Free em zumbi state) -->
       <app-competitor-ads *ngIf="hasCompetitorAds()" [ads]="fornecedor.adInjection!"></app-competitor-ads>
 
-      <!-- Recomendação Cruzada (Cross-Selling) -->
-      @defer (on viewport) {
-        <app-cross-selling
-          [currentVendorId]="fornecedor.id"
-          [currentCategoryName]="fornecedor.categoria || undefined">
-        </app-cross-selling>
-      } @placeholder {
-        <div class="h-32"></div>
-      }
     </div>
 
     <aside>
@@ -341,6 +332,16 @@
     </div>
     </ng-container>
   </ng-template>
+
+  <!-- Recomendação Cruzada (Cross-Selling) -->
+  @defer (on viewport) {
+    <app-cross-selling
+      [currentVendorId]="fornecedor.id"
+      [currentCategoryName]="fornecedor.categoria || undefined">
+    </app-cross-selling>
+  } @placeholder {
+    <div class="h-32"></div>
+  }
 
   <!-- Footer Discrete Actions (Claim / LGPD) -->
   <div *ngIf="fornecedor && !notFound && fornecedor.planLevel !== PlanLevel.Vitrine"

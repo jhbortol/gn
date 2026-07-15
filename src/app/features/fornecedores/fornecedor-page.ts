@@ -79,56 +79,67 @@ export class FornecedorPageComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.weddingSync.init();
-    const identifier = this.route.snapshot.params['id']; // pode ser GUID ou slug
-    this.isPreviewMode = this.route.snapshot.queryParams['preview'] === 'true';
 
-    // Try to apply prerendered metadata first
-    const currentRoute = this.router.routerState.root.firstChild?.component ? 
-      `${this.router.url.split('?')[0]}` : null;
-    if (currentRoute) {
-      this.metaTagService.applyMetadata(currentRoute);
-    }
+    this.route.params.subscribe(async (params) => {
+      const identifier = params['id']; // pode ser GUID ou slug
+      this.isPreviewMode = this.route.snapshot.queryParams['preview'] === 'true';
 
-    if (!identifier) {
-      this.setNotFoundState();
-      this.isLoading = false;
-      this.cdr.markForCheck();
-      return;
-    }
-
-    try {
-      // Use firstValueFrom to ensure the Observable completes before continuing
-      // This is critical for SSR to include meta tags in the rendered HTML
-      const f = await firstValueFrom(this.fornecedores.getById(identifier, this.isPreviewMode));
-
-      // Validate publicado field if environment requires it
-      // Only enforce if FORNECEDOR_PUBLICADO is true (production) and not in preview mode
-      if (environment.FORNECEDOR_PUBLICADO === true && !this.isPreviewMode && !f.publicado) {
-        console.warn('Fornecedor não publicado acessado diretamente:', f.id);
-        this.setNotFoundState();
-      } else {
-        this.fornecedor = f;
-
-        // 🔴 NOVO: Aplicar lógica tier
-        this.applyTierLogic(f);
-
-        // 🔴 NOVO: Atualizar meta tags SEO
-        // This is now guaranteed to run before SSR renders the page
-        this.updateSeoMetaTags(f);
-
-        this.tracking.trackVendorView({
-          vendorId: f.id,
-          vendorName: f.nome,
-          vendorCategory: f.categoria
-        });
+      // Try to apply prerendered metadata first
+      const currentRoute = this.router.routerState.root.firstChild?.component ?
+        `${this.router.url.split('?')[0]}` : null;
+      if (currentRoute) {
+        this.metaTagService.applyMetadata(currentRoute);
       }
-    } catch (err) {
-      console.warn('Error loading fornecedor:', err);
-      this.setNotFoundState();
-    } finally {
-      this.isLoading = false;
+
+      this.isLoading = true;
+      this.notFound = false;
       this.cdr.markForCheck();
-    }
+
+      if (!identifier) {
+        this.setNotFoundState();
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        return;
+      }
+
+      try {
+        // Use firstValueFrom to ensure the Observable completes before continuing
+        // This is critical for SSR to include meta tags in the rendered HTML
+        const f = await firstValueFrom(this.fornecedores.getById(identifier, this.isPreviewMode));
+
+        // Validate publicado field if environment requires it
+        // Only enforce if FORNECEDOR_PUBLICADO is true (production) and not in preview mode
+        if (environment.FORNECEDOR_PUBLICADO === true && !this.isPreviewMode && !f.publicado) {
+          console.warn('Fornecedor não publicado acessado diretamente:', f.id);
+          this.setNotFoundState();
+        } else {
+          this.fornecedor = f;
+
+          // Reset view state
+          this.selectedImageIndex = 0;
+          this.selectedImage = undefined;
+
+          // 🔴 NOVO: Aplicar lógica tier
+          this.applyTierLogic(f);
+
+          // 🔴 NOVO: Atualizar meta tags SEO
+          // This is now guaranteed to run before SSR renders the page
+          this.updateSeoMetaTags(f);
+
+          this.tracking.trackVendorView({
+            vendorId: f.id,
+            vendorName: f.nome,
+            vendorCategory: f.categoria
+          });
+        }
+      } catch (err) {
+        console.warn('Error loading fornecedor:', err);
+        this.setNotFoundState();
+      } finally {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   private setNotFoundState(): void {

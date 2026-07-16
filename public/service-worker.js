@@ -16,6 +16,14 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
+  const url = new URL(event.request.url);
+
+  // Ignore requests that are not HTTP/HTTPS (e.g., chrome-extension://)
+  if (!url.protocol.startsWith('http')) return;
+
+  // Ignore requests to external origins (only cache own origin requests)
+  if (url.origin !== self.location.origin) return;
+
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(() => caches.match('/index.html'))

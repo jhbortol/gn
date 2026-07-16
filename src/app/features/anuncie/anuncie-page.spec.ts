@@ -10,6 +10,7 @@ import { TermoAdesaoService } from '../../core/services/termo-adesao.service';
 import { TrackingService } from '../../core/tracking.service';
 import { MetaTagService } from '../../core/meta-tag.service';
 import { CategoriasData } from '../categorias/services/categorias-data';
+import { CidadeService } from '../../core/cidade.service';
 
 describe('AnunciePageComponent', () => {
   let component: AnunciePageComponent;
@@ -19,6 +20,7 @@ describe('AnunciePageComponent', () => {
   let trackingSpy: jasmine.SpyObj<TrackingService>;
   let metaSpy: jasmine.SpyObj<MetaTagService>;
   let categoriasSpy: jasmine.SpyObj<CategoriasData>;
+  let cidadeServiceSpy: jasmine.SpyObj<CidadeService>;
 
   beforeEach(async () => {
     apiSpy = jasmine.createSpyObj('ApiService', ['post']);
@@ -26,6 +28,10 @@ describe('AnunciePageComponent', () => {
     trackingSpy = jasmine.createSpyObj('TrackingService', ['trackFormSubmit', 'trackFreeSignupFunnel']);
     metaSpy = jasmine.createSpyObj('MetaTagService', ['applyMetadata']);
     categoriasSpy = jasmine.createSpyObj('CategoriasData', ['getAll']);
+    cidadeServiceSpy = jasmine.createSpyObj('CidadeService', ['getCidade', 'getCidadeBySlug']);
+
+    cidadeServiceSpy.getCidade.and.returnValue('piracicaba');
+    cidadeServiceSpy.getCidadeBySlug.and.returnValue(of({ id: 'piracicaba', guid: '93e3496e-6a26-4851-ad9b-f9d6b4b58f3d', nome: 'Piracicaba', slug: 'piracicaba' }));
 
     termoSpy.carregarTermo.and.returnValue(of({ termo: { texto: 'Termo teste', hash: 'abc123' } } as any));
     termoSpy.validarHash.and.resolveTo(true);
@@ -44,7 +50,8 @@ describe('AnunciePageComponent', () => {
         { provide: TermoAdesaoService, useValue: termoSpy },
         { provide: TrackingService, useValue: trackingSpy },
         { provide: MetaTagService, useValue: metaSpy },
-        { provide: CategoriasData, useValue: categoriasSpy }
+        { provide: CategoriasData, useValue: categoriasSpy },
+        { provide: CidadeService, useValue: cidadeServiceSpy }
       ]
     }).compileComponents();
 

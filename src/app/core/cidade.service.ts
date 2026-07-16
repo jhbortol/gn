@@ -142,6 +142,7 @@ export class CidadeService {
           id: cidade.slug,
           nome: cidade.nome,
           slug: cidade.slug,
+          guid: cidade.guid,
           estado: undefined
         }))),
         shareReplay(1)

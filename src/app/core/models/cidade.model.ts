@@ -3,4 +3,5 @@ export interface CidadeDto {
   nome: string;
   slug: string;
   estado?: string;
+  guid?: string;
 }

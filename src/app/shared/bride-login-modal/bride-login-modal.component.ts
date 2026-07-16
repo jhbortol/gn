@@ -5,12 +5,11 @@ import { TrackingService } from '../../core/tracking.service';
 import { SocialAuthService, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
-import { IconComponent } from '../icon/icon';
 
 @Component({
   selector: 'app-bride-login-modal',
   standalone: true,
-  imports: [CommonModule, GoogleSigninButtonModule, IconComponent, FormsModule],
+  imports: [CommonModule, GoogleSigninButtonModule, FormsModule],
   template: `
     <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
       <div class="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto flex flex-col animate-in zoom-in-95 duration-200">

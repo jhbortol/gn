@@ -336,8 +336,8 @@
   <!-- Recomendação Cruzada (Cross-Selling) -->
   @defer (on viewport) {
     <app-cross-selling
-      [currentVendorId]="fornecedor.id"
-      [currentCategoryName]="fornecedor.categoria || undefined">
+      [currentVendorId]="fornecedor?.id"
+      [currentCategoryName]="fornecedor?.categoria || undefined">
     </app-cross-selling>
   } @placeholder {
     <div class="h-32"></div>

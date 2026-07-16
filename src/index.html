@@ -4,11 +4,11 @@
   <!-- Content Security Policy to prevent XSS and data exfiltration -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.googleadservices.com https://www.clarity.ms https://scripts.clarity.ms https://connect.facebook.net https://www.facebook.com https://accounts.google.com;
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.clarity.ms https://scripts.clarity.ms https://connect.facebook.net https://www.facebook.com https://accounts.google.com https://static.cloudflareinsights.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' data: https:;
     font-src 'self' data: https://fonts.gstatic.com;
-    connect-src 'self' ws://localhost:* ws://127.0.0.1:* wss://localhost:* wss://127.0.0.1:* https://www.googletagmanager.com https://www.google-analytics.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.clarity.ms https://scripts.clarity.ms https://z.clarity.ms https://y.clarity.ms https://b.clarity.ms https://*.guianoivas.com https://*.guianoivas.com.br https://guia-noivas.somee.com https://*.azurewebsites.net https://connect.facebook.net https://www.facebook.com https://formspree.io https://api.formspree.io https://api.bigdatacloud.net https://checkip.amazonaws.com;
+    connect-src 'self' ws://localhost:* ws://127.0.0.1:* wss://localhost:* wss://127.0.0.1:* https://www.googletagmanager.com https://www.google-analytics.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://www.google.com https://www.clarity.ms https://scripts.clarity.ms https://z.clarity.ms https://y.clarity.ms https://b.clarity.ms https://*.guianoivas.com https://*.guianoivas.com.br https://guia-noivas.somee.com https://*.azurewebsites.net https://connect.facebook.net https://www.facebook.com https://formspree.io https://api.formspree.io https://api.bigdatacloud.net https://checkip.amazonaws.com https://static.cloudflareinsights.com https://accounts.google.com;
     base-uri 'self';
     form-action 'self' https://formspree.io;
   ">
@@ -100,7 +100,7 @@
   <!-- Google tag (gtag.js) - Google Ads: AW-18077793493 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18077793493"></script>
   <!-- Google Identity Services (GSI) for Sign-In With Google -->
-  <script async src="https://accounts.google.com/gsi/client" crossorigin></script>
+  <script async src="https://accounts.google.com/gsi/client"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}

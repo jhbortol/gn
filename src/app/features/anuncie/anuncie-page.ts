@@ -29,6 +29,7 @@ interface CadastroFreePayload {
   termoHash: string;
   dataAceite: string;
   planLevel: 'Free';
+  cidadeId: string;
 }
 
 @Component({
@@ -152,6 +153,12 @@ export class AnunciePageComponent implements OnInit {
         throw this.criarErroApi('HASH_INVALIDO');
       }
 
+      const currentCidadeSlug = this.cidadeService.getCidade();
+      const cidadeDto = await firstValueFrom(this.cidadeService.getCidadeBySlug(currentCidadeSlug));
+      if (!cidadeDto || !cidadeDto.guid) {
+        throw new Error('Não foi possível identificar a cidade para o cadastro.');
+      }
+
       const termoHash = await this.termoService.calcularHashTermo(this.termoConteudo);
       const raw = this.cadastroForm.getRawValue();
       const cnpjCpf = (raw.cnpjCpf || '').replace(/\D/g, '');
@@ -186,7 +193,8 @@ export class AnunciePageComponent implements OnInit {
         aceitaTermos: true,
         termoHash,
         dataAceite,
-        planLevel: 'Free'
+        planLevel: 'Free',
+        cidadeId: cidadeDto.guid
       };
 
       if (senha) {

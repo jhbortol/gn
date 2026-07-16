@@ -49,8 +49,9 @@ export class CidadesDataService {
       const nome = String(cidade?.nome || cidade?.Nome || cidade?.name || cidade?.Name || '').trim();
       const slugSource = cidade?.slug || cidade?.Slug || cidade?.codigo || cidade?.Codigo || nome;
       const slug = this.slugify(String(slugSource || ''));
+      const guid = cidade?.id || cidade?.Id || cidade?.guid;
 
-      return { slug, nome: nome || slug };
+      return { slug, nome: nome || slug, guid };
     });
   }
 
@@ -64,7 +65,8 @@ export class CidadesDataService {
 
       uniques.set(slug, {
         slug,
-        nome: (cidade.nome || slug).trim()
+        nome: (cidade.nome || slug).trim(),
+        guid: cidade.guid
       });
     }
 

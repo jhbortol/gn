@@ -73,17 +73,6 @@
         #nav-skeleton{height:80px;}
       }
   </style>
-  <!-- Google Tag Manager (deferred) -->
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-MVF5F3ZD');
-  </script>
-  <!-- End Google Tag Manager -->
-  
   <!-- Inline font (Playfair Display 700) to avoid late swap -->
   <style>@font-face {font-family:'Playfair Display';font-style:normal;font-weight:700;font-display:swap;src:url(data:font/woff2;base64,d09GMgABAAAAACl4ABIAAAAAP2AAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABGRlRNAAABqAAAABwAAAAcZ0rkJEdERUYAAAHEAAAAXAAAAFjQAiYcR1BPUwAAAegAAAR8AAAInAm4h8tHU1VCAAACfAAACcIAAA3g7yX/W09TLzIAAALEAAAARAAAAGB4wCzSY21hcAAAAswAAACyAAABsj2ZCcxnbHlmAAADHAAAB2gAAAjYeW1mKWhlYWQAAAewAAAAMAAAADYQ9ZJWaGhlYQAAB9wAAAAeAAAAJAgEAw5obXR4AAAICAAAACAAAAAgCIAAtmxvY2EAAAg4AAAAFgAAABYF6gIObWF4cAAACGgAAAAfAAAAIAAUABxuYW1lAAAIdAAAAU4AAAJiB5kKIXBvc3QAAAlkAAAAOAAAAGCiH6xRcHJlcAAACagAAAB6AAAAhuVBK8t4nGNgYGBg4GIwYHBh4GQAASYgZgHzGAAJAwNTBh4GZgYGB6wMAAAACAAH0eJxjYGRgYOBiMIHhBQAE5gBFBkYAYhkAFgAAAHicY2BkYGA+8P8Agx4DAxMBAx4AIwEKAHicY2BkYGAAYp3dwfD/PwM78wACCAAADQAAAHicY2BkYGB2+P8Agx4DAxMBAx4AJwEKAF4AAXicY2BkYGBgZHBhYGVgYgABEMkF0BgAE+0BQwAAAHicY2BkYGAAYh0gAwMMDAwMIoIBkQSQY2BgYATCAwEWGAgB9wEAgAC8AQcAAAB4nGWQPU7DQBiF/yZjSoUE3UQXMBAPoFVLXJwcFihKHg+C7HNZPJkMkpJQQAfjwFf4Ggl7B4oC54RNOng80IYblbHvffvWmQAEPh2vHNbIp9wHItqdHG7kAbOLqtZijAZzu4uW0DLAnHk3dO+CarqFKzYJvDD3e87bTYZs9ZL2p7xxb0bWm8fP9QChpntC2lnTHaZt0wZ4a2K7R85aGvnOooxb7nJpGqJAkjFzhcblCtqFSWczx34AS0PC3bAAAAeJx1kDtOwzAQhV/zEBIAsCizoQWwFKiyhbsAWhSJGyjgOeN/btC3a0mSByDBFPAPg7AUCryVrORw9vmL//MmJP56Dk9My8krD9gnyscY3yaSh6sh0VnufCeWzznJNK7trnqcDr/jymGv4Fk9CbnTD3AxQhtZqh1PjRWUZnZmcBRVVNIpRMge63WErbGJBbcNWdI2bGOncLdZzGPYvboVGv6kRJqfI8znq1fV9xMOeoK9q63DjIIaYpgl5Q61hJcNuTeSXF8gGn6gB8jkH2QAAAHicY2BigAAuBuyAOxJQAGVmLmIAAAABAAMAAA==) format('woff2');}</style>
 
@@ -97,28 +86,69 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23881337'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E">
-  <!-- Google tag (gtag.js) - Google Ads: AW-18077793493 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18077793493"></script>
-  <!-- Google Identity Services (GSI) for Sign-In With Google -->
-  <script async src="https://accounts.google.com/gsi/client"></script>
+
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'AW-18077793493');
-  </script>
-  <!-- End Google tag - Google Ads -->
-  <!-- Meta Pixel -->
-  <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1392814085844033');
+    // Deferred tracking scripts (GTM, Google Ads, GSI, Meta Pixel)
+    (function() {
+      var isTrackingLoaded = false;
+      function loadTrackingScripts() {
+        if (isTrackingLoaded) return;
+        isTrackingLoaded = true;
+
+        // 1. Google Tag Manager
+        window.dataLayer = window.dataLayer || [];
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-MVF5F3ZD');
+
+        // 2. Google Ads
+        var gtagScript = document.createElement('script');
+        gtagScript.async = true;
+        gtagScript.src = "https://www.googletagmanager.com/gtag/js?id=AW-18077793493";
+        document.head.appendChild(gtagScript);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', 'AW-18077793493');
+
+        // 3. Meta Pixel
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1392814085844033');
+
+        // 4. Google Identity Services
+        var gsiScript = document.createElement('script');
+        gsiScript.async = true;
+        gsiScript.src = "https://accounts.google.com/gsi/client";
+        document.head.appendChild(gsiScript);
+      }
+
+      // Delay execution until interaction or timeout (max 3500ms)
+      var events = ['scroll', 'mousemove', 'keydown', 'touchstart'];
+      var fallbackTimeout = setTimeout(loadTrackingScripts, 3500);
+
+      function onInteraction() {
+        loadTrackingScripts();
+        clearTimeout(fallbackTimeout);
+        events.forEach(function(e) {
+          window.removeEventListener(e, onInteraction, { passive: true });
+        });
+      }
+
+      events.forEach(function(e) {
+        window.addEventListener(e, onInteraction, { once: true, passive: true });
+      });
+    })();
   </script>
   <script>
     (function () {
@@ -145,11 +175,33 @@
         page_source: 'initial_load'
       });
 
-      fbq('track', 'PageView', {
-        page_path: pagePath,
-        page_title: pageTitle,
-        page_location: pageLocation
-      });
+      if (typeof fbq === 'function') {
+        fbq('track', 'PageView', {
+          page_path: pagePath,
+          page_title: pageTitle,
+          page_location: pageLocation
+        });
+      } else {
+        window.addEventListener('scroll', function() {
+          if (typeof fbq === 'function') {
+            fbq('track', 'PageView', {
+              page_path: pagePath,
+              page_title: pageTitle,
+              page_location: pageLocation
+            });
+          }
+        }, { once: true, passive: true });
+
+        setTimeout(function() {
+          if (typeof fbq === 'function') {
+            fbq('track', 'PageView', {
+              page_path: pagePath,
+              page_title: pageTitle,
+              page_location: pageLocation
+            });
+          }
+        }, 3600);
+      }
 
       function flushPrebootEngagement(reason) {
         if (!prebootState.active) return;

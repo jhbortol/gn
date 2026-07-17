@@ -58,7 +58,7 @@ const SUPPLIERS: Supplier[] = [
       'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&q=80&w=600',
       'https://images.unsplash.com/photo-1511285560982-1351cdeb9821?auto=format&fit=crop&q=80&w=600',
       'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=600',
-      'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=600'
+      'https://media.guianoivas.com/media/media/bg.jpg'
     ],
     contact: { phone: '(19) 99843-7940', instagram: '@sandrocardoso', site: 'sandrocardoso.com.br' }
   },
@@ -192,7 +192,7 @@ const SUPPLIERS: Supplier[] = [
       'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&q=80&w=600',
       'https://images.unsplash.com/photo-1511285560982-1351cdeb9821?auto=format&fit=crop&q=80&w=600',
       'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=600',
-      'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=600'
+      'https://media.guianoivas.com/media/media/bg.jpg'
     ],
     contact: { phone: '(19) 99843-7940', instagram: '@sandrocardoso', site: 'sandrocardoso.com.br' }
   },
@@ -622,7 +622,7 @@ export class CategoryPageComponent implements OnInit {
       <!-- Hero Section -->
       <div class="relative h-[400px] flex items-center justify-center bg-rose-900 text-white">
         <div class="absolute inset-0 overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" class="w-full h-full object-cover opacity-40" alt="Hero" />
+          <img src="https://media.guianoivas.com/media/media/bg.jpg" class="w-full h-full object-cover opacity-40" alt="Hero" />
         </div>
         <div class="relative z-10 container mx-auto px-4 text-center">
           <h1 class="text-4xl md:text-6xl font-serif font-bold mb-4">O Casamento dos seus Sonhos</h1>

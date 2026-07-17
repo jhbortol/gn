@@ -7,25 +7,25 @@
 
 Initial chunk files   | Names                                                                                    |  Raw size
 main.js               | main                                                                                     |   3.83 MB |
-styles.css, styles.js | styles                                                                                   | 191.52 kB |
+styles.css, styles.js | styles                                                                                   | 191.79 kB |
 runtime.js            | runtime                                                                                  |  12.93 kB |
 
                       | Initial total                                                                            |   4.03 MB
 
 Lazy chunk files      | Names                                                                                    |  Raw size
-451.js                | fornecedor-page                                                                          | 144.00 kB |
+451.js                | fornecedor-page                                                                          | 146.11 kB |
 654.js                | removal-request-removal-request-page                                                     | 121.66 kB |
 587.js                | claim-profile-page-claim-profile-page                                                    | 112.36 kB |
 207.js                | features-comecar-comecar-page                                                            |  95.46 kB |
-386.js                | features-categorias-categorias-module                                                    |  84.65 kB |
-695.js                | features-meu-casamento-pages-meu-casamento-hub-meu-casamento-hub-component               |  84.49 kB |
+386.js                | features-categorias-categorias-module                                                    |  84.79 kB |
+695.js                | features-meu-casamento-pages-meu-casamento-hub-meu-casamento-hub-component               |  84.50 kB |
 212.js                | features-privacy-privacy-module                                                          |  81.61 kB |
 751.js                | features-meu-casamento-pages-meu-casamento-orcamento-meu-casamento-orcamento-component   |  77.22 kB |
 737.js                | features-meu-casamento-pages-meu-casamento-convidados-meu-casamento-convidados-component |  67.78 kB |
 647.js                | features-guia-custos-guia-custos-page                                                    |  58.67 kB |
-165.js                | features-home-home-page-home-page                                                        |  53.67 kB |
+165.js                | features-home-home-page-home-page                                                        |  53.59 kB |
+476.js                | features-anuncie-anuncie-page                                                            |  42.19 kB |
 655.js                | features-meu-casamento-pages-meu-casamento-cronograma-meu-casamento-cronograma-component |  42.11 kB |
-476.js                | features-anuncie-anuncie-page                                                            |  41.79 kB |
 852.js                | blog-detail-blog-detail-page                                                             |  39.22 kB |
 568.js                | features-guia-precos-guia-precos-module                                                  |  36.78 kB |
 671.js                | features-meu-casamento-pages-bride-profile-bride-profile-component                       |  35.23 kB |
@@ -35,6 +35,7 @@ common.js             | common                                                  
 837.js                | features-meu-casamento-pages-meus-favoritos-meus-favoritos-component                     |  19.65 kB |
 332.js                | features-contato-contato-module                                                          |  18.38 kB |
 778.js                | fornecedores-list-page                                                                   |  17.06 kB |
+874.js                | cross-selling-component                                                                  |  15.61 kB |
 719.js                | features-meu-casamento-pages-remover-meus-dados-remover-meus-dados-component             |  13.16 kB |
 95.js                 | sobre-nos                                                                                |  12.96 kB |
 247.js                | termos                                                                                   |  10.28 kB |
@@ -44,34 +45,9 @@ common.js             | common                                                  
 988.js                | features-institucional-institucional-module                                              |   4.83 kB |
 139.js                | features-midia-kit-midia-kit-page                                                        |   1.64 kB |
 
-Build at: 2026-07-13T21:51:31.001Z - Hash: 70fd67c62bd55f9e - Time: 24643ms
-
-Warning: [96msrc/app/shared/bride-login-modal/bride-login-modal.component.ts[0m:[93m13[0m:[93m53[0m - [93mwarning[0m[90m NG8113: [0mIconComponent is not used within the template of BrideLoginModalComponent
-
-[7m13[0m   imports: [CommonModule, GoogleSigninButtonModule, IconComponent, FormsModule],
-[7m  [0m [93m                                                    ~~~~~~~~~~~~~[0m
-
-
-
+Build at: 2026-07-17T19:06:50.013Z - Hash: 380266c80da4e26e - Time: 25181ms
 
 ** Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/ **
-
-
-✔ Compiled successfully.
-✔ Browser application bundle generation complete.
-
-
-
-33 unchanged chunks
-
-Build at: 2026-07-13T21:53:45.229Z - Hash: 70fd67c62bd55f9e - Time: 4181ms
-
-Warning: [96msrc/app/shared/bride-login-modal/bride-login-modal.component.ts[0m:[93m13[0m:[93m53[0m - [93mwarning[0m[90m NG8113: [0mIconComponent is not used within the template of BrideLoginModalComponent
-
-[7m13[0m   imports: [CommonModule, GoogleSigninButtonModule, IconComponent, FormsModule],
-[7m  [0m [93m                                                    ~~~~~~~~~~~~~[0m
-
-
 
 
 ✔ Compiled successfully.

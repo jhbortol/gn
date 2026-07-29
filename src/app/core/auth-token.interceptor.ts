@@ -14,10 +14,7 @@ export const authTokenInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, n
     '/contato',
     '/api/v1/supplier',
     '/api/v1/fornecedores',
-    '/public/cidades',
-    '/public/categorias',
-    '/public/fornecedores',
-    '/public/leads',
+    '/public/',
     '/cidades',
     '/me/',
     '/api/v1/account',
@@ -27,7 +24,7 @@ export const authTokenInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, n
   ];
 
   // Não anexar token em chamadas públicas
-  if (publicRoutes.some(route => req.url.includes(route))) {
+  if (publicRoutes.some(route => req.url.includes(route) || req.url.startsWith(route))) {
     return next(req);
   }
 

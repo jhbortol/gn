@@ -6,17 +6,31 @@
 	<router-outlet />
 </main>
 @if (showFooter()) {
-	<app-footer></app-footer>
+	@defer (on viewport) {
+		<app-footer></app-footer>
+	} @placeholder {
+		<div style="min-height: 200px;"></div>
+	}
 }
 
 @if (showNavbar()) {
   <app-bottom-nav></app-bottom-nav>
 }
 
-<app-destaque-popup></app-destaque-popup>
-<app-toast-container></app-toast-container>
-<app-install-banner></app-install-banner>
+@defer (on idle) {
+	<app-destaque-popup></app-destaque-popup>
+}
+
+@defer (on idle) {
+	<app-toast-container></app-toast-container>
+}
+
+@defer (on idle) {
+	<app-install-banner></app-install-banner>
+}
 
 @if (loginModalService.isOpen()) {
-  <app-bride-login-modal [options]="loginModalService.getOptions() || {}" (close)="loginModalService.close($event)"></app-bride-login-modal>
+	@defer (when loginModalService.isOpen()) {
+		<app-bride-login-modal [options]="loginModalService.getOptions() || {}" (close)="loginModalService.close($event)"></app-bride-login-modal>
+	}
 }

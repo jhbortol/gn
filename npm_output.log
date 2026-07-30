@@ -6,46 +6,54 @@
 ✔ Browser application bundle generation complete.
 
 Initial chunk files   | Names                                                                                    |  Raw size
-main.js               | main                                                                                     |   3.83 MB |
-styles.css, styles.js | styles                                                                                   | 191.79 kB |
+main.js               | main                                                                                     |   3.36 MB |
+styles.css, styles.js | styles                                                                                   | 192.01 kB |
 runtime.js            | runtime                                                                                  |  12.93 kB |
 
-                      | Initial total                                                                            |   4.03 MB
+                      | Initial total                                                                            |   3.56 MB
 
 Lazy chunk files      | Names                                                                                    |  Raw size
+456.js                | features-meu-casamento-pages-meu-casamento-hub-meu-casamento-hub-component               | 291.69 kB |
 451.js                | fornecedor-page                                                                          | 146.11 kB |
 654.js                | removal-request-removal-request-page                                                     | 121.66 kB |
 587.js                | claim-profile-page-claim-profile-page                                                    | 112.36 kB |
 207.js                | features-comecar-comecar-page                                                            |  95.46 kB |
+695.js                | features-meu-casamento-pages-meu-casamento-hub-meu-casamento-hub-component               |  88.84 kB |
 386.js                | features-categorias-categorias-module                                                    |  84.79 kB |
-695.js                | features-meu-casamento-pages-meu-casamento-hub-meu-casamento-hub-component               |  84.50 kB |
 212.js                | features-privacy-privacy-module                                                          |  81.61 kB |
 751.js                | features-meu-casamento-pages-meu-casamento-orcamento-meu-casamento-orcamento-component   |  77.22 kB |
 737.js                | features-meu-casamento-pages-meu-casamento-convidados-meu-casamento-convidados-component |  67.78 kB |
 647.js                | features-guia-custos-guia-custos-page                                                    |  58.67 kB |
-165.js                | features-home-home-page-home-page                                                        |  53.59 kB |
+165.js                | features-home-home-page-home-page                                                        |  57.95 kB |
 476.js                | features-anuncie-anuncie-page                                                            |  42.19 kB |
 655.js                | features-meu-casamento-pages-meu-casamento-cronograma-meu-casamento-cronograma-component |  42.11 kB |
 852.js                | blog-detail-blog-detail-page                                                             |  39.22 kB |
+541.js                | shared-components-destaque-popup-destaque-popup-component                                |  38.94 kB |
 568.js                | features-guia-precos-guia-precos-module                                                  |  36.78 kB |
+237.js                | features-home-home-page-home-page                                                        |  35.49 kB |
 671.js                | features-meu-casamento-pages-bride-profile-bride-profile-component                       |  35.23 kB |
 common.js             | common                                                                                   |  34.67 kB |
-49.js                 | features-meu-casamento-pages-meu-casamento-hub-meu-casamento-hub-component               |  29.09 kB |
+504.js                | shared-bride-login-modal-bride-login-modal-component                                     |  29.51 kB |
+49.js                 | home-destaques-semana-destaques-semana                                                   |  29.09 kB |
+260.js                | features-categorias-categorias-module                                                    |  28.31 kB |
 220.js                | blog-list-blog-list-page                                                                 |  24.14 kB |
 837.js                | features-meu-casamento-pages-meus-favoritos-meus-favoritos-component                     |  19.65 kB |
 332.js                | features-contato-contato-module                                                          |  18.38 kB |
+435.js                | shared-components-toast-container-component                                              |  17.72 kB |
 778.js                | fornecedores-list-page                                                                   |  17.06 kB |
+527.js                | shared-components-app-install-banner-app-install-banner-component                        |  16.50 kB |
+665.js                | shared-footer-footer                                                                     |  16.25 kB |
 874.js                | cross-selling-component                                                                  |  15.61 kB |
 719.js                | features-meu-casamento-pages-remover-meus-dados-remover-meus-dados-component             |  13.16 kB |
 95.js                 | sobre-nos                                                                                |  12.96 kB |
 247.js                | termos                                                                                   |  10.28 kB |
 706.js                | features-cidades-cidade-selector-page                                                    |   8.29 kB |
-376.js                | features-fornecedores-fornecedores-module                                                |   6.40 kB |
-478.js                | features-blog-blog-module                                                                |   5.47 kB |
-988.js                | features-institucional-institucional-module                                              |   4.83 kB |
+376.js                | features-fornecedores-fornecedores-module                                                |   6.61 kB |
+478.js                | features-blog-blog-module                                                                |   5.50 kB |
+988.js                | features-institucional-institucional-module                                              |   4.85 kB |
 139.js                | features-midia-kit-midia-kit-page                                                        |   1.64 kB |
 
-Build at: 2026-07-17T19:06:50.013Z - Hash: 380266c80da4e26e - Time: 25181ms
+Build at: 2026-07-30T00:31:23.304Z - Hash: b5163b231971f6c2 - Time: 12001ms
 
 ** Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/ **
 

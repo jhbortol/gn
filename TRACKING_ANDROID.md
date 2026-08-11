@@ -1,6 +1,6 @@
 # Documentação de Rastreamento (Tracking) para Android
 
-Este documento contém o mapeamento de todos os eventos de tracking implementados atualmente na versão web/PWA do projeto. O objetivo é guiar os desenvolvedores do aplicativo Android na implementação dos mesmos eventos via Firebase Analytics (GA4) e Facebook SDK (Meta), garantindo paridade na coleta de dados.
+Este documento contém o mapeamento de todos os eventos de tracking implementados atualmente na versão web/PWA do projeto. O objetivo é guiar os desenvolvedores do aplicativo Android na implementação dos mesmos eventos via Google Analytics (GA4) e Facebook SDK (Meta), garantindo paridade na coleta de dados.
 
 O mapeamento descreve apenas a estrutura lógica (Nome do evento, Parâmetros e Gatilho/Momento de disparo).
 
@@ -28,7 +28,7 @@ O mapeamento descreve apenas a estrutura lógica (Nome do evento, Parâmetros e 
 **Objetivo:** Mensurar quais telas o usuário visita e identificar a entrada de tráfego pago nas landings.
 **Gatilho:** Assim que o usuário abre uma nova tela/rota no aplicativo.
 
-**Google Analytics 4 (Firebase)**
+**Google Analytics 4**
 * **Evento:** `page_view`
 * **Parâmetros:**
   * `page_path` (String): Caminho/Rota da tela (ex: `/cascavel/guia-custos`).
@@ -50,7 +50,7 @@ O mapeamento descreve apenas a estrutura lógica (Nome do evento, Parâmetros e 
 **Objetivo:** Mensurar o tempo exato de retenção/engajamento na tela ativa.
 **Gatilho:** Quando a tela perde o foco (vai para background), ou quando o usuário sai da tela para ir a outra, ou a destrói.
 
-**Google Analytics 4 (Firebase)**
+**Google Analytics 4**
 * **Evento:** `page_engagement`
 * **Parâmetros:**
   * `page_path` (String): Rota atual.
@@ -69,7 +69,7 @@ O mapeamento descreve apenas a estrutura lógica (Nome do evento, Parâmetros e 
 **Objetivo:** Mensurar quando um usuário decide contactar o fornecedor ou suporte diretamente pelos botões de contato.
 **Gatilho:** Clique/Tap no botão de contato (WhatsApp, Instagram, Website, Telefone ou Maps).
 
-**Google Analytics 4 (Firebase)**
+**Google Analytics 4**
 * **Evento:** `contact_click`
 * **Parâmetros:**
   * `contact_type` (String): Tipo de contato (ex: `whatsapp`, `instagram`, `facebook`, `website`, `phone`, `maps`).
@@ -92,7 +92,7 @@ O mapeamento descreve apenas a estrutura lógica (Nome do evento, Parâmetros e 
 **Objetivo:** Analisar em qual etapa o usuário manifestou o interesse em chamar o fornecedor via WhatsApp (especialmente quando existe uma camada de formulário/lead intermediária).
 **Gatilho:** No tap do botão de WhatsApp pré ou pós o preenchimento de formulário de qualificação.
 
-**Google Analytics 4 (Firebase)**
+**Google Analytics 4**
 * **Evento:** `whatsapp_intent`
 * **Parâmetros:**
   * `intent_stage` (String): Fase da intenção (ex: `before_lead_form` ou `after_lead_form`).
@@ -116,7 +116,7 @@ O mapeamento descreve apenas a estrutura lógica (Nome do evento, Parâmetros e 
 **Objetivo:** Mensurar visitas aos perfis detalhados de fornecedores.
 **Gatilho:** Assim que carregar a tela de detalhes de um fornecedor específico.
 
-**Google Analytics 4 (Firebase)**
+**Google Analytics 4**
 * **Evento:** `view_vendor`
 * **Parâmetros:**
   * `vendor_id` (String): ID do fornecedor.
@@ -138,7 +138,7 @@ O mapeamento descreve apenas a estrutura lógica (Nome do evento, Parâmetros e 
 **Objetivo:** Rastrear a utilização e volume da barra/ferramenta de pesquisa interna.
 **Gatilho:** Quando o usuário efetua/submete uma busca.
 
-**Google Analytics 4 (Firebase)**
+**Google Analytics 4**
 * **Evento:** `search`
 * **Parâmetros:**
   * `search_term` (String): A string/palavra buscada.
@@ -155,7 +155,7 @@ O mapeamento descreve apenas a estrutura lógica (Nome do evento, Parâmetros e 
 **Objetivo:** Monitorar a conversão através de formulários (Contato, Assinatura de Newsletter ou Anúncio).
 **Gatilho:** Quando o formulário é enviado/concluído com sucesso (requisição respondeu OK).
 
-**Google Analytics 4 (Firebase)**
+**Google Analytics 4**
 * **Evento:** `form_submit`
 * **Parâmetros:**
   * `form_type` (String): Tipo de formulário (ex: `contact`, `anuncio`, `newsletter`).
@@ -170,7 +170,7 @@ O mapeamento descreve apenas a estrutura lógica (Nome do evento, Parâmetros e 
 **Objetivo:** Identificar captura de leads e downloads através das iscas digitais da plataforma.
 **Gatilho:** Quando o usuário preenche o formulário para ter acesso a algum e-book/guia (ex: Guia de Custos 2026).
 
-**Google Analytics 4 (Firebase)**
+**Google Analytics 4**
 * **Evento:** `generate_lead`
 * **Parâmetros:**
   * `lead_type` (String): Tipo/Origem do lead (ex: `guia_precos`).
@@ -190,7 +190,7 @@ O mapeamento descreve apenas a estrutura lógica (Nome do evento, Parâmetros e 
 **Objetivo:** Monitorar e identificar quedas em cada etapa do fluxo de adesão gratuita de fornecedores.
 **Gatilho:** Mudança de etapa na tela de cadastro (ex: inicio do processo, erro, conclusão).
 
-**Google Analytics 4 (Firebase)**
+**Google Analytics 4**
 * **Evento:** `free_signup_funnel`
 * **Parâmetros:**
   * `funnel_stage` (String): `inicio`, `falha` ou `sucesso`.
@@ -206,7 +206,7 @@ O mapeamento descreve apenas a estrutura lógica (Nome do evento, Parâmetros e 
 **Objetivo:** Rastrear a autenticação de usuárias no aplicativo.
 **Gatilho:** Autenticação concluída com sucesso.
 
-**Google Analytics 4 (Firebase)**
+**Google Analytics 4**
 * **Evento:** `login`
 * **Parâmetros:**
   * `method` (String): Método utilizado (ex: `google` ou `email`).
@@ -222,7 +222,7 @@ O mapeamento descreve apenas a estrutura lógica (Nome do evento, Parâmetros e 
 **Objetivo:** Rastrear a criação de novas contas de usuárias no aplicativo.
 **Gatilho:** Finalização/criação da nova conta com sucesso.
 
-**Google Analytics 4 (Firebase)**
+**Google Analytics 4**
 * **Evento:** `sign_up`
 * **Parâmetros:**
   * `method` (String): Método utilizado (ex: `google` ou `email`).
@@ -239,7 +239,7 @@ O mapeamento descreve apenas a estrutura lógica (Nome do evento, Parâmetros e 
 **Objetivo:** Medir engajamento em ferramentas específicas disponíveis logado.
 **Gatilho:** Tap/interação em funcionalidades da dashboard da noiva.
 
-**Google Analytics 4 (Firebase)**
+**Google Analytics 4**
 * **Evento:** `hub_interaction`
 * **Parâmetros:**
   * `action_name` (String): Qual ação/clique ocorreu.
@@ -253,7 +253,7 @@ O mapeamento descreve apenas a estrutura lógica (Nome do evento, Parâmetros e 
 **Objetivo:** Identificar quando os usuários saem de um fluxo paralelo e decidem navegar na listagem de fornecedores.
 **Gatilho:** Tap no botão "Ir para categorias" / "Navegar" (Ex: botão final após download do guia de preços).
 
-**Google Analytics 4 (Firebase)**
+**Google Analytics 4**
 * **Evento:** `navigate_categorias`
 * **Parâmetros:**
   * `source` (String): Onde ocorreu o clique (ex: `guia_precos_success`).

@@ -11,6 +11,7 @@ import { environment } from '../../../environments/environment';
 import { LeadFormComponent } from './lead-form.component';
 import { CompetitorAdsComponent } from './competitor-ads.component';
 import { CrossSellingComponent } from './cross-selling.component';
+import { FornecedorReviewsComponent } from './components/fornecedor-reviews/fornecedor-reviews.component';
 import { PlanLevel } from '../../core/models/tier-system.model';
 import { MeuCasamentoStoreService } from '../meu-casamento/services/meu-casamento-store.service';
 import { MeuCasamentoSyncService } from '../meu-casamento/services/meu-casamento-sync.service';
@@ -25,7 +26,8 @@ import { MeuCasamentoSyncService } from '../meu-casamento/services/meu-casamento
     RouterModule,
     LeadFormComponent,
     CompetitorAdsComponent,
-    CrossSellingComponent
+    CrossSellingComponent,
+    FornecedorReviewsComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

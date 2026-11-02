@@ -15,6 +15,7 @@ import { FornecedorReviewsComponent } from './components/fornecedor-reviews/forn
 import { PlanLevel } from '../../core/models/tier-system.model';
 import { MeuCasamentoStoreService } from '../meu-casamento/services/meu-casamento-store.service';
 import { MeuCasamentoSyncService } from '../meu-casamento/services/meu-casamento-sync.service';
+import { LeadService } from '../../core/services/lead.service';
 
 @Component({
   selector: 'app-fornecedor-page',
@@ -60,6 +61,7 @@ export class FornecedorPageComponent implements OnInit {
   private weddingStore = inject(MeuCasamentoStoreService);
   private weddingSync = inject(MeuCasamentoSyncService);
   private location = inject(Location);
+  private leadService = inject(LeadService);
 
   goBack(event: Event): void {
     event.preventDefault();
@@ -222,45 +224,27 @@ export class FornecedorPageComponent implements OnInit {
     // Rastrear analytics
     this.onWhatsAppClick();
 
-    this.openLeadModalForContact(whatsappUrl);
-  }
+    // Send a "Contato Desconhecido" lead to notify the supplier
+    if (this.fornecedor?.id) {
+      this.leadService.submitLead(this.fornecedor.id, {
+        clienteName: 'Contato Desconhecido',
+        clientePhone: '00000000000',
+        message: "Contato via WhatsApp pelo portal (sem dados preenchidos pela noiva)",
+        lgpdConsent: true
+      }).subscribe({
+        next: () => console.log('Notificação de contato via WhatsApp enviada ao fornecedor'),
+        error: (err: any) => console.error('Erro ao enviar notificação de WhatsApp', err)
+      });
+    }
 
-  /**
-   * Fecha o modal de lead WhatsApp sem abrir o aplicativo.
-   */
-  fecharModalLeadWhatsapp(): void {
-    this.showWhatsAppLeadModal.set(false);
-    this.pendingContactUrl = '';
-    this.cdr.markForCheck();
-  }
-
-  /**
-   * Callback quando lead do modal de contato é submetido com sucesso.
-   * Fecha o modal e abre o canal selecionado.
-   */
-  onContactLeadSubmitSuccess(leadId: number): void {
     this.tracking.trackWhatsAppIntent('after_lead_form', {
       vendorId: this.fornecedor?.id || '',
       vendorName: this.fornecedor?.nome || '',
-      vendorCategory: this.fornecedor?.categoria
+      vendorCategory: this.fornecedor?.categoria,
     });
-
-    this.showWhatsAppLeadModal.set(false);
-    console.log('Lead WhatsApp enviado com sucesso:', leadId);
-
-    // Abrir canal após captura do lead
-    if (typeof window !== 'undefined' && this.pendingContactUrl) {
-      window.open(this.pendingContactUrl, '_blank', 'noopener,noreferrer');
-    }
-    this.pendingContactUrl = '';
-    this.cdr.markForCheck();
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   }
 
-  private openLeadModalForContact(url: string): void {
-    this.pendingContactUrl = url;
-    this.showWhatsAppLeadModal.set(true);
-    this.cdr.markForCheck();
-  }
 
   getSiteLink(): string {
     return this.fornecedor?.website || '#';

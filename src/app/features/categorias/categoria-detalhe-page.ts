@@ -14,6 +14,7 @@ import { PlanLevel } from '../../core/models/tier-system.model';
 import { TrackingService } from '../../core/tracking.service';
 import { MeuCasamentoStoreService } from '../meu-casamento/services/meu-casamento-store.service';
 import { MeuCasamentoSyncService } from '../meu-casamento/services/meu-casamento-sync.service';
+import { LeadService } from '../../core/services/lead.service';
 
 @Component({
   selector: 'app-categoria-detalhe-page',
@@ -48,6 +49,7 @@ export class CategoriaDetalhePageComponent implements OnInit {
   private weddingStore = inject(MeuCasamentoStoreService);
   private weddingSync = inject(MeuCasamentoSyncService);
   private location = inject(Location);
+  private leadService = inject(LeadService);
 
   goBack(event: Event): void {
     event.preventDefault();
@@ -193,7 +195,7 @@ export class CategoriaDetalhePageComponent implements OnInit {
   }
 
   /**
-   * Abre o modal de captura de lead para Vitrine (WhatsApp)
+   * Abre o WhatsApp e envia um lead de "contato desconhecido" para notificar o fornecedor
    */
   openWhatsAppModal(fornecedor: FornecedorListDto): void {
     const url = this.getWhatsAppLinkFor(fornecedor);
@@ -210,10 +212,28 @@ export class CategoriaDetalhePageComponent implements OnInit {
       vendorCategory: fornecedor.categoria?.nome || ''
     });
 
-    this.selectedFornecedorForModal.set(fornecedor);
-    this.pendingWhatsAppUrl.set(url);
-    this.isVitrineModal.set(true);
-    this.showContactModal.set(true);
+    // Send a "Contato Desconhecido" lead to notify the supplier
+    if (fornecedor.id) {
+      this.leadService.submitLead(fornecedor.id, {
+        clienteName: 'Contato Desconhecido',
+        clientePhone: '00000000000',
+        message: "Contato via WhatsApp pelo portal (sem dados preenchidos pela noiva)",
+        lgpdConsent: true
+      }).subscribe({
+        next: () => console.log('Notificação de contato via WhatsApp enviada ao fornecedor', fornecedor.id),
+        error: (err: any) => console.error('Erro ao enviar notificação de WhatsApp', err)
+      });
+    }
+
+    this.tracking.trackWhatsAppIntent('after_lead_form', {
+      vendorId: fornecedor.id || '',
+      vendorName: fornecedor.nome || '',
+      vendorCategory: fornecedor.categoria?.nome || ''
+    });
+
+    if (typeof window !== 'undefined') {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
   }
 
   /**
